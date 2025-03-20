@@ -11,5 +11,7 @@ public interface LoginMapper {
 
 	Login getlogin(HashMap<String, Object> map);
 
+	int insertUser(HashMap<String, Object> map);
+
 	
 }
