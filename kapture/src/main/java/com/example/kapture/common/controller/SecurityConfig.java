@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 public class SecurityConfig {
@@ -26,5 +28,12 @@ public class SecurityConfig {
             .httpBasic(basic -> basic.disable()); // HTTP Basic 인증 비활성화
 
         return http.build();
+    }
+    
+    @Bean
+    public HttpFirewall allowDoubleSlashFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowUrlEncodedDoubleSlash(true); // 이중 슬래시 허용
+        return firewall;
     }
 }
