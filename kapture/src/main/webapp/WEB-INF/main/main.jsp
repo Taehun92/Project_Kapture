@@ -170,7 +170,8 @@
 
 </style>
 <body>
-	<div id="app">
+    <jsp:include page="../common/header.jsp"></jsp:include>
+    <div id="app">
         <div class="swiper-container">
             <div class="swiper-wrapper">
                <div class="swiper-slide">
@@ -236,6 +237,7 @@
                 <div class="review-rating">★★★★</div>
             </div>
 	</div>
+    <jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
 <script>
