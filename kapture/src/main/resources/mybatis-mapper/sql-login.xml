@@ -3,12 +3,20 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.kapture.login.mapper.LoginMapper">
-	<select id="" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
+	<select id="getlogin" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
 		SELECT *
 		FROM USERS 
 		WHERE EMAIL = #{email} AND 
 		PASSWORD = #{password}  
 	</select>
+	
+	<insert id="insertUser" parameterType="hashmap">
+		INSERT IN TO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, 
+		ADDRESS, GENDER, CREATED_AT, UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
+		VALUES (#{userNo}, #{password}, #{email}, #{phone}, #{role}, #{birthday}, #{address},
+				#{gender}, SYSDATE, SYSDATE, #{userFirstName}, #{userLastName})
+	
+	</insert>
 
 
 	
