@@ -44,10 +44,25 @@ public class ToursController {
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		if(map.get("selectedThemes") != null) {
 		String json = map.get("selectedThemes").toString(); 
 		ObjectMapper mapper = new ObjectMapper();
 		List<Object> selectedThemes = mapper.readValue(json, new TypeReference<List<Object>>(){});
 		map.put("selectedThemes", selectedThemes);
+		}
+		if(map.get("selectedLanguages") != null) {
+			String json = map.get("selectedLanguages").toString(); 
+			ObjectMapper mapper = new ObjectMapper();
+			List<Object> selectedLanguages = mapper.readValue(json, new TypeReference<List<Object>>(){});
+			map.put("selectedLanguages", selectedLanguages);
+		}
+		if(map.get("selectedRegions") != null) {
+			String json = map.get("selectedRegions").toString(); 
+			ObjectMapper mapper = new ObjectMapper();
+			List<Object> selectedRegions = mapper.readValue(json, new TypeReference<List<Object>>(){});
+			map.put("selectedRegions", selectedRegions);
+		}
+		System.out.println(map);
 		resultMap = toursService.getToursList(map);
 		return new Gson().toJson(resultMap);
 	}

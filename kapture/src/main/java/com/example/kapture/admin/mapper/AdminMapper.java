@@ -3,6 +3,6 @@ package com.example.kapture.admin.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public class AdminMapper {
+public interface AdminMapper {
 
 }
