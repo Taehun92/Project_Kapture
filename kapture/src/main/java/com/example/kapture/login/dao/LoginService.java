@@ -29,22 +29,21 @@ public class LoginService {
 			// TODO Auto-generated method stub
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			Login login = loginMapper.getlogin(map);
-			boolean loginFlg = false;
+//			boolean loginFlg = false;
 			if(login != null) {
-					loginFlg = passwordEncoder.matches((String) map.get("password"), login.getPassword());
-					
+//					loginFlg = passwordEncoder.matches((String) map.get("password"), login.getPassword());
+				System.out.println("성공");
+				session.setAttribute("sessionId", login.getUserNo());
+				session.setAttribute("sessionRole", login.getRole());
+				
+				resultMap.put("login", login);
+				resultMap.put("result", "success");
 				}
 				
-				if(loginFlg) {
-					System.out.println("성공");
-					session.setAttribute("sessionId", login.getUserNo());
-					session.setAttribute("sessionName", login.getUserFirstName());
-					session.setAttribute("sessionName", login.getUserLastName());
-					session.setAttribute("sessionStatus", login.getRole());
-					
-					resultMap.put("login", login);
-					resultMap.put("result", "success");
-				} else {
+//				if(loginFlg) {
+//					
+//				} 
+				else {
 					System.out.println("실패");
 					resultMap.put("result", "fail");
 				}
@@ -52,10 +51,10 @@ public class LoginService {
 				return resultMap;
 			}
 //회원가입 
-		public HashMap<String, Object> addUser(HashMap<String, Object> map) {
+		public HashMap<String, Object> joinUser(HashMap<String, Object> map) {
 				HashMap<String, Object> resultMap = new HashMap<String, Object>();
-				String hashPwd = passwordEncoder.encode((String) map.get("password"));
-				map.put("password", hashPwd);
+//				String hashPwd = passwordEncoder.encode((String) map.get("password"));
+//				map.put("password", hashPwd);
 				
 				int num = loginMapper.insertUser(map);
 				resultMap.put("result", "success");
