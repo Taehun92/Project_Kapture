@@ -97,11 +97,7 @@
 		    <artifactId>ojdbc11</artifactId>
 		    <version>23.7.0.25.01</version>
 		</dependency>
-		<!--해시 비밀번호  -->
-		<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+
 	</dependencies>
 
 	<build>
