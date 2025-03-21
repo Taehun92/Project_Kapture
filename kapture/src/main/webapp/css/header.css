@@ -94,7 +94,7 @@ header a:hover {
 
 .translation-links {
 	display: inline;
-}
+} 
 
 translate-button:hover translation-links {
 	display: block;
