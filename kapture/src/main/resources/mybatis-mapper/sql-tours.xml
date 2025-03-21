@@ -9,11 +9,25 @@
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
-		WHERE 1=1 AND THEME_NO IN
-		
-		<foreach collection="selectedThemes" item="item" index="index" open="(" close=")" separator=","> <!--인덱스,오픈,클로즈 생략가능-->
-			#{item}
-		</foreach>
+		WHERE 1=1 
+		<if test="selectedThemes != null and selectedThemes.size() > 0">
+        	AND T.THEME_NO IN
+        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+   		</if>
+   		<if test="selectedRegions != null and selectedRegions.size() > 0">
+        	AND T.SI_NO IN
+        <foreach collection="selectedRegions" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+   		</if>
+   		<if test="selectedLanguages != null and selectedLanguages.size() > 0">
+        	AND LANGUAGE LIKE 
+        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=" OR ">
+            '%' || #{item} || '%'
+        </foreach>
+   		</if>
 	</select>
 	
 		
