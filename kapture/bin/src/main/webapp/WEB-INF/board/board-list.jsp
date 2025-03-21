@@ -18,7 +18,6 @@
     } 
 </style>
 <body>
-    <jsp:include page ="../common/header.jsp" />
 	<div id="app"> 
         <table>
             <tr>
@@ -41,7 +40,6 @@
         <button @click="fnAdd">글쓰기</button>
 		
 	</div>
-    <jsp:include page ="../common/footer.jsp" />
 </body>
 </html>
 <script>
