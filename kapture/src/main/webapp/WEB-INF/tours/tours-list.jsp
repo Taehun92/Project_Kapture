@@ -148,7 +148,7 @@
                 <div class="sidebar">
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
-                        <div class="" v-if="filters.date">
+                        <div class="filter-content" v-if="filters.date">
                             <input type="date">
                         </div>
 
@@ -156,14 +156,19 @@
                     <div class="filter">
                         <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.language">
-                            <label><input type="checkbox" v-model="selectedLanguages" value="한국어"> 한국어</label><br>
+                            <template @change="fnToursList" v-for="language in languages">
+								<label>
+									<input type="checkbox" v-model="selectedLanguages" :value="language.eng">
+									 {{language.kor}}
+								</label><br>
+							</template>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
                             <template v-for="item in regionList">
-                                <label><input type="checkbox" v-model="selectedRegions" value="item.siName">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions" value="item.siName">
                                     {{item.siName}}
                                 </label><br>
                             </template>
@@ -173,7 +178,7 @@
                         <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
                             <template v-for="theme in themeList">
-                                <label><input type="checkbox" v-model="selectedThemes" value="theme.themeNo">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes" :value="theme.themeNo">
                                     {{theme.themeName}}
                                 </label><br>
                             </template>
@@ -202,7 +207,7 @@
             data() {
                 return {
                     regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
-                    language: ["한국어", "영어", "중국어", "일본어"],
+                    languages: [{eng : "Korean", kor : "한국어"}, {eng : "English", kor : "영어"}, {eng : "chinese", kor : "중국어"}, {eng : "Japanese", kor : "일본어"}],
                     filters: {
                         date: false,
                         language: false,
@@ -242,26 +247,23 @@
                     let self = this;
 
                     let nparmap = {
-                        // selectedDates:self.selectedDates,
-                        // selectedRegion:self.selectedRegion,
-                        // selectedLanguage:self.selectedLanguage,
-                        // selectedTheme:self.selectedTheme,
+                        selectedDates: JSON.stringify(self.selectedDates),
+                        selectedRegions: JSON.stringify(self.selectedRegions),
+                        selectedLanguages: JSON.stringify(self.selectedLanguages),
+                        selectedThemes: JSON.stringify(self.selectedThemes),
                     };
+                    
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
                         type: "POST",
-                        contentType: "application/json", // JSON으로 보내기
-                        data: JSON.stringify(nparmap),
+                        data: nparmap,
                         success: function (data) {
                             console.log(data);
                             self.toursList = data.toursList;
-                            console.log(self.toursList);
                             self.regionList = data.regionList;
-                            console.log(self.regionList);
                             self.themeList = data.themeList;
-                            console.log(self.themeList);
-
+                            console.log(self.selectedThemes);
                         }
                     });
                 },
