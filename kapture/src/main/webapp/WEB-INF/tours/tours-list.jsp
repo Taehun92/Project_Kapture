@@ -156,17 +156,16 @@
                     <div class="filter">
                         <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.language">
-                            <label><input type="checkbox" value="한국어"> 한국어</label><br>
-                            <label><input type="checkbox" value="영어"> 영어</label><br>
-                            <label><input type="checkbox" value="중국어"> 중국어</label><br>
-                            <label><input type="checkbox" value="중국어"> 일본어</label><br>
+                            <label><input type="checkbox" v-model="selectedLanguages" value="한국어"> 한국어</label><br>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
                             <template v-for="item in regionList">
-                            <label><input type="checkbox" value="item.siName">{{item.siName}}</label><br>
+                                <label><input type="checkbox" v-model="selectedRegions" value="item.siName">
+                                    {{item.siName}}
+                                </label><br>
                             </template>
                         </div>
                     </div>
@@ -174,7 +173,9 @@
                         <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
                             <template v-for="theme in themeList">
-                            <label><input type="checkbox" value="theme.themeName"> {{theme.themeName}}</label><br>
+                                <label><input type="checkbox" v-model="selectedThemes" value="theme.themeNo">
+                                    {{theme.themeName}}
+                                </label><br>
                             </template>
                         </div>
                     </div>
@@ -194,12 +195,14 @@
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
+
     </html>
     <script>
         const app = Vue.createApp({
             data() {
                 return {
                     regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
+                    language: ["한국어", "영어", "중국어", "일본어"],
                     filters: {
                         date: false,
                         language: false,
@@ -221,6 +224,11 @@
                     toursList: [],
                     regionList: [],
                     themeList: [],
+                    selectedDates: [],
+                    selectedRegions: [],
+                    selectedLanguages: [],
+                    selectedThemes: [],
+
                 };
             },
             methods: {
@@ -234,13 +242,17 @@
                     let self = this;
 
                     let nparmap = {
-                        
+                        // selectedDates:self.selectedDates,
+                        // selectedRegion:self.selectedRegion,
+                        // selectedLanguage:self.selectedLanguage,
+                        // selectedTheme:self.selectedTheme,
                     };
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
                         type: "POST",
-                        data: nparmap,
+                        contentType: "application/json", // JSON으로 보내기
+                        data: JSON.stringify(nparmap),
                         success: function (data) {
                             console.log(data);
                             self.toursList = data.toursList;
