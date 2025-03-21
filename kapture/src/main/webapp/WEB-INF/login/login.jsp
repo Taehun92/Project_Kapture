@@ -8,12 +8,10 @@
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<title>첫번째 페이지</title>
 </head>
-<style>
-</style>
 <body>
 	<div id="app">
         <div>
-        <input v-model="userEmail" type="text" placeholder="이메일 주소 혹은 아이디">
+        <input v-model="email" type="text" placeholder="이메일 주소 혹은 아이디">
         </div>
 
         <div>
@@ -28,31 +26,46 @@
             <a  style="text-decoration: none; color: black;" @click="fnSearch" href="javascript:;">아이디 / 비밀번호 찾기</a>
             <a style="text-decoration: none; color: black;" @click="fnJoin" href="javascript:;">  회원가입 </a>
          </div>
-         <div>
-            or
-         </div>
-	</div>
+    <div>
+        <a  :href="location"> 
+			<img src="../../img/kakaoLogin.png">
+		</a>
+    </div>
+      
+      </div>
+  
 </body>
 </html>
 <script>
     const app = Vue.createApp({
         data() {
             return {
-                userEmail : self.userEmail,
-                password : self.password
+                email : "",
+                password : "",
+                location : "${location}"
             };
         },
         methods: {
             fnLogin(){
 				var self = this;
-				var nparmap = {};
+				var nparmap = {
+                    email : self.email,
+                    password : self.password,
+                    
+                };
 				$.ajax({
-					url:"login.dox",
+					url:"/login.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
 						console.log(data);
+                        if(data.result == "success"){
+							alert(data.login.user + "님 환영합니다!");
+							location.href="/main.do";
+						} else {
+							alert("아이디/패스워드 확인하세요.");
+						}
 					}
 				});
             },
@@ -60,13 +73,12 @@
                 location.href="/login/search.do"
             },
             fnJoin () {
-
+                location.href="/join.do"
             }
 
         },
         mounted() {
             var self = this;
-            self.fnLogin();
         }
     });
     app.mount('#app');

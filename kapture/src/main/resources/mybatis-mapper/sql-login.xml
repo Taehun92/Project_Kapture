@@ -6,22 +6,16 @@
 	<select id="getlogin" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
 		SELECT *
 		FROM USERS 
-		WHERE EMAIL = #{email} AND 
+		WHERE EMAIL = #{email} AND
 		PASSWORD = #{password}  
 	</select>
 	
 	<insert id="insertUser" parameterType="hashmap">
-		INSERT IN TO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, 
-		ADDRESS, GENDER, CREATED_AT, UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
-		VALUES (#{userNo}, #{password}, #{email}, #{phone}, #{role}, #{birthday}, #{address},
-				#{gender}, SYSDATE, SYSDATE, #{userFirstName}, #{userLastName})
-	
+		INSERT IN TO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, CREATED_AT, UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
+		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, TOURIST, #{birthday},
+		SYSDATE, SYSDATE, #{userFirstName}, #{userLastName})
 	</insert>
 
-
-	
-	
-	
 </mapper>
 
 

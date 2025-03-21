@@ -7,58 +7,76 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script src="/js/page-Change.js"></script>
+	<link rel="stylesheet" href="../../css/header.css">
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 	<title>헤더</title>
+</script>
 </head>
 <style>
 </style>
 <body>
 	<div id="header">
-		<header>
-			<div>
-				<!--로고 영역-->
-				<a href="main"> <!--메인페이지로 이동 예정-->
-					<img id="logo" src="javascript:;" >
-				</a>
+        <div id="google_translate_element">
+        <header>
+            <div>
+                <!-- 로고 -->
+                <a href="/main.do">
+                    <img id="logo" src="#" >
+                </a>
 
-				<!-- 검색 바 -->
-				<span class="search-bar">
-					<input v-model="keyword" type="text" placeholder="상품을 검색하세요...">
-					<button @click="fnSearch">검색</button>
-				</span>
+                <!-- 검색 바 -->
+                <span class="search-bar">
+                    <input v-model="keyword" type="text" placeholder="상품을 검색하세요...">
+                    <button @click="fnSearch">검색</button>
+                </span>
 
-				<!--메뉴 버튼-->
-				<span>
-					<a href="javascript:;">상품검색</a> <!--상품 리스트 화면으로 이동 예정-->
-				</span>
+                <!-- 메뉴 -->
+                <span>
+                    <a href="#">상품검색</a>
+                </span>
+                <span>
+                    <a href="#">요청게시판</a>
+                </span>
+            </div>
 
-				<span>
-					<a href="javascript:;">요청게시판</a> <!--요청게시판 화면으로 이동 예정-->
-				</span>
-			</div>
-
-			<div>
-				<span>
-					<a href="javascript:;">FAQ</a> <!--FAQ 화면으로 이동 예정-->
-				</span>
-				<span>
-					<a href="javascript:;">고객센터</a> <!--고객센터 화면으로 이동 예정-->
-				</span>
-				<!-- 로그인 버튼 -->
-				<span class="login-btn">
-					<a href="javascript:;"> <!--로그인 페이지로 이동 예정-->
-						<button>로그인</button> 
-					</a>
-				</span>
-			</div>
-		</header>
-	</div>
+            <div>
+                <span>
+                     <a href="#" id="language">
+                        언어선택
+                     </a>
+                </span>
+                <span>
+                    <a href="#">FAQ</a>
+                </span>
+                <span>
+                    <a href="#">고객센터</a>
+                </span>
+                <!-- 로그인 버튼 -->
+                <span class="login-btn">
+                    <template v-if="sessionId == ''">
+                        <a href="login.do"> 
+                            <button>Login</button> 
+                        </a>
+                    </template>
+                    <template v-else>
+                        <a href="#">
+                            <button @click="fnLogOut">Logout</button>
+                        </a>
+                    </template>
+                </span>
+            </div>
+        </div>
+        </header>
+    </div>
 </body>
 </html>
 <script>
     const header = Vue.createApp({
         data() {
             return {
-                keyword : ""
+                keyword : "",
+                sessionId : "${sessionId}"
+
             };
         },
         methods: {
@@ -76,14 +94,24 @@
 				});
             },
 			
-			fnSearch(){
-				let self = this;
-				pagechange("main.do",{keyword : self.keyword}); // 상품화면 페이지로 이동 예정
-			}
+			fnSearch (){
+                let self = this;
+                console.log(app);
+                app._component.methods.fnToursList(self.keyword);
+            },
+
+            googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'ko',autoDisplay: false}, 'google_translate_element');
+            },
+            
+            fnLogOut(){
+                
+            }
 
         },
         mounted() {
             var self = this;
+           self.googleTranslateElementInit();
         }
     });
     header.mount('#header');
