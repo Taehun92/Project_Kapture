@@ -179,9 +179,6 @@
         <div>
             <h1>K-apture 에 오신 것을 환영합니다!!!</h1>
         </div>
-
-
-
         <div class="swiper-container">
             <div class="swiper-wrapper">
                <div class="swiper-slide">
@@ -217,11 +214,10 @@
             </span>
 
             <span class="box">
-
                 <img class="" src="../../img/3.jpg">
                 <div>상품 제목</div>
                 <div>상품 설명</div>
-            <button>예약</button> 
+                <button>예약</button> 
             </span>
         </div>
         <div>
@@ -231,21 +227,25 @@
         <div class="review-page">
             <div class="review-box">
                 <div class="review-author">사용자 A</div>
-                <img class="review-image" src="../../img/1.jpg" alt="리뷰 이미지 1"> <div class="review-content">이 상품 정말 좋아요! 배송도 빠르고 품질도 만족스럽습니다.</div>
+                <img class="review-image" src="../../img/1.jpg" alt="리뷰 이미지 1">
+                <div class="review-content">이 상품 정말 좋아요! 배송도 빠르고 품질도 만족스럽습니다.</div>
                 <div class="review-rating">★★★★★</div>
             </div>
 
             <div class="review-box">
                 <div class="review-author">사용자 B</div>
-                <img class="review-image" src="../../img/2.jpg" alt="리뷰 이미지 2"> <div class="review-content">가격 대비 성능이 훌륭합니다. 추천합니다!</div>
+                <img class="review-image" src="../../img/2.jpg" alt="리뷰 이미지 2">
+                <div class="review-content">가격 대비 성능이 훌륭합니다. 추천합니다!</div>
                 <div class="review-rating">★★★★☆</div>
             </div>
 
             <div class="review-box">
                 <div class="review-author">사용자 C</div>
-                <img class="review-image" src="../../img/3.jpg" alt="리뷰 이미지 3"> <div class="review-content">잘 받았습니다. 다음에 또 구매할게요.</div>
+                <img class="review-image" src="../../img/3.jpg" alt="리뷰 이미지 3">
+                <div class="review-content">잘 받았습니다. 다음에 또 구매할게요.</div>
                 <div class="review-rating">★★★★</div>
             </div>
+        </div>
 	</div>
     <jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
