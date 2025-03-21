@@ -22,19 +22,17 @@
 		Password
 		<div>
 		<input type="password" v-model="user.password" 
-		placeholder="At least 6 characters" oninput="pwCheck()">
-		<span id="pwConfirm">비밀번호를 입력하세요</span>
+		placeholder="At least 6 characters" >
 		</div>
 		
-		<div style="font-size: small;">
+		<div style="font-size:x-small">
 		<img src="../../img/login.png">Passwords must be at least 6 characters.
 		</div>
 		
 		
 		Re-enter password 
 		<div>
-		<input type="password"  v-model="user.password2" oninput="pwCheck()">
-		<span id="pwConfirm">비밀번호를 입력하세요</span>
+		<input type="password"  v-model="user.password2">
 		</div>
 
 	
@@ -58,7 +56,7 @@
 		
 		BirthDay 
 		<div>
-		<input type="text" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
+		<input type="date" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
 		</div>
 
 
@@ -96,8 +94,12 @@
             fnJoin(){
 				var self = this;
 				var nparmap = self.user;
-				if(self.user.password != self.user.password2){
-						return ;
+
+				if(self.user.password == "" && self.user.password != self.user.password2){
+						alert("비밀번호를 확인해주세요")	
+					return ;
+				}else{
+
 				}
 				$.ajax({
 					url:"join.dox",
@@ -111,13 +113,6 @@
 					}
 				});
             },
-			pwCheck :function (){
-    			if($('#pw1').val() == $('#pw2').val()){
-        		$('#pwConfirm').text('비밀번호 일치').css('color', 'green')
-    			}else{
-       	 		$('#pwConfirm').text('비밀번호 불일치').css('color', 'red')
-    			}
-				}
         },
         mounted() {
             var self = this;
