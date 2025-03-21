@@ -41,9 +41,7 @@
 
             <div>
                 <span>
-                     <a href="#" id="language">
-                        언어선택
-                     </a>
+
                 </span>
                 <span>
                     <a href="#">FAQ</a>
@@ -60,7 +58,7 @@
                     </template>
                     <template v-else>
                         <a href="#">
-                            <button @click="fnLogOut">Logout</button>
+                            <button @click="fnLogout">Logout</button>
                         </a>
                     </template>
                 </span>
@@ -75,43 +73,45 @@
         data() {
             return {
                 keyword : "",
-                sessionId : "${sessionId}"
+                sessionId : "${sessionId}",
+                languages: [
+                    { code: "ko", label: "한국어" },
+                    { code: "en", label: "English" },
+                    { code: "ja", label: "日本語" },
+                    { code: "zh-CN", label: "中文" }
+                ]
 
             };
         },
         methods: {
-            fnLogin(){
+            fnLogout(){
 				var self = this;
-				var nparmap = {	};
+				var nparmap = {
+                };
 				$.ajax({
-					url:"login.dox",
+					url:"logout.dox",
 					dataType:"json",	
 					type : "POST", 
 					data : nparmap,
 					success : function(data) { 
 						console.log(data);
+                        if(data.result == "success"){
+                            alert("로그아웃 되었습니다.");
+                            location.href="/main.do";
+                        }
 					}
 				});
             },
 			
 			fnSearch (){
                 let self = this;
-                console.log(app);
                 app._component.methods.fnToursList(self.keyword);
-            },
-
-            googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'ko',autoDisplay: false}, 'google_translate_element');
-            },
-            
-            fnLogOut(){
-                
             }
 
         },
         mounted() {
             var self = this;
-           self.googleTranslateElementInit();
+            
         }
     });
     header.mount('#header');
