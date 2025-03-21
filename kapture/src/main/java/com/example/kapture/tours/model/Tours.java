@@ -5,16 +5,30 @@ import lombok.Data;
 @Data
 public class Tours { 
 	//기본적으로 카멜 표기법, "_" 언더바가 있을 경우 언더바 생략 후 카멜표기법으로!!
-	private String tourNo;
-	private String guideNo;
+	private int tourNo;
+	private int guideNo;
 	private String title;
 	private String description;
 	private String duration;
-	private String price;
-	private String maxPeople;
-	private String availableDates;
+	private int price;
+	private int maxPeople;
+	private String tourDate;
 	private String createdAt;
 	private String updatedAt;
 	private String deleteYN;
+	private int themeNo;
+	private String themeName;
+	private int themeParentNo;
+	private int siNo;
+	private int guNo;
+	private int fileNo;
+	private String filePath;
+	private String fileName;
+	private String fileOrgName;
+	private String fileType;
+	private String fileSize;
+	private String fileExtension;
+	private String uploadDate;
+	private String thumbNail;
 	
 }
