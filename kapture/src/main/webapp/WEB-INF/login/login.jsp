@@ -61,7 +61,7 @@
 					success : function(data) { 
 						console.log(data);
                         if(data.result == "success"){
-							alert(data.login.userLastName + "님 환영합니다!");
+							alert(data.login.user + "님 환영합니다!");
 							location.href="/main.do";
 						} else {
 							alert("아이디/패스워드 확인하세요.");

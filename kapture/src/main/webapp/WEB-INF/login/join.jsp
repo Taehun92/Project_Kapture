@@ -18,21 +18,23 @@
 		<div>
 		<input type="text" placeholder=" ex)123@gmail.com"  v-model="user.email">
 		</div>
-
 		
 		Password
 		<div>
-		<input type="password" v-model="user.password" placeholder="At least 6 characters">
+		<input type="password" v-model="user.password" 
+		placeholder="At least 6 characters" oninput="pwCheck()">
+		<span id="pwConfirm">비밀번호를 입력하세요</span>
 		</div>
 		
 		<div style="font-size: small;">
 		<img src="../../img/login.png">Passwords must be at least 6 characters.
 		</div>
-
+		
 		
 		Re-enter password 
 		<div>
-		<input type="password"  v-model="user.password2">
+		<input type="password"  v-model="user.password2" oninput="pwCheck()">
+		<span id="pwConfirm">비밀번호를 입력하세요</span>
 		</div>
 
 	
@@ -59,16 +61,11 @@
 		<input type="text" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
 		</div>
 
-		<div>
-		<label>gender : </label>
-    	<input type="radio" id="male" name="gender" value="M"  v-model="user.gender">
-    	<label for="male">M</label>
-    	<input type="radio" id="female" name="gender" value="F"  v-model="user.gender">
-    	<label for="female">F</label>
-		</div>
+
+		<br>
 
 		<div>
-			<button @click="fnJoin">Continue</button>
+			<button style="font-weight: bold;" @click="fnJoin" >Continue</button>
 		</div>
 
 		<div style="font-size: small; margin-top: 20px;" >
@@ -91,7 +88,7 @@
 					password : "",
 					password2 : "",
 					phone : "",
-					birthDay : ""
+					birthDay : "",
 				}
             };
         },
@@ -99,6 +96,9 @@
             fnJoin(){
 				var self = this;
 				var nparmap = self.user;
+				if(self.user.password != self.user.password2){
+						return ;
+				}
 				$.ajax({
 					url:"join.dox",
 					dataType:"json",	
@@ -110,7 +110,14 @@
 						location.href= "/login.do";
 					}
 				});
-            }
+            },
+			pwCheck :function (){
+    			if($('#pw1').val() == $('#pw2').val()){
+        		$('#pwConfirm').text('비밀번호 일치').css('color', 'green')
+    			}else{
+       	 		$('#pwConfirm').text('비밀번호 불일치').css('color', 'red')
+    			}
+				}
         },
         mounted() {
             var self = this;
