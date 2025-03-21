@@ -254,7 +254,8 @@
     const app = Vue.createApp({
         data() {
             return {
-				swiper : null
+				swiper : null,
+                
             };
         },
         methods: {

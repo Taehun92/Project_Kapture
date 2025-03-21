@@ -146,7 +146,7 @@
                 <!-- 사이드바 -->
                 <div class="sidebar">
                     <div class="filter">
-                        <button @click="toggleFilter('date')">출발 일정 {{ filters.date ? '∧' : '∨' }}</button>
+                        <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="" v-if="filters.date">
                             <input type="date">
                         </div>
@@ -197,25 +197,26 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
-                    filters: {
-                        date: false,
-                        language: false,
-                        region: false,
-                        theme: false
-                    },
-                    tours: [
-                        { id: 1, name: "경복궁", description: "전통적인 궁궐", image: "https://via.placeholder.com/180" },
-                        { id: 2, name: "해운대 해수욕장", description: "부산의 대표 해변", image: "https://via.placeholder.com/180" },
-                        { id: 3, name: "전주 한옥마을", description: "전통 한옥 체험", image: "https://via.placeholder.com/180" },
-                        { id: 4, name: "남산 타워", description: "서울의 랜드마크", image: "https://via.placeholder.com/180" },
-                        { id: 5, name: "설악산", description: "아름다운 자연 경관", image: "https://via.placeholder.com/180" },
-                        { id: 6, name: "제주 성산일출봉", description: "제주의 대표 명소", image: "https://via.placeholder.com/180" },
-                        { id: 7, name: "광안리 해변", description: "야경이 아름다운 해변", image: "https://via.placeholder.com/180" },
-                        { id: 8, name: "안동 하회마을", description: "전통적인 한옥 마을", image: "https://via.placeholder.com/180" },
-                        { id: 9, name: "수원 화성", description: "유네스코 문화유산", image: "https://via.placeholder.com/180" },
-                        { id: 10, name: "DMZ 비무장지대", description: "한국 전쟁의 역사적 장소", image: "https://via.placeholder.com/180" }
-                    ]
+                    // regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
+                    // filters: {
+                    //     date: false,
+                    //     language: false,
+                    //     region: false,
+                    //     theme: false
+                    // },
+                    // tours: [
+                    //     { id: 1, name: "경복궁", description: "전통적인 궁궐", image: "https://via.placeholder.com/180" },
+                    //     { id: 2, name: "해운대 해수욕장", description: "부산의 대표 해변", image: "https://via.placeholder.com/180" },
+                    //     { id: 3, name: "전주 한옥마을", description: "전통 한옥 체험", image: "https://via.placeholder.com/180" },
+                    //     { id: 4, name: "남산 타워", description: "서울의 랜드마크", image: "https://via.placeholder.com/180" },
+                    //     { id: 5, name: "설악산", description: "아름다운 자연 경관", image: "https://via.placeholder.com/180" },
+                    //     { id: 6, name: "제주 성산일출봉", description: "제주의 대표 명소", image: "https://via.placeholder.com/180" },
+                    //     { id: 7, name: "광안리 해변", description: "야경이 아름다운 해변", image: "https://via.placeholder.com/180" },
+                    //     { id: 8, name: "안동 하회마을", description: "전통적인 한옥 마을", image: "https://via.placeholder.com/180" },
+                    //     { id: 9, name: "수원 화성", description: "유네스코 문화유산", image: "https://via.placeholder.com/180" },
+                    //     { id: 10, name: "DMZ 비무장지대", description: "한국 전쟁의 역사적 장소", image: "https://via.placeholder.com/180" }
+                    // ]
+                    toursList:[],
                 };
             },
             methods: {
@@ -223,7 +224,26 @@
                     let self = this;
                     self.filters[type] = !self.filters[type];
 
-                }
+                },
+                fnToursList() {
+                    let self = this;
+
+                    let nparmap = {
+                        keyword: keyword
+                    };
+                    $.ajax({
+                        url: "/tours/list.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data);
+                            self.toursList = data.toursList;
+                            console.log(self.toursList);
+
+                        }
+                    });
+                },
             },
             mounted() {
                 var self = this;
