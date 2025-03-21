@@ -25,7 +25,20 @@
 		WHERE BOARDNO = #{boardNo}	
 	</update>
 	
+	<select id="selectRegionList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NO, 
+    		CASE
+        		WHEN SI_NAME LIKE '%남도%' THEN SUBSTR(SI_NAME,1,2)||'도'
+       			WHEN SI_NAME LIKE '%북도%' THEN SUBSTR(SI_NAME,1,2)||'도'
+        		ELSE SUBSTR(SI_NAME, 1, 2)
+    		END AS SI_NAME 
+		FROM 	REGION
+	</select>
 	
+	<select id="selectThemeList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT *
+		FROM THEME
+	</select>
 	
 </mapper>
 
