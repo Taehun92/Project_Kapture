@@ -11,13 +11,13 @@ import com.example.kapture.board.model.Board;
 
 @Service
 public class BoardService {
+	// get, select
+	// add, insert
+	// edit, update
+	// remove, delete
 	
 	@Autowired
 	BoardMapper boardMapper;
 
 }
 
-// get, select
-// add, insert
-// edit, update
-// remove, delete

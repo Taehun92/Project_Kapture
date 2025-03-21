@@ -20,7 +20,5 @@ public class BoardController {
 	
 	@Autowired
 	BoardService boardService;
-
-	
 	
 }
