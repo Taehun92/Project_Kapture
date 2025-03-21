@@ -46,10 +46,10 @@ public class LoginController {
 	    }
 
 
-		@RequestMapping("/login/join.do") 
+		@RequestMapping("/join.do") 
 			public String add(Model model) throws Exception{
 			
-		    return "/login/login-add";
+		    return "/login/join";
 		}
 	
 	
@@ -71,7 +71,7 @@ public class LoginController {
 		public String add(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
-			resultMap = loginService.addUser(map);
+			resultMap = loginService.joinUser(map);
 			return new Gson().toJson(resultMap);
 		}
 		
