@@ -102,13 +102,6 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<!--구글 이메일 인증 -->
-		<dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-mail</artifactId>
-	    <version>3.0.5</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
