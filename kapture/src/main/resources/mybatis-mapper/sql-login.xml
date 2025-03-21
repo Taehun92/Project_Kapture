@@ -15,13 +15,8 @@
 		ADDRESS, GENDER, CREATED_AT, UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
 		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, TOURIST, #{birthday},
 				#{gender}, SYSDATE, SYSDATE, #{userFirstName}, #{userLastName})
-	
 	</insert>
 
-
-	
-	
-	
 </mapper>
 
 
