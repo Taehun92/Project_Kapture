@@ -24,7 +24,7 @@ public class LoginService {
 	PasswordEncoder passwordEncoder;
 	
 	
-	//로그인 
+//	로그인 
 	public HashMap<String, Object> userLogin(HashMap<String, Object> map) {
 			// TODO Auto-generated method stub
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -52,16 +52,16 @@ public class LoginService {
 				return resultMap;
 			}
 //회원가입 
-	public HashMap<String, Object> addUser(HashMap<String, Object> map) {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		String hashPwd = passwordEncoder.encode((String) map.get("password"));
-		map.put("password", hashPwd);
-		
-		int num = loginMapper.insertUser(map);
-		resultMap.put("result", "success");
-		// if num > 0 데이터 삽입 잘 된거 
-		// 아니면 뭔가 문제 있는거
-		return resultMap;
-	}
+		public HashMap<String, Object> addUser(HashMap<String, Object> map) {
+				HashMap<String, Object> resultMap = new HashMap<String, Object>();
+				String hashPwd = passwordEncoder.encode((String) map.get("password"));
+				map.put("password", hashPwd);
+				
+				int num = loginMapper.insertUser(map);
+				resultMap.put("result", "success");
+				// if num > 0 데이터 삽입 잘 된거 
+				// 아니면 뭔가 문제 있는거
+				return resultMap;
+			}
 
 }
