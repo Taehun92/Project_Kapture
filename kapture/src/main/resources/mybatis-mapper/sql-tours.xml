@@ -9,6 +9,11 @@
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		WHERE 1=1 AND THEME_NO IN
+		
+		<foreach collection="selectedThemes" item="item" index="index" open="(" close=")" separator=","> <!--인덱스,오픈,클로즈 생략가능-->
+			#{item}
+		</foreach>
 	</select>
 	
 		

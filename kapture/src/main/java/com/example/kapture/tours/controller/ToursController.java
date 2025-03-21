@@ -1,8 +1,7 @@
 package com.example.kapture.tours.controller;
 
 import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.kapture.tours.dao.ToursService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 @Controller
@@ -43,6 +44,10 @@ public class ToursController {
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		String json = map.get("selectedThemes").toString(); 
+		ObjectMapper mapper = new ObjectMapper();
+		List<Object> selectedThemes = mapper.readValue(json, new TypeReference<List<Object>>(){});
+		map.put("selectedThemes", selectedThemes);
 		resultMap = toursService.getToursList(map);
 		return new Gson().toJson(resultMap);
 	}
