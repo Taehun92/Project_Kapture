@@ -7,42 +7,7 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <title>관리자 페이지</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200px;
-            height: 100vh;
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            padding: 10px 0;
-        }
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .sidebar ul li a:hover {
-            background-color: #555;
-        }
-        .content {
-            margin-left: 220px;
-            padding: 20px;
-        }
+        
     </style>
 </head>
 <body>
