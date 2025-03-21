@@ -6,7 +6,6 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="/js/page-change.js"></script>
 	<title>요청게시판</title>
 </head>
 <style>
@@ -27,17 +26,17 @@
                 <th>작성자</th>
                 <th>요청상태</th>
             </tr>
-            <tr v-for ="item in list">
-                <td>{{item.boardNo}}</td>
+            <tr v-for = "item in list">
+                <td>{{item.requestNo}}</td>
+                <td>{{item.title}}</td>
+                <td>{{item.userFirstName}} {{item.userLastName}}</td>
                 <td>
-                   <a href="javascript:;" @click="fnView(item.boardNo)">{{item.title}}</a>
+                    <template v-if="item.status='open'">답변 대기</template>
+                    <template v-else>답변 대기</template>
                 </td>
-                <td>{{item.userId}}</td>
-                <td>{{item.cnt}}</td>
-                <td>{{item.cdateTime}}</td>
             </tr>
         </table>
-		
+        <button @click="fnAdd">글쓰기</button>
 	</div>
     <jsp:include page ="../common/footer.jsp" />
 </body>
@@ -62,9 +61,13 @@
 					data : nparmap,
 					success : function(data) { 
 						console.log(data);
-                        self.list = data.list;
+                        self.list = data.requestList;
 					}
 				});
+            },
+
+            fnAdd(){
+                location.href="/request/add.do";
             }
 
         },
