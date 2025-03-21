@@ -134,7 +134,7 @@
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" :key="region">{{ region }}</button>
+                    <a v-for="region in regions" :key="region">{{ region }}</a>
                 </div>
             </div>
 
