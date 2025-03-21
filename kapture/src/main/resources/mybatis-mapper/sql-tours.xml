@@ -6,8 +6,12 @@
 	
 	<select id="selectToursList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
 		SELECT *
-		FROM TOURS
-	</select>	
+		FROM TOURS T
+		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+	</select>
+	
+		
 	
 </mapper>
 
