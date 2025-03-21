@@ -11,7 +11,7 @@
 <body>
 	<div id="app">
         <div>
-        <input v-model="userEmail" type="text" placeholder="이메일 주소 혹은 아이디">
+        <input v-model="email" type="text" placeholder="이메일 주소 혹은 아이디">
         </div>
 
         <div>
@@ -40,7 +40,7 @@
     const app = Vue.createApp({
         data() {
             return {
-                userEmail : "",
+                email : "",
                 password : "",
                 location : "${location}"
             };
@@ -49,7 +49,7 @@
             fnLogin(){
 				var self = this;
 				var nparmap = {
-                    userEmail : self.userEmail,
+                    email : self.email,
                     password : self.password,
                     
                 };
@@ -61,7 +61,7 @@
 					success : function(data) { 
 						console.log(data);
                         if(data.result == "success"){
-							alert(data.member.userName + "님 환영합니다!");
+							alert(data.login.userLastName + "님 환영합니다!");
 							location.href="/main.do";
 						} else {
 							alert("아이디/패스워드 확인하세요.");
@@ -73,7 +73,7 @@
                 location.href="/login/search.do"
             },
             fnJoin () {
-                location.href="/login/add.do"
+                location.href="/join.do"
             }
 
         },
