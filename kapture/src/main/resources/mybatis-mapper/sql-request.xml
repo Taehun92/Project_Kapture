@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.board.mapper.RequestMapper">
+	<select id="selectRequestList" parameterType="hashmap" resultType="com.example.kapture.board.model.Request">
+		SELECT *
+		FROM REQUESTS R
+		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		ORDER BY REQUEST_NO DESC
+	</select>
+	<insert id="insertRequest" parameterType="hashmap">
+		INSERT INTO REQUSETS
+		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{contents}, #{region}, #{budget},'open', SYSDATE, SYSDATE)
+	</insert>
+	
+</mapper>
