@@ -6,7 +6,7 @@
 	<select id="getlogin" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
 		SELECT *
 		FROM USERS 
-		WHERE EMAIL = #{userEmail} AND
+		WHERE EMAIL = #{email} AND
 		PASSWORD = #{password}  
 	</select>
 	
