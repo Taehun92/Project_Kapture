@@ -1,0 +1,93 @@
+/* 전체 헤더 스타일 */
+#header {
+    width: 100%;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 하단 그림자 효과 */
+}
+
+/* 헤더 내부 레이아웃 */
+header {
+    display: flex;
+    justify-content: space-between; /* 요소들을 양옆에 배치 */
+    align-items: center; /* 세로 중앙 정렬 */
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 로고 스타일 */
+#logo {
+    width: 70px; /* 로고 크기 */
+    height: 70px; /* 로고 크기 */
+    background-color: #ddd; /* 로고 영역 (임시) */
+    border-radius: 8px;
+    margin-right: 20px; /* 로고와 검색바 사이에 간격 */
+}
+
+/* 검색 바 스타일 */
+.search-bar {
+    display: inline-flex; /* flexbox 사용 */
+    align-items: center; /* 세로 정렬 */
+    background: white;
+    padding: 5px; /* padding 조정 */
+    border-radius: 25px; /* 검색바를 더 둥글게 */
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 400px; /* 검색바 크기 */
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    padding: 10px;
+    width: 80%; /* 검색창 넓이를 80%로 */
+    font-size: 16px; /* 텍스트 크기 키움 */
+    border-radius: 25px; /* 입력창 둥글게 */
+}
+
+.search-bar button {
+    background-color: #404486; /* 포인트 색상 */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px; /* 버튼과 검색창 사이 간격 */
+}
+
+.search-bar button:hover {
+    background-color: #30356b; /* 호버 시 다소 어두운 포인트 색상 */
+}
+
+/* 메뉴 스타일 */
+header span {
+    margin: 0 15px;
+    font-size: 16px;
+}
+
+header a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+header a:hover {
+    color: #404486; /* 포인트 색상 적용 */
+}
+
+/* 로그인 버튼 스타일 */
+.login-btn button {
+    background-color: #404486; /* 포인트 색상 */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.login-btn button:hover {
+    background-color: #30356b; /* 호버 시 다소 어두운 포인트 색상 */
+}
