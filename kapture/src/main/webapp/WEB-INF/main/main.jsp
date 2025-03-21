@@ -168,20 +168,32 @@
         margin-bottom: 10px;
     }
 
+    h1 {
+        text-align: center;
+    }
+
 </style>
 <body>
-	<div id="app">
+    <jsp:include page="../common/header.jsp"></jsp:include>
+    <div id="app">
+        <div>
+            <h1>K-apture 에 오신 것을 환영합니다!!!</h1>
+        </div>
+
+
+
         <div class="swiper-container">
             <div class="swiper-wrapper">
                <div class="swiper-slide">
-                    <img class="banner" src="../../img/1.jpg">슬라이드 1
+                    <img class="banner" src="../../img/banner.jpg">슬라이드 1
                 </div>
                 <div class="swiper-slide">
-                    <img class="banner" src="../../img/2.jpg">슬라이드 2
+                    <img class="banner" src="../../img/banner2.jpg">슬라이드 2
                 </div>
                 <div class="swiper-slide">
                     <img class="banner" src="../../img/3.jpg">슬라이드 3
                 </div>
+                
             </div>
         </div>
 
@@ -191,7 +203,6 @@
         </div>
         <div class="item-page">
             <span class="box">
-        
             <img class="" src="../../img/1.jpg">
                 <div>상품 제목</div>
                 <div>상품 설명</div>
@@ -236,6 +247,7 @@
                 <div class="review-rating">★★★★</div>
             </div>
 	</div>
+    <jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
 <script>
