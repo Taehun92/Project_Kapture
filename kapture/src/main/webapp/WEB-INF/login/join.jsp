@@ -21,17 +21,20 @@
 		
 		Password
 		<div>
-		<input type="password" v-model="user.password" placeholder="At least 6 characters">
+		<input type="password" v-model="user.password" 
+		placeholder="At least 6 characters" oninput="pwCheck()">
+		<span id="pwConfirm">비밀번호를 입력하세요</span>
 		</div>
 		
 		<div style="font-size: small;">
 		<img src="../../img/login.png">Passwords must be at least 6 characters.
 		</div>
-
+		
 		
 		Re-enter password 
 		<div>
-		<input type="password"  v-model="user.password2">
+		<input type="password"  v-model="user.password2" oninput="pwCheck()">
+		<span id="pwConfirm">비밀번호를 입력하세요</span>
 		</div>
 
 	
@@ -60,7 +63,7 @@
 
 
 		<br>
-		
+
 		<div>
 			<button style="font-weight: bold;" @click="fnJoin" >Continue</button>
 		</div>
@@ -93,6 +96,9 @@
             fnJoin(){
 				var self = this;
 				var nparmap = self.user;
+				if(self.user.password != self.user.password2){
+						return ;
+				}
 				$.ajax({
 					url:"join.dox",
 					dataType:"json",	
@@ -104,7 +110,14 @@
 						location.href= "/login.do";
 					}
 				});
-            }
+            },
+			pwCheck :function (){
+    			if($('#pw1').val() == $('#pw2').val()){
+        		$('#pwConfirm').text('비밀번호 일치').css('color', 'green')
+    			}else{
+       	 		$('#pwConfirm').text('비밀번호 불일치').css('color', 'red')
+    			}
+				}
         },
         mounted() {
             var self = this;
