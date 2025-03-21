@@ -18,7 +18,6 @@
 		<div>
 		<input type="text" placeholder=" ex)123@gmail.com"  v-model="user.email">
 		</div>
-
 		
 		Password
 		<div>
@@ -59,16 +58,11 @@
 		<input type="text" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
 		</div>
 
-		<div>
-		<label>gender : </label>
-    	<input type="radio" id="male" name="gender" value="M"  v-model="user.gender">
-    	<label for="male">M</label>
-    	<input type="radio" id="female" name="gender" value="F"  v-model="user.gender">
-    	<label for="female">F</label>
-		</div>
 
+		<br>
+		
 		<div>
-			<button @click="fnJoin">Continue</button>
+			<button style="font-weight: bold;" @click="fnJoin" >Continue</button>
 		</div>
 
 		<div style="font-size: small; margin-top: 20px;" >
@@ -91,7 +85,7 @@
 					password : "",
 					password2 : "",
 					phone : "",
-					birthDay : ""
+					birthDay : "",
 				}
             };
         },
