@@ -59,8 +59,8 @@
                         </a>
                     </template>
                     <template v-else>
-                        <a>
-                            <button>Logout</button>
+                        <a href="#">
+                            <button @click="fnLogOut">Logout</button>
                         </a>
                     </template>
                 </span>
@@ -94,14 +94,18 @@
 				});
             },
 			
-			fnSearch(){
-				let self = this;
-                console.log(self.keyword);
-			    pagechange("main.do",{keyword : self.keyword}); // 상품화면 페이지로 이동 예정
-			},
+			fnSearch (){
+                let self = this;
+                console.log(app);
+                app._component.methods.fnToursList(self.keyword);
+            },
 
             googleTranslateElementInit() {
             new google.translate.TranslateElement({pageLanguage: 'ko',autoDisplay: false}, 'google_translate_element');
+            },
+            
+            fnLogOut(){
+                
             }
 
         },
