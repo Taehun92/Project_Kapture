@@ -6,13 +6,13 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<script src="/js/page-change.js"></script>
+	<script src="/js/page-Change.js"></script>
 	<title>헤더</title>
 </head>
 <style>
 </style>
 <body>
-	<div id="app">
+	<div id="header">
 		<header>
 			<div>
 				<!--로고 영역-->
@@ -55,7 +55,7 @@
 </body>
 </html>
 <script>
-    const app = Vue.createApp({
+    const header = Vue.createApp({
         data() {
             return {
                 keyword : ""
@@ -86,5 +86,5 @@
             var self = this;
         }
     });
-    app.mount('#app');
+    header.mount('#header');
 </script>

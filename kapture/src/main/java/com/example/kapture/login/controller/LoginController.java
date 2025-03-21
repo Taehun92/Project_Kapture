@@ -1,22 +1,14 @@
 package com.example.kapture.login.controller;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 
 import com.example.kapture.login.dao.LoginService;
 import com.google.gson.Gson;
@@ -35,34 +27,53 @@ public class LoginController {
     @Value("${redirect_uri}")
     private String redirect_uri;
 
-@RequestMapping("/login/main.do") 
-    public String login(Model model) throws Exception{
-		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-//        model.addAttribute("location", location);
+	@RequestMapping("/login/main.do") 
+	    public String login(Model model) throws Exception{
+			String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+	//        model.addAttribute("location", location);
+	
+	        return "/login/login-main"; 
+	    }
 
-        return "/login/login-main"; 
-    }
-	
-	
-	
-	@RequestMapping("/login/search.do") 
-    public String search(Model model) throws Exception{
-//		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-//        model.addAttribute("location", location);
 
-        return "/login/search-main"; 
-    }
+		@RequestMapping("/login/add.do") 
+			public String add(Model model) throws Exception{
+			
+		    return "/login/login-add"; 
+		}
 	
-	// 로그인
-//		@RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//		@ResponseBody
-//		public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-//			HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//			
-//			resultMap = loginService.userLogin(map);
-//			return new Gson().toJson(resultMap);
-//		},
-//		
+	
+//	
+//		@RequestMapping("/login/search.do") 
+//	    public String search(Model model) throws Exception{
+//	//		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+//	//        model.addAttribute("location", location);
+//	
+//	        return "/login/search-main"; 
+//	    }
+	
+	
+	
+	 //로그인
+		@RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = loginService.userLogin(map);
+			return new Gson().toJson(resultMap);
+		}
+		
+		// 회원가입
+		@RequestMapping(value = "/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String add(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = loginService.addUser(map);
+			return new Gson().toJson(resultMap);
+		}
+		
 //		//카카오 액세스 토큰 및 정보 조회 
 //		@RequestMapping(value = "/kakao.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 //		@ResponseBody
@@ -94,5 +105,4 @@ public class LoginController {
 //			return new Gson().toJson(resultMap);
 //			
 //		}
-//	
 }

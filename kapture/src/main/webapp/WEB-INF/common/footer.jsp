@@ -11,7 +11,7 @@
 <style>
 </style>
 <body>
-	<div id="app">
+	<div id="footer">
 		<div>
             <a>
                 공지사항
@@ -49,7 +49,7 @@
 </body>
 </html>
 <script>
-    const app = Vue.createApp({
+    const footer = Vue.createApp({
         data() {
             return {
                 
@@ -74,5 +74,5 @@
             var self = this;
         }
     });
-    app.mount('#app');
+    footer.mount('#footer');
 </script>
