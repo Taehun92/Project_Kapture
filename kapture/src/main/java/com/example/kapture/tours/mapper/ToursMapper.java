@@ -13,6 +13,8 @@ import com.example.kapture.common.model.Theme;
 public interface ToursMapper {
 
 	List<Tours> selectToursList(HashMap<String, Object> map);
+
+	Tours selectTourInfo(HashMap<String, Object> map);
 	
 	
 

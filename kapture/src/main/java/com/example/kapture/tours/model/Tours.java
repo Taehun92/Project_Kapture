@@ -33,5 +33,9 @@ public class Tours {
 	private String language;
 	private String siName;
 	private String guName;
+	private int userNo;
+	private String experience;
+	private String profileImage;
+	
 	
 }

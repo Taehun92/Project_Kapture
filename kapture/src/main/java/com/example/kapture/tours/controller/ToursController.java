@@ -35,16 +35,16 @@ public class ToursController {
         return "/tours/test-list";
     }
 	// 상품 상세페이지 주소
-	@RequestMapping("/tours/detailTour.do")
+	@RequestMapping("/tours/tour-info.do")
     public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
-		return "/tours/detailTour";
+		return "/tours/tour-info";
     }
 	
-	@RequestMapping("/tours/test-detailTour.do")
+	@RequestMapping("/tours/test-info.do")
     public String testDetailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
-		return "/tours/test-detailTour";
+		return "/tours/test-info";
     }
 	
 	
@@ -76,6 +76,17 @@ public class ToursController {
 		System.out.println(map);
 		resultMap = toursService.getToursList(map);
 		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 상세페이지
+	@RequestMapping(value = "/tours/tour-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String tourInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = toursService.getTourInfo(map);
+		
+		return new Gson().toJson(resultMap); //받는 타입을 json으로 정의해서 json 형태로 변환
 	}
 	
 	

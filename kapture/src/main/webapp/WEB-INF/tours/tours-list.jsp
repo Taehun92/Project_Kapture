@@ -134,7 +134,7 @@
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <a v-for="region in regions" :key="region">{{ region }}</a>
+                    <button src="javascript:;" v-for="region in regions" :key="region">{{ region }}</button>
                 </div>
             </div>
 
@@ -257,7 +257,7 @@
                     });
                 },
                 goToDetail(tourNo){
-                    pageChange("/tours/test-detailTour.do",{tourNo: tourNo});
+                    pageChange("/tours/test-info.do",{tourNo: tourNo});
                 }
             },
             mounted() {
