@@ -31,5 +31,7 @@ public class Tours {
 	private String uploadDate;
 	private String thumbNail;
 	private String language;
+	private String siName;
+	private String guName;
 	
 }

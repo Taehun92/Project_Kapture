@@ -72,6 +72,7 @@
             }
 
             .filter {
+                width: 145px;
                 margin-bottom: 10px;
                 border-bottom: 1px solid #ddd;
                 padding-bottom: 5px;
@@ -127,13 +128,13 @@
 
     <body>
 
-        <jsp:include page="../common/header.jsp" />
+		<jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" :key="region">{{ region }}</button>
+                    <a v-for="region in regions" :key="region">{{ region }}</a>
                 </div>
             </div>
 
@@ -147,7 +148,7 @@
                 <div class="sidebar">
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
-                        <div class="" v-if="filters.date">
+                        <div class="filter-content" v-if="filters.date">
                             <input type="date">
                         </div>
 
@@ -155,36 +156,43 @@
                     <div class="filter">
                         <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.language">
-                            <label><input type="checkbox" value="한국어"> 한국어</label><br>
-                            <label><input type="checkbox" value="영어"> 영어</label><br>
-                            <label><input type="checkbox" value="중국어"> 중국어</label><br>
+                            <template v-for="language in languages">
+                                <label>
+                                    <input  @change="fnToursList" type="checkbox" v-model="selectedLanguages" :value="language.eng">
+                                    {{language.kor}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
-                            <label><input type="checkbox" value="서울"> 서울</label><br>
-                            <label><input type="checkbox" value="부산"> 부산</label><br>
-                            <label><input type="checkbox" value="전주"> 전주</label><br>
+                            <template v-for="item in regionList">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions" :value="item.siNo">
+                                    {{item.siName}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
-                            <label><input type="checkbox" value="고요한"> 고요한 테마</label><br>
-                            <label><input type="checkbox" value="짜릿한"> 짜릿한 테마</label><br>
-                            <label><input type="checkbox" value="감성적인"> 감성적인 테마</label><br>
+                            <template v-for="theme in themeList">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes" :value="theme.themeNo">
+                                    {{theme.themeName}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                 </div>
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in tours" :key="tour.id" class="tour-card">
-                        <img :src="tour.image" alt="Tour Image">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
+                        <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
-                            <p>{{ tour.name }}</p>
-                            <p>{{ tour.description }}</p>
+                            <p>{{ tour.title }}</p>
+                            <p>{{ tour.price }}</p>
                         </div>
                     </div>
                 </div>
@@ -192,18 +200,20 @@
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
+
     </html>
     <script>
         const app = Vue.createApp({
             data() {
                 return {
-                    // regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
-                    // filters: {
-                    //     date: false,
-                    //     language: false,
-                    //     region: false,
-                    //     theme: false
-                    // },
+                    regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
+                    languages: [{eng : "Korean", kor : "한국어"}, {eng : "English", kor : "영어"}, {eng : "Chinese", kor : "중국어"}, {eng : "Japanese", kor : "일본어"}],
+                    filters: {
+                        date: false,
+                        language: false,
+                        region: false,
+                        theme: false
+                    },
                     // tours: [
                     //     { id: 1, name: "경복궁", description: "전통적인 궁궐", image: "https://via.placeholder.com/180" },
                     //     { id: 2, name: "해운대 해수욕장", description: "부산의 대표 해변", image: "https://via.placeholder.com/180" },
@@ -216,37 +226,55 @@
                     //     { id: 9, name: "수원 화성", description: "유네스코 문화유산", image: "https://via.placeholder.com/180" },
                     //     { id: 10, name: "DMZ 비무장지대", description: "한국 전쟁의 역사적 장소", image: "https://via.placeholder.com/180" }
                     // ]
-                    toursList:[],
+                    toursList: [],
+                    regionList: [],
+                    themeList: [],
+                    selectedDates: [],
+                    selectedRegions: [],
+                    selectedLanguages: [],
+                    selectedThemes: [],
+
                 };
             },
             methods: {
                 toggleFilter(type) {
                     let self = this;
                     self.filters[type] = !self.filters[type];
-
+                    console.log(self.regionList);
+                    console.log(self.themeList);
                 },
                 fnToursList() {
                     let self = this;
 
                     let nparmap = {
-                        keyword: keyword
+                        selectedDates: JSON.stringify(self.selectedDates),
+                        selectedRegions: JSON.stringify(self.selectedRegions),
+                        selectedLanguages: JSON.stringify(self.selectedLanguages),
+                        selectedThemes: JSON.stringify(self.selectedThemes),
                     };
+                    
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
+                            console.log("DATA",data);
                             self.toursList = data.toursList;
-                            console.log(self.toursList);
-
+                            self.regionList = data.regionList;
+                            self.themeList = data.themeList;
+                            console.log("LANG",self.selectedLanguages);
+                            console.log("LIST",self.toursList);
                         }
                     });
                 },
+                goToDetail(tourNo){
+                    pageChange("/tours/detailTour.do",{tourNo: tourNo});
+                }
             },
             mounted() {
                 var self = this;
+                self.fnToursList();
             }
         });
         app.mount('#app');

@@ -5,10 +5,17 @@
 <mapper namespace="com.example.kapture.tours.mapper.ToursMapper">
 	
 	<select id="selectToursList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
-		SELECT *
+		SELECT DISTINCT 
+    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.CREATED_AT, T.UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
+    	M.*, I.*, R.*, G.*
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		INNER JOIN (
+            SELECT DISTINCT SI_NO, SI_NAME
+            FROM REGION
+        )R ON T.SI_NO = R.SI_NO
+        INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		WHERE 1=1 
 		<if test="selectedThemes != null and selectedThemes.size() > 0">
         	AND T.THEME_NO IN
@@ -23,11 +30,12 @@
         </foreach>
    		</if>
    		<if test="selectedLanguages != null and selectedLanguages.size() > 0">
-        	AND LANGUAGE LIKE 
-        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=" OR ">
-            '%' || #{item} || '%'
+        	AND 
+        <foreach collection="selectedLanguages" item="item" separator=" OR ">
+            LANGUAGE LIKE '%' || #{item} || '%'
         </foreach>
    		</if>
+   		ORDER BY T.TOUR_NO 
 	</select>
 	
 		
