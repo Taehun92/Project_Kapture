@@ -3,6 +3,8 @@ package com.example.kapture.tours.controller;
 import java.util.HashMap;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,42 +23,51 @@ public class ToursController {
 	
 	@Autowired
 	ToursService toursService;
-
+	
+	// 상품 페이지 dept(1) 주소
 	@RequestMapping("/tours/list.do")
     public String toursList(Model model) throws Exception{
         return "/tours/tours-list";
     }
-	@RequestMapping("/tours/test.do")
-    public String test(Model model) throws Exception{
-        return "/tours/test";
+	
+	@RequestMapping("/tours/test-list.do")
+    public String testList(Model model) throws Exception{
+        return "/tours/test-list";
+    }
+	// 상품 상세페이지 주소
+	@RequestMapping("/tours/detailTour.do")
+    public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/detailTour";
+    }
+	
+	@RequestMapping("/tours/test-detailTour.do")
+    public String testDetailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/test-detailTour";
     }
 	
 	
-//	@RequestMapping("/board/view.do")
-//    public String view(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-//		System.out.println(map);
-//		request.setAttribute("map", map);
-//        return "/board/board-view";
-//    }
-	
-	// 게시글 목록 조회
+//---------------------------------------------------------dox---------------------------------------------------------------------------
+		
+	// 상품 목록 조회
 	@RequestMapping(value = "/tours/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		if(map.get("selectedThemes") != null) {
+		if(map.get("selectedThemes") != null) { // 선택된 테마 리스트가 널이 아니면 맵에 추가
 		String json = map.get("selectedThemes").toString(); 
 		ObjectMapper mapper = new ObjectMapper();
 		List<Object> selectedThemes = mapper.readValue(json, new TypeReference<List<Object>>(){});
 		map.put("selectedThemes", selectedThemes);
 		}
-		if(map.get("selectedLanguages") != null) {
+		if(map.get("selectedLanguages") != null) { // 선택된 가이드언어 리스트가 널이 아니면 맵에 추가
 			String json = map.get("selectedLanguages").toString(); 
 			ObjectMapper mapper = new ObjectMapper();
 			List<Object> selectedLanguages = mapper.readValue(json, new TypeReference<List<Object>>(){});
 			map.put("selectedLanguages", selectedLanguages);
 		}
-		if(map.get("selectedRegions") != null) {
+		if(map.get("selectedRegions") != null) { // 선택된 지역 리스트가 널이 아니면 맵에 추가
 			String json = map.get("selectedRegions").toString(); 
 			ObjectMapper mapper = new ObjectMapper();
 			List<Object> selectedRegions = mapper.readValue(json, new TypeReference<List<Object>>(){});

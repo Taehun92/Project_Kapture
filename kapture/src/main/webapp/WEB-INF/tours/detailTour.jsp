@@ -6,14 +6,15 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<title>첫번째 페이지</title>
+	<script src="/js/page-Change.js"></script>
+	<title>상품 상세페이지</title>
 </head>
 <style>
 </style>
 <body>
 	<jsp:include page="../common/header.jsp" />
 	<div id="app">
-		
+				
 	</div>
 	<jsp:include page="../common/footer.jsp" />
 </body>
@@ -29,7 +30,7 @@
             fn(){
 				let self = this;
 				let nparmap = {
-
+					tourNo:"${map.tourNo}",
 				};
 				$.ajax({
 					url:".dox",
