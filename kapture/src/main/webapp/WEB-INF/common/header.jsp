@@ -36,7 +36,7 @@
                     <a href="#">상품검색</a>
                 </span>
                 <span>
-                    <a href="#">요청게시판</a>
+                    <a href="/request/list.do">요청게시판</a>
                 </span>
             </div>
 

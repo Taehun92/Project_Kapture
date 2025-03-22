@@ -30,5 +30,12 @@ public class Tours {
 	private String fileExtension;
 	private String uploadDate;
 	private String thumbNail;
+	private String language;
+	private String siName;
+	private String guName;
+	private int userNo;
+	private String experience;
+	private String profileImage;
+	
 	
 }

@@ -1,11 +1,18 @@
 package com.example.kapture.admin.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.kapture.admin.dao.AdminService;
+
 @Controller
 public class AdminController {
+	
+	@Autowired
+	AdminService adminService;
+	
 	// 관리자 페이지 메인
 	@RequestMapping("/admin.do")
     public String main(Model model) throws Exception{

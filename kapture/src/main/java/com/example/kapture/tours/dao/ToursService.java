@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.kapture.common.mapper.CommonMapper;
 import com.example.kapture.common.model.Region;
+import com.example.kapture.common.model.Reviews;
 import com.example.kapture.common.model.Theme;
 import com.example.kapture.tours.mapper.ToursMapper;
 import com.example.kapture.tours.model.Tours;
@@ -38,6 +39,25 @@ public class ToursService {
 			resultMap.put("themeList", themeList);
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+	// 삼품 상세정보 불러오기(+ 해당 상품 리뷰) 
+	public HashMap<String, Object> getTourInfo(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {			
+			
+			Tours tourInfo = toursMapper.selectTourInfo(map);
+			String result = "success";
+			List<Reviews> reviewsList = commonMapper.selectReviewsList(map);
+			System.out.println(reviewsList);
+			resultMap.put("reviewsList", reviewsList);
+			resultMap.put("tourInfo", tourInfo);
+			resultMap.put("result", result);
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
