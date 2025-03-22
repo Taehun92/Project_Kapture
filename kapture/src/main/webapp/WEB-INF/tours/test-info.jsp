@@ -128,19 +128,20 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app" class="container">
 			<div class="top-section">
-				<div class="thumbnail">썸네일 이미지</div>
+				<div class="thumbnail"><img src="tourInfo.filePath"></div>
 				<div class="info">
-					<div class="title">{{ title }}</div>
-					<div class="guide-info">가이드 정보</div>
+					<div class="title">{{ tourInfo.title }}</div>
+					<div class="guide-info">{{tourInfo.experience}}</div>
 					<div class="actions">
 						<button @click="decrease">-</button>
 						<span>인원수 {{ count }}명</span>
 						<button @click="increase">+</button>
 						<button @click="toggleWishlist">{{ isWishlisted ? "❤️ 찜 취소" : "🤍 찜" }}</button>
+						<button @click="fnAddedToCart">🛒 장바구니 담기</button>
 					</div>
 				</div>
 			</div>
-			<div class="contents">contents</div>
+			<div class="contents">{{tourInfo.description}}</div>
 			<div class="reviews">
 				<div class="review-score">이용후기
 					<div>
@@ -148,20 +149,24 @@
 					</div>
 				</div>
 				<hr style="margin-bottom: 20px;">
-				<div>
-					<img src="../img/화면 캡처 2025-03-22 152559.png" class="profile-img">
-					<span>강 재 석</span>
-					<div>3월 22일</div>
-				</div>
-				<div class="tags">
-					<span class="tag">#불친절해요</span>
-					<span class="tag">#비합리적인 가격</span>
-					<span class="tag">#안재밌어요</span>
+				<!-- <template> v-for="review in reviewsList" -->
+					<div>
+						<img src="../img/화면 캡처 2025-03-22 152559.png" class="profile-img">
+						<span>강 재 석</span>
+						<div>3월 22일</div>
+						<!-- <span>{{review.userFirstName}}</span> -->
+						 <!-- <div>{{review.rUpdatedAt}}</div> -->
+					</div>
+					<div class="tags">
+						<span class="tag">#불친절해요</span>
+						<span class="tag">#비합리적인 가격</span>
+						<span class="tag">#안재밌어요</span>
+					</div>
+					<div class="user-review">
+						⭐☆☆☆☆ 나 강재석인데 이 상품 별로임 대표 나오라 그래
 
-				</div>
-				<div class="user-review">
-					⭐☆☆☆☆ 나 강재석인데 이 상품 별로임 대표 나오라 그래
-				</div>
+					</div>
+				</template>
 			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -173,28 +178,33 @@
 			data() {
 				return {
 					tourNo: "${map.tourNo}",
-					title: "상품 제목",
 					count: 0,
 					isWishlisted: false,
+					tourInfo: {},
+					reviewsList: [],
+
 				};
 			},
 			methods: {
-				// fn() {
-				// 	let self = this;
-				// 	let nparmap = {
-
-				// 	};
-				// 	$.ajax({
-				// 		url: ".dox",
-				// 		dataType: "json",
-				// 		type: "POST",
-				// 		data: nparmap,
-				// 		success: function (data) {
-				// 			console.log(data);
-
-				// 		}
-				// 	});
-				// },
+				fnTourInfo() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+					};
+					$.ajax({
+						url: "/tours/tour-info.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							self.tourInfo = data.tourInfo;
+							console.log(self.tourInfo);
+							self.reviewsList = data.reviewsList;
+							console.log(self.reviewsList);
+						}
+					});
+				},
 				increase() {
 					this.count++;
 				},
@@ -203,10 +213,14 @@
 				},
 				toggleWishlist() {
 					this.isWishlisted = !this.isWishlisted;
+				},
+				fnAddedToCart() {
+
 				}
 			},
 			mounted() {
 				let self = this;
+				self.fnTourInfo();
 			}
 		});
 		app.mount('#app');

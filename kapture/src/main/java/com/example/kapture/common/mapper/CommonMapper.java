@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.kapture.common.model.Region;
 import com.example.kapture.common.model.Theme;
+import com.example.kapture.common.model.Reviews;
 
 @Mapper
 public interface CommonMapper {
@@ -14,4 +15,6 @@ public interface CommonMapper {
 	List<Region> selectRegionList(HashMap<String, Object> map);
 	
 	List<Theme> selectThemeList(HashMap<String, Object> map);
+	
+	List<Reviews> selectReviewsList(HashMap<String, Object> map);
 }
