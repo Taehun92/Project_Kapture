@@ -12,8 +12,8 @@ public class Request {
 	private String region;
 	private int budget;
 	private String status;
-	private String createdAt;
-	private String updatedAt;
+	private String rqCreatedAt;
+	private String rqUpdatedAt;
 	private String userFirstName;
 	private String userLastName;
 }

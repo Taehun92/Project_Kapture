@@ -47,6 +47,12 @@ public class ToursController {
 		return "/tours/test-info";
     }
 	
+	@RequestMapping("/tours/date-picker-test.do")
+    public String testDatePicker(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/date-picker-test";
+    }
+	
 	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		
