@@ -35,6 +35,7 @@
                 <td>{{item.userId}}</td>
                 <td>{{item.cnt}}</td>
                 <td>{{item.cdateTime}}</td>
+				
             </tr>
         </table>
 		
