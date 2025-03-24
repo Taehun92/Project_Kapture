@@ -6,6 +6,7 @@ import lombok.Data;
 public class Login {
 	private int userNo;
 	private String password;
+	private String password2;
 	private String email;
 	private String phone;
 	private String role;
@@ -14,8 +15,6 @@ public class Login {
 	private String gender;
 	private String createdAt;
 	private String updatedAt;
-	private String userFirstName; 
-	private String userLastName;
 	
 	
 }	
