@@ -75,6 +75,7 @@
                 background: white;
                 transition: top 0.3s;
                 overflow-y: overlay;
+            
             }
 
             .filter {
@@ -82,6 +83,11 @@
                 margin-bottom: 10px;
                 border-bottom: 1px solid #ddd;
                 padding-bottom: 5px;
+            }
+
+            .filter-content {
+
+                padding: 5px 10px;
             }
 
             .filter button {
@@ -123,6 +129,7 @@
 
             .tour-card {
                 width: 200px;
+                height: 257px;
                 background: white;
                 border: 2px solid black;
                 padding: 10px;
@@ -170,7 +177,7 @@
 
                             <div>날짜 선택: {{ dates }}</div>
                             <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
-                                @input="params.startDate = _formatedDatepicker($event)" />
+                                @input="params.startDate = _formatedDatepicker($event)" :teleport="true" />
                         </div>
 
                     </div>
@@ -234,7 +241,6 @@
             data() {
                 return {
                     dates: null,
-                    regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -250,7 +256,7 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-                    region: "${map.region}",
+                    siNo: "${map.siNo}",
                     iniFlg: false,
 
                 };
@@ -266,11 +272,12 @@
                 },
                 fnToursList() {
                     let self = this;
-                    console.log("region"+self.region);
-                    let nparmap={};
+
+                    let nparmap = {};
                     if (!self.iniFlg) {
-                        nparmap = {region: self.region}
-                        self.iniFlg=true;
+                        console.log("siNo" + self.siNo);
+                        nparmap = { siNo: self.siNo }
+                        self.iniFlg = true;
                     } else {
                         nparmap = {
                             selectedDates: JSON.stringify(self.selectedDates),
@@ -290,17 +297,13 @@
                             self.toursList = data.toursList;
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
-                            console.log("LANG", self.selectedLanguages);
-                            console.log("LIST", self.toursList);
                         }
                     });
                 },
-                goToDetail(tourNo) {
-                    pageChange("/tours/detailTour.do", { tourNo: tourNo });
+                goToTourInfo(tourNo) {
+                    pageChange("/tours/test-info.do", { tourNo: tourNo });
                 },
-                fnRegionalTours(region) {
-                    pageChange("/tours/regionalTours.do", { region: region });
-                },
+
             },
             mounted() {
                 var self = this;
