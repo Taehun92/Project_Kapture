@@ -277,10 +277,7 @@
                 },
                 goToDetail(tourNo) {
                     pageChange("/tours/detailTour.do", { tourNo: tourNo });
-                },
-                fnRegionalTours(region){
-                    pageChange("/tours/regionalTours.do",{region: region});
-                },
+                }
             },
             mounted() {
                 var self = this;

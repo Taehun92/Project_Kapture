@@ -40,6 +40,13 @@
 		FROM THEME
 	</select>
 	
+	<select id="selectReviewsList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT R.*, U.USER_FIRSTNAME, U.USER_LASTNAME
+		FROM REVIEWS R
+		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		WHERE TOUR_NO = #{tourNo}
+	</select>
+	
 </mapper>
 
 

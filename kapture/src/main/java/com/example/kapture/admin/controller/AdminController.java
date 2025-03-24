@@ -67,15 +67,4 @@ public class AdminController {
 		return "/admin/admin-setting";
 	}
 	
-	
-	// 상품 리스트 불러오기
-		@RequestMapping(value = "/admin/tourList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-		@ResponseBody
-		public String requestAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-			HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap = adminService.getTourList(map);
-			return new Gson().toJson(resultMap);
-		}
-	
-	
 }
