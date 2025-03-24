@@ -43,5 +43,21 @@ public class ToursService {
 		}
 		return resultMap;
 	}
+
+	public HashMap<String, Object> getAll(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Tours> toursList = toursMapper.selectAll(map);
+			resultMap.put("result", "success");
+			resultMap.put("toursList", toursList);
+			
+		} catch (Exception e) {
+
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 }
 

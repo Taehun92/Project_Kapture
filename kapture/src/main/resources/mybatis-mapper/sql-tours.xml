@@ -30,8 +30,11 @@
    		</if>
 	</select>
 	
-		
-	
+	<select id="selectAll" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
+	SELECT *
+		FROM TOURS
+		ORDER BY TOUR_NO
+	</select>
 </mapper>
 
 
