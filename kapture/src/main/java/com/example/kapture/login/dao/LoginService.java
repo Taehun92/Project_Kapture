@@ -1,6 +1,7 @@
 package com.example.kapture.login.dao;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -88,6 +89,8 @@ public class LoginService {
 		
 		return resultMap;
 	}
+
+
 	
 
 }

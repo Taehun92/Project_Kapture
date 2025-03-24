@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.cs.mapper.CsMapper">
+	
+	<select id="mainCs" parameterType="hashmap" resultType="com.example.kapture.cs.model.Cs">
+		SELECT *
+		FROM INQUIRIES
+		WHERE 1=1
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (CATEGORY LIKE '%' || #{keyword} || '%' 
+					OR QUESTION LIKE '%' || #{keyword} || '%') 
+		</if>
+		<if test="searchOption != null and searchOption == 'category'">
+			AND CATEGORY LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'question'">
+			AND QUESTION LIKE '%' || #{keyword} || '%' 
+		</if>
+		ORDER BY CATEGORY
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	<select id="mainCsCnt" parameterType="hashmap" resultType="int">
+		
+		SELECT COUNT(*) 
+		FROM INQUIRIES
+		WHERE 1=1
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (CATEGORY LIKE '%' || #{keyword} || '%' 
+			OR QUESTION LIKE '%' || #{keyword} || '%') 
+		</if>
+		<if test="searchOption != null and searchOption == 'category'">
+			AND CATEGORY LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'question'">
+			AND QUESTION LIKE '%' || #{keyword} || '%' 
+		</if>
+	</select>
+	
+</mapper>
