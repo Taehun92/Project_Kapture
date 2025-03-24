@@ -137,7 +137,7 @@
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <a v-for="region in regions" :key="region">{{ region }}</a>
+                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region }}</button>
 
                 </div>
             </div>
@@ -153,8 +153,10 @@
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
-                            <input type="date">
-                            <vue-date-picker v-model="dates" locale="ko"></vue-date-picker>
+                            
+                            <div>날짜  선택: {{ dates }}</div>
+                            <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
+                                @input="params.startDate = _formatedDatepicker($event)" />
                         </div>
 
                     </div>
@@ -217,7 +219,7 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    dates: new Date(),
+                    dates: null,
                     regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
