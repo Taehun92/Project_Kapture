@@ -105,6 +105,7 @@
 
             .tour-card {
                 width: 200px;
+                height: 257px;
                 background: white;
                 border: 2px solid black;
                 padding: 10px;
@@ -137,7 +138,7 @@
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region">{{ region.region }}</button>
+                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region.region">{{ region.region }}</button>
 
                 </div>
             </div>
@@ -154,9 +155,10 @@
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
                             
-                            <div>날짜  선택: {{ dates }}</div>
-                            <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
-                                @input="params.startDate = _formatedDatepicker($event)" />
+                            <div>날짜  선택: {{ selectedDates }}</div>
+                            <vue-date-picker v-model="selectedDates" multi-calendars model-auto range :min-date="new Date()"
+                                @input="params.startDate = _formatedDatepicker($event)" locale="ko" />
+                                
                         </div>
 
                     </div>
@@ -219,8 +221,8 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    dates: null,
-                    regions: [{region:"서울", siNo:11}, {region:"경기", siNo:31}, {region:"인천", siNo:23}, {region:"부산", siNo:21}, {region:"전주", siNo:35}, {region:"강원", siNo:32}, {region:"그 외", siNo:999}],
+                    regions: [{region:"서울", siNo:11}, {region:"제주", siNo:39}, {region:"부산", siNo:21}, {region:"전주", siNo:35},
+                             {region:"강원", siNo:32}, {region:"인천", siNo:23}, {region:"경기", siNo:31}, {region:"그 외", siNo:999}],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -243,6 +245,11 @@
             components: {
 				VueDatePicker
 			},
+            watch: {
+				selectedDates() {
+                    this.fnToursList();
+				}
+			},
             methods: {
                 toggleFilter(type) {
                     let self = this;
@@ -252,7 +259,7 @@
                 },
                 fnToursList() {
                     let self = this;
-
+                    console.log("selectedDates >> " + self.selectedDates);
                     let nparmap = {
                         selectedDates: JSON.stringify(self.selectedDates),
                         selectedRegions: JSON.stringify(self.selectedRegions),
@@ -278,8 +285,10 @@
                 goToTourInfo(tourNo) {
                     pageChange("/tours/test-info.do", { tourNo: tourNo });
                 },
-                fnRegionalTours(region){
-                    pageChange("/tours/regionalTours.do",{region: region});
+                fnRegionalTours(siNo){
+                    console.log("siNo"+siNo);
+                    alert("타임");
+                    pageChange("/tours/test-regional.do",{siNo: siNo});
                 },
             },
             mounted() {

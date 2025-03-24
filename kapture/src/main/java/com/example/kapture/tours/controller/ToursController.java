@@ -1,9 +1,8 @@
 package com.example.kapture.tours.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,8 @@ import com.example.kapture.tours.dao.ToursService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ToursController {
@@ -71,6 +72,20 @@ public class ToursController {
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		if(map.get("selectedDates") != null) { // 선택된 테마 리스트가 널이 아니면 맵에 추가
+			
+			String json = map.get("selectedDates").toString(); 
+			ObjectMapper mapper = new ObjectMapper();
+			List<Object> selectedDates = mapper.readValue(json, new TypeReference<List<Object>>(){});
+			List<String> formattedDates = new ArrayList<>();
+
+			for (Object date : selectedDates) {
+			    String dateStr = date.toString().substring(0, 10); // "2025-03-25T06:39:00.000Z" → "2025-03-25"
+			    formattedDates.add(dateStr);
+			}
+			
+			map.put("selectedDates", formattedDates);
+			}
 		if(map.get("selectedThemes") != null) { // 선택된 테마 리스트가 널이 아니면 맵에 추가
 		String json = map.get("selectedThemes").toString(); 
 		ObjectMapper mapper = new ObjectMapper();
