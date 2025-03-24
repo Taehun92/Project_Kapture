@@ -6,7 +6,7 @@
 	
 	<select id="selectToursList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
 		SELECT DISTINCT 
-    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.CREATED_AT, T.UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
+    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.T_CREATED_AT, T.T_UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
     	M.*, I.*, R.*, G.*
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
@@ -17,6 +17,9 @@
         )R ON T.SI_NO = R.SI_NO
         INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		WHERE 1=1 
+		<if test="region != null">
+			AND SI_NAME = #{region}
+		</if>
 		<if test="selectedThemes != null and selectedThemes.size() > 0">
         	AND T.THEME_NO IN
         <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
