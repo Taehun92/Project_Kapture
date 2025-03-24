@@ -17,9 +17,18 @@
         )R ON T.SI_NO = R.SI_NO
         INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		WHERE 1=1 
-		<if test="region != null">
-			AND SI_NAME = #{region}
+		<if test="siNo != null and siNo != 999">
+			AND T.SI_NO = #{siNo}
 		</if>
+		<if test="siNo != null and siNo == 999">
+			AND T.SI_NO IN(34, 37, 26, 38, 25, 22, 29, 24, 33, 36)
+		</if>
+		<if test="selectedDates != null and selectedDates.size() > 0">
+        	AND TOUR_DATE BETWEEN
+        <foreach collection="selectedDates" item="item" open="" close="" separator=" AND ">
+            TO_DATE(#{item}, 'YY/MM/DD')
+        </foreach>
+   		</if>
 		<if test="selectedThemes != null and selectedThemes.size() > 0">
         	AND T.THEME_NO IN
         <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
