@@ -1,6 +1,7 @@
 package com.example.kapture.login.dao;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,6 +72,25 @@ public class LoginService {
 		resultMap.put("result", "success");
 		return resultMap;
 	}
+	//ID 중복체크 
+	public HashMap<String, Object> checkUser(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		Login login = loginMapper.checkUser(map);
+		
+		int count = login != null ? 1 : 0 ;
+		resultMap.put("count", count);
+//		int count = 0;
+//		if(member != null) {
+//			count = 1;
+//		} else {
+//			count = 0;
+//		}
+		
+		return resultMap;
+	}
+
+
 	
 
 }
