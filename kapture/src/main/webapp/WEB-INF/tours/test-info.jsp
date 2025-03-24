@@ -216,6 +216,8 @@
 				},
 				fnAddedToCart() {
 
+					
+
 				}
 			},
 			mounted() {
