@@ -1,78 +1,62 @@
-/* 전체 푸터 스타일 */
+/* 전체 푸터 영역 */
 #footer {
-    background-color: #f8f9fa; /* 푸터 배경색 */
-    padding: 30px 20px; /* 푸터 여백 */
-    font-size: 14px; /* 기본 글자 크기 */
-    color: #333; /* 텍스트 색상 */
-    border-top: 1px solid #ddd; /* 푸터 상단 경계선 */
+  width: 100%;
+  max-width: 1920px;
+  height: 130px;
+  background-color: #ccc;
+  color: #444;
+  font-size: 12px;
+  padding: 10px 60px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* 푸터 내부 섹션들 */
-#footer div {
-    margin-bottom: 20px; /* 각 섹션 사이 간격 */
+/* 상단 링크 영역 */
+.footer-links {
+  margin-bottom: 5px;
 }
 
-/* 첫 번째 섹션 (공지사항, 이용약관 등) */
-#footer div:first-child {
-    display: flex; /* 링크들을 가로로 정렬 */
-    justify-content: space-around; /* 각 링크 사이에 균등하게 배치 */
+.footer-links a {
+  margin-right: 20px;
+  font-weight: bold;
+  color: #222;
+  text-decoration: none;
+  font-size: 13px;
 }
 
-#footer a {
-    text-decoration: none; /* 링크 기본 스타일 제거 */
-    color: #404486; /* 링크 색상 */
-    font-weight: 500;
-    padding: 5px 10px; /* 패딩 */
+/* 메인 내용: 회사 정보 + 아이콘 */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-#footer a:hover {
-    color: #30356b; /* 호버 시 색상 */
+/* 회사 정보 영역 */
+.company-info {
+  max-width: 70%;
+  line-height: 1.6;
 }
 
-/* 두 번째 섹션 (상호, 대표, 주소 등) */
-#footer div:nth-child(2) {
-    font-weight: 600; /* 강조된 글씨체 */
-    line-height: 1.6; /* 줄 간격 */
+/* 아이콘 전체 묶음 */
+.footer-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
-/* 세 번째 섹션 (전화번호, 이메일 등) */
-#footer div:nth-child(3) {
-    font-weight: 600;
-    line-height: 1.6;
+/* SNS 아이콘 */
+.sns-icons img {
+  height: 20px;
+  margin-right: 8px;
 }
 
-/* 네 번째 섹션 (등록번호, 개인정보 보호자 등) */
-#footer div:nth-child(4) {
-    font-weight: 600;
-    line-height: 1.6;
-}
-
-/* 다섯 번째 섹션 (영업보증보험) */
-#footer div:nth-child(5) {
-    font-weight: 600;
-    line-height: 1.6;
-}
-
-/* 여섯 번째 섹션 (Powered by) */
-#footer div:last-child {
-    font-weight: 400; /* 기본 글씨체 */
-    text-align: center; /* 가운데 정렬 */
-    font-size: 12px; /* 작은 글씨체 */
-    color: #777; /* 연한 글씨 색상 */
-}
-
-/* 모바일에서 각 섹션들이 세로로 나열되도록 */
-@media (max-width: 768px) {
-    #footer div:first-child {
-        flex-direction: column; /* 가로에서 세로로 변경 */
-        align-items: center;
-    }
-
-    #footer div:nth-child(2),
-    #footer div:nth-child(3),
-    #footer div:nth-child(4),
-    #footer div:nth-child(5),
-    #footer div:last-child {
-        text-align: center; /* 텍스트 중앙 정렬 */
-    }
+/* 결제수단 아이콘 */
+.payment-icons img {
+  height: 24px;
+  margin-left: 8px;
 }
