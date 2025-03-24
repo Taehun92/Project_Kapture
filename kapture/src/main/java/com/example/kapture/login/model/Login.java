@@ -15,8 +15,6 @@ public class Login {
 	private String gender;
 	private String createdAt;
 	private String updatedAt;
-	private String userFirstName; 
-	private String userLastName;
 	
 	
 }	

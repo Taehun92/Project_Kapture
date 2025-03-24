@@ -37,14 +37,14 @@
 		placeholder="At least 6 characters" >
 		</div>
 		
-		<div style="font-size: small;">
+		<div style="font-size:x-small">
 		<img src="../../img/login.png">Passwords must be at least 6 characters.
 		</div>
 		
 		
 		Re-enter password 
 		<div>
-		<input type="password"  v-model="user.password2" >
+		  <input type="password"  v-model="user.password2">
 		</div>
 
 	
@@ -68,7 +68,7 @@
 		
 		birthday 
 		<div>
-		<input type="text" placeholder="ex)yyyy.mm.dd"  v-model="user.birthday">
+		  <input type="date" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
 		</div>
 
 
@@ -134,6 +134,7 @@
 					}
 				});
             },
+          
 				fnIdCheck : function(){
                     var self = this;
                     if(self.user.email === ""){
