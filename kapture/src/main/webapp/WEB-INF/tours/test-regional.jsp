@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
@@ -60,21 +60,25 @@
             /* 사이드바 및 고정 기능 */
             .content {
                 display: flex;
-                gap: 20px;
+                gap: 10px;
             }
 
             .sidebar {
-                width: 250px;
+                width: 160px;
+                min-width: 160px;
+                /* 최소 너비 유지 */
+                height: 600px;
                 padding: 10px;
                 border: 1px solid #ddd;
                 position: sticky;
                 top: 0;
                 background: white;
                 transition: top 0.3s;
+                overflow-y: overlay;
             }
 
             .filter {
-                width: 145px;
+                width: 160px;
                 margin-bottom: 10px;
                 border-bottom: 1px solid #ddd;
                 padding-bottom: 5px;
@@ -87,12 +91,26 @@
                 font-size: 16px;
                 text-align: left;
                 cursor: pointer;
-                padding: 5px;
+                
+                transition: background-color 0.2s;
             }
 
-            .filter-content {
+            .filter button:hover {
+                background-color: #e0e0e0;
+                /* 밝은 회색으로 변경 */
+            }
 
-                padding: 5px 10px;
+            /* 체크박스 라벨 스타일 */
+            .filter-content label {
+                display: block;
+
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .filter-content label:hover {
+                background-color: #f5f5f5;
+                /* 밝은 회색 */
             }
 
             /* 상품 카드 (폴라로이드 스타일) */
@@ -133,11 +151,12 @@
         <!-- <jsp:include page="../common/header.jsp" /> -->
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
-            
+
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region }}</button>
+                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region
+                        }}</button>
 
                 </div>
             </div>
@@ -153,8 +172,8 @@
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
-                            
-                            <div>날짜  선택: {{ dates }}</div>
+
+                            <div>날짜 선택: {{ dates }}</div>
                             <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
                                 @input="params.startDate = _formatedDatepicker($event)" />
                         </div>
@@ -209,8 +228,8 @@
             </div>
         </div>
         <!-- <jsp:include page="../common/footer.jsp" /> -->
-         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
-          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
+        <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+        <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
 
     </html>
@@ -241,8 +260,8 @@
                 };
             },
             components: {
-				VueDatePicker
-			},
+                VueDatePicker
+            },
             methods: {
                 toggleFilter(type) {
                     let self = this;
@@ -278,8 +297,8 @@
                 goToDetail(tourNo) {
                     pageChange("/tours/detailTour.do", { tourNo: tourNo });
                 },
-                fnRegionalTours(region){
-                    pageChange("/tours/regionalTours.do",{region: region});
+                fnRegionalTours(region) {
+                    pageChange("/tours/regionalTours.do", { region: region });
                 },
             },
             mounted() {
@@ -287,6 +306,6 @@
                 self.fnToursList();
             }
         });
-        
+
         app.mount('#app');
     </script>
