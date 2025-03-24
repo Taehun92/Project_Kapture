@@ -5,7 +5,9 @@
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
+        <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
         <title>관광지 목록</title>
         <style>
@@ -128,13 +130,15 @@
 
     <body>
 
-		<jsp:include page="../common/header.jsp" />
+        <!-- <jsp:include page="../common/header.jsp" /> -->
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
+            
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <a v-for="region in regions" :key="region">{{ region }}</a>
+                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region }}</button>
+
                 </div>
             </div>
 
@@ -149,7 +153,10 @@
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
-                            <input type="date">
+                            
+                            <div>날짜  선택: {{ dates }}</div>
+                            <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
+                                @input="params.startDate = _formatedDatepicker($event)" />
                         </div>
 
                     </div>
@@ -158,7 +165,8 @@
                         <div class="filter-content" v-if="filters.language">
                             <template v-for="language in languages">
                                 <label>
-                                    <input  @change="fnToursList" type="checkbox" v-model="selectedLanguages" :value="language.eng">
+                                    <input @change="fnToursList" type="checkbox" v-model="selectedLanguages"
+                                        :value="language.eng">
                                     {{language.kor}}
                                 </label><br>
                             </template>
@@ -168,7 +176,8 @@
                         <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
                             <template v-for="item in regionList">
-                                <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions" :value="item.siNo">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions"
+                                        :value="item.siNo">
                                     {{item.siName}}
                                 </label><br>
                             </template>
@@ -178,7 +187,8 @@
                         <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
                             <template v-for="theme in themeList">
-                                <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes" :value="theme.themeNo">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes"
+                                        :value="theme.themeNo">
                                     {{theme.themeName}}
                                 </label><br>
                             </template>
@@ -198,34 +208,27 @@
                 </div>
             </div>
         </div>
-        <jsp:include page="../common/footer.jsp" />
+        <!-- <jsp:include page="../common/footer.jsp" /> -->
+         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
 
     </html>
     <script>
+
         const app = Vue.createApp({
             data() {
                 return {
+                    dates: null,
                     regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
-                    languages: [{eng : "Korean", kor : "한국어"}, {eng : "English", kor : "영어"}, {eng : "Chinese", kor : "중국어"}, {eng : "Japanese", kor : "일본어"}],
+                    languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
                         language: false,
                         region: false,
                         theme: false
                     },
-                    // tours: [
-                    //     { id: 1, name: "경복궁", description: "전통적인 궁궐", image: "https://via.placeholder.com/180" },
-                    //     { id: 2, name: "해운대 해수욕장", description: "부산의 대표 해변", image: "https://via.placeholder.com/180" },
-                    //     { id: 3, name: "전주 한옥마을", description: "전통 한옥 체험", image: "https://via.placeholder.com/180" },
-                    //     { id: 4, name: "남산 타워", description: "서울의 랜드마크", image: "https://via.placeholder.com/180" },
-                    //     { id: 5, name: "설악산", description: "아름다운 자연 경관", image: "https://via.placeholder.com/180" },
-                    //     { id: 6, name: "제주 성산일출봉", description: "제주의 대표 명소", image: "https://via.placeholder.com/180" },
-                    //     { id: 7, name: "광안리 해변", description: "야경이 아름다운 해변", image: "https://via.placeholder.com/180" },
-                    //     { id: 8, name: "안동 하회마을", description: "전통적인 한옥 마을", image: "https://via.placeholder.com/180" },
-                    //     { id: 9, name: "수원 화성", description: "유네스코 문화유산", image: "https://via.placeholder.com/180" },
-                    //     { id: 10, name: "DMZ 비무장지대", description: "한국 전쟁의 역사적 장소", image: "https://via.placeholder.com/180" }
-                    // ]
+
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -234,8 +237,12 @@
                     selectedLanguages: [],
                     selectedThemes: [],
 
+
                 };
             },
+            components: {
+				VueDatePicker
+			},
             methods: {
                 toggleFilter(type) {
                     let self = this;
@@ -252,24 +259,24 @@
                         selectedLanguages: JSON.stringify(self.selectedLanguages),
                         selectedThemes: JSON.stringify(self.selectedThemes),
                     };
-                    
+
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log("DATA",data);
+                            console.log("DATA", data);
                             self.toursList = data.toursList;
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
-                            console.log("LANG",self.selectedLanguages);
-                            console.log("LIST",self.toursList);
+                            console.log("LANG", self.selectedLanguages);
+                            console.log("LIST", self.toursList);
                         }
                     });
                 },
-                goToDetail(tourNo){
-                    pageChange("/tours/detailTour.do",{tourNo: tourNo});
+                goToDetail(tourNo) {
+                    pageChange("/tours/detailTour.do", { tourNo: tourNo });
                 }
             },
             mounted() {
@@ -277,5 +284,6 @@
                 self.fnToursList();
             }
         });
+        
         app.mount('#app');
     </script>

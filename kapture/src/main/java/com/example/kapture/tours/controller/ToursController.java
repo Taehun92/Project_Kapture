@@ -47,6 +47,22 @@ public class ToursController {
 		return "/tours/test-info";
     }
 	
+	@RequestMapping("/tours/date-picker-test.do")
+    public String testDatePicker(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/date-picker-test";
+    }
+	
+	@RequestMapping("/tours/regionalTours.do")
+    public String regionalTours(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/regional-tours";
+    }
+	@RequestMapping("/tours/test-regional.do")
+    public String testRegional(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/test-regional";
+    }
 	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		
