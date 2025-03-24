@@ -16,4 +16,7 @@ public class Request {
 	private String updatedAt;
 	private String userFirstName;
 	private String userLastName;
+	private String commentNo;
+	private String message;
+	private String parentCommentNo;
 }
