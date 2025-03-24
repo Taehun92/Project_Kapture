@@ -35,7 +35,8 @@ public class LoginService {
 			System.out.println("성공");
 			session.setAttribute("sessionId", login.getUserNo());
 			session.setAttribute("sessionRole", login.getRole());
-			
+			session.setAttribute("sessionFirstName", login.getUserFirstName());
+			session.setAttribute("sessionLastName", login.getUserLastName());
 			resultMap.put("login", login);
 			resultMap.put("result", "success");
 		}
