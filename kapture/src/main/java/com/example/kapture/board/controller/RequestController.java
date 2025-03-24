@@ -1,5 +1,6 @@
 package com.example.kapture.board.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.board.dao.RequestService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.kapture.common.model.Common;
 import com.google.gson.Gson;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class RequestController {
@@ -32,6 +36,19 @@ public class RequestController {
     return "/board/request-add";
 	}
 	
+	@RequestMapping("/request/view.do")
+    public String view(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+        return "/board/request-view";
+    }
+	
+	@RequestMapping("/request/edit.do")
+    public String edit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+        return "/board/request-edit";
+    }
+	
+	
 	
 	// 게시글 목록 조회
 	@RequestMapping(value = "/request/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -48,6 +65,60 @@ public class RequestController {
 	public String requestAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = requestService.addRequest(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 게시글 조회
+	@RequestMapping(value = "/request/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestGet(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.getRequest(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 게시글 삭제
+	@RequestMapping(value = "/request/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.removeRequest(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글 작성
+	@RequestMapping(value = "/request/comment/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestCommentAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.addRequestComment(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글 수정
+	@RequestMapping(value = "/request/comment/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestCommentEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.editRequestComment(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 댓글 삭제
+	@RequestMapping(value = "/request/comment/remove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestCommentRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.removeRequestComment(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 답변 채택
+	@RequestMapping(value = "/request/accept.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestAccept(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.acceptRequest(map);
 		return new Gson().toJson(resultMap);
 	}
 	
