@@ -11,15 +11,16 @@
 <body>
 	<div id="app">
         <div>
-        <input v-model="email" type="text" placeholder="이메일 주소 혹은 아이디">
+        <input v-model="email" type="text" placeholder="Email or Id">
+     
         </div>
 
         <div>
-        <input v-model="password" type="password" placeholder="비밀번호 확인">
+        <input v-model="password" type="password" @keyup.enter="fnLogin" placeholder="password">
         </div>
 
         <div>
-        <button @click="fnLogin">로그인</button>
+        <button @click="fnLogin" >Login</button>
          </div>
 
          <div >

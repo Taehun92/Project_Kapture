@@ -16,9 +16,21 @@
 		
 		Email or Id 
 		<div>
-		<input type="text" placeholder=" ex)123@gmail.com"  v-model="user.email">
+			<input type="text" placeholder="ex)123@gmail.com" v-model="user.email">
+		 <button @click="fnIdCheck" style="margin-left: 10px;">Please double check your ID.</button>
 		</div>
 		
+		<div>
+		<button class="btn btn-primary btn-sm" style=" color :#4A5157 ;border: none; background-color: white;"
+					v-on:click="sendEmail">이메일인증</button>
+		</div>
+
+		<div class="form-outline form-white mb-4">
+			<input type="text" class="form-control form-control-lg" placeholder="인증번호를 입력!" @input="updateEmailCheck" />
+			<button class="btn btn-primary btn-sm" style=" color :#4A5157 ;border: none; background-color: white;"
+				v-on:click="emailcheck">확인</button>
+		</div>
+
 		Password
 		<div>
 		<input type="password" v-model="user.password" 
@@ -32,7 +44,7 @@
 		
 		Re-enter password 
 		<div>
-		<input type="password"  v-model="user.password2">
+		  <input type="password"  v-model="user.password2">
 		</div>
 
 	
@@ -50,13 +62,13 @@
 		
 		Phone 
 		<div>
-		<input  v-model="user.phone">
+		<input  v-model="user.phone" placeholder="ex) xxx-xxxx-xxxx">
 		</div>
 
 		
-		BirthDay 
+		birthday 
 		<div>
-		<input type="date" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
+		  <input type="date" placeholder="ex)yyyy.mm.dd"  v-model="user.birthDay">
 		</div>
 
 
@@ -86,20 +98,29 @@
 					password : "",
 					password2 : "",
 					phone : "",
-					birthDay : "",
-				}
+					birthday : "",
+					
+				},
             };
         },
         methods: {
             fnJoin(){
 				var self = this;
 				var nparmap = self.user;
-
-				if(self.user.password == "" && self.user.password != self.user.password2){
-						alert("비밀번호를 확인해주세요")	
-					return ;
-				}else{
-
+				if(self.user.password != self.user.password2 ||
+				   self.user.password.length < 6 
+				){
+					alert("Please check your password")
+					return;
+				}
+				if(self.user.firstName == "" ||
+				   self.user.lastName == "" ||
+				   self.user.phone == "" ||
+				   self.user.birthday == "" 
+				   
+				 ){
+					alert("Please fill in all blanks.")
+					return;
 				}
 				$.ajax({
 					url:"join.dox",
@@ -113,6 +134,31 @@
 					}
 				});
             },
+          
+				fnIdCheck : function(){
+                    var self = this;
+                    if(self.user.email === ""){
+                        alert("Please check your ID and re-enter it.");
+                        return;
+                    }
+                    var nparmap = {
+                        email : self.user.email
+                    };
+                    $.ajax({
+                        url: "/check.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                           if(data.count == 0){
+                                alert("Available");
+                           } else {
+                                alert("Unavailable")
+                           }
+                           
+                        }
+                    });
+                },
         },
         mounted() {
             var self = this;
