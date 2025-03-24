@@ -21,7 +21,15 @@ public class CsController {
 	
 	@RequestMapping("/cs/main.do")
     public String login(Model model) throws Exception{
-        return "cs/cs-main";
+        return "cs/main";
+    }
+	@RequestMapping("/cs/notice.do")
+    public String notice(Model model) throws Exception{
+        return "cs/notice";
+    }
+	@RequestMapping("/cs/qna.do")
+    public String qna(Model model) throws Exception{
+        return "cs/qna";
     }
 	
 	
