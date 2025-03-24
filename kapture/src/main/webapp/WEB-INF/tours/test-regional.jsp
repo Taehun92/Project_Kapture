@@ -91,7 +91,7 @@
                 font-size: 16px;
                 text-align: left;
                 cursor: pointer;
-                
+
                 transition: background-color 0.2s;
             }
 
@@ -153,12 +153,7 @@
             <!-- 주요 관광지 그룹 -->
 
             <div class="tour-header-group">
-                <div class="tour-header">주요 관광지</div>
-                <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region
-                        }}</button>
 
-                </div>
             </div>
 
             <!-- 현재 경로 -->
@@ -255,7 +250,8 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-
+                    region: "${map.region}",
+                    iniFlg: false,
 
                 };
             },
@@ -266,18 +262,23 @@
                 toggleFilter(type) {
                     let self = this;
                     self.filters[type] = !self.filters[type];
-                    console.log(self.regionList);
-                    console.log(self.themeList);
+
                 },
                 fnToursList() {
                     let self = this;
-
-                    let nparmap = {
-                        selectedDates: JSON.stringify(self.selectedDates),
-                        selectedRegions: JSON.stringify(self.selectedRegions),
-                        selectedLanguages: JSON.stringify(self.selectedLanguages),
-                        selectedThemes: JSON.stringify(self.selectedThemes),
-                    };
+                    console.log("region"+self.region);
+                    let nparmap={};
+                    if (!self.iniFlg) {
+                        nparmap = {region: self.region}
+                        self.iniFlg=true;
+                    } else {
+                        nparmap = {
+                            selectedDates: JSON.stringify(self.selectedDates),
+                            selectedRegions: JSON.stringify(self.selectedRegions),
+                            selectedLanguages: JSON.stringify(self.selectedLanguages),
+                            selectedThemes: JSON.stringify(self.selectedThemes),
+                        };
+                    }
 
                     $.ajax({
                         url: "/tours/list.dox",
