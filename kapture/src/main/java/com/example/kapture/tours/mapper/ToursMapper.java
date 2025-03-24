@@ -16,6 +16,8 @@ public interface ToursMapper {
 
 	List<Tours> selectAll(HashMap<String, Object> map);
 	
+	Tours selectTourInfo(HashMap<String, Object> map);
+	
 	
 
 }
