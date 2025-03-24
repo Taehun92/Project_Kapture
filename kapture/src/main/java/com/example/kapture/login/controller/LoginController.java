@@ -76,10 +76,22 @@ public class LoginController {
 		// 회원가입
 		@RequestMapping(value = "/join.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
-		public String add(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		public String join(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = loginService.joinUser(map);
+			return new Gson().toJson(resultMap);
+		}
+	
+		
+		
+		// id 중복체크
+		@RequestMapping(value = "/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = loginService.checkUser(map); 
 			return new Gson().toJson(resultMap);
 		}
 		
