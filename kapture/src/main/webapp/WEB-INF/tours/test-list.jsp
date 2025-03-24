@@ -137,7 +137,7 @@
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region)" :key="region">{{ region }}</button>
+                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region">{{ region.region }}</button>
 
                 </div>
             </div>
@@ -198,7 +198,7 @@
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
                         <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
                             <p>{{ tour.title }}</p>
@@ -220,7 +220,7 @@
             data() {
                 return {
                     dates: null,
-                    regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
+                    regions: [{region:"서울", siNo:11}, {region:"경기", siNo:31}, {region:"인천", siNo:23}, {region:"부산", siNo:21}, {region:"전주", siNo:35}, {region:"강원", siNo:32}, {region:"그 외", siNo:999}],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -275,9 +275,12 @@
                         }
                     });
                 },
-                goToDetail(tourNo) {
-                    pageChange("/tours/detailTour.do", { tourNo: tourNo });
-                }
+                goToTourInfo(tourNo) {
+                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                },
+                fnRegionalTours(region){
+                    pageChange("/tours/regionalTours.do",{region: region});
+                },
             },
             mounted() {
                 var self = this;
