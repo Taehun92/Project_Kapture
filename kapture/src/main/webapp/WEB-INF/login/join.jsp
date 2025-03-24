@@ -17,11 +17,20 @@
 		Email or Id 
 		<div>
 			<input type="text" placeholder="ex)123@gmail.com" v-model="user.email">
-
-		
 		 <button @click="fnIdCheck" style="margin-left: 10px;">Please double check your ID.</button>
 		</div>
 		
+		<div>
+		<button class="btn btn-primary btn-sm" style=" color :#4A5157 ;border: none; background-color: white;"
+					v-on:click="sendEmail">이메일인증</button>
+		</div>
+
+		<div class="form-outline form-white mb-4">
+			<input type="text" class="form-control form-control-lg" placeholder="인증번호를 입력!" @input="updateEmailCheck" />
+			<button class="btn btn-primary btn-sm" style=" color :#4A5157 ;border: none; background-color: white;"
+				v-on:click="emailcheck">확인</button>
+		</div>
+
 		Password
 		<div>
 		<input type="password" v-model="user.password" 
