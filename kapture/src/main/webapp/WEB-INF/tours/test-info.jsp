@@ -206,7 +206,7 @@
 					});
 				},
 				increase() {
-					this.count++;
+					if(this.count<4) this.count++;
 				},
 				decrease() {
 					if (this.count > 0) this.count--;

@@ -30,49 +30,57 @@ public class ToursController {
     public String toursList(Model model) throws Exception{
         return "/tours/tours-list";
     }
-	
+	// 상품 페이지 테스트 주소(추후 삭제 예정)
 	@RequestMapping("/tours/test-list.do")
     public String testList(Model model) throws Exception{
         return "/tours/test-list";
     }
-	// 상품 상세페이지 주소
+	// 지역별 상품 페이지 dept(2) 주소
+	@RequestMapping("/tours/regionalTours.do")
+	public String regionalTours(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/regional-tours";
+	}
+	// 지역별 상품 페이지 테스트 주소(추후 삭제 예정)
+	@RequestMapping("/tours/test-regional.do")
+	public String testRegional(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/tours/test-regional";
+	}
+	// 상품 상세페이지 dept(3) 주소
 	@RequestMapping("/tours/tour-info.do")
     public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
 		return "/tours/tour-info";
     }
-	
+	//  상품 상세페이지 테스트 주소(추후 삭제 예정)
 	@RequestMapping("/tours/test-info.do")
     public String testDetailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
 		return "/tours/test-info";
     }
-	
+	// 데이트피커 테스트 주소(추후 삭제예정)
 	@RequestMapping("/tours/date-picker-test.do")
     public String testDatePicker(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
 		return "/tours/date-picker-test";
     }
 	
-	@RequestMapping("/tours/regionalTours.do")
-    public String regionalTours(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
-		return "/tours/regional-tours";
-    }
-	@RequestMapping("/tours/test-regional.do")
-    public String testRegional(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
-		return "/tours/test-regional";
+	// 리뷰 별점 테스용 주소
+	@RequestMapping("/tours/rating.do")
+    public String ratingTest(Model model) throws Exception{
+        return "/tours/test-rating";
     }
 	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		
-	// 상품 목록 조회
+	// 상품 목록 조회(dept(1,2) 공통)
 	@RequestMapping(value = "/tours/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		if(map.get("selectedDates") != null) { // 선택된 테마 리스트가 널이 아니면 맵에 추가
+		
+		if(map.get("selectedDates") != null) { // 선택된 여행 기간이 널이 아니면 'YYYY-MM-DD'형식으로 짤라서 맵에 추가
 			
 			String json = map.get("selectedDates").toString(); 
 			ObjectMapper mapper = new ObjectMapper();
@@ -85,25 +93,29 @@ public class ToursController {
 			}
 			
 			map.put("selectedDates", formattedDates);
-			}
+		}
+		
 		if(map.get("selectedThemes") != null) { // 선택된 테마 리스트가 널이 아니면 맵에 추가
 		String json = map.get("selectedThemes").toString(); 
 		ObjectMapper mapper = new ObjectMapper();
 		List<Object> selectedThemes = mapper.readValue(json, new TypeReference<List<Object>>(){});
 		map.put("selectedThemes", selectedThemes);
 		}
+		
 		if(map.get("selectedLanguages") != null) { // 선택된 가이드언어 리스트가 널이 아니면 맵에 추가
 			String json = map.get("selectedLanguages").toString(); 
 			ObjectMapper mapper = new ObjectMapper();
 			List<Object> selectedLanguages = mapper.readValue(json, new TypeReference<List<Object>>(){});
 			map.put("selectedLanguages", selectedLanguages);
 		}
+		
 		if(map.get("selectedRegions") != null) { // 선택된 지역 리스트가 널이 아니면 맵에 추가
 			String json = map.get("selectedRegions").toString(); 
 			ObjectMapper mapper = new ObjectMapper();
 			List<Object> selectedRegions = mapper.readValue(json, new TypeReference<List<Object>>(){});
 			map.put("selectedRegions", selectedRegions);
 		}
+		
 		System.out.println(map);
 		resultMap = toursService.getToursList(map);
 		return new Gson().toJson(resultMap);
