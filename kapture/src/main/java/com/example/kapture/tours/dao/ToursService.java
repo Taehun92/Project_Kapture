@@ -30,9 +30,10 @@ public class ToursService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Tours> toursList = toursMapper.selectToursList(map);
-			List<Region> regionList = commonMapper.selectRegionList(map);
-			List<Theme> themeList = commonMapper.selectThemeList(map);
+			
+			List<Tours> toursList = toursMapper.selectToursList(map); // 조건에 맞는 상품 목록 조회 
+			List<Region> regionList = commonMapper.selectRegionList(map); // 상품 검색을 위한 지역별 이름 목록
+			List<Theme> themeList = commonMapper.selectThemeList(map); // 상품 검색을 위한 테마별 이름 목록
 			resultMap.put("result", "success");
 			resultMap.put("toursList", toursList);
 			resultMap.put("regionList", regionList);
@@ -50,9 +51,9 @@ public class ToursService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {			
 			
-			Tours tourInfo = toursMapper.selectTourInfo(map);
+			Tours tourInfo = toursMapper.selectTourInfo(map); // 해당 상품에 대한 정보
 			String result = "success";
-			List<Reviews> reviewsList = commonMapper.selectReviewsList(map);
+			List<Reviews> reviewsList = commonMapper.selectReviewsList(map); // 해당 상품에대한 리뷰 목록
 			System.out.println(reviewsList);
 			resultMap.put("reviewsList", reviewsList);
 			resultMap.put("tourInfo", tourInfo);
