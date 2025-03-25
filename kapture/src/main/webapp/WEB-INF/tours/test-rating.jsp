@@ -7,7 +7,6 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue3-star-ratings@latest/dist/vue3-star-ratings.umd.js"></script>
         <script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
         <title>Vue 별점</title>
     </head>
@@ -34,13 +33,17 @@
             <h1>Vue Star Rating for Vue 3.x</h1>
 
 
-            <h2>리뷰 별점</h2>
+            <h2>리뷰 등록시 별점</h2>
             <star-rating :increment="0.5" :star-size="20" :border-width="5" :show-rating="false"
-                :rounded-corners="true" ></star-rating>
+                :rounded-corners="true"></star-rating>
+
+            <h2>등록된 리뷰 별점</h2>
+            <star-rating :rating="3.8" :read-only="true" :star-size="20" :increment="0.01" :border-width="5" :show-rating="false"
+                :rounded-corners="true"></star-rating>
 
             <h2>평균 별점</h2>
             <star-rating :rating="3.8" :read-only="true" :increment="0.01" :border-width="5" :show-rating="false"
-                :rounded-corners="true" ></star-rating>
+                :rounded-corners="true"></star-rating>
 
             <h2>Default</h2>
             <star-rating></star-rating>
