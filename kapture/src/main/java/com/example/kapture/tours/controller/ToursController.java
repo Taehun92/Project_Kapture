@@ -27,8 +27,9 @@ public class ToursController {
 	
 	// 상품 페이지 dept(1) 주소
 	@RequestMapping("/tours/list.do")
-    public String toursList(Model model) throws Exception{
-        return "/tours/tours-list";
+    public String toursList(@RequestParam(value = "keyword", required = false) String keyword, Model model) throws Exception{
+		model.addAttribute("keyword", keyword);
+		return "/tours/tours-list";
     }
 	// 상품 페이지 테스트 주소(추후 삭제 예정)
 	@RequestMapping("/tours/test-list.do")
