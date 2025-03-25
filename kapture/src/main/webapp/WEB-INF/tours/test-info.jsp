@@ -8,6 +8,7 @@
 			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="/js/page-Change.js"></script>
+		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
 		<title>상품 상세페이지</title>
 	</head>
 	<style>
@@ -79,21 +80,6 @@
 			font-size: 18px;
 		}
 
-		.reviews {
-			padding: 10px;
-			background: #fff;
-			border-top: 2px solid #f00;
-		}
-
-		.review-score {
-			font-size: 18px;
-			font-weight: bold;
-		}
-
-		.stars {
-			color: gold;
-		}
-
 		.tags {
 			margin-top: 5px;
 			display: flex;
@@ -107,20 +93,58 @@
 			border-radius: 5px;
 		}
 
+		.reviews {
+			padding: 15px;
+			background: #fff;
+			border-top: 2px solid #f00;
+		}
+
+		.review-score {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		.stars {
+			color: gold;
+		}
+
 		.user-review {
-			margin-top: 10px;
-			font-size: 14px;
+			padding: 10px 0;
+			border-bottom: 1px solid #ddd;
 		}
 
 		.profile-img {
 			width: 40px;
-			/* 가로 크기 */
 			height: 40px;
-			/* 세로 크기 */
 			border-radius: 50%;
-			/* 동그랗게 */
 			object-fit: cover;
-			/* 이미지가 잘리지 않도록 */
+			margin-right: 10px;
+		}
+
+		.rating-bars {
+			margin: 10px 0;
+		}
+
+		.rating-bar {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
+
+		.progress-bar {
+			flex: 1;
+			height: 8px;
+			background: #ddd;
+			border-radius: 5px;
+			overflow: hidden;
+		}
+
+		.fill {
+			height: 100%;
+			background: #ffa500;
 		}
 	</style>
 
@@ -142,32 +166,38 @@
 				</div>
 			</div>
 			<div class="contents">{{tourInfo.description}}</div>
+
 			<div class="reviews">
-				<div class="review-score">이용후기
-					<div>
-						<span class="stars">★★★★★</span> 4.9/5
+				<div class="review-score">
+					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"
+						:show-rating="false" :rounded-corners="true"></star-rating>
+					<span> {{getReviewAvg()}} / 5</span>
+				</div>
+
+				<!-- 점수별 게이지바 -->
+				<div class="rating-bars">
+					<div v-for="n in 5" :key="n" class="rating-bar">
+						<span>{{ n }}점</span>
+						<div class="progress-bar">
+							<div class="fill" :style="{ width: getReviewPercentage(n) + '%' }"></div>
+						</div>
+						<span>{{ getReviewCount(n) }}명</span>
 					</div>
 				</div>
-				<hr style="margin-bottom: 20px;">
-				<!-- <template> v-for="review in reviewsList" -->
-					<div>
-						<img src="../img/화면 캡처 2025-03-22 152559.png" class="profile-img">
-						<span>강 재 석</span>
-						<div>3월 22일</div>
-						<!-- <span>{{review.userFirstName}}</span> -->
-						 <!-- <div>{{review.rUpdatedAt}}</div> -->
-					</div>
-					<div class="tags">
-						<span class="tag">#불친절해요</span>
-						<span class="tag">#비합리적인 가격</span>
-						<span class="tag">#안재밌어요</span>
-					</div>
-					<div class="user-review">
-						⭐☆☆☆☆ 나 강재석인데 이 상품 별로임 대표 나오라 그래
 
+				<!-- 개별 리뷰 목록 -->
+				<div v-for="review in reviewsList" class="user-review">
+
+					<div>
+
+						<span>{{review.userFirstName}} {{review.userLastName}}</span>
 					</div>
-				</template>
+					<star-rating :rating="review.rating" :read-only="true" :star-size="20" :increment="0.01" :border-width="5"
+						:show-rating="false" :rounded-corners="true"></star-rating>
+					<p>{{review.comment}}</p>
+				</div>
 			</div>
+
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -182,7 +212,11 @@
 					isWishlisted: false,
 					tourInfo: {},
 					reviewsList: [],
+
+					
+
 					sessionId : "${sessionId}"
+
 				};
 			},
 			methods: {
@@ -207,7 +241,7 @@
 					});
 				},
 				increase() {
-					if(this.count<4) this.count++;
+					if (this.count < 4) this.count++;
 				},
 				decrease() {
 					if (this.count > 0) this.count--;
@@ -222,7 +256,32 @@
 						tourNo: self.tourNo,
 						sessionId : self.sessionId
 
+
+				},
+				getReviewCount(star) {
+					return this.reviewsList.filter(r => r.rating === star).length;
+				},
+
+				// 특정 별점의 비율을 계산 (전체 리뷰 대비 %)
+				getReviewPercentage(star) {
+					const total = this.reviewsList.length;
+					if (total === 0) return 0;
+					return (this.getReviewCount(star) / total) * 100;
+				},
+				getReviewAvg() {
+					if (this.reviewsList.length === 0) return 0;
+					const total = this.reviewsList.reduce((sum, rating) => sum + rating.rating, 0);
+					return (total / this.reviewsList.length).toFixed(1);
+        }
+					
+          fnAddedToCart() {
+            let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId : self.sessionId
+
 					};
+            
 					$.ajax({
 						url: "/basket/add.dox",
 						dataType: "json",
@@ -237,6 +296,7 @@
 							}
 						}
 					});
+
 				}
 
 			},
@@ -245,5 +305,6 @@
 				self.fnTourInfo();
 			}
 		});
+		app.component('star-rating', VueStarRating.default)
 		app.mount('#app');
 	</script>
