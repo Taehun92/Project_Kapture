@@ -14,4 +14,8 @@ public interface CsMapper {
 
 	int mainCsCnt(HashMap<String, Object> map);
 
+	List<Cs> csNotice(HashMap<String, Object> map);
+
+	int noticeCsCnt(HashMap<String, Object> map);
+
 }

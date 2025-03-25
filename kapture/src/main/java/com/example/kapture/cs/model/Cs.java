@@ -12,4 +12,9 @@ public class Cs {
 	private String answer;
 	private String inqCreatedAt;
 	private String inqUpdatedAt;
+	private int noticeNo;
+	private String title;
+	private String content;
+	private String nCreatedAt;
+	private String nUpdatedAt;
 }

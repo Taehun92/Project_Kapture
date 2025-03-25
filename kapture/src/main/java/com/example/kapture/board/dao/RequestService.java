@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.board.mapper.RequestMapper;
+import com.example.kapture.board.model.Comment;
 import com.example.kapture.board.model.Request;
 
 @Service
@@ -43,4 +44,100 @@ public class RequestService {
 		}
 		return resultMap;
 	}
+
+	public HashMap<String, Object> getRequest(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Request info = requestMapper.selectRequest(map);
+			List<Comment> commentList = requestMapper.selectRequestCommentList(map);
+			resultMap.put("result", "success");
+			resultMap.put("info", info);
+			resultMap.put("commentList", commentList);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> addRequestComment(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.insertRequestComment(map);
+			requestMapper.updateRequestStatus(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> removeRequest(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.deleteRequest(map);
+			int num2 = requestMapper.deleteRequestComment(map);
+			requestMapper.updateRequestStatus(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> editRequestComment(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.updateRequestComment(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> removeRequestComment(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.deleteRequestComment(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> acceptRequest(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.acceptRequestStatus(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+	
 }

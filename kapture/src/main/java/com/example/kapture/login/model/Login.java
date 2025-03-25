@@ -13,15 +13,9 @@ public class Login {
 	private String birthday;
 	private String address;
 	private String gender;
-
 	private String uCreatedAt;
 	private String uUpdatedAt;
 	private String userFirstName; 
 	private String userLastName;
-
-	private String createdAt;
-	private String updatedAt;
-
-	
 	
 }	

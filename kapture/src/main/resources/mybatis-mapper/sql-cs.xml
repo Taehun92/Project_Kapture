@@ -21,6 +21,7 @@
 		ORDER BY CATEGORY
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
+	
 	<select id="mainCsCnt" parameterType="hashmap" resultType="int">
 		
 		SELECT COUNT(*) 
@@ -37,5 +38,39 @@
 			AND QUESTION LIKE '%' || #{keyword} || '%' 
 		</if>
 	</select>
+	
+	<select id="csNotice" parameterType="hashmap" resultType="com.example.kapture.cs.model.Cs">
+		SELECT *
+		FROM NOTICES
+		WHERE 1=1
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (TITLE LIKE '%' || #{keyword} || '%' 
+					OR CONTENT LIKE '%' || #{keyword} || '%') 
+		</if>
+		<if test="searchOption != null and searchOption == 'title'">
+			AND TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'content'">
+			AND CONTENT LIKE '%' || #{keyword} || '%' 
+		</if>
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<select id="noticeCsCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)
+		FROM NOTICES
+		WHERE 1=1
+		<if test="searchOption != null and searchOption == 'all'">
+			AND (TITLE LIKE '%' || #{keyword} || '%' 
+					OR CONTENT LIKE '%' || #{keyword} || '%') 
+		</if>
+		<if test="searchOption != null and searchOption == 'title'">
+			AND TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="searchOption != null and searchOption == 'content'">
+			AND CONTENT LIKE '%' || #{keyword} || '%' 
+		</if>
+	</select>
+	
 	
 </mapper>
