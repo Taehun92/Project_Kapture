@@ -54,7 +54,7 @@
 <body>
 <div class="sidebar">
     <ul>
-        <li><a href="/admin/tour.do">상품 관리</a></li>
+        <li><a href="/admin/tours.do">상품 관리</a></li>
         <li><a href="/admin/guide.do">가이드 관리</a></li>
         <li><a href="/admin/order.do">주문 및 예약 관리</a></li>
         <li><a href="/admin/pay.do">결제 및 수익 관리</a></li>

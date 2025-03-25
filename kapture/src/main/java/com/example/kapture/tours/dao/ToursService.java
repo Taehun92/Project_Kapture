@@ -45,6 +45,23 @@ public class ToursService {
 		}
 		return resultMap;
 	}
+
+
+	public HashMap<String, Object> getAll(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Tours> toursList = toursMapper.selectAll(map);
+			resultMap.put("result", "success");
+			resultMap.put("toursList", toursList);
+			
+		} catch (Exception e) {
+      System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
 	// 삼품 상세정보 불러오기(+ 해당 상품 리뷰) 
 	public HashMap<String, Object> getTourInfo(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub

@@ -121,7 +121,17 @@ public class ToursController {
 		resultMap = toursService.getToursList(map);
 		return new Gson().toJson(resultMap);
 	}
-	
+
+	// 상품 목록 조회
+	@RequestMapping(value = "/tours/all.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String all(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = toursService.getAll(map);
+		return new Gson().toJson(resultMap);
+	}
+
 	// 상품 상세페이지
 	@RequestMapping(value = "/tours/tour-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
