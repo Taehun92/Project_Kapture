@@ -6,7 +6,6 @@
 	<meta charset="UTF-8">
 	<title>푸터</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<link rel="stylesheet" href="../../css/footer.css">
 </head>
 <body>
@@ -32,7 +31,7 @@
 		  <!-- 오른쪽: 아이콘 정렬 -->
 		  <div class="footer-icons">
 			<div class="sns-icons">
-			  <img src="/images/icon-twitter.svg" alt="Twitter">
+			  <!-- <img src="/images/icon-twitter.svg" alt="Twitter">
 			  <img src="/images/icon-facebook.svg" alt="Facebook">
 			  <img src="/images/icon-instagram.svg" alt="Instagram">
 			</div>
@@ -41,7 +40,7 @@
 			  <img src="/images/pay-mastercard.png" alt="MasterCard">
 			  <img src="/images/pay-paypal.png" alt="PayPal">
 			  <img src="/images/pay-applepay.png" alt="Apple Pay">
-			  <img src="/images/pay-gpay.png" alt="Google Pay">
+			  <img src="/images/pay-gpay.png" alt="Google Pay"> -->
 			</div>
 		  </div>
 		</div>
@@ -54,21 +53,10 @@ const footer = Vue.createApp({
 		return {};
 	},
 	methods: {
-		// 로그인 기능은 푸터에서 필요 없다면 제거 가능
-		fnLogin() {
-			var self = this;
-			$.ajax({
-				url: "login.dox",
-				type: "POST",
-				dataType: "json",
-				success: function(data) {
-					console.log(data);
-				}
-			});
-		}
+		
 	},
 	mounted() {
-		// 현재 특별한 초기화 로직 없음
+		
 	}
 });
 
