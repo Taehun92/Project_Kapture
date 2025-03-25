@@ -14,7 +14,10 @@ public interface ToursMapper {
 
 	List<Tours> selectToursList(HashMap<String, Object> map);
 
+	List<Tours> selectAll(HashMap<String, Object> map);
+  
 	Tours selectTourInfo(HashMap<String, Object> map);
+
 	
 	
 
