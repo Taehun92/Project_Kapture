@@ -182,7 +182,7 @@
 					isWishlisted: false,
 					tourInfo: {},
 					reviewsList: [],
-
+					sessionId : "${sessionId}"
 				};
 			},
 			methods: {
@@ -202,6 +202,7 @@
 							console.log(self.tourInfo);
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
+							
 						}
 					});
 				},
@@ -214,11 +215,30 @@
 				toggleWishlist() {
 					this.isWishlisted = !this.isWishlisted;
 				},
+				
 				fnAddedToCart() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId : self.sessionId
 
-					
-
+					};
+					$.ajax({
+						url: "/basket/add.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							if(data.result == "success") {
+								alert("장바구니에 담겼습니다.");
+							} else {
+								alert("이미 담은 상품입니다!");
+							}
+						}
+					});
 				}
+
 			},
 			mounted() {
 				let self = this;

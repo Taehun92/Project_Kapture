@@ -11,10 +11,17 @@
 	</select>
 	
 	<insert id="insertUser" parameterType="hashmap">
-		INSERT IN TO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
-		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, TOURIST, #{birthday},
-		SYSDATE, SYSDATE, #{userFirstName}, #{userLastName})
+		INSERT INTO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME)
+		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, 'TOURIST', #{birthday, jdbcType=DATE}, SYSDATE, SYSDATE,
+		 #{firstName}, #{lastName})
 	</insert>
+	
+	<select id="checkUser" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
+		SELECT *
+		FROM USERS 
+		WHERE EMAIL = #{email}
+		
+	</select>
 
 </mapper>
 
