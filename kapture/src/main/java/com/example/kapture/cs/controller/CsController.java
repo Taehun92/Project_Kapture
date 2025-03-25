@@ -19,9 +19,9 @@ public class CsController {
 	@Autowired
 	CsService csService;
 	
-	@RequestMapping("/cs/main.do")
+	@RequestMapping("/cs/faq.do")
     public String login(Model model) throws Exception{
-        return "cs/main";
+        return "cs/faq";
     }
 	@RequestMapping("/cs/notice.do")
     public String notice(Model model) throws Exception{
@@ -42,4 +42,15 @@ public class CsController {
 			resultMap = csService.csMain(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		// 공지사항
+		@RequestMapping(value = "/cs/notice.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String notice(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+					
+			resultMap = csService.csNotice(map);
+			return new Gson().toJson(resultMap);
+				}
+		
 }
