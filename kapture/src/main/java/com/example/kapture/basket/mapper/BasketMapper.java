@@ -9,5 +9,7 @@ public interface BasketMapper {
 
 	// 장바구니 추가
 	void insertBasket(HashMap<String, Object> map);
+	
+	int existsBasketItem(HashMap<String, Object> map);
 
 }
