@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
@@ -131,7 +131,7 @@
 
     <body>
 
-        <jsp:include page="../common/header.jsp" />
+        <!-- <jsp:include page="../common/header.jsp" /> -->
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
             
@@ -210,7 +210,7 @@
                 </div>
             </div>
         </div>
-        <jsp:include page="../common/footer.jsp" />
+        <!-- <jsp:include page="../common/footer.jsp" /> -->
          <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
           <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
@@ -239,8 +239,7 @@
                     selectedLanguages: [],
                     selectedThemes: [],
 
-                    keyword : "${keyword}"
-                    
+
                 };
             },
             components: {
@@ -292,17 +291,6 @@
                     pageChange("/tours/test-regional.do",{siNo: siNo});
                 },
             },
-
-            created() {
-                const params = new URLSearchParams(window.location.search);
-                const keyword = params.get("keyword");
-
-                if (keyword) {
-                    this.keyword = keyword; // 검색창에 표시
-                    this.fnGetSearchResult(keyword); // 검색 로직 실행
-                }
-            },
-
             mounted() {
                 var self = this;
                 self.fnToursList();
