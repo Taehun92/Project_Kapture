@@ -12,4 +12,6 @@ public interface BasketMapper {
 	
 	int existsBasketItem(HashMap<String, Object> map);
 
+	int selectCount(HashMap<String, Object> map);
+
 }

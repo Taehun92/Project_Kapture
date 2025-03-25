@@ -28,5 +28,15 @@ public class BasketController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 장바구니 담은 갯수 구하기
+	@RequestMapping(value = "/basket/getCount.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getCount(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = basketService.getCount(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	
 
 }

@@ -33,4 +33,17 @@ public class BasketService {
 		return resultMap;
 	}
 
+
+	public HashMap<String, Object> getCount(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		int count = basketMapper.selectCount(map);
+		
+		resultMap.put("count", count);
+		
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+
 }

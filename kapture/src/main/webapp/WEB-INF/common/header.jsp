@@ -27,8 +27,8 @@
                 <a href="#">FAQ</a>
                 <a href="#">고객센터</a>
                 <template v-if="sessionId != ''">
-                    <a href="#">장바구니(0)</button></a>
-                    <a href="#">마이페이지</button></a>
+                    <a href="#">장바구니({{basketCount}})</a>
+                    <a href="#">마이페이지</a>
                 </template>
             </div>
             <div>
@@ -48,7 +48,8 @@ const header = Vue.createApp({
     data() {
         return {
             keyword: "",
-            sessionId: "${sessionId}"
+            sessionId: "${sessionId}",
+            basketCount : 0
         };
     },
     methods: {
@@ -77,11 +78,31 @@ const header = Vue.createApp({
             location.href = `/tours/list.do?keyword=${encoded}`;
         },
 
+        fnGetBasket() {
+            let self = this;
+            let nparmap = {
+                sessionId : self.sessionId
+            };
+            $.ajax({
+                url: "/basket/getCount.dox",
+                type: "POST",
+                data: nparmap,
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    self.basketCount = data.count;
+
+                }
+            });
+        },
+
     
     },
     mounted() {
         var self = this;
-        
+        if(this.sessionId != '') {
+            this.fnGetBasket();
+        }
     }
 });
 
