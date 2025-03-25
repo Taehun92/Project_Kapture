@@ -25,7 +25,7 @@
         <div class="top-right">
             <div class="right-links">
                 <a href="/cs/faq.do">FAQ</a>
-                <a href="/cs/notice.do">고객센터</a>
+                <a href="/cs/main.do">고객센터</a>
                 <template v-if="sessionId != ''">
                     <a href="#">장바구니({{basketCount}})</a>
                     <a href="#">마이페이지</a>
