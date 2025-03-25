@@ -13,11 +13,4 @@ public class AdminService {
 	@Autowired
 	AdminMapper adminMapper;
 
-	public HashMap<String, Object> getTourList(HashMap<String, Object> map) {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		
-		return resultMap;
-	}
-
 }
