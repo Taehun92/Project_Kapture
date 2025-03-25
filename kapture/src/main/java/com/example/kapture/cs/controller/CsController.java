@@ -1,23 +1,33 @@
 package com.example.kapture.cs.controller;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.kapture.cs.dao.CsService;
 import com.google.gson.Gson;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CsController {
 
 	@Autowired
 	CsService csService;
+	
+	@RequestMapping("/cs/main.do")
+    public String main(Model model) throws Exception{
+        return "cs/main";
+    }
 	
 	@RequestMapping("/cs/faq.do")
     public String login(Model model) throws Exception{
@@ -34,12 +44,12 @@ public class CsController {
 	
 	
 	// 게시글 목록
-		@RequestMapping(value = "/cs/main.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@RequestMapping(value = "/cs/faq.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String csMain(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
-			resultMap = csService.csMain(map);
+			resultMap = csService.csFaq(map);
 			return new Gson().toJson(resultMap);
 		}
 		
@@ -51,6 +61,19 @@ public class CsController {
 					
 			resultMap = csService.csNotice(map);
 			return new Gson().toJson(resultMap);
-				}
+		}
+		
+		// 문의글 추가
+		@RequestMapping(value = "/cs/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+			public String csAdd(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+				HashMap<String, Object> resultMap = new HashMap<String, Object>();
+				
+				resultMap = csService.qnaAdd(map);
+				return new Gson().toJson(resultMap);
+			}
+			
+
+
 		
 }

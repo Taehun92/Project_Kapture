@@ -10,12 +10,14 @@ import com.example.kapture.cs.model.Cs;
 @Mapper
 public interface CsMapper {
 
-	List<Cs> mainCs(HashMap<String, Object> map);
+	List<Cs> faqCs(HashMap<String, Object> map);
 
-	int mainCsCnt(HashMap<String, Object> map);
+	int faqCsCnt(HashMap<String, Object> map);
 
 	List<Cs> csNotice(HashMap<String, Object> map);
 
 	int noticeCsCnt(HashMap<String, Object> map);
+
+	void insertQna(HashMap<String, Object> map);
 
 }
