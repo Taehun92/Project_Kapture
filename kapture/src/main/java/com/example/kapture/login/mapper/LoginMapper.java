@@ -15,5 +15,7 @@ public interface LoginMapper {
 
 	Login checkUser(HashMap<String, Object> map);
 
+	String selectUserEmail(HashMap<String, Object> map);
+
 	
 }

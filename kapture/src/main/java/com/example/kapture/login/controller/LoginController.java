@@ -52,9 +52,9 @@ public class LoginController {
         return "/login/join";
     }
 
-	@RequestMapping("/find-password.do") 
-		public String findPassword(Model model) throws Exception{
-	    return "/login/findPassword";
+	@RequestMapping("/find-id.do") 
+		public String findId(Model model) throws Exception{
+	    return "/login/find-id";
 	}
 
 
@@ -189,7 +189,14 @@ public class LoginController {
 	    return new Gson().toJson(resultMap);
 	}
 	
-	
+	// 이메일 찾기
+	@RequestMapping(value = "/find-email.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String findEmail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = loginService.getUserEmail(map);
+		return new Gson().toJson(resultMap);
+	}
 	
 	
 	
