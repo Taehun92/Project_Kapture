@@ -7,7 +7,7 @@ public class Reviews {
 	private int reviewNo;
 	private int tourNo;
 	private int userNo;
-	private String rating;
+	private int rating;
 	private String comment;
 	private String rCreatedAt;
 	private String rUpdatedAt;
