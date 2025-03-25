@@ -82,4 +82,3 @@ public class ToursService {
 		return resultMap;
 	}
 }
-
