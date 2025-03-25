@@ -8,7 +8,7 @@
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-	<title>요청 등록</title>
+	<title>요청 수정</title>
 </head>
 <body>
 	<div id="app">
@@ -31,7 +31,8 @@
             </tr>
         </table>
         <div style="margin-top: 20px;">
-            <button @click="fnSave">저장</button>
+            <button @click="fnEdit">저장</button>
+            <button @click="fnBack">취소</button>
         </div>
 	</div>
 </body>
@@ -40,41 +41,63 @@
 const app = Vue.createApp({
     data() {
         return {
+            requestNo: "${map.requestNo}",
+            info: {},
             title: "",
             contents: "",
             region: "",
-            budget: "",
-            sessionId: "${sessionId}"
+            budget: ""
         };
     },
     methods: {
-        fnSave() {
+        fnview() {
+            var self = this;
+            $.ajax({
+                url: "/request/view.dox",
+                type: "POST",
+                dataType: "json",
+                data: { requestNo: self.requestNo },
+                success: function(data) {
+                    self.title = data.info.title;
+                    self.contents = data.info.description;
+                    self.region = data.info.region;
+                    self.budget = data.info.budget;
+                    self.$nextTick(function() {
+                        quill.root.innerHTML = self.contents;
+                    });
+                }
+            });
+        },
+        fnEdit() {
             var self = this;
             var nparmap = {
                 title: self.title,
                 contents: self.contents,
-                userNo: self.sessionId,
+                requestNo: self.requestNo,
                 region: self.region,
                 budget: self.budget
             };
             $.ajax({
-                url: "/request/add.dox",
+                url: "/request/edit.dox",
                 type: "POST",
                 dataType: "json",
                 data: nparmap,
                 success: function(data) {
-                    console.log(data);
                     if (data.num > 0) {
-                        alert("입력되었습니다.");
-                        location.href = "/request/list.do";
+                        alert("수정되었습니다.");
+                        location.href = "/request/view.do?requestNo=" + self.requestNo;
                     }
                 }
             });
+        },
+        fnBack() {
+            history.back();
         }
-    }, 
+    },
     mounted() {
         var self = this;
-        var quill = new Quill('#editor', {
+
+        window.quill = new Quill('#editor', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -92,6 +115,8 @@ const app = Vue.createApp({
         quill.on('text-change', function() {
             self.contents = quill.root.innerHTML;
         });
+
+        self.fnview();
     }
 });
 

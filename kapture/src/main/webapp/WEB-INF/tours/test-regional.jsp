@@ -6,6 +6,8 @@
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
+        <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
         <title>관광지 목록</title>
         <style>
@@ -58,23 +60,34 @@
             /* 사이드바 및 고정 기능 */
             .content {
                 display: flex;
-                gap: 20px;
+                gap: 10px;
             }
 
             .sidebar {
-                width: 250px;
+                width: 160px;
+                min-width: 160px;
+                /* 최소 너비 유지 */
+                height: 600px;
                 padding: 10px;
                 border: 1px solid #ddd;
                 position: sticky;
                 top: 0;
                 background: white;
                 transition: top 0.3s;
+                overflow-y: overlay;
+            
             }
 
             .filter {
+                width: 160px;
                 margin-bottom: 10px;
                 border-bottom: 1px solid #ddd;
                 padding-bottom: 5px;
+            }
+
+            .filter-content {
+
+                padding: 5px 10px;
             }
 
             .filter button {
@@ -84,12 +97,26 @@
                 font-size: 16px;
                 text-align: left;
                 cursor: pointer;
-                padding: 5px;
+
+                transition: background-color 0.2s;
             }
 
-            .filter-content {
+            .filter button:hover {
+                background-color: #e0e0e0;
+                /* 밝은 회색으로 변경 */
+            }
 
-                padding: 5px 10px;
+            /* 체크박스 라벨 스타일 */
+            .filter-content label {
+                display: block;
+
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .filter-content label:hover {
+                background-color: #f5f5f5;
+                /* 밝은 회색 */
             }
 
             /* 상품 카드 (폴라로이드 스타일) */
@@ -102,6 +129,7 @@
 
             .tour-card {
                 width: 200px;
+                height: 257px;
                 background: white;
                 border: 2px solid black;
                 padding: 10px;
@@ -127,14 +155,12 @@
 
     <body>
 
-        <jsp:include page="../common/header.jsp" />
+        <!-- <jsp:include page="../common/header.jsp" /> -->
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
+
             <div class="tour-header-group">
-                <div class="tour-header">주요 관광지</div>
-                <div class="tour-buttons">
-                    <button v-for="region in regions" :key="region">{{ region }}</button>
-                </div>
+
             </div>
 
             <!-- 현재 경로 -->
@@ -147,77 +173,96 @@
                 <div class="sidebar">
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
-                        <div class="" v-if="filters.date">
-                            <input type="date">
+                        <div class="filter-content" v-if="filters.date">
+
+                            <div>날짜 선택: {{ dates }}</div>
+                            <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
+                                @input="params.startDate = _formatedDatepicker($event)" :teleport="true" />
                         </div>
 
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.language">
-                            <label><input type="checkbox" value="한국어"> 한국어</label><br>
-                            <label><input type="checkbox" value="영어"> 영어</label><br>
-                            <label><input type="checkbox" value="중국어"> 중국어</label><br>
+                            <template v-for="language in languages">
+                                <label>
+                                    <input @change="fnToursList" type="checkbox" v-model="selectedLanguages"
+                                        :value="language.eng">
+                                    {{language.kor}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
-                            <label><input type="checkbox" value="서울"> 서울</label><br>
-                            <label><input type="checkbox" value="부산"> 부산</label><br>
-                            <label><input type="checkbox" value="전주"> 전주</label><br>
+                            <template v-for="item in regionList">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions"
+                                        :value="item.siNo">
+                                    {{item.siName}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
-                            <label><input type="checkbox" value="고요한"> 고요한 테마</label><br>
-                            <label><input type="checkbox" value="짜릿한"> 짜릿한 테마</label><br>
-                            <label><input type="checkbox" value="감성적인"> 감성적인 테마</label><br>
+                            <template v-for="theme in themeList">
+                                <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes"
+                                        :value="theme.themeNo">
+                                    {{theme.themeName}}
+                                </label><br>
+                            </template>
                         </div>
                     </div>
                 </div>
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in tours" :key="tour.id" class="tour-card">
-                        <img :src="tour.image" alt="Tour Image">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
+                        <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
-                            <p>{{ tour.name }}</p>
-                            <p>{{ tour.description }}</p>
+                            <p>{{ tour.title }}</p>
+                            <p>{{ tour.price }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <jsp:include page="../common/footer.jsp" />
+        <!-- <jsp:include page="../common/footer.jsp" /> -->
+        <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+        <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
+
     </html>
     <script>
+
         const app = Vue.createApp({
             data() {
                 return {
-                    // regions: ["서울", "경기 인천", "부산", "전주", "강원", "그 외"],
-                    // filters: {
-                    //     date: false,
-                    //     language: false,
-                    //     region: false,
-                    //     theme: false
-                    // },
-                    // tours: [
-                    //     { id: 1, name: "경복궁", description: "전통적인 궁궐", image: "https://via.placeholder.com/180" },
-                    //     { id: 2, name: "해운대 해수욕장", description: "부산의 대표 해변", image: "https://via.placeholder.com/180" },
-                    //     { id: 3, name: "전주 한옥마을", description: "전통 한옥 체험", image: "https://via.placeholder.com/180" },
-                    //     { id: 4, name: "남산 타워", description: "서울의 랜드마크", image: "https://via.placeholder.com/180" },
-                    //     { id: 5, name: "설악산", description: "아름다운 자연 경관", image: "https://via.placeholder.com/180" },
-                    //     { id: 6, name: "제주 성산일출봉", description: "제주의 대표 명소", image: "https://via.placeholder.com/180" },
-                    //     { id: 7, name: "광안리 해변", description: "야경이 아름다운 해변", image: "https://via.placeholder.com/180" },
-                    //     { id: 8, name: "안동 하회마을", description: "전통적인 한옥 마을", image: "https://via.placeholder.com/180" },
-                    //     { id: 9, name: "수원 화성", description: "유네스코 문화유산", image: "https://via.placeholder.com/180" },
-                    //     { id: 10, name: "DMZ 비무장지대", description: "한국 전쟁의 역사적 장소", image: "https://via.placeholder.com/180" }
-                    // ]
-                    toursList:[],
+                    dates: null,
+                    languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
+                    filters: {
+                        date: false,
+                        language: false,
+                        region: false,
+                        theme: false
+                    },
+
+                    toursList: [],
+                    regionList: [],
+                    themeList: [],
+                    selectedDates: [],
+                    selectedRegions: [],
+                    selectedLanguages: [],
+                    selectedThemes: [],
+                    siNo: "${map.siNo}",
+                    iniFlg: false,
+
                 };
+            },
+            components: {
+                VueDatePicker
             },
             methods: {
                 toggleFilter(type) {
@@ -228,26 +273,43 @@
                 fnToursList() {
                     let self = this;
 
-                    let nparmap = {
-                        keyword: keyword
-                    };
+                    let nparmap = {};
+                    if (!self.iniFlg) {
+                        console.log("siNo" + self.siNo);
+                        nparmap = { siNo: self.siNo }
+                        self.iniFlg = true;
+                    } else {
+                        nparmap = {
+                            selectedDates: JSON.stringify(self.selectedDates),
+                            selectedRegions: JSON.stringify(self.selectedRegions),
+                            selectedLanguages: JSON.stringify(self.selectedLanguages),
+                            selectedThemes: JSON.stringify(self.selectedThemes),
+                        };
+                    }
+
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
+                            console.log("DATA", data);
                             self.toursList = data.toursList;
-                            console.log(self.toursList);
-
+                            self.regionList = data.regionList;
+                            self.themeList = data.themeList;
                         }
                     });
                 },
+                goToTourInfo(tourNo) {
+                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                },
+
             },
             mounted() {
                 var self = this;
+                self.fnToursList();
             }
         });
+
         app.mount('#app');
     </script>

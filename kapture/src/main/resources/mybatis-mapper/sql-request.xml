@@ -9,9 +9,49 @@
 		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
 		ORDER BY REQUEST_NO DESC
 	</select>
+	<select id="selectRequest" parameterType="hashmap" resultType="com.example.kapture.board.model.Request">
+		SELECT *
+		FROM REQUESTS R
+		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		WHERE R.REQUEST_NO = #{requestNo}
+	</select>
+	<select id="selectRequestCommentList" parameterType="hashmap" resultType="com.example.kapture.board.model.Comment">
+		SELECT *
+		FROM REQUEST_COMMENTS C1
+		LEFT JOIN REQUEST_COMMENTS C2 ON C1.COMMENT_NO = C2.PARENT_COMMENT_NO
+		INNER JOIN REQUESTS R ON R.REQUEST_NO = C1.REQUEST_NO
+		INNER JOIN USERS U ON C1.USER_NO = U.USER_NO
+		WHERE C1.REQUEST_NO = #{requestNo}
+	</select>
 	<insert id="insertRequest" parameterType="hashmap">
-		INSERT INTO REQUSETS
-		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{contents}, #{region}, #{budget},'open', SYSDATE, SYSDATE)
+		INSERT INTO REQUESTS
+		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{region}, #{budget}, '0', SYSDATE, SYSDATE, #{contents})
 	</insert>
-	
+	<insert id="insertRequestComment" parameterType="hashmap">
+		INSERT INTO REQUEST_COMMENTS
+		VALUES(COMMENT_NO_SEQ.NEXTVAL, #{userId}, #{requestNo}, #{comments}, SYSDATE, SYSDATE, #{commentNo})
+	</insert>
+	<update id="updateRequestStatus" parameterType="hashmap">
+		UPDATE REQUESTS
+		SET STATUS = '1'
+		WHERE REQUEST_NO = #{requestNo}
+	</update>
+	<update id="acceptRequestStatus">
+		UPDATE REQUESTS
+		SET STATUS = '2'
+		WHERE REQUEST_NO = #{requestNo}
+	</update>
+	<update id="updateRequestComment" parameterType="hashmap">
+		UPDATE REQUEST_COMMENTS
+		SET MESSAGE = #{comments}, RQC_UPDATE_AT = SYSDATE
+		WHERE COMMENT_NO = #{commentNo}
+	</update>
+	<delete id="deleteRequest" parameterType="hashmap">
+		DELETE FROM REQUESTS
+		WHERE REQUEST_NO = #{requestNo}
+	</delete>
+	<delete id="deleteRequestComment" parameterType="hashmap">
+		DELETE FROM REQUEST_COMMENTS
+		WHERE REQUEST_NO = #{requestNo}
+	</delete>
 </mapper>

@@ -60,24 +60,34 @@
             /* 사이드바 및 고정 기능 */
             .content {
                 display: flex;
-                gap: 20px;
+                gap: 10px;
             }
 
             .sidebar {
-                width: 250px;
+                width: 160px;
+                min-width: 160px;
+                /* 최소 너비 유지 */
+                height: 600px;
                 padding: 10px;
                 border: 1px solid #ddd;
                 position: sticky;
                 top: 0;
                 background: white;
                 transition: top 0.3s;
+                overflow-y: overlay;
+            
             }
 
             .filter {
-                width: 145px;
+                width: 160px;
                 margin-bottom: 10px;
                 border-bottom: 1px solid #ddd;
                 padding-bottom: 5px;
+            }
+
+            .filter-content {
+
+                padding: 5px 10px;
             }
 
             .filter button {
@@ -87,12 +97,26 @@
                 font-size: 16px;
                 text-align: left;
                 cursor: pointer;
-                padding: 5px;
+
+                transition: background-color 0.2s;
             }
 
-            .filter-content {
+            .filter button:hover {
+                background-color: #e0e0e0;
+                /* 밝은 회색으로 변경 */
+            }
 
-                padding: 5px 10px;
+            /* 체크박스 라벨 스타일 */
+            .filter-content label {
+                display: block;
+
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .filter-content label:hover {
+                background-color: #f5f5f5;
+                /* 밝은 회색 */
             }
 
             /* 상품 카드 (폴라로이드 스타일) */
@@ -131,16 +155,12 @@
 
     <body>
 
-        <jsp:include page="../common/header.jsp" />
+        <!-- <jsp:include page="../common/header.jsp" /> -->
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
-            
-            <div class="tour-header-group">
-                <div class="tour-header">주요 관광지</div>
-                <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region.region">{{ region.region }}</button>
 
-                </div>
+            <div class="tour-header-group">
+
             </div>
 
             <!-- 현재 경로 -->
@@ -154,11 +174,10 @@
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
-                            
-                            <div>날짜  선택: {{ selectedDates }}</div>
-                            <vue-date-picker v-model="selectedDates" multi-calendars model-auto range :min-date="new Date()"
-                                @input="params.startDate = _formatedDatepicker($event)" locale="ko" />
-                                
+
+                            <div>날짜 선택: {{ dates }}</div>
+                            <vue-date-picker v-model="dates" multi-calendars model-auto range :min-date="new Date()"
+                                @input="params.startDate = _formatedDatepicker($event)" :teleport="true" />
                         </div>
 
                     </div>
@@ -200,7 +219,7 @@
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
                         <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
                             <p>{{ tour.title }}</p>
@@ -210,9 +229,9 @@
                 </div>
             </div>
         </div>
-        <jsp:include page="../common/footer.jsp" />
-         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
-          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
+        <!-- <jsp:include page="../common/footer.jsp" /> -->
+        <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+        <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
 
     </html>
@@ -221,8 +240,7 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    regions: [{region:"서울", siNo:11}, {region:"제주", siNo:39}, {region:"부산", siNo:21}, {region:"전주", siNo:35},
-                             {region:"강원", siNo:32}, {region:"인천", siNo:23}, {region:"경기", siNo:31}, {region:"그 외", siNo:999}],
+                    dates: null,
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -238,35 +256,36 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
+                    siNo: "${map.siNo}",
+                    iniFlg: false,
 
-                    keyword : "${keyword}"
-                    
                 };
             },
             components: {
-				VueDatePicker
-			},
-            watch: {
-				selectedDates() {
-                    this.fnToursList();
-				}
-			},
+                VueDatePicker
+            },
             methods: {
                 toggleFilter(type) {
                     let self = this;
                     self.filters[type] = !self.filters[type];
-                    console.log(self.regionList);
-                    console.log(self.themeList);
+
                 },
                 fnToursList() {
                     let self = this;
-                    console.log("selectedDates >> " + self.selectedDates);
-                    let nparmap = {
-                        selectedDates: JSON.stringify(self.selectedDates),
-                        selectedRegions: JSON.stringify(self.selectedRegions),
-                        selectedLanguages: JSON.stringify(self.selectedLanguages),
-                        selectedThemes: JSON.stringify(self.selectedThemes),
-                    };
+
+                    let nparmap = {};
+                    if (!self.iniFlg) {
+                        console.log("siNo" + self.siNo);
+                        nparmap = { siNo: self.siNo }
+                        self.iniFlg = true;
+                    } else {
+                        nparmap = {
+                            selectedDates: JSON.stringify(self.selectedDates),
+                            selectedRegions: JSON.stringify(self.selectedRegions),
+                            selectedLanguages: JSON.stringify(self.selectedLanguages),
+                            selectedThemes: JSON.stringify(self.selectedThemes),
+                        };
+                    }
 
                     $.ajax({
                         url: "/tours/list.dox",
@@ -278,36 +297,19 @@
                             self.toursList = data.toursList;
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
-                            console.log("LANG", self.selectedLanguages);
-                            console.log("LIST", self.toursList);
                         }
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
                 },
-                fnRegionalTours(siNo){
-                    console.log("siNo"+siNo);
-                    alert("타임");
-                    pageChange("/tours/test-regional.do",{siNo: siNo});
-                },
+
             },
-
-            created() {
-                const params = new URLSearchParams(window.location.search);
-                const keyword = params.get("keyword");
-
-                if (keyword) {
-                    this.keyword = keyword; // 검색창에 표시
-                    this.fnGetSearchResult(keyword); // 검색 로직 실행
-                }
-            },
-
             mounted() {
                 var self = this;
                 self.fnToursList();
             }
         });
-        
+
         app.mount('#app');
     </script>

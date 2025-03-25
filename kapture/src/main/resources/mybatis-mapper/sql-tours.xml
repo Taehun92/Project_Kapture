@@ -5,11 +5,30 @@
 <mapper namespace="com.example.kapture.tours.mapper.ToursMapper">
 	
 	<select id="selectToursList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
-		SELECT *
+		SELECT DISTINCT 
+    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.T_CREATED_AT, T.T_UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
+    	M.*, I.*, R.*, G.*
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		INNER JOIN (
+            SELECT DISTINCT SI_NO, SI_NAME
+            FROM REGION
+        )R ON T.SI_NO = R.SI_NO
+        INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		WHERE 1=1 
+		<if test="siNo != null and siNo != 999">
+			AND T.SI_NO = #{siNo}
+		</if>
+		<if test="siNo != null and siNo == 999">
+			AND T.SI_NO IN(34, 37, 26, 38, 25, 22, 29, 24, 33, 36)
+		</if>
+		<if test="selectedDates != null and selectedDates.size() > 0">
+        	AND TOUR_DATE BETWEEN
+        <foreach collection="selectedDates" item="item" open="" close="" separator=" AND ">
+            TO_DATE(#{item}, 'YY/MM/DD')
+        </foreach>
+   		</if>
 		<if test="selectedThemes != null and selectedThemes.size() > 0">
         	AND T.THEME_NO IN
         <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
@@ -23,18 +42,30 @@
         </foreach>
    		</if>
    		<if test="selectedLanguages != null and selectedLanguages.size() > 0">
-        	AND LANGUAGE LIKE 
-        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=" OR ">
-            '%' || #{item} || '%'
+        	AND 
+        <foreach collection="selectedLanguages" item="item" separator=" OR ">
+            LANGUAGE LIKE '%' || #{item} || '%'
         </foreach>
    		</if>
+   		ORDER BY T.TOUR_NO 
 	</select>
 	
+
 	<select id="selectAll" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
 	SELECT *
 		FROM TOURS
 		ORDER BY TOUR_NO
 	</select>
+
+	<select id="selectTourInfo" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
+		SELECT *
+		FROM TOURS T
+		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+		WHERE T.TOUR_NO = #{tourNo}
+	</select>
+	
 </mapper>
 
 

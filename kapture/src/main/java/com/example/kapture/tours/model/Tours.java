@@ -13,8 +13,8 @@ public class Tours {
 	private int price;
 	private int maxPeople;
 	private String tourDate;
-	private String createdAt;
-	private String updatedAt;
+	private String tCreatedAt;
+	private String tUpdatedAt;
 	private String deleteYN;
 	private int themeNo;
 	private String themeName;
@@ -28,8 +28,14 @@ public class Tours {
 	private String fileType;
 	private String fileSize;
 	private String fileExtension;
-	private String uploadDate;
+	private String iUploadDate;
 	private String thumbNail;
 	private String language;
+	private String siName;
+	private String guName;
+	private int userNo;
+	private String experience;
+	private String profileImage;
+	
 	
 }
