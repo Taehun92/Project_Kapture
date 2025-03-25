@@ -4,9 +4,9 @@
 
 <mapper namespace="com.example.kapture.cs.mapper.CsMapper">
 	
-	<select id="mainCs" parameterType="hashmap" resultType="com.example.kapture.cs.model.Cs">
+	<select id="faqCs" parameterType="hashmap" resultType="com.example.kapture.cs.model.Cs">
 		SELECT *
-		FROM INQUIRIES
+		FROM FAQ
 		WHERE 1=1
 		<if test="searchOption != null and searchOption == 'all'">
 			AND (CATEGORY LIKE '%' || #{keyword} || '%' 
@@ -18,14 +18,13 @@
 		<if test="searchOption != null and searchOption == 'question'">
 			AND QUESTION LIKE '%' || #{keyword} || '%' 
 		</if>
-		ORDER BY CATEGORY
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 	
-	<select id="mainCsCnt" parameterType="hashmap" resultType="int">
+	<select id="faqCsCnt" parameterType="hashmap" resultType="int">
 		
 		SELECT COUNT(*) 
-		FROM INQUIRIES
+		FROM FAQ
 		WHERE 1=1
 		<if test="searchOption != null and searchOption == 'all'">
 			AND (CATEGORY LIKE '%' || #{keyword} || '%' 
@@ -71,6 +70,11 @@
 			AND CONTENT LIKE '%' || #{keyword} || '%' 
 		</if>
 	</select>
+	
+	<insert id="insertQna" parameterType="hashmap">
+  		INSERT INTO INQUIRIES (INQUIRY_NO, USER_NO, CATEGORY, QUESTION, INQ_CREATED_AT, INQ_UPDATED_AT, TITLE)
+  		VALUES(INQUIRIES_SEQ.NEXTVAL, #{userNo}, #{category}, #{question}, SYSDATE, SYSDATE, #{title})
+	</insert>
 	
 	
 </mapper>

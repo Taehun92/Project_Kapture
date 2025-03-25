@@ -17,4 +17,5 @@ public class Cs {
 	private String content;
 	private String nCreatedAt;
 	private String nUpdatedAt;
+	private int faqNo;
 }

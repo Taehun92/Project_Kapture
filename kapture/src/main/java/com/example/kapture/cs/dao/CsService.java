@@ -15,12 +15,12 @@ public class CsService {
 	@Autowired
 	CsMapper csMapper;
 
-	public HashMap<String, Object> csMain(HashMap<String, Object> map) {
+	public HashMap<String, Object> csFaq(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			List<Cs> list = csMapper.mainCs(map);
+			List<Cs> list = csMapper.faqCs(map);
 			
-			int count = csMapper.mainCsCnt(map);
+			int count = csMapper.faqCsCnt(map);
 
 			resultMap.put("count", count);
 			resultMap.put("list", list);
@@ -50,4 +50,11 @@ public class CsService {
 		}
 		return resultMap;
 }
+
+	public HashMap<String, Object> qnaAdd(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		csMapper.insertQna(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
 }
