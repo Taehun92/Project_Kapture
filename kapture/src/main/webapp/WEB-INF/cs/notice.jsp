@@ -155,7 +155,7 @@
             <ul>
                 <li :class="{ active: activeMenu === 'notice' }" @click="setActive('notice')">공지사항</li>
                 <li :class="{ active: activeMenu === 'faq' }" @click="goTo('faq')">FAQ</li>
-                <li :class="{ active: activeMenu === 'inquiry' }" @click="goTo('inquiry')">QNA</li>
+                <li :class="{ active: activeMenu === 'inquiry' }" @click="goTo('inquiry')">Q&A</li>
             </ul>
         </div>
 
