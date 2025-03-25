@@ -192,8 +192,8 @@
 
 						<span>{{review.userFirstName}} {{review.userLastName}}</span>
 					</div>
-					<star-rating :rating="review.rating" :read-only="true" :star-size="20" :increment="0.01" :border-width="5"
-						:show-rating="false" :rounded-corners="true"></star-rating>
+					<star-rating :rating="review.rating" :read-only="true" :star-size="20" :increment="0.01"
+						:border-width="5" :show-rating="false" :rounded-corners="true"></star-rating>
 					<p>{{review.comment}}</p>
 				</div>
 			</div>
@@ -213,9 +213,9 @@
 					tourInfo: {},
 					reviewsList: [],
 
-					
 
-					sessionId : "${sessionId}"
+
+					sessionId: "${sessionId}"
 
 				};
 			},
@@ -236,7 +236,7 @@
 							console.log(self.tourInfo);
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
-							
+
 						}
 					});
 				},
@@ -248,15 +248,6 @@
 				},
 				toggleWishlist() {
 					this.isWishlisted = !this.isWishlisted;
-				},
-				
-				fnAddedToCart() {
-					let self = this;
-					let nparmap = {
-						tourNo: self.tourNo,
-						sessionId : self.sessionId
-
-
 				},
 				getReviewCount(star) {
 					return this.reviewsList.filter(r => r.rating === star).length;
@@ -272,16 +263,15 @@
 					if (this.reviewsList.length === 0) return 0;
 					const total = this.reviewsList.reduce((sum, rating) => sum + rating.rating, 0);
 					return (total / this.reviewsList.length).toFixed(1);
-        }
-					
-          fnAddedToCart() {
-            let self = this;
+				},
+
+				fnAddedToCart() {
+					let self = this;
 					let nparmap = {
 						tourNo: self.tourNo,
-						sessionId : self.sessionId
-
+						sessionId: self.sessionId
 					};
-            
+
 					$.ajax({
 						url: "/basket/add.dox",
 						dataType: "json",
@@ -289,7 +279,7 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							if(data.result == "success") {
+							if (data.result == "success") {
 								alert("장바구니에 담겼습니다.");
 							} else {
 								alert("이미 담은 상품입니다!");
