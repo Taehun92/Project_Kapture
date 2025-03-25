@@ -32,4 +32,22 @@ public class CsService {
 		}
 		return resultMap;
 }
+
+	public HashMap<String, Object> csNotice(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Cs> list = csMapper.csNotice(map);
+			
+			int count = csMapper.noticeCsCnt(map);
+
+			resultMap.put("count", count);
+			resultMap.put("list", list);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+}
 }
