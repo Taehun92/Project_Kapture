@@ -1,7 +1,7 @@
 package com.example.kapture.login.dao;
 
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,7 +91,24 @@ public class LoginService {
 		return resultMap;
 	}
 
-
+	public String generateVerificationCode() {
+	    int length = 6;
+	    String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	    StringBuilder code = new StringBuilder();
+	    Random random = new Random();
+	    for (int i = 0; i < length; i++) {
+	        code.append(characters.charAt(random.nextInt(characters.length())));
+	    }
+	    return code.toString();
+	}
+	
+	public void sendVerificationEmail(String to, String code) {
+	    System.out.println("[인증 이메일 전송] 받는 사람: " + to + " | 인증번호: " + code);
+	    // 실제 전송은 나중에 연동 or EmailJS 사용 시 프론트에서 처리
+	}
+	
+	
+	
 	
 
 }
