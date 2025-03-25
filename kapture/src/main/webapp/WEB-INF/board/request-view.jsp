@@ -127,13 +127,13 @@ const app = Vue.createApp({
     },
     computed: {
         canEditRequest() {
-            return this.sessionId === this.info.userNo || this.sessionRole === 'ADMIN';
+            return this.sessionId == this.info.userNo || this.sessionRole == 'ADMIN';
         },
         canAccept() {
-            return this.info.status === '1' && this.sessionId === this.info.userNo;
+            return this.info.status == '1' && this.sessionId == this.info.userNo;
         },
         canWriteAnswer() {
-            return this.info.status !== '2' && (this.sessionRole === 'ADMIN' || this.sessionRole === 'GUIDE');
+            return this.info.status != '2' && (this.sessionRole == 'ADMIN' || this.sessionRole == 'GUIDE');
         }
     },
     methods: {
@@ -142,7 +142,7 @@ const app = Vue.createApp({
             return this.commentList.filter(item => item.parentCommentNo == parentNo);
         },
         canEditComment(comment) {
-            return this.info.status !== '2' && (this.sessionId === comment.userNo || this.sessionRole === 'ADMIN');
+            return this.info.status != '2' && (this.sessionId == comment.userNo || this.sessionRole == 'ADMIN');
         },
         fnview() {
             var self = this;

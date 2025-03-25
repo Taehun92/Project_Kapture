@@ -1,11 +1,17 @@
 package com.example.kapture.admin.controller;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.kapture.admin.dao.AdminService;
+import com.google.gson.Gson;
 
 @Controller
 public class AdminController {
@@ -20,9 +26,9 @@ public class AdminController {
     }
 	
 	// 상품 관리
-	@RequestMapping("/admin/tour.do")
+	@RequestMapping("/admin/tours.do")
 	public String tour(Model model) throws Exception{
-		return "/admin/admin-tour";
+		return "/admin/admin-tours";
 	}
 	
 	// 가이드 관리
@@ -60,6 +66,5 @@ public class AdminController {
 	public String setting(Model model) throws Exception{
 		return "/admin/admin-setting";
 	}
-	
 	
 }
