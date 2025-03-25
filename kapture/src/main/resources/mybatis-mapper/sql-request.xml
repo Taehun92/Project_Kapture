@@ -24,8 +24,8 @@
 		WHERE C1.REQUEST_NO = #{requestNo}
 	</select>
 	<insert id="insertRequest" parameterType="hashmap">
-		INSERT INTO REQUSETS
-		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{contents}, #{region}, #{budget}, 'open', SYSDATE, SYSDATE)
+		INSERT INTO REQUESTS
+		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{region}, #{budget}, '0', SYSDATE, SYSDATE, #{contents})
 	</insert>
 	<insert id="insertRequestComment" parameterType="hashmap">
 		INSERT INTO REQUEST_COMMENTS

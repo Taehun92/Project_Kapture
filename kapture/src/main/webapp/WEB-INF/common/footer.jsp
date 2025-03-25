@@ -5,7 +5,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>푸터</title>
-	<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="../../css/footer.css">
 </head>
 <body>
