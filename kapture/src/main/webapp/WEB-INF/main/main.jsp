@@ -171,6 +171,36 @@
     h1 {
         text-align: center;
     }
+    .tour-list {
+        flex-grow: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .tour-card {
+        width: 200px;
+        height: 257px;
+        background: white;
+        border: 2px solid black;
+        padding: 10px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tour-card img {
+        width: 180px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .tour-card .desc {
+        width: 100%;
+        background: white;
+        padding: 10px;
+    }
 
 </style>
 <body>
@@ -198,27 +228,15 @@
             <hr>
             추천상품
         </div>
-        <div class="item-page">
-            <span class="box">
-            <img class="" src="../../img/1.jpg">
-                <div>상품 제목</div>
-                <div>상품 설명</div>
-                <button>예약</button>
-            </span>
-
-            <span class="box">
-                <img class="" src="../../img/2.jpg">
-                <div>상품 제목</div>
-                <div>상품 설명</div>
-                <button>예약</button>
-            </span>
-
-            <span class="box">
-                <img class="" src="../../img/3.jpg">
-                <div>상품 제목</div>
-                <div>상품 설명</div>
-                <button>예약</button> 
-            </span>
+        <!-- 관광지 리스트 -->
+        <div class="tour-list">
+            <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
+                <img :src="tour.filePath" alt="Tour Image">
+                <div class="desc">
+                    <p>{{ tour.title }}</p>
+                    <p>{{ tour.price }}</p>
+                </div>
+            </div>
         </div>
         <div>
             <hr>
@@ -255,25 +273,37 @@
         data() {
             return {
 				swiper : null,
-                
+                toursList: []
             };
         },
         methods: {
-            fnGetBoard(){
-				let self = this;
-				let nparmap = {
+            fnToursList() {
+                let self = this;
+                console.log("selectedDates >> " + self.selectedDates);
+                let nparmap = {
+                    selectedDates: JSON.stringify(self.selectedDates),
+                    selectedRegions: JSON.stringify(self.selectedRegions),
+                    selectedLanguages: JSON.stringify(self.selectedLanguages),
+                    selectedThemes: JSON.stringify(self.selectedThemes),
+                };
 
-                	};
-				$.ajax({
-					url:"/board/info.dox",
-					dataType:"json",	
-					type : "POST", 
-					data : nparmap,
-					success : function(data) { 
-						console.log(data);
-                        self.info = data.info;
-					}
-				});
+                $.ajax({
+                    url: "/tours/list.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: nparmap,
+                    success: function (data) {
+                        console.log("DATA", data);
+                        self.toursList = data.toursList;
+                        self.regionList = data.regionList;
+                        self.themeList = data.themeList;
+                        console.log("LANG", self.selectedLanguages);
+                        console.log("LIST", self.toursList);
+                    }
+                });
+            },
+            goToTourInfo(tourNo) {
+                pageChange("/tours/test-info.do", { tourNo: tourNo });
             },
         },
         mounted() {
@@ -295,6 +325,7 @@
 					prevEl: '.swiper-button-prev',
 				},
 			});
+            self.fnToursList();
         }
     });
     app.mount('#app');

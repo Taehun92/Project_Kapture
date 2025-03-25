@@ -12,4 +12,8 @@
     	SELECT COUNT(*) FROM BASKET WHERE TOUR_NO = #{tourNo} AND USER_NO = #{sessionId}
 	</select>
 	
+	<select id="selectCount" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM BASKET WHERE USER_NO = #{sessionId}
+	</select>
+	
 </mapper>
