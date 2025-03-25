@@ -33,16 +33,6 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 	
-	@Value("${emailjs.public.key}")
-    private String emailJsPublicKey;
-
-    @Value("${emailjs.service.id}")
-    private String emailJsServiceId;
-
-    @Value("${emailjs.template.id}")
-    private String emailJsTemplateId;
-	
-	
 	@Value("${client_id}")
 	private String client_id;
 
@@ -59,9 +49,6 @@ public class LoginController {
 
 	@RequestMapping("/join.do")
     public String goJoinPage(Model model) throws Exception{
-        model.addAttribute("emailJsPublicKey", emailJsPublicKey);
-        model.addAttribute("emailJsServiceId", emailJsServiceId);
-        model.addAttribute("emailJsTemplateId", emailJsTemplateId);
         return "/login/join";
     }
 
@@ -125,38 +112,40 @@ public class LoginController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	//이메일로 인증코드 전송
-	@RequestMapping(value = "/login/email/send.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	// 이메일 인증 코드 발송
+	@RequestMapping(value = "/login/email/send.dox", method = RequestMethod.POST)
 	@ResponseBody
-	public String sendEmail(Model model, @RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
-	    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+	public Map<String, Object> sendVerificationEmail(@RequestParam HashMap<String, Object> map, HttpSession session) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        String email = (String) map.get("email");
+	        if (email == null || email.trim().isEmpty()) {
+	            result.put("result", "fail");
+	            result.put("message", "이메일이 비어 있습니다.");
+	            return result;
+	        }
 
-	    // 1. 사용자가 입력한 이메일 꺼내기
-	    String email = (String) map.get("email");
+	        String code = loginService.generateVerificationCode();
 
-	    if (email == null || email.trim().isEmpty()) {
-	        resultMap.put("result", "fail");
-	        resultMap.put("message", "이메일이 입력되지 않았습니다.");
-	        return new Gson().toJson(resultMap);
+	        session.setAttribute("email_code", code);
+	        session.setAttribute("email_target", email);
+	        session.setAttribute("email_time", System.currentTimeMillis());
+
+	        loginService.sendVerificationEmail(email, code);
+
+	        result.put("result", "success");
+	        result.put("code", code);
+	        result.put("message", "인증 코드가 전송되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("result", "fail");
+	        result.put("message", "메일 전송 중 오류 발생: " + e.getMessage());
 	    }
 
-	    // 2. 인증번호 생성
-	    String code = loginService.generateVerificationCode(); // 아래에서 만들어줌
-
-	    // 3. 세션에 인증정보 저장
-	    session.setAttribute("email_code", code);
-	    session.setAttribute("email_target", email);
-	    session.setAttribute("email_time", System.currentTimeMillis());
-
-	    // 4. 이메일 발송 (혹은 console 출력)
-	    loginService.sendVerificationEmail(email, code);
-
-	    // 5. 결과 반환
-	    resultMap.put("code", code);
-	    resultMap.put("result", "success");
-	    resultMap.put("message", "인증번호가 이메일로 전송되었습니다.");
-	    return new Gson().toJson(resultMap);
+	    return result; // ✅ 여기선 Map 그대로 반환해도 JSON으로 자동 변환됨
 	}
+	
+	
 	
 	//이메일로 전송한 인증코드 확인 
 	@RequestMapping(value = "/login/email/verify.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -248,6 +237,13 @@ public class LoginController {
 	        e.printStackTrace();
 	        return null; // 예외 발생 시 null 반환
 	    }
+	}
+	
+	@RequestMapping("/test-mail")
+	@ResponseBody
+	public String testMail() {
+	    loginService.sendVerificationEmail("수신자메일@gmail.com", "ABC123");
+	    return "메일 전송 성공!";
 	}
 	
 }
