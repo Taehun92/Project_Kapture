@@ -6,8 +6,6 @@
   <title>Kapture - Join</title>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script> emailjs.init("${emailJsPublicKey}"); </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -58,7 +56,7 @@
   <h2>Join Kapture</h2>
 
   <!-- Email + 인증 -->
-  <input type="text" placeholder="Email" v-model="user.email" @input="debouncedCheck" :disabled="emailVerified"/>
+  <input type="text" placeholder="Email" v-model="user.email" :disabled="emailVerified"/>
   <div v-if="emailCheckMessage && !emailVerified" :style="{ color: emailCheckColor, fontSize: '13px', marginTop: '5px' }">
     {{ emailCheckMessage }}
   </div>
@@ -76,6 +74,9 @@
   <div v-if="user.password.length > 0 && !passwordValid" style="font-size: 13px;">
     <div :style="{ color: passwordRules.length ? 'green' : 'orange' }">
       {{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters' }}
+    </div>
+    <div :style="{ color: passwordRules.number ? 'green' : 'orange' }">
+      {{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
     </div>
     <div :style="{ color: passwordRules.upper ? 'green' : 'orange' }">
       {{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
@@ -185,6 +186,7 @@ const app = Vue.createApp({
         this.fnIdCheck();
       }, 500);
     },
+
     validatePassword() {
       const pw = this.user.password;
       const pw2 = this.user.password2;
@@ -193,19 +195,23 @@ const app = Vue.createApp({
       this.passwordRules.upper = /[A-Z]/.test(pw);
       this.passwordRules.lower = /[a-z]/.test(pw);
       this.passwordRules.special = /[^A-Za-z0-9]/.test(pw);
+      this.passwordRules.number = /[0-9]/.test(pw);
 
       this.passwordValid =
         this.passwordRules.length &&
         this.passwordRules.upper &&
         this.passwordRules.lower &&
-        this.passwordRules.special;
+        this.passwordRules.special &&
+        this.passwordRules.number;
 
       this.passwordsMatch = pw && pw2 && pw === pw2;
     },
+
     isValidEmail(email) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(email);
     },
+
     fnIdCheck() {
       const email = this.user.email;
       if (!email) {
@@ -245,34 +251,7 @@ const app = Vue.createApp({
         }
       });
     },
-    sendVerificationCode() {
-      if (!this.user.email) {
-        alert("Enter your email first.");
-        return;
-      }
-      const self = this;
-      $.ajax({
-        url: "/login/email/send.dox",
-        type: "POST",
-        data: { email: this.user.email },
-        success: (res) => {
-          console.log("✅ response from server:", res);
-          self.emailCodeSent = true;
-          // EmailJS를 통한 인증 메일 발송
-          emailjs.send("${emailJsServiceId}", "${emailJsTemplateId}", {
-            to_email: self.user.email,
-            passcode: res.code
-          }).then(() => {
-            alert("Verification code sent to your email.");
-          }, (err) => {
-            alert("Failed to send verification email: " + err.text);
-          });
-        },
-        error: () => {
-          alert("Failed to initiate verification process.");
-        }
-      });
-    },
+
     verifyCode() {
       if (!this.userInputCode) {
         alert("Enter the code you received.");
@@ -298,6 +277,7 @@ const app = Vue.createApp({
         }
       });
     },
+
     fnJoin() {
       if (!this.canSubmit) {
         alert("Please complete all required fields.");
@@ -311,6 +291,34 @@ const app = Vue.createApp({
         success: function (data) {
           alert("Congratulations on becoming a member.");
           location.href = "/login.do";
+        }
+      });
+    },
+
+    sendVerificationCode() {
+      let self = this;
+      let nparmap = {
+        email: self.user.email
+      };
+
+      $.ajax({
+        url: "/login/email/send.dox",
+        type: "POST",
+        data: nparmap,
+        success: function(data) {
+          console.log("✅ 응답 확인:", data); // ← 실제 응답 구조 확인용
+
+          if (data.result === "success") {
+            alert("✅ " + data.message);
+            self.emailCodeSent = true;
+
+          } else {
+            alert("❌ 인증 메일 전송 실패: " + (data.message || "알 수 없는 오류"));
+          }
+        },
+        error: function(xhr, status, err) {
+          console.error("❌ 서버 오류:", xhr.responseText);
+          alert("❌ 서버 통신 오류 발생");
         }
       });
     }

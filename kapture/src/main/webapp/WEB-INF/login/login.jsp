@@ -53,7 +53,7 @@
 		.signup-link {
 			margin-top: 20px;
 			text-align: center;
-			font-size: 13px;
+			font-size: 15px;
 		}
 		.signup-link a {
 			color: #2b74e4;
@@ -77,7 +77,7 @@
         <h2>Login to Kapture</h2>
 
         <input type="text" v-model="email" placeholder="Email or ID">
-        <input type="password" v-model="password" placeholder="Password">
+        <input type="password" v-model="password" placeholder="Password" @keyUp.enter="login">
 
         <div class="error-msg" v-if="errorMessage">{{ errorMessage }}</div>
 
@@ -118,6 +118,7 @@ const app = Vue.createApp({
 				},
 				success(data) {
 					if (data.result === "success") {
+						alert(data.login.userFirstName + data.login.userLastName + "님 환영합니다!");
 						location.href = "/main.do";
 					} else {
 						self.errorMessage = data.message || "Login failed. Please try again.";
