@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>헤더</title>
     <link rel="stylesheet" href="../../css/header.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="header">
