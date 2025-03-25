@@ -19,7 +19,7 @@ public class BasketService {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
 	    
-	    // 중복 체크
+	    // 장바구니 중복 체크
 	    int count = basketMapper.existsBasketItem(map);
 	    
 	    if (count > 0) {

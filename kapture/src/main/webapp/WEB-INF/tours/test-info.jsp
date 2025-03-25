@@ -9,6 +9,8 @@
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="/js/page-Change.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
+		<script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
+		<link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
 		<title>상품 상세페이지</title>
 	</head>
 	<style>
@@ -146,6 +148,88 @@
 			height: 100%;
 			background: #ffa500;
 		}
+
+		.clickable-area {
+			width: 50px;
+			height: 150px;
+			margin-left: auto;
+			margin-right: 0;
+			margin-top: 20px;
+			background-color: #f0f0f0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			position: fixed;
+			top: 50%;
+			right: 0;
+			transform: translateY(-50%);
+			overflow: hidden;
+			z-index: 1001;
+		  }
+		  
+		  .modal {
+			background-color: lightblue;
+			padding: 20px;
+			overflow: hidden;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 800px;
+			height: 800px;
+			max-height: 800px;
+			z-index: 1000;
+			display: flex;
+			flex-direction: column;
+			border: 1px solid #ccc;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			align-items: center;
+			justify-content: flex-start;
+		  }
+		  
+		  .modal-enter-from {
+			opacity: 0;
+			transform: translateX(100%);
+		  }
+		  
+		  .modal-enter-active {
+			transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+		  }
+		  
+		  .modal-enter-to {
+			opacity: 1;
+			transform: translateX(0%);
+		  }
+		  
+		  .modal-leave-from {
+			opacity: 1;
+			transform: translateX(0%);
+		  }
+		  
+		  .modal-leave-active {
+			transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+		  }
+		  
+		  .modal-leave-to {
+			opacity: 0;
+			transform: translateX(100%);
+		  }
+		  
+		  .close-button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			cursor: pointer;
+			padding: 5px;
+			background-color: #ddd;
+			border-radius: 5px;
+		  }
+
+		  .datepicker {
+			width: 100%;
+		  }
 	</style>
 
 	<body>
@@ -187,9 +271,7 @@
 
 				<!-- 개별 리뷰 목록 -->
 				<div v-for="review in reviewsList" class="user-review">
-
 					<div>
-
 						<span>{{review.userFirstName}} {{review.userLastName}}</span>
 					</div>
 					<star-rating :rating="review.rating" :read-only="true" :star-size="20" :increment="0.01"
@@ -197,6 +279,23 @@
 					<p>{{review.comment}}</p>
 				</div>
 			</div>
+
+			<div class="clickable-area" @click="showModal = true" v-if="!showModal">
+            	<p>🛒</p>
+        	</div>
+        	<transition name="modal">
+            	<div v-if="showModal" class="modal">
+                	<span class="close-button" @click="showModal = false">닫기</span>
+                	<h2>날짜를 선택해주세요.</h2>
+					<div class="datepicker">
+						<vue-date-picker v-model="date" multi-calendars model-auto range :min-date="new Date()"
+						@input="params.startDate = _formatedDatepicker($event)" />
+					</div>
+					<div><button>날짜선택완료</button></div>
+            	</div>
+        	</transition>
+    	
+
 
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -212,12 +311,13 @@
 					isWishlisted: false,
 					tourInfo: {},
 					reviewsList: [],
-
-
-
-					sessionId: "${sessionId}"
-
+					sessionId: "${sessionId}",
+					showModal: false,
+					date: new Date(),
 				};
+			},
+			components: {
+				VueDatePicker
 			},
 			methods: {
 				fnTourInfo() {
