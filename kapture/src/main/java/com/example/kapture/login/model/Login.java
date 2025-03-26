@@ -16,5 +16,8 @@ public class Login {
 	private String uUpdatedAt;
 	private String userFirstName; 
 	private String userLastName;
+	private String socialType;
+	private String isForeigner;
+	private String pushYN;
 	
 }	
