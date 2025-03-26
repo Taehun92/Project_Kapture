@@ -83,6 +83,13 @@
 
         <button @click="login">Login</button>
 
+        <!-- ✅ 구글 로그인 버튼 추가 -->
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/google/login">
+                <img src="../../img/google.png" alt="Google 로그인" style="width: 50px; cursor: pointer;" />
+            </a>
+        </div>
+
         <div class="signup-link">
             Don't have an account? <a href="/join.do">Sign up here</a><br/>
             Forgot your password? <a href="/find-password.do">Find it here</a>
