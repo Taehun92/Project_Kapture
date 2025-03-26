@@ -27,38 +27,17 @@ public class SecurityConfig {
 
     }
     
-    
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//        	.authorizeHttpRequests(auth -> auth
-//        			.anyRequest().permitAll()
-//        	)// 모든 요청 허용 (로그인 필요 없음)
-//            .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (필요 시 설정 가능)
-//            .formLogin(form -> form.disable()) // 기본 로그인 페이지 비활성화
-//            .httpBasic(basic -> basic.disable()); // HTTP Basic 인증 비활성화
-//        return http.build();
-//    }
-    
-    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
-                .anyRequest().permitAll()
-            )
-            .csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
-            .oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                .defaultSuccessUrl("/login/success", true)
-            );
-
+        	.authorizeHttpRequests(auth -> auth
+        			.anyRequest().permitAll()
+        	)// 모든 요청 허용 (로그인 필요 없음)
+            .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (필요 시 설정 가능)
+            .formLogin(form -> form.disable()) // 기본 로그인 페이지 비활성화
+            .httpBasic(basic -> basic.disable()); // HTTP Basic 인증 비활성화
         return http.build();
     }
-    
     
     
     @Bean

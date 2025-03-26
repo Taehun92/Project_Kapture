@@ -211,24 +211,7 @@ public class LoginController {
 	}
 	
 	
-	@RequestMapping("/test-mail")
-	@ResponseBody
-	public String testMail() {
-	    loginService.sendVerificationEmail("수신자메일@gmail.com", "ABC123");
-	    return "메일 전송 성공!";
-	}
-	
-	// 구글 로그인 api
-	@RequestMapping("/login/success")
-    @ResponseBody
-    public String loginSuccess(@AuthenticationPrincipal OAuth2User oauth2User) {
-        Map<String, Object> attributes = oauth2User.getAttributes();
-
-        System.out.println("🔐 구글 로그인 사용자 정보 출력:");
-        attributes.forEach((key, value) -> System.out.println(key + " : " + value));
-
-        return "✅ 로그인 성공! 콘솔을 확인하세요.";
-    }
+ 
 	
 	
 	
