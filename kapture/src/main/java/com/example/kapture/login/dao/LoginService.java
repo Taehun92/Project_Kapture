@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -170,15 +171,30 @@ public class LoginService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			String email = loginMapper.selectUserEmail(map);
+			List<String> emailList = loginMapper.selectUserEmail(map);
 			resultMap.put("result", "success");
-			resultMap.put("email", email);
+			resultMap.put("emailList", emailList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
+	}
+	
+	public HashMap<String, Object> updatePassword(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    String hashPwd = passwordEncoder.encode((String) map.get("password"));
+	    map.put("password", hashPwd);
+	    int updated = loginMapper.updateUserPassword(map);
+	    if (updated > 0) {
+	        resultMap.put("result", "success");
+	    } else {
+	        resultMap.put("result", "fail");
+	        resultMap.put("message", "비밀번호 변경 실패");
+	    }
+
+	    return resultMap;
 	}
 
 }

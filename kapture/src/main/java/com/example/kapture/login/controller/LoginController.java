@@ -198,6 +198,16 @@ public class LoginController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 비밀번호 변경
+	@RequestMapping(value = "/login/reset-password.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String resetPassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		System.out.println("🔐 받은 비밀번호: " + map.get("password"));
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = loginService.updatePassword(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 	
 	
 	
