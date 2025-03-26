@@ -20,6 +20,41 @@
 		FROM USERS 
 		WHERE EMAIL = #{email}
 	</select>
+	
+	<select id="selectUserByEmail" parameterType="string" resultType="map">
+    SELECT * FROM (
+        SELECT USER_NO AS userNo,
+               EMAIL AS email,
+               USER_FIRSTNAME AS userFirstName,
+               USER_LASTNAME AS userLastName
+          FROM USERS
+         WHERE EMAIL = #{email, jdbcType=VARCHAR}
+    )
+    WHERE ROWNUM = 1
+</select>
+
+
+	<insert id="insertSocialUser" parameterType="map">
+    INSERT INTO USERS(
+        USER_NO,
+        PASSWORD,
+        EMAIL,
+        PHONE,
+        ROLE,
+        USER_FIRSTNAME,
+        USER_LASTNAME,
+        SOCIAL_TYPE
+    ) VALUES (
+        USERS_SEQ.NEXTVAL,
+        'Test1234!',
+        #{email},
+        '010-1234-1234',
+        'TOURIST',
+        #{userFirstName},
+        NVL(#{userLastName}, 'N/A'),
+        'SOCIAL'
+    )
+</insert>
 	<select id="selectUserEmail" parameterType="hashmap" resultType="String">
 	    SELECT EMAIL
 	    FROM USERS
