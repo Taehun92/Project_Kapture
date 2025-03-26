@@ -12,5 +12,7 @@ import com.example.kapture.login.model.Login;
 public interface MyPageMapper {
 
 	Login selectUser(HashMap<String, Object> map);
+
+	void userInfoUpdate(HashMap<String, Object> map);
 	
 }
