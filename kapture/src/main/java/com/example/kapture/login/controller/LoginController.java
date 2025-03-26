@@ -3,16 +3,24 @@ package com.example.kapture.login.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.kapture.login.dao.LoginService;
@@ -57,29 +65,35 @@ public class LoginController {
     public String findPassword() {
         return "/login/findPassword";
     }
-
-    @RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String login(@RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
-        HashMap<String, Object> resultMap = loginService.userLogin(map);
-        if ("success".equals(resultMap.get("result"))) {
-            session.setAttribute("user", resultMap.get("login"));
-        }
-        return new Gson().toJson(resultMap);
+    
+    @RequestMapping("/find-id.do")
+    public String findId(Model model) throws Exception {
+        return "/login/find-id";
     }
 
+    // 로그인
+    @RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = loginService.userLogin(map);
+        return new Gson().toJson(resultMap);
+    }
+    
+    // 로그아웃
     @RequestMapping(value = "/logout.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String logout(@RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
-        session.invalidate();
+    public String logout(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
         HashMap<String, Object> resultMap = loginService.userLogout(map);
         return new Gson().toJson(resultMap);
     }
-
+    
+    // 회원가입
     @RequestMapping(value = "/join.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String join(@RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
+    public String join(Model model, @RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
         HashMap<String, Object> resultMap = new HashMap<>();
+
+        // 이메일 인증 여부 확인
         Boolean verified = (Boolean) session.getAttribute("emailVerified");
         if (verified == null || !verified) {
             resultMap.put("result", "fail");
@@ -87,8 +101,10 @@ public class LoginController {
             return new Gson().toJson(resultMap);
         }
 
+        // 회원가입 처리
         resultMap = loginService.joinUser(map);
 
+        // 세션 정리
         session.removeAttribute("emailVerified");
         session.removeAttribute("email_code");
         session.removeAttribute("email_target");
@@ -97,12 +113,15 @@ public class LoginController {
         return new Gson().toJson(resultMap);
     }
 
+    // id 중복체크
     @RequestMapping(value = "/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String check(@RequestParam HashMap<String, Object> map) throws Exception {
-        return new Gson().toJson(loginService.checkUser(map));
+    public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = loginService.checkUser(map);
+        return new Gson().toJson(resultMap);
     }
-
+    
+    // 이메일 인증 코드 발송
     @RequestMapping(value = "/login/email/send.dox", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> sendVerificationEmail(@RequestParam HashMap<String, Object> map, HttpSession session) {
@@ -127,16 +146,19 @@ public class LoginController {
             result.put("code", code);
             result.put("message", "인증 코드가 전송되었습니다.");
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("result", "fail");
             result.put("message", "메일 전송 중 오류 발생: " + e.getMessage());
         }
         return result;
     }
-
+    
+    // 이메일로 전송한 인증코드 확인 
     @RequestMapping(value = "/login/email/verify.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String verifyEmailCode(@RequestParam HashMap<String, Object> map, HttpSession session) {
+    public String verifyEmailCode(Model model, @RequestParam HashMap<String, Object> map, HttpSession session) throws Exception {
         HashMap<String, Object> resultMap = new HashMap<>();
+
         String email = (String) map.get("email");
         String code = (String) map.get("code");
 
@@ -144,25 +166,53 @@ public class LoginController {
         String savedEmail = (String) session.getAttribute("email_target");
         Long sentTime = (Long) session.getAttribute("email_time");
 
+        // 1. 세션 정보 없음
         if (savedCode == null || savedEmail == null || sentTime == null) {
             resultMap.put("result", "fail");
             resultMap.put("message", "인증 요청 기록이 없습니다. 다시 시도해주세요.");
-        } else if (System.currentTimeMillis() - sentTime > 600_000) {
-            resultMap.put("result", "fail");
-            resultMap.put("message", "인증번호가 만료되었습니다.");
-        } else if (!savedEmail.equals(email) || !savedCode.equalsIgnoreCase(code)) {
-            resultMap.put("result", "fail");
-            resultMap.put("message", "이메일 또는 인증번호가 일치하지 않습니다.");
-        } else {
-            session.setAttribute("emailVerified", true);
-            resultMap.put("result", "success");
-            resultMap.put("message", "이메일 인증이 완료되었습니다.");
+            return new Gson().toJson(resultMap);
         }
 
+        // 2. 10분 초과 (600,000ms)
+        if (System.currentTimeMillis() - sentTime > 600_000) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "인증번호가 만료되었습니다.");
+            return new Gson().toJson(resultMap);
+        }
+
+        // 3. 이메일 또는 인증번호 불일치
+        if (!savedEmail.equals(email) || !savedCode.equalsIgnoreCase(code)) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "이메일 또는 인증번호가 일치하지 않습니다.");
+            return new Gson().toJson(resultMap);
+        }
+
+        // 4. 성공 - 이메일 인증 완료 플래그 설정
+        session.setAttribute("emailVerified", true);
+        resultMap.put("result", "success");
+        resultMap.put("message", "이메일 인증이 완료되었습니다.");
         return new Gson().toJson(resultMap);
     }
-
-    @GetMapping("/google/login")
+    
+    // 이메일 찾기
+    @RequestMapping(value = "/find-email.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String findEmail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = loginService.getUserEmail(map);
+        return new Gson().toJson(resultMap);
+    }
+    
+    // 비밀번호 변경
+    @RequestMapping(value = "/login/reset-password.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String resetPassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+        System.out.println("🔐 받은 비밀번호: " + map.get("password"));
+        HashMap<String, Object> resultMap = loginService.updatePassword(map);
+        return new Gson().toJson(resultMap);
+    }
+    
+    // 구글 로그인 리다이렉트
+    @RequestMapping(value = "/google/login", method = RequestMethod.GET)
     public String googleLoginRedirect() {
         String googleLoginUrl = "https://accounts.google.com/o/oauth2/v2/auth"
                 + "?client_id=" + googleClientId
@@ -173,7 +223,7 @@ public class LoginController {
         return "redirect:" + googleLoginUrl;
     }
 
-    @GetMapping("/google/callback")
+    @RequestMapping(value = "/google/callback", method = RequestMethod.GET)
     public String googleCallback(@RequestParam("code") String code, HttpSession session) {
         try {
             System.out.println("✅ STEP 1: 구글에서 받은 code = " + code);
@@ -204,20 +254,37 @@ public class LoginController {
             String email = userInfo.get("email").asText();
             String name = userInfo.get("name").asText();
 
+            System.out.println("구글에서 받은 이메일: " + email);
+
+            // DB에서 해당 이메일로 가입된 회원 조회
             Map<String, Object> user = loginService.findUserByEmail(email);
+            System.out.println("조회된 user: " + user);
+
             if (user != null) {
+                // 기존 회원이면 세션에 사용자 정보 저장 (대문자 키 사용)
                 session.setAttribute("user", user);
+                session.setAttribute("sessionId", user.get("USERNO"));
+                session.setAttribute("sessionRole", user.get("ROLE"));
+                session.setAttribute("sessionFirstName", user.get("USERFIRSTNAME"));
+                session.setAttribute("sessionLastName", user.get("USERLASTNAME"));
+                System.out.println("세션에 기존 회원 정보 저장됨: " + session.getAttribute("sessionId"));
             } else {
+                // 신규 회원이면 파라미터 맵 구성
                 Map<String, Object> param = new HashMap<>();
                 param.put("email", email);
                 param.put("userFirstName", name);
-                param.put("userLastName", "");
-                param.put("socialType", "google");
+                param.put("userLastName", "N/A");
+                param.put("socialType", "social");
 
-                loginService.createUserFromSocial(param);
-                user = loginService.findUserByEmail(email);
+                // 신규 회원가입 후 DB에 저장 및 정보 조회
+                user = loginService.createUserFromSocial(param);
                 if (user != null) {
                     session.setAttribute("user", user);
+                    session.setAttribute("sessionId", user.get("USERNO"));
+                    session.setAttribute("sessionRole", user.get("ROLE"));
+                    session.setAttribute("sessionFirstName", user.get("USERFIRSTNAME"));
+                    session.setAttribute("sessionLastName", user.get("USERLASTNAME"));
+                    System.out.println("세션에 신규 회원 정보 저장됨: " + session.getAttribute("sessionId"));
                 }
             }
 
@@ -227,6 +294,8 @@ public class LoginController {
             return "redirect:/login.do";
         }
     }
+
+
 
     @RequestMapping("/test-mail")
     @ResponseBody
