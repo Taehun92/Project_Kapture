@@ -46,11 +46,20 @@ public class BasketController {
 	}
 	
 	// 최소 날짜 구하기
-	@RequestMapping(value = "/basket/getTourDate.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/basket/getMinTourDate.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String getTourDate(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	public String getMinTourDate(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap = basketService.getTourDate(map);
+		resultMap = basketService.getMinTourDate(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 장바구니에 담은 날짜 리스트 출력
+	@RequestMapping(value = "/basket/getTourDateList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getTourDateList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = basketService.getTourDateList(map);
 		return new Gson().toJson(resultMap);
 	}
 	
