@@ -1,6 +1,7 @@
 package com.example.kapture.login.mapper;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,7 +16,9 @@ public interface LoginMapper {
 
 	Login checkUser(HashMap<String, Object> map);
 
-	String selectUserEmail(HashMap<String, Object> map);
+	List<String> selectUserEmail(HashMap<String, Object> map);
+
+	int updateUserPassword(HashMap<String, Object> map);
 
 	
 }

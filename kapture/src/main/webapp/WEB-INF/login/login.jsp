@@ -117,7 +117,7 @@ const app = Vue.createApp({
 				},
 				success(data) {
 					if (data.result === "success") {
-						alert(data.login.userFirstName + data.login.userLastName + "님 환영합니다!");
+						alert(data.login.userFirstName + "님 환영합니다!");
 						location.href = "/main.do";
 					} else {
 						self.errorMessage = data.message || "Login failed. Please try again.";

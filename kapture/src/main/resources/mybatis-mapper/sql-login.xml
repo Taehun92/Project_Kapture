@@ -28,7 +28,11 @@
 	      AND PHONE = #{phone}
 	      AND BIRTHDAY = #{birthday}
 	</select>
-	
+	<update id="updateUserPassword" parameterType="hashmap">
+		UPDATE USERS
+	    SET PASSWORD = #{password}
+	    WHERE EMAIL = #{email}
+	</update>
 
 </mapper>
 
