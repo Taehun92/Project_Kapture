@@ -41,6 +41,11 @@ public class CsController {
     public String qna(Model model) throws Exception{
         return "cs/qna";
     }
+	@RequestMapping("/cs/privacy.do")
+    public String privacy(Model model) throws Exception{
+        return "cs/privacy";
+    }
+	
 	
 	
 	// 게시글 목록

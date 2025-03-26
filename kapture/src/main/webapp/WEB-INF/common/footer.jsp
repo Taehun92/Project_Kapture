@@ -11,9 +11,9 @@
 	<div id="footer">
 		<!-- 상단 텍스트 링크 -->
 		<div class="footer-links">
-		  <a href="#">공지사항</a>
-		  <a href="#">이용약관</a>
-		  <a href="#">개인정보 처리방침</a>
+		  <a href="#" @click="fnPrivacy">공지사항</a>
+		  <a href="#" @click="fnPrivacy">이용약관</a>
+		  <a href="#" @click="fnPrivacy">개인정보 처리방침</a>
 		</div>
 	  
 		<!-- 메인 내용 -->
@@ -52,7 +52,9 @@ const footer = Vue.createApp({
 		return {};
 	},
 	methods: {
-		
+		fnPrivacy :function(){
+			location.href="/cs/privacy.do"
+		}
 	},
 	mounted() {
 		

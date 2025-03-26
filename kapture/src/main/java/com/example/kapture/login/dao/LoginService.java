@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -139,6 +140,15 @@ public class LoginService {
             code.append(characters.charAt(index));
         }
         return code.toString();
+    }
+    //구글 로그인
+    public Map<String, Object> findUserByEmail(String email) {
+        return loginMapper.selectUserByEmail(email);
+    }
+    //구글 로그인 후 신규가입
+    public Map<String, Object> createUserFromSocial(Map<String, Object> param) {
+        loginMapper.insertSocialUser(param);
+        return loginMapper.selectUserByEmail((String) param.get("userEmail"));
     }
 
 }
