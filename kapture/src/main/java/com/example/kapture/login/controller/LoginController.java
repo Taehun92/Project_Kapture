@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -209,58 +211,26 @@ public class LoginController {
 	}
 	
 	
-	
-	
-	//카카오 액세스 토큰 및 정보 조회 
-	@RequestMapping(value = "/kakao.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String kakao(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-        String tokenUrl = "https://kauth.kakao.com/oauth/token";
-
-        RestTemplate restTemplate = new RestTemplate();
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", client_id);
-        params.add("redirect_uri", redirect_uri);
-        params.add("code", (String)map.get("code"));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
-
-        Map<String, Object> responseBody = response.getBody();
-        resultMap = (HashMap<String, Object>)getUserInfo((String) responseBody.get("access_token"));
-		System.out.println(resultMap);
-		return new Gson().toJson(resultMap);
-    }
-	private Map<String, Object> getUserInfo(String accessToken) {
-	    String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
-
-	    RestTemplate restTemplate = new RestTemplate();
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setBearerAuth(accessToken);
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
-
-	    ResponseEntity<String> response = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, String.class);
-
-	    try {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        return objectMapper.readValue(response.getBody(), Map.class);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null; // 예외 발생 시 null 반환
-	    }
-	}
-	
 	@RequestMapping("/test-mail")
 	@ResponseBody
 	public String testMail() {
 	    loginService.sendVerificationEmail("수신자메일@gmail.com", "ABC123");
 	    return "메일 전송 성공!";
 	}
+	
+	// 구글 로그인 api
+	@RequestMapping("/login/success")
+    @ResponseBody
+    public String loginSuccess(@AuthenticationPrincipal OAuth2User oauth2User) {
+        Map<String, Object> attributes = oauth2User.getAttributes();
+
+        System.out.println("🔐 구글 로그인 사용자 정보 출력:");
+        attributes.forEach((key, value) -> System.out.println(key + " : " + value));
+
+        return "✅ 로그인 성공! 콘솔을 확인하세요.";
+    }
+	
+	
+	
 	
 }
