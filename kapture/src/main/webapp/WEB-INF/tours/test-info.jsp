@@ -9,8 +9,7 @@
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="/js/page-Change.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
-		<script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-		<link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
+
 		<title>상품 상세페이지</title>
 	</head>
 	<style>
@@ -227,9 +226,7 @@
 			border-radius: 5px;
 		  }
 
-		  .datepicker {
-			width: 100%;
-		  }
+
 	</style>
 
 	<body>
@@ -286,31 +283,12 @@
         	<transition name="modal">
             	<div v-if="showModal" class="modal">
                 	<span class="close-button" @click="showModal = false">닫기</span>
-                	<h2>날짜를 선택해주세요.</h2>
-					<div class="datepicker">
-						<vue-date-picker v-model="date" multi-calendars model-auto range :min-date="new Date()"
-						@input="params.startDate = _formatedDatepicker($event)" />
-					</div>
-					<div><button @click="selectDate">날짜선택완료</button></div>
+                	<h2>일정</h2>
+					
+
             	</div>
         	</transition>
     	
-			<transition name="modal">
-				<div v-if="showSelectedModal" class="modal">
-				  <span class="close-button" @click="showSelectedModal = false">닫기</span>
-				  <h2>선택한 날짜</h2>
-				  <!-- 필요에 따라 다른 날짜 정보도 추가 -->
-				  	<div v-if="formattedDays.length">
-						<p v-for="(day, index) in formattedDays" :key="index">
-							{{ day }} 
-							<button @click="reserve(day, '오전')">오전</button>
-							<button @click="reserve(day, '오후')">오후</button>
-							<button @click="reserve(day, '종일')">종일</button>
-						</p>
-					</div>
-				</div>
-			  </transition>
-
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
@@ -327,15 +305,11 @@
 					reviewsList: [],
 					sessionId: "${sessionId}",
 					showModal: false,
-					showSelectedModal: false,
 					date: new Date(),
 					tourTime : ""
 				};
 			},
-			components: {
-				VueDatePicker
-			},
-
+			
 			watch: {
 				date(date) {
 			 		this.selectedDate = date;
@@ -386,6 +360,7 @@
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
 							self.tourTime = data.tourInfo.duration;
+							console.log(self.tourTime);
 						}
 					});
 				},
@@ -442,63 +417,6 @@
 						}
 					});
 				},
-
-				// 모달창에서 날짜 선택 후 날짜 표시
-				formatDate(date) {
-					// 🟢 date가 유효한지 체크
-					// 🟢 YY/MM/DD 형식으로 변환
-					const yy = String(date.getFullYear()).slice(2); // '25'
-					const mm = String(date.getMonth() + 1).padStart(2, '0'); // '03'
-					const dd = String(date.getDate()).padStart(2, '0'); // '23'					
-					return yy + '/' + mm + '/' + dd;
-			   	},
-			   	getDatesInRange(startDate, endDate) {
-				   const dates = [];
-				   let currentDate = new Date(startDate);
-				   endDate = new Date(endDate);
-				   while (currentDate <= endDate) {
-					 dates.push(new Date(currentDate));
-					 currentDate.setDate(currentDate.getDate() + 1);
-				   	}
-				   return dates;
-				},
-				 // 날짜를 "일"만 출력 (예: "25일")
-				formatDay(date) {
-				   const d = new Date(date);
-				   return (d.getMonth() + 1) + "월 " + d.getDate() + "일";
-			   	},
-
-				selectDate() {
-				// 첫 번째 모달 닫고, 두 번째 모달 열기
-					this.showModal = false;
-					this.showSelectedModal = true;
-				},
-				/*
-				reserve(day, time) {
-					// tourInfo.duration 에 저장된 값과 사용자가 선택한 시간이 일치하는지 확인
-					if (this.tourInfo.duration === time) {
-					  alert(day + " " + time + "에 예약되었습니다.");
-					} else {
-					  alert("이 상품은 " + this.tourInfo.duration + " 예약 상품입니다.");
-					}
-					// 예약 후 추가 동작이 필요하면 여기에 구현합니다.
-				}
-					*/
-
-				reserve(day, time) {
-					// tourInfo.date가 상품의 예약 날짜라고 가정합니다.
-					if (this.tourInfo.tourDate && this.tourInfo.tourDate !== day) {
-					  alert("선택한 날짜(" + day + ")가 상품의 날짜(" + this.tourInfo.tourDate + ")와 일치하지 않습니다.");
-					  return;
-					}
-				  
-					// 날짜가 일치하는 경우, 예약 가능한 시간(오전/오후/종일)도 비교합니다.
-					if (this.tourInfo.duration === time) {
-					  alert(day + " " + time + "에 예약되었습니다.");
-					} else {
-					  alert("이 상품은 " + this.tourInfo.duration + " 예약 상품입니다.");
-					}
-				  }
 
 			},
 			mounted() {
