@@ -31,7 +31,7 @@
 			margin-bottom: 20px;
 			color: #333;
 		}
-		input {
+		.login-input {
 			width: 100%;
 			padding: 12px;
 			margin: 10px 0;
@@ -39,13 +39,13 @@
 			border-radius: 4px;
 			box-sizing: border-box;
 		}
-		button {
+		.login-btn {
 			width: 100%;
 			background-color: #2b74e4;
 			color: white;
-			padding: 12px;
+			padding: 19px;
 			border: none;
-			border-radius: 4px;
+			border-radius: 2px;
 			font-size: 16px;
 			cursor: pointer;
 			margin-top: 10px;
@@ -75,13 +75,12 @@
         </div>
 
         <h2>Login to Kapture</h2>
-
-        <input type="text" v-model="email" placeholder="Email or ID">
-        <input type="password" v-model="password" placeholder="Password" @keyUp.enter="login">
+		<input class="login-input" type="text" v-model="email" placeholder="Email or ID">
+		<input class="login-input" type="password" v-model="password" placeholder="Password" @keyUp.enter="login">
 
         <div class="error-msg" v-if="errorMessage">{{ errorMessage }}</div>
 
-        <button @click="login">Login</button>
+        <button class="login-btn" @click="login">Login</button>
 
         <!-- ✅ 구글 로그인 버튼 추가 -->
         <div style="margin-top: 30px; text-align: center;">
@@ -92,7 +91,7 @@
 
         <div class="signup-link">
             Don't have an account? <a href="/join.do">Sign up here</a><br/>
-            Forgot your password? <a href="/find-password.do">Find it here</a>
+            Forgot your password? <a href="/find-id.do">Find it here</a>
         </div>
     </div>
     <jsp:include page="../common/footer.jsp" />
@@ -125,7 +124,7 @@ const app = Vue.createApp({
 				},
 				success(data) {
 					if (data.result === "success") {
-						alert(data.login.userFirstName + data.login.userLastName + "님 환영합니다!");
+						alert(data.login.userFirstName + "님 환영합니다!");
 						location.href = "/main.do";
 					} else {
 						self.errorMessage = data.message || "Login failed. Please try again.";

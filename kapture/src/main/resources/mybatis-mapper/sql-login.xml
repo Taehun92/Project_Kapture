@@ -6,8 +6,7 @@
 	<select id="getlogin" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
 		SELECT *
 		FROM USERS 
-		WHERE EMAIL = #{email} AND
-		PASSWORD = #{password}  
+		WHERE EMAIL = #{email}
 	</select>
 	
 	<insert id="insertUser" parameterType="hashmap">
@@ -20,33 +19,55 @@
 		SELECT *
 		FROM USERS 
 		WHERE EMAIL = #{email}
-		
 	</select>
 	
 	<select id="selectUserByEmail" parameterType="string" resultType="map">
-    SELECT user_no AS userNo,
-           email AS userEmail,
-           user_firstname AS userFirstName,
-           user_lastname AS userLastName
-    FROM users
-    WHERE email = #{email}
-	</select>
+    SELECT * FROM (
+        SELECT USER_NO AS userNo,
+               EMAIL AS email,
+               USER_FIRSTNAME AS userFirstName,
+               USER_LASTNAME AS userLastName
+          FROM USERS
+         WHERE EMAIL = #{email, jdbcType=VARCHAR}
+    )
+    WHERE ROWNUM = 1
+</select>
+
 
 	<insert id="insertSocialUser" parameterType="map">
-        INSERT INTO users(
-            email,
-         	password,
-            user_firstname,
-            user_lastname,
-            social_type
-        ) VALUES (
-            #{userEmail},
-            'Test1234!'
-            #{userFirstName},
-            #{userLastName},
-            #{socialType}
-        )
-    </insert>
+    INSERT INTO USERS(
+        USER_NO,
+        PASSWORD,
+        EMAIL,
+        PHONE,
+        ROLE,
+        USER_FIRSTNAME,
+        USER_LASTNAME,
+        SOCIAL_TYPE
+    ) VALUES (
+        USERS_SEQ.NEXTVAL,
+        'Test1234!',
+        #{email},
+        '010-1234-1234',
+        'TOURIST',
+        #{userFirstName},
+        NVL(#{userLastName}, 'N/A'),
+        'SOCIAL'
+    )
+</insert>
+	<select id="selectUserEmail" parameterType="hashmap" resultType="String">
+	    SELECT EMAIL
+	    FROM USERS
+	    WHERE USER_FIRSTNAME = #{firstName}
+	      AND USER_LASTNAME = #{lastName}
+	      AND PHONE = #{phone}
+	      AND BIRTHDAY = #{birthday}
+	</select>
+	<update id="updateUserPassword" parameterType="hashmap">
+		UPDATE USERS
+	    SET PASSWORD = #{password}
+	    WHERE EMAIL = #{email}
+	</update>
 
 </mapper>
 
