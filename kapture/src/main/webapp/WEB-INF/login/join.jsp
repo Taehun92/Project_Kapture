@@ -303,31 +303,36 @@ const app = Vue.createApp({
     validateBirthdayParts() {
       const { mm, dd, yyyy } = this.birth;
       const mmNum = parseInt(mm), ddNum = parseInt(dd), yyyyNum = parseInt(yyyy);
-
-      const valid =
+      const isValid = (
         yyyy.length === 4 &&
-        mm.length === 2 &&
-        dd.length === 2 &&
+        mm.length >= 1 &&
+        dd.length >= 1 &&
+        !isNaN(yyyyNum) && !isNaN(mmNum) && !isNaN(ddNum) &&
         mmNum >= 1 && mmNum <= 12 &&
-        ddNum >= 1 && ddNum <= 31;
-
-      this.isBirthdayValid = valid;
-
-      if (valid) {
-        const yy = yyyy.slice(2); // 마지막 두 자리만 사용
-        this.user.birthday = `${yy}/${mm}/${dd}`; // 최종 조합
+        ddNum >= 1 && ddNum <= 31 &&
+        yyyyNum >= 1900 && yyyyNum <= 2100
+      );
+      this.isBirthdayValid = isValid;
+      if (isValid) {
+        const yy = yyyy.slice(2);
+        const pad = (n) => n.toString().padStart(2, '0');
+        const paddedMM = pad(mm);
+        const paddedDD = pad(dd);
+        this.user.birthday = yy +'/'+ paddedMM +'/'+ paddedDD;
       } else {
-        this.user.birthday = ''; // 유효하지 않으면 비워버림
+        this.user.birthday = null; // or ''
       }
     },
 
     fnJoin() {
       this.validateBirthdayParts();
-
+    
       if (!this.canSubmit || !this.isBirthdayValid) {
         alert("Please complete all required fields correctly.");
         return;
       }
+
+      console.log("전송 전 birthday:", this.user.birthday);
 
       $.ajax({
         url: "join.dox",
