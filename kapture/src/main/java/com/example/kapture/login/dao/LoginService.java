@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -12,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.kapture.board.model.Request;
 import com.example.kapture.login.mapper.LoginMapper;
 import com.example.kapture.login.model.Login;
 
@@ -67,13 +69,16 @@ public class LoginService {
 	//회원가입 
 	public HashMap<String, Object> joinUser(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//				String hashPwd = passwordEncoder.encode((String) map.get("password"));
-//				map.put("password", hashPwd);
-		
+		String hashPwd = passwordEncoder.encode((String) map.get("password"));
+		map.put("password", hashPwd);
 		int num = loginMapper.insertUser(map);
-		resultMap.put("result", "success");
-		// if num > 0 데이터 삽입 잘 된거 
-		// 아니면 뭔가 문제 있는거
+		if(num>0) {
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} else {
+			resultMap.put("result", "fail");
+		}
+		
 		return resultMap;
 	}
 	
@@ -140,5 +145,20 @@ public class LoginService {
         }
         return code.toString();
     }
+
+	public HashMap<String, Object> getUserEmail(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			String email = loginMapper.selectUserEmail(map);
+			resultMap.put("result", "success");
+			resultMap.put("email", email);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 
 }
