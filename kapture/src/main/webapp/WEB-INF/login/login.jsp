@@ -86,6 +86,9 @@
             Don't have an account? <a href="/join.do">Sign up here</a><br/>
             Forgot your password? <a href="/find-id.do">Find it here</a>
         </div>
+		<div>
+			<button @click="loginWithGoogle">Sign in with Google</button>
+		</div>
     </div>
     <jsp:include page="../common/footer.jsp" />
 </body>
@@ -127,6 +130,10 @@ const app = Vue.createApp({
 					self.errorMessage = "Server error. Please try again later.";
 				}
 			});
+		},
+
+		loginWithGoogle() {
+			window.location.href = 'http://localhost:8080/oauth2/authorization/google';
 		}
 	}
 });
