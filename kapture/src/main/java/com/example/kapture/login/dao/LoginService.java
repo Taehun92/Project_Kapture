@@ -69,13 +69,16 @@ public class LoginService {
 	//회원가입 
 	public HashMap<String, Object> joinUser(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//				String hashPwd = passwordEncoder.encode((String) map.get("password"));
-//				map.put("password", hashPwd);
-		
+		String hashPwd = passwordEncoder.encode((String) map.get("password"));
+		map.put("password", hashPwd);
 		int num = loginMapper.insertUser(map);
-		resultMap.put("result", "success");
-		// if num > 0 데이터 삽입 잘 된거 
-		// 아니면 뭔가 문제 있는거
+		if(num>0) {
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+		} else {
+			resultMap.put("result", "fail");
+		}
+		
 		return resultMap;
 	}
 	

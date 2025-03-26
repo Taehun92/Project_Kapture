@@ -100,8 +100,15 @@
   <!-- Personal Info -->
   <input placeholder="First Name" v-model="user.firstName" />
   <input placeholder="Last Name" v-model="user.lastName" />
-  <input placeholder="Phone (e.g. 010-0000-0000)" v-model="user.phone" />
-  <input type="date" v-model="user.birthday" placeholder="yyyy-mm-dd" />
+  <input placeholder="Phone Number" v-model="user.phone" />
+  <div style="display: flex; gap: 8px;">
+    <input type="text" v-model="birth.mm" maxlength="2" placeholder="MM" style="flex: 1;" />
+    <input type="text" v-model="birth.dd" maxlength="2" placeholder="DD" style="flex: 1;" />
+    <input type="text" v-model="birth.yyyy" maxlength="4" placeholder="YYYY" style="flex: 2;" />
+  </div>
+  <div v-if="!isBirthdayValid" style="color: red; font-size: 13px; margin-top: 5px;">
+    ❌ 생년월일을 올바르게 입력해주세요.
+  </div>
 
   <div v-if="!emailVerified && userInputCode.length > 0" style="color: red; font-size: 13px;">
     ❗ You must verify your email to proceed with sign up.
@@ -130,8 +137,20 @@ const app = Vue.createApp({
   data() {
     return {
       user: {
-        email: '', password: '', password2: '', firstName: '', lastName: '', phone: '', birthday: ''
+        email: '', 
+        password: '', 
+        password2: '', 
+        firstName: '', 
+        lastName: '', 
+        phone: '', 
+        birthday: ''
       },
+      birth: {
+        mm: '', 
+        dd: '', 
+        yyyy: ''
+      },
+      isBirthdayValid: true,
       userInputCode: '',
       emailCodeSent: false,
       emailVerified: false,
@@ -162,7 +181,10 @@ const app = Vue.createApp({
       this.emailCheckTimer = setTimeout(() => {
         this.fnIdCheck();
       }, 500);
-    }
+    },
+    'birth.mm': 'validateBirthdayParts',
+    'birth.dd': 'validateBirthdayParts',
+    'birth.yyyy': 'validateBirthdayParts'
   },
   computed: {
     canSubmit() {
@@ -278,11 +300,35 @@ const app = Vue.createApp({
       });
     },
 
+    validateBirthdayParts() {
+      const { mm, dd, yyyy } = this.birth;
+      const mmNum = parseInt(mm), ddNum = parseInt(dd), yyyyNum = parseInt(yyyy);
+
+      const valid =
+        yyyy.length === 4 &&
+        mm.length === 2 &&
+        dd.length === 2 &&
+        mmNum >= 1 && mmNum <= 12 &&
+        ddNum >= 1 && ddNum <= 31;
+
+      this.isBirthdayValid = valid;
+
+      if (valid) {
+        const yy = yyyy.slice(2); // 마지막 두 자리만 사용
+        this.user.birthday = `${yy}/${mm}/${dd}`; // 최종 조합
+      } else {
+        this.user.birthday = ''; // 유효하지 않으면 비워버림
+      }
+    },
+
     fnJoin() {
-      if (!this.canSubmit) {
-        alert("Please complete all required fields.");
+      this.validateBirthdayParts();
+
+      if (!this.canSubmit || !this.isBirthdayValid) {
+        alert("Please complete all required fields correctly.");
         return;
       }
+
       $.ajax({
         url: "join.dox",
         type: "POST",
