@@ -9,6 +9,13 @@
 		WHERE USER_NO = #{sessionId}
 	</select>
 	
+	<update id="userInfoUpdate" parameterType="hashmap">
+		UPDATE USERS
+	    SET PHONE = #{phone},
+	    	PUSHYN = #{pushYN},
+	    	GENDER = #{gender}
+	    WHERE USER_NO = #{sessionId}
+	</update>
 	
 </mapper>
 
