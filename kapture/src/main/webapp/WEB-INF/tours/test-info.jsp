@@ -291,11 +291,25 @@
 						<vue-date-picker v-model="date" multi-calendars model-auto range :min-date="new Date()"
 						@input="params.startDate = _formatedDatepicker($event)" />
 					</div>
-					<div><button>날짜선택완료</button></div>
+					<div><button @click="selectDate">날짜선택완료</button></div>
             	</div>
         	</transition>
     	
-
+			<transition name="modal">
+				<div v-if="showSelectedModal" class="modal">
+				  <span class="close-button" @click="showSelectedModal = false">닫기</span>
+				  <h2>선택한 날짜</h2>
+				  <!-- 필요에 따라 다른 날짜 정보도 추가 -->
+				  	<div v-if="formattedDays.length">
+						<p v-for="(day, index) in formattedDays" :key="index">
+							{{ day }} 
+							<button @click="reserve(day, '오전')">오전</button>
+							<button @click="reserve(day, '오후')">오후</button>
+							<button @click="reserve(day, '종일')">종일</button>
+						</p>
+					</div>
+				</div>
+			  </transition>
 
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -313,12 +327,47 @@
 					reviewsList: [],
 					sessionId: "${sessionId}",
 					showModal: false,
+					showSelectedModal: false,
 					date: new Date(),
+					tourTime : ""
 				};
 			},
 			components: {
 				VueDatePicker
 			},
+
+			watch: {
+				date(date) {
+			 		this.selectedDate = date;
+			 	}
+			},
+
+			computed: {
+			 	formattedDate() {
+			 		if (!this.date) return ''; // 날짜가 없을 때 빈 문자열 반환
+			 		const d = new Date(this.date);
+		 			const yy = String(d.getFullYear()).slice(2); // 연도 두 자리
+			 		const mm = String(d.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1 필요)
+			 		const dd = String(d.getDate()).padStart(2, '0'); // 일
+			 		return yy + '/' + mm + '/' + dd;
+				},
+				monthDay() {
+					// date가 배열인 경우 첫 번째 날짜만 사용하거나 원하는 방식으로 처리 가능
+					const d = Array.isArray(this.date) ? new Date(this.date[0]) : new Date(this.date);
+					const month = d.getMonth() + 1;
+					const day = d.getDate();
+					return month + "월 " + day + "일";
+				},
+				formattedDays() {
+					if (Array.isArray(this.date) && this.date.length === 2) {
+					  const datesArray = this.getDatesInRange(this.date[0], this.date[1]);
+					  return datesArray.map(date => this.formatDay(date));
+					}
+					return [];
+				}
+			},
+
+
 			methods: {
 				fnTourInfo() {
 					let self = this;
@@ -336,7 +385,7 @@
 							console.log(self.tourInfo);
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
-
+							self.tourTime = data.tourInfo.duration;
 						}
 					});
 				},
@@ -372,6 +421,12 @@
 						sessionId: self.sessionId
 					};
 
+					if(!self.sessionId) {
+						alert('로그인이 필요합니다.');
+						location.href='/login.do'
+						return;
+					}
+
 					$.ajax({
 						url: "/basket/add.dox",
 						dataType: "json",
@@ -386,8 +441,64 @@
 							}
 						}
 					});
+				},
 
+				// 모달창에서 날짜 선택 후 날짜 표시
+				formatDate(date) {
+					// 🟢 date가 유효한지 체크
+					// 🟢 YY/MM/DD 형식으로 변환
+					const yy = String(date.getFullYear()).slice(2); // '25'
+					const mm = String(date.getMonth() + 1).padStart(2, '0'); // '03'
+					const dd = String(date.getDate()).padStart(2, '0'); // '23'					
+					return yy + '/' + mm + '/' + dd;
+			   	},
+			   	getDatesInRange(startDate, endDate) {
+				   const dates = [];
+				   let currentDate = new Date(startDate);
+				   endDate = new Date(endDate);
+				   while (currentDate <= endDate) {
+					 dates.push(new Date(currentDate));
+					 currentDate.setDate(currentDate.getDate() + 1);
+				   	}
+				   return dates;
+				},
+				 // 날짜를 "일"만 출력 (예: "25일")
+				formatDay(date) {
+				   const d = new Date(date);
+				   return (d.getMonth() + 1) + "월 " + d.getDate() + "일";
+			   	},
+
+				selectDate() {
+				// 첫 번째 모달 닫고, 두 번째 모달 열기
+					this.showModal = false;
+					this.showSelectedModal = true;
+				},
+				/*
+				reserve(day, time) {
+					// tourInfo.duration 에 저장된 값과 사용자가 선택한 시간이 일치하는지 확인
+					if (this.tourInfo.duration === time) {
+					  alert(day + " " + time + "에 예약되었습니다.");
+					} else {
+					  alert("이 상품은 " + this.tourInfo.duration + " 예약 상품입니다.");
+					}
+					// 예약 후 추가 동작이 필요하면 여기에 구현합니다.
 				}
+					*/
+
+				reserve(day, time) {
+					// tourInfo.date가 상품의 예약 날짜라고 가정합니다.
+					if (this.tourInfo.tourDate && this.tourInfo.tourDate !== day) {
+					  alert("선택한 날짜(" + day + ")가 상품의 날짜(" + this.tourInfo.tourDate + ")와 일치하지 않습니다.");
+					  return;
+					}
+				  
+					// 날짜가 일치하는 경우, 예약 가능한 시간(오전/오후/종일)도 비교합니다.
+					if (this.tourInfo.duration === time) {
+					  alert(day + " " + time + "에 예약되었습니다.");
+					} else {
+					  alert("이 상품은 " + this.tourInfo.duration + " 예약 상품입니다.");
+					}
+				  }
 
 			},
 			mounted() {
