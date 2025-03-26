@@ -16,10 +16,18 @@
 		SELECT COUNT(*) FROM BASKET WHERE USER_NO = #{sessionId}
 	</select>
 	
-	<select id="selectTourDate" parameterType="hashmap" resultType="java.sql.Date">
+	<select id="selectMinTourDate" parameterType="hashmap" resultType="java.sql.Date">
 		select min(tour_date) from basket b
 		inner join tours t on b.tour_no = t.tour_no
 		where user_no = #{sessionId}
 	</select>
+	
+	<select id="selectTourDateList" parameterType="hashmap" resultType="java.sql.Date">
+		select tour_date from basket b
+		inner join tours t on b.tour_no = t.tour_no
+		where user_no = #{sessionId}
+	</select>
+	
+	
 
 </mapper>

@@ -1,7 +1,8 @@
 package com.example.kapture.basket.mapper;
 
-import java.util.HashMap;
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,5 +16,7 @@ public interface BasketMapper {
 
 	int selectCount(HashMap<String, Object> map);
 	
-	Date selectTourDate(HashMap<String, Object> map);
+	Date selectMinTourDate(HashMap<String, Object> map);
+
+	List<Date> selectTourDateList(HashMap<String, Object> map);
 }

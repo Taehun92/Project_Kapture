@@ -2,12 +2,12 @@ package com.example.kapture.basket.dao;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.basket.mapper.BasketMapper;
-import com.example.kapture.basket.model.Basket;
 
 @Service
 public class BasketService {
@@ -61,16 +61,29 @@ public class BasketService {
 		
 	}
 	
-	public HashMap<String, Object> getTourDate(HashMap<String, Object> map) {
+	public HashMap<String, Object> getMinTourDate(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
-		Date date = basketMapper.selectTourDate(map);
+		Date minDate = basketMapper.selectMinTourDate(map);
 		
-		resultMap.put("date", date);
+		resultMap.put("minDate", minDate);
 		
 		resultMap.put("result", "success");
 		
 		return resultMap;
 		
+	}
+
+
+	public HashMap<String, Object> getTourDateList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		List<Date> dateList = basketMapper.selectTourDateList(map);
+		
+		
+		resultMap.put("dateList", dateList);
+		
+		resultMap.put("result", "success");
+		
+		return resultMap;
 	}
 
 }

@@ -285,14 +285,18 @@
             	<div v-if="showModal" class="modal">
                 	<span class="close-button" @click="showModal = false">닫기</span>
                 	<h2>일정</h2>
-					
-
+					<div>
+						<p v-for="date in dateList">
+							{{ date }}
+						</p>
+					</div>
             	</div>
         	</transition>
     	
 		</div>
 		<jsp:include page="../common/footer.jsp" />
 	</body>
+	
 
 	</html>
 	<script>
@@ -308,8 +312,9 @@
 					showModal: false,
 					date: new Date(),
 					showCartButton : false,
-					tourDate : null
-					
+					tourDate : null,
+					dateList : [],
+					minDate : null
 				};
 			},
 			
@@ -367,6 +372,17 @@
 						
 					};
 
+					if (self.minDate) { // 장바구니에 이미 투어가 담겨있다면 날짜 비교
+						const selectedDate = new Date(self.tourInfo.tourDate);
+						const cartDate = new Date(self.minDate);
+						const diffInDays = Math.abs(Math.ceil((selectedDate - cartDate) / (1000 * 60 * 60 * 24)));
+	
+						if (diffInDays > 6) {
+							alert('장바구니에 담긴 투어와 6일 이상 차이납니다. 담을 수 없습니다.');
+							return;
+						}
+					}
+
 					if(!self.sessionId) {
 						alert('로그인이 필요합니다.');
 						location.href='/login.do'
@@ -383,7 +399,7 @@
 							if (data.result == "success") {
 								alert("장바구니에 담겼습니다.");
 								self.fnGetCart();
-								self.fnGetTourDate();
+								self.fnGetMinTourDate();
 							} else {
 								alert("이미 담은 상품입니다!");
 								
@@ -405,18 +421,15 @@
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							console.log(data);
 							if(data.count > 0) {
-								console.log('카트에 존재');
 								self.showCartButton = true;
 							} else {
-								console.log('카트에 존재 x');
 								
 							}
 						}
 					});
 				},
-				fnGetTourDate() {
+				fnGetMinTourDate() {
 					let self = this;
 					let nparmap = {
 						tourNo: self.tourNo,
@@ -425,17 +438,15 @@
 					};
 
 					$.ajax({
-						url: "/basket/getTourDate.dox",
+						url: "/basket/getMinTourDate.dox",
 						dataType: "json",
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							console.log(data);
-							self.tourDate = data.date;
-							console.log(self.tourDate);
-							if (data.tourDate) {
+							self.minDate = data.minDate;
+							if (data.minDate) {
 								// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
-								const parts = data.tourDate.split(' ');
+								const parts = data.minDate.split(' ');
 								const month = parts[0].replace('월', '');
 								const day = parseInt(parts[1].replace(',', ''), 10);
 								const year = parseInt(parts[2], 10);
@@ -443,24 +454,46 @@
 								// 월은 0부터 시작하므로 1을 빼줍니다.
 								const monthIndex = parseInt(month, 10) - 1;
 								const dateObj = new Date(year, monthIndex, day);
-								self.cartTourDate = dateObj;
+								self.minDate = dateObj;
 
-								console.log(cartTourDate);
+								console.log(self.minDate);
 								console.log(day);
 								console.log(month);
-								console.log(monthIndex);
 							}
 						}
 					});
 				},
 
+				fnGetTourDateList() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId: self.sessionId,
+						
+					};
+
+					$.ajax({
+						url: "/basket/getTourDateList.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							self.dateList = data.dateList;
+							console.log(self.dateList);
+						}
+					});
+				},
+
+			
 
 			},
 			mounted() {
 				let self = this;
 				self.fnTourInfo();
 				self.fnGetCart();
-				self.fnGetTourDate();
+				self.fnGetMinTourDate();
+				self.fnGetTourDateList();
 			}
 		});
 		app.component('star-rating', VueStarRating.default)
