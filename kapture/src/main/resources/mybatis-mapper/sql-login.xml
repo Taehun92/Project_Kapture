@@ -6,8 +6,7 @@
 	<select id="getlogin" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
 		SELECT *
 		FROM USERS 
-		WHERE EMAIL = #{email} AND
-		PASSWORD = #{password}  
+		WHERE EMAIL = #{email}
 	</select>
 	
 	<insert id="insertUser" parameterType="hashmap">
@@ -20,8 +19,16 @@
 		SELECT *
 		FROM USERS 
 		WHERE EMAIL = #{email}
-		
 	</select>
+	<select id="selectUserEmail" parameterType="hashmap" resultType="String">
+	    SELECT EMAIL
+	    FROM USERS
+	    WHERE USER_FIRSTNAME = #{firstName}
+	      AND USER_LASTNAME = #{lastName}
+	      AND PHONE = #{phone}
+	      AND BIRTHDAY = #{birthday}
+	</select>
+	
 
 </mapper>
 
