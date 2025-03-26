@@ -3,8 +3,10 @@ package com.example.kapture.login.dao;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -13,7 +15,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.kapture.board.model.Request;
 import com.example.kapture.login.mapper.LoginMapper;
 import com.example.kapture.login.model.Login;
 
@@ -68,18 +69,37 @@ public class LoginService {
 	
 	//회원가입 
 	public HashMap<String, Object> joinUser(HashMap<String, Object> map) {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		String hashPwd = passwordEncoder.encode((String) map.get("password"));
-		map.put("password", hashPwd);
-		int num = loginMapper.insertUser(map);
-		if(num>0) {
-			resultMap.put("result", "success");
-			resultMap.put("num", num);
-		} else {
-			resultMap.put("result", "fail");
-		}
-		
-		return resultMap;
+	    HashMap<String, Object> resultMap = new HashMap<>();
+
+	    // 비밀번호 해시화
+	    String hashPwd = passwordEncoder.encode((String) map.get("password"));
+	    map.put("password", hashPwd);
+
+	    // 생년월일 문자열 (예: 24/07/09)
+	    String birthdayStr = (String) map.get("birthday");
+	    System.out.println("프론트에서 넘어온 생년월일: " + birthdayStr);
+
+	    // 생년월일 날짜 변환
+	    SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd");
+	    try {
+	        Date birthday = sdf.parse(birthdayStr); // java.util.Date
+	        map.put("birthday", new java.sql.Date(birthday.getTime())); // java.sql.Date로 변환
+	    } catch (ParseException e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("message", "잘못된 생년월일 형식입니다.");
+	        return resultMap;
+	    }
+
+	    // DB 저장
+	    int num = loginMapper.insertUser(map);
+	    if (num > 0) {
+	        resultMap.put("result", "success");
+	        resultMap.put("num", num);
+	    } else {
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
 	}
 	
 	//	로그아웃
