@@ -134,7 +134,7 @@ const app = Vue.createApp({
 					self.errorMessage = "Server error. Please try again later.";
 				}
 			});
-		}
+		},
 	}
 });
 app.mount('#app');
