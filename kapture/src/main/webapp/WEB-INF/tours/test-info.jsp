@@ -276,10 +276,11 @@
 					<p>{{review.comment}}</p>
 				</div>
 			</div>
-
-			<div class="clickable-area" @click="showModal = true" v-if="!showModal">
-            	<p>🛒</p>
-        	</div>
+			<div v-if="showCartButton">
+				<div class="clickable-area" @click="showModal = true" v-if="!showModal">
+					<p>🛒</p>
+				</div>
+			</div>
         	<transition name="modal">
             	<div v-if="showModal" class="modal">
                 	<span class="close-button" @click="showModal = false">닫기</span>
@@ -306,42 +307,12 @@
 					sessionId: "${sessionId}",
 					showModal: false,
 					date: new Date(),
-					tourTime : ""
+					showCartButton : false,
+					tourDate : null
+					
 				};
 			},
 			
-			watch: {
-				date(date) {
-			 		this.selectedDate = date;
-			 	}
-			},
-
-			computed: {
-			 	formattedDate() {
-			 		if (!this.date) return ''; // 날짜가 없을 때 빈 문자열 반환
-			 		const d = new Date(this.date);
-		 			const yy = String(d.getFullYear()).slice(2); // 연도 두 자리
-			 		const mm = String(d.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1 필요)
-			 		const dd = String(d.getDate()).padStart(2, '0'); // 일
-			 		return yy + '/' + mm + '/' + dd;
-				},
-				monthDay() {
-					// date가 배열인 경우 첫 번째 날짜만 사용하거나 원하는 방식으로 처리 가능
-					const d = Array.isArray(this.date) ? new Date(this.date[0]) : new Date(this.date);
-					const month = d.getMonth() + 1;
-					const day = d.getDate();
-					return month + "월 " + day + "일";
-				},
-				formattedDays() {
-					if (Array.isArray(this.date) && this.date.length === 2) {
-					  const datesArray = this.getDatesInRange(this.date[0], this.date[1]);
-					  return datesArray.map(date => this.formatDay(date));
-					}
-					return [];
-				}
-			},
-
-
 			methods: {
 				fnTourInfo() {
 					let self = this;
@@ -359,8 +330,7 @@
 							console.log(self.tourInfo);
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
-							self.tourTime = data.tourInfo.duration;
-							console.log(self.tourTime);
+
 						}
 					});
 				},
@@ -393,7 +363,8 @@
 					let self = this;
 					let nparmap = {
 						tourNo: self.tourNo,
-						sessionId: self.sessionId
+						sessionId: self.sessionId,
+						
 					};
 
 					if(!self.sessionId) {
@@ -411,17 +382,85 @@
 							console.log(data);
 							if (data.result == "success") {
 								alert("장바구니에 담겼습니다.");
+								self.fnGetCart();
+								self.fnGetTourDate();
 							} else {
 								alert("이미 담은 상품입니다!");
+								
+							}
+						}
+					});
+				},
+				fnGetCart() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId: self.sessionId,
+						
+					};
+
+					$.ajax({
+						url: "/basket/get.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							if(data.count > 0) {
+								console.log('카트에 존재');
+								self.showCartButton = true;
+							} else {
+								console.log('카트에 존재 x');
+								
+							}
+						}
+					});
+				},
+				fnGetTourDate() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId: self.sessionId,
+						
+					};
+
+					$.ajax({
+						url: "/basket/getTourDate.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							self.tourDate = data.date;
+							console.log(self.tourDate);
+							if (data.tourDate) {
+								// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+								const parts = data.tourDate.split(' ');
+								const month = parts[0].replace('월', '');
+								const day = parseInt(parts[1].replace(',', ''), 10);
+								const year = parseInt(parts[2], 10);
+	
+								// 월은 0부터 시작하므로 1을 빼줍니다.
+								const monthIndex = parseInt(month, 10) - 1;
+								const dateObj = new Date(year, monthIndex, day);
+								self.cartTourDate = dateObj;
+
+								console.log(cartTourDate);
+								console.log(day);
+								console.log(month);
+								console.log(monthIndex);
 							}
 						}
 					});
 				},
 
+
 			},
 			mounted() {
 				let self = this;
 				self.fnTourInfo();
+				self.fnGetCart();
+				self.fnGetTourDate();
 			}
 		});
 		app.component('star-rating', VueStarRating.default)
