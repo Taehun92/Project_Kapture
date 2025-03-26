@@ -1,9 +1,10 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
-  <title>Kapture - Find ID</title>
+  <title>Kapture - Find Account</title>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
@@ -11,15 +12,17 @@
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
     }
+
     #app {
       max-width: 420px;
       margin: 80px auto;
       background: #fff;
       padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    input {
+
+    .form-input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
@@ -27,6 +30,12 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
+    .radio-input {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
     .action-btn {
       width: 100%;
       background-color: #2b74e4;
@@ -38,157 +47,252 @@
       cursor: pointer;
       margin-top: 10px;
     }
+
     .info {
       font-size: 14px;
       margin-top: 15px;
       color: #333;
     }
+
+    .tab-switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .tab-switch a {
+      color: #2b74e4;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-left: 5px;
+    }
+
+    .verified-message {
+      color: green;
+      font-size: 13px;
+      margin-top: 5px;
+      text-align: left;
+    }
   </style>
 </head>
+
 <body>
-<div id="app">
-  <h2 style="text-align:center;">Find Your Email</h2>
+  <div id="app">
+    <h2 style="text-align:center;">{{ mode === 'findId' ? 'Find Your Email' : 'Reset Your Password' }}</h2>
 
-  <input v-model="user.firstName" @input="normalizeName('firstName')" placeholder="First Name" />
-  <input v-model="user.lastName" @input="normalizeName('lastName')" placeholder="Last Name" />
+    <div class="tab-switch">
+      <span v-if="mode === 'findId'">
+        이미 아이디를 알고 계신가요?
+        <a @click="mode = 'findPw'">비밀번호 찾기</a>
+      </span>
+      <span v-else>
+        아이디를 모르시나요?
+        <a @click="mode = 'findId'">아이디 찾기</a>
+      </span>
+    </div>
 
-  <!-- 생년월일: 월/일/년 별도 -->
-  <div style="display: flex; gap: 10px;">
-    <input v-model="birthday.MM" maxlength="2" placeholder="MM" />
-    <input v-model="birthday.DD" maxlength="2" placeholder="DD" />
-    <input v-model="birthday.YYYY" maxlength="4" placeholder="YYYY" />
+    <template v-if="mode === 'findId'">
+      <input v-model="user.firstName" @input="normalizeName('firstName')" placeholder="First Name" class="form-input" />
+      <input v-model="user.lastName" @input="normalizeName('lastName')" placeholder="Last Name" class="form-input" />
+      <div style="display: flex; gap: 10px;">
+        <input v-model="birthday.MM" maxlength="2" placeholder="MM" class="form-input" />
+        <input v-model="birthday.DD" maxlength="2" placeholder="DD" class="form-input" />
+        <input v-model="birthday.YYYY" maxlength="4" placeholder="YYYY" class="form-input" />
+      </div>
+      <input v-model="user.phone" @input="normalizePhone" placeholder="Phone Number" class="form-input" />
+      <button class="action-btn" @click="findEmail">Find Email</button>
+      <div class="info" v-if="foundEmails.length > 0">
+        <p>✅ 등록된 이메일 목록:</p>
+        <div v-for="email in foundEmails" :key="email" style="margin-bottom: 8px;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="radio" name="selectedEmail" :value="email" v-model="selectedEmail" class="radio-input" />
+            <span style="font-size: 14px; color: #333;">{{ email }}</span>
+          </label>
+        </div>
+        <button class="action-btn" @click="askPasswordReset">Reset Password?</button>
+      </div>
+    </template>
+
+    <template v-else>
+      <input v-model="selectedEmail" :disabled="verified" placeholder="Your Email" class="form-input" />
+      <button v-if="!verified" class="action-btn" @click="askPasswordReset">Send Verification Code</button>
+    </template>
+
+    <div v-if="emailForReset && !verified">
+      <input v-model="verificationCode" placeholder="Enter verification code" class="form-input" />
+      <button class="action-btn" @click="verifyCode">Verify</button>
+    </div>
+
+    <div v-if="verified" class="verified-message">✅ 인증이 완료되었습니다.</div>
+
+    <div v-if="verified">
+      <input type="password" v-model="newPassword" placeholder="Enter new password" class="form-input" />
+      <div v-if="newPassword.length > 0 && !passwordValid" style="font-size: 13px; margin-top: 5px;">
+        <div class="mt-4 space-y-1 text-sm">
+          <div :class="passwordRules.length ? 'text-green-600' : 'text-red-500'">
+            {{ passwordRules.length ? '✅ 6자 이상' : '❌ 6자 이상' }}
+          </div>
+          <div :class="passwordRules.upper ? 'text-green-600' : 'text-red-500'">
+            {{ passwordRules.upper ? '✅ 대문자 포함' : '❌ 대문자 포함' }}
+          </div>
+          <div :class="passwordRules.lower ? 'text-green-600' : 'text-red-500'">
+            {{ passwordRules.lower ? '✅ 소문자 포함' : '❌ 소문자 포함' }}
+          </div>
+          <div :class="passwordRules.number ? 'text-green-600' : 'text-red-500'">
+            {{ passwordRules.number ? '✅ 숫자 포함' : '❌ 숫자 포함' }}
+          </div>
+          <div :class="passwordRules.special ? 'text-green-600' : 'text-red-500'">
+            {{ passwordRules.special ? '✅ 특수문자 포함' : '❌ 특수문자 포함' }}
+          </div>
+        </div>
+      </div>
+      <input type="password" v-model="confirmPassword" placeholder="Confirm new password" class="form-input" />
+      <div v-if="confirmPassword.length > 0" class="mt-2 text-sm font-medium" :class="passwordsMatch ? 'text-green-600' : 'text-red-500'">
+        {{ passwordsMatch ? '✅ 비밀번호가 일치합니다' : '❌ 비밀번호가 일치하지 않습니다' }}
+      </div>
+      <button class="action-btn" @click="resetPassword">Change Password</button>
+    </div>
   </div>
 
-  <!-- 전화번호 -->
-  <input v-model="user.phone" @input="normalizePhone" placeholder="Phone Number (e.g. 010-1234-5678)" />
-
-  <button class="action-btn" @click="findEmail">Find Email</button>
-
-  <div class="info" v-if="foundEmail">
-    ✅ Your registered email is: <strong>{{ foundEmail }}</strong>
-    <br><br>
-    <button class="action-btn" @click="askPasswordReset">Reset Password?</button>
-  </div>
-
-  <!-- 비밀번호 재설정 관련 화면 (추후 확장 예정) -->
-  <div v-if="emailForReset">
-    <input v-model="verificationCode" placeholder="Enter verification code" />
-    <button class="action-btn" @click="verifyCode">Verify</button>
-  </div>
-
-  <div v-if="verified">
-    <input type="password" v-model="newPassword" placeholder="Enter new password" />
-    <input type="password" v-model="confirmPassword" placeholder="Confirm new password" />
-    <button class="action-btn" @click="resetPassword">Change Password</button>
-  </div>
-</div>
-
-<script>
-const app = Vue.createApp({
-  data() {
-    return {
-      user: {
-        firstName: "",
-        lastName: "",
-        phone: ""
-      },
-      birthday: {
-        MM: "",
-        DD: "",
-        YYYY: ""
-      },
-      foundEmail: "",
-      emailForReset: "",
-      verificationCode: "",
-      newPassword: "",
-      confirmPassword: "",
-      verified: false
-    };
-  },
-  methods: {
-    // 이름 정리: 공백 제거 + 첫 글자 대문자
-    normalizeName(field) {
-      let value = this.user[field] || "";
-      value = value.trim().toLowerCase();
-      value = value.charAt(0).toUpperCase() + value.slice(1);
-      this.user[field] = value;
-    },
-
-    // 전화번호 정리: 공백/하이픈 제거 → 숫자만
-    normalizePhone() {
-      this.user.phone = this.user.phone.replace(/\s|-/g, '').replace(/[^0-9]/g, '');
-    },
-
-    // 생년월일 → YY/MM/DD 형식
-    formatBirthday() {
-      const { YYYY, MM, DD } = this.birthday;
-      if (!YYYY || !MM || !DD) return "";
-
-      const yearShort = YYYY.slice(-2);
-      return yearShort + '/' + MM.padStart(2, '0') + '/' + DD.padStart(2, '0');
-    },
-
-    // 이메일 찾기
-    findEmail() {
-      const self = this;
-
-      if (
-        !self.user.firstName ||
-        !self.user.lastName ||
-        !self.user.phone ||
-        !self.birthday.YYYY ||
-        !self.birthday.MM ||
-        !self.birthday.DD
-      ) {
-        alert("모든 값을 입력해 주세요.");
-        return;
-      }
-      const birthdayFormatted = this.formatBirthday();
-
-      if (!birthdayFormatted) {
-        alert("생년월일을 정확히 입력해주세요.");
-        return;
-      }
-      const nparam = {
-        firstName: self.user.firstName,
-        lastName: self.user.lastName,
-        phone: self.user.phone,
-        birthday: birthdayFormatted
-      };
-
-      console.log("최종 전송 데이터:", nparam);
-
-      $.ajax({
-        url: "/find-email.dox",
-        type: "POST",
-        data: nparam,
-        dataType: "json",
-        success(data) {
-          if (data.result === "success") {
-            self.foundEmail = data.email;
-          } else {
-            alert("❌ 일치하는 계정을 찾을 수 없습니다.");
-          }
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          mode: 'findId',
+          user: { firstName: '', lastName: '', phone: '' },
+          birthday: { MM: '', DD: '', YYYY: '' },
+          foundEmails: [],
+          selectedEmail: '',
+          emailForReset: '',
+          verificationCode: '',
+          newPassword: '',
+          confirmPassword: '',
+          verified: false,
+          emailCodeSent: false,
+          codeMessage: '',
+          passwordRules: { length: false, upper: false, lower: false, number: false, special: false },
+          passwordValid: false,
+          passwordsMatch: false
         }
-      });
-    },
-
-    askPasswordReset() {
-      // 향후: 비밀번호 재설정 절차 시작
-      this.emailForReset = this.foundEmail;
-      alert("이메일 인증 절차로 이동합니다.");
-    },
-
-    verifyCode() {
-      // TODO: 인증번호 검증 로직
-    },
-
-    resetPassword() {
-      // TODO: 새 비밀번호 저장 로직
-    }
-  }
-});
-app.mount('#app');
-</script>
+      },
+      watch: {
+        newPassword() { this.validatePassword(); },
+        confirmPassword() { this.validatePassword(); }
+      },
+      methods: {
+        normalizeName(field) {
+          let value = this.user[field] || "";
+          value = value.trim().toLowerCase();
+          value = value.charAt(0).toUpperCase() + value.slice(1);
+          this.user[field] = value;
+        },
+        normalizePhone() {
+          this.user.phone = this.user.phone.replace(/\s|-/g, '').replace(/[^0-9]/g, '');
+        },
+        formatBirthday() {
+          const { YYYY, MM, DD } = this.birthday;
+          if (!YYYY || !MM || !DD) return "";
+          return YYYY.slice(-2) + '/' + MM.padStart(2, '0') + '/' + DD.padStart(2, '0');
+        },
+        findEmail() {
+          if (!this.user.firstName || !this.user.lastName || !this.user.phone || !this.birthday.YYYY || !this.birthday.MM || !this.birthday.DD) {
+            alert("모든 값을 입력해 주세요."); return;
+          }
+          const birthdayFormatted = this.formatBirthday();
+          $.ajax({
+            url: "/find-email.dox",
+            type: "POST",
+            data: {
+              firstName: this.user.firstName,
+              lastName: this.user.lastName,
+              phone: this.user.phone,
+              birthday: birthdayFormatted
+            },
+            dataType: "json",
+            success: data => {
+              if (data.result === "success") {
+                this.foundEmails = data.emailList;
+                if (this.foundEmails.length === 1) this.selectedEmail = this.foundEmails[0];
+              } else {
+                alert("❌ 일치하는 계정을 찾을 수 없습니다.");
+              }
+            }
+          });
+        },
+        askPasswordReset() {
+          if (!this.selectedEmail) {
+            alert("이메일을 입력하거나 선택해주세요.");
+            return;
+          }
+          this.emailForReset = this.selectedEmail;
+          this.sendVerificationCode();
+        },
+        sendVerificationCode() {
+          if (!this.emailForReset) return;
+          alert("📨 인증 코드가 곧 전송됩니다. 이메일을 확인해주세요!");
+          $.ajax({
+            url: "/login/email/send.dox",
+            type: "POST",
+            data: { email: this.emailForReset },
+            dataType: "json",
+            success: data => {
+              if (data.result === "success") this.emailCodeSent = true;
+              else alert("❌ 인증 메일 전송 실패: " + (data.message || "알 수 없는 오류"));
+            },
+            error: xhr => alert("❌ 서버 오류: " + xhr.responseText)
+          });
+        },
+        verifyCode() {
+          if (!this.verificationCode) return alert("인증번호를 입력해주세요.");
+          $.ajax({
+            url: "/login/email/verify.dox",
+            type: "POST",
+            data: { email: this.emailForReset, code: this.verificationCode },
+            dataType: "json",
+            success: data => {
+              if (data.result === "success") {
+                this.verified = true;
+                alert("✅ 인증이 완료되었습니다.");
+              } else {
+                alert("❌ 인증 실패: " + data.message);
+                this.verificationCode = "";
+              }
+            }
+          });
+        },
+        validatePassword() {
+          const pw = this.newPassword;
+          const pw2 = this.confirmPassword;
+          this.passwordRules.length = pw.length >= 6;
+          this.passwordRules.upper = /[A-Z]/.test(pw);
+          this.passwordRules.lower = /[a-z]/.test(pw);
+          this.passwordRules.number = /[0-9]/.test(pw);
+          this.passwordRules.special = /[^A-Za-z0-9]/.test(pw);
+          this.passwordValid = Object.values(this.passwordRules).every(Boolean);
+          this.passwordsMatch = pw && pw2 && pw === pw2;
+        },
+        resetPassword() {
+          if (!this.passwordValid || !this.passwordsMatch) return alert("❌ 비밀번호 조건을 확인해주세요.");
+          $.ajax({
+            url: "/login/reset-password.dox",
+            type: "POST",
+            data: { email: this.emailForReset, password: this.newPassword },
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
+            success: data => {
+              if (data.result === "success") {
+                alert("✅ 비밀번호가 성공적으로 변경되었습니다.");
+                location.href = "/login.do";
+              } else {
+                alert("❌ 변경 실패: " + data.message);
+              }
+            }
+          });
+        }
+      }
+    });
+    app.mount('#app');
+  </script>
 </body>
+
 </html>
