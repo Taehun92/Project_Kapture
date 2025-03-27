@@ -82,6 +82,13 @@
 
         <button class="login-btn" @click="login">Login</button>
 
+        <!-- ✅ 구글 로그인 버튼 추가 -->
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/google/login">
+                <img src="../../img/google.png" alt="Google 로그인" style="width: 50px; cursor: pointer;" />
+            </a>
+        </div>
+
         <div class="signup-link">
             Don't have an account? <a href="/join.do">Sign up here</a><br/>
             Forgot your password? <a href="/find-id.do">Find it here</a>
@@ -117,7 +124,7 @@ const app = Vue.createApp({
 				},
 				success(data) {
 					if (data.result === "success") {
-						alert(data.login.userFirstName + data.login.userLastName + "님 환영합니다!");
+						alert(data.login.userFirstName + "님 환영합니다!");
 						location.href = "/main.do";
 					} else {
 						self.errorMessage = data.message || "Login failed. Please try again.";
@@ -127,7 +134,7 @@ const app = Vue.createApp({
 					self.errorMessage = "Server error. Please try again later.";
 				}
 			});
-		}
+		},
 	}
 });
 app.mount('#app');

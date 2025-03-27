@@ -28,7 +28,8 @@
                 <a href="/cs/main.do">고객센터</a>
                 <template v-if="sessionId != ''">
                     <a href="#">장바구니({{basketCount}})</a>
-                    <a href="#">마이페이지</a>
+                    <a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
+                    <a href="location:8080/mypage/user-mypage.do" v-else>마이페이지</a>
                 </template>
             </div>
             <div>
@@ -49,6 +50,7 @@ const header = Vue.createApp({
         return {
             keyword: "",
             sessionId: "${sessionId}",
+            sessionRole : "${sessionRole}",
             basketCount : 0
         };
     },
