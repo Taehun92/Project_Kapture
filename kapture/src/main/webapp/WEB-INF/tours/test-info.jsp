@@ -176,9 +176,9 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			width: 800px;
-			height: 800px;
-			max-height: 800px;
+			width: 1200px;
+			height: 900px;
+			max-height: 900px;
 			z-index: 1000;
 			display: flex;
 			flex-direction: column;
@@ -225,6 +225,48 @@
 			background-color: #ddd;
 			border-radius: 5px;
 		  }
+
+		  .black-box {
+			background-color: black;
+			color: white;
+			padding: 10px;
+			text-align: center;
+			border: 1px solid #000;
+			border-radius: 5px;
+		}
+		
+		.white-box {
+			background-color: white;
+			color: black;
+			padding: 10px;
+			text-align: center;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+
+		table {
+			width: 100%; /* 테이블 너비를 100%로 설정 */
+			max-width: 1200px; /* 최대 너비를 1200px로 제한 */
+			margin: 20px auto; /* 테이블을 가운데 정렬 */
+			border-collapse: collapse; /* 테이블 경계선 병합 */
+			font-size: 16px; /* 글자 크기 조정 */
+		}
+		
+		th, td {
+			padding: 15px; /* 셀 안쪽 여백 */
+			text-align: center; /* 텍스트 가운데 정렬 */
+			border: 1px solid #ccc; /* 셀 경계선 */
+		}
+		
+		th {
+			background-color: #f4f4f4; /* 헤더 배경색 */
+			font-weight: bold; /* 헤더 글자 굵게 */
+		}
+		
+		td {
+			background-color: #fff; /* 셀 배경색 */
+		}
+
 
 
 	</style>
@@ -286,9 +328,49 @@
                 	<span class="close-button" @click="showModal = false">닫기</span>
                 	<h2>일정</h2>
 					<div>
-						<p v-for="date in dateList">
-							{{ date }}
-						</p>
+						<table>
+							<tr v-for="n in 7" :key="n">
+								<td>{{ formatDate(addDays(minDate, n-1))  }}</td>
+								<td>
+									<div
+										v-bind:class="{
+											'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전'|| item.duration === '종일') ),
+											'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일'))
+										}"
+									>
+										오전
+									</div>
+								</td>
+								<td>
+									<div
+										v-bind:class="{
+											'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')),
+											'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일'))
+										}"
+									>
+										오후
+									</div>
+								</td>
+								<template v-for="item in getSortedCartList()">
+									<td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일')">
+										오전 : {{ item.title }}
+									</td>
+									<td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')">
+										오후 : {{ item.title }}
+									</td>
+									<td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
+										인원 : {{ item.numPeople }}
+									</td>
+									<td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
+										금액 : {{ item.price }}
+									</td>
+								</template>
+							</tr>
+						</table>
+						<div>
+							최종금액 : {{ getTotalPrice().toLocaleString() }} 원
+						</div>
+						<button>결제</button>
 					</div>
             	</div>
         	</transition>
@@ -314,7 +396,12 @@
 					showCartButton : false,
 					tourDate : null,
 					dateList : [],
-					minDate : null
+					minDate : null,
+					maxDate : null,
+
+					cartList : [],
+
+
 				};
 			},
 			
@@ -335,15 +422,17 @@
 							console.log(self.tourInfo);
 							self.reviewsList = data.reviewsList;
 							console.log(self.reviewsList);
-
+							console.log('투어 날짜 : ', self.tourInfo.tourDate);
 						}
 					});
 				},
 				increase() {
 					if (this.count < 4) this.count++;
+					console.log('인원수 : ' , this.count);
 				},
 				decrease() {
 					if (this.count > 0) this.count--;
+					console.log('인원수 : ' , this.count);
 				},
 				toggleWishlist() {
 					this.isWishlisted = !this.isWishlisted;
@@ -369,15 +458,45 @@
 					let nparmap = {
 						tourNo: self.tourNo,
 						sessionId: self.sessionId,
-						
+						count : self.count
 					};
+					self.fnGetMinTourDate();
+					self.fnGetMaxTourDate();
+					
+
+					if(self.count <= 0) {
+						alert('인원수를 선택해주세요.');
+						return;
+					}
+
+    				// 같은 날짜에 "종일" 상품이 있는지 확인
+    				const selectedDate = self.formatDate(new Date(self.tourInfo.tourDate));
+    				const hasFullDay = self.cartList.some(item => 
+        			self.formatDate(new Date(item.tourDate)) === selectedDate && item.duration === '종일');
+
+    				// 같은 날짜에 "오전" 또는 "오후" 상품이 있는지 확인
+    				const hasMorningOrAfternoon = self.cartList.some(item => 
+        			self.formatDate(new Date(item.tourDate)) === selectedDate && (item.duration === '오전' || item.duration === '오후'));
+
+    				// "종일" 상품이 이미 있는 경우 "오전" 또는 "오후" 상품 추가 불가
+    				if ((self.tourInfo.duration === '오전' || self.tourInfo.duration === '오후') && hasFullDay) {
+        				alert('같은 날짜에 종일 상품이 이미 담겨 있어 오전 또는 오후 상품을 담을 수 없습니다.');
+        				return;
+    				}
+
+    				// "오전" 또는 "오후" 상품이 이미 있는 경우 "종일" 상품 추가 불가
+    				if (self.tourInfo.duration === '종일' && hasMorningOrAfternoon) {
+        				alert('같은 날짜에 오전 또는 오후 상품이 이미 담겨 있어 종일 상품을 담을 수 없습니다.');
+        				return;
+    				}
 
 					if (self.minDate) { // 장바구니에 이미 투어가 담겨있다면 날짜 비교
 						const selectedDate = new Date(self.tourInfo.tourDate);
-						const cartDate = new Date(self.minDate);
-						const diffInDays = Math.abs(Math.ceil((selectedDate - cartDate) / (1000 * 60 * 60 * 24)));
-	
-						if (diffInDays > 6) {
+						const mindate = new Date(self.minDate);
+						const maxdate = new Date(self.maxDate);
+						const diffMin = Math.abs(Math.ceil((selectedDate - mindate) / (1000 * 60 * 60 * 24)));
+						const diffMax = Math.abs(Math.ceil((selectedDate - maxdate) / (1000 * 60 * 60 * 24)));
+						if (diffMax > 6 || diffMin > 6) {
 							alert('장바구니에 담긴 투어와 6일 이상 차이납니다. 담을 수 없습니다.');
 							return;
 						}
@@ -400,9 +519,11 @@
 								alert("장바구니에 담겼습니다.");
 								self.fnGetCart();
 								self.fnGetMinTourDate();
+								self.fnGetMaxTourDate();
+								self.fnGetTourDateList();
+								self.fnGetBasketList();
 							} else {
 								alert("이미 담은 상품입니다!");
-								
 							}
 						}
 					});
@@ -443,7 +564,7 @@
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							self.minDate = data.minDate;
+							console.log('fnGetMinTourDate 호출' , data);
 							if (data.minDate) {
 								// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
 								const parts = data.minDate.split(' ');
@@ -455,10 +576,37 @@
 								const monthIndex = parseInt(month, 10) - 1;
 								const dateObj = new Date(year, monthIndex, day);
 								self.minDate = dateObj;
+							}
+						}
+					});
+				},
 
-								console.log(self.minDate);
-								console.log(day);
-								console.log(month);
+				fnGetMaxTourDate() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+						sessionId: self.sessionId,
+						
+					};
+
+					$.ajax({
+						url: "/basket/getMaxTourDate.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log('fnGetMaxTourDate 호출' , data);
+							if (data.maxDate) {
+								// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+								const parts = data.maxDate.split(' ');
+								const month = parts[0].replace('월', '');
+								const day = parseInt(parts[1].replace(',', ''), 10);
+								const year = parseInt(parts[2], 10);
+	
+								// 월은 0부터 시작하므로 1을 빼줍니다.
+								const monthIndex = parseInt(month, 10) - 1;
+								const dateObj = new Date(year, monthIndex, day);
+								self.maxDate = dateObj;
 							}
 						}
 					});
@@ -485,6 +633,48 @@
 					});
 				},
 
+				addDays(date, days) {
+                    const newDate = new Date(date);
+                    newDate.setDate(newDate.getDate() + days); // Use newDate here
+                    return newDate;
+                },
+                formatDate(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return year + '-' + month + '-' + day;
+                },
+
+				fnGetBasketList() {
+					let self = this;
+					let nparmap = {
+						sessionId: self.sessionId,
+					};
+
+					$.ajax({
+						url: "/basket/getBasketList.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							self.cartList = data.basketList;
+							
+						}
+					});
+				},
+				// 최종 금액 계산 메서드
+				getTotalPrice() {
+					return this.cartList.reduce((total, item) => total + Number(item.price), 0);
+				},
+
+				getSortedCartList() {
+					return this.cartList.slice().sort((a, b) => {
+						if (a.duration === '오전' && b.duration !== '오전') return -1;
+						if (a.duration !== '오전' && b.duration === '오전') return 1;
+						return 0;
+					});
+				}
 			
 
 			},
@@ -493,7 +683,9 @@
 				self.fnTourInfo();
 				self.fnGetCart();
 				self.fnGetMinTourDate();
+				self.fnGetMaxTourDate();
 				self.fnGetTourDateList();
+				self.fnGetBasketList();
 			}
 		});
 		app.component('star-rating', VueStarRating.default)

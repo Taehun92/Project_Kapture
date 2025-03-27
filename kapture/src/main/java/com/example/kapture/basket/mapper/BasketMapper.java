@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.kapture.basket.model.Basket;
+
 @Mapper
 public interface BasketMapper {
 
@@ -19,4 +21,8 @@ public interface BasketMapper {
 	Date selectMinTourDate(HashMap<String, Object> map);
 
 	List<Date> selectTourDateList(HashMap<String, Object> map);
+
+	Date selectMaxTourDate(HashMap<String, Object> map);
+
+	List<Basket> selectBasketList(HashMap<String, Object> map);
 }

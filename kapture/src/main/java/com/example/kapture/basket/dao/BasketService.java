@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.basket.mapper.BasketMapper;
+import com.example.kapture.basket.model.Basket;
 
 @Service
 public class BasketService {
@@ -80,6 +81,31 @@ public class BasketService {
 		
 		
 		resultMap.put("dateList", dateList);
+		
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+
+
+	public HashMap<String, Object> getMaxTourDate(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		Date maxDate = basketMapper.selectMaxTourDate(map);
+		
+		resultMap.put("maxDate", maxDate);
+		
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+
+
+	public HashMap<String, Object> getBasketList(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		List<Basket> basketList  = basketMapper.selectBasketList(map);
+		
+		resultMap.put("basketList", basketList);
 		
 		resultMap.put("result", "success");
 		
