@@ -26,7 +26,6 @@
                 display: flex;
                 max-width: 1200px;
                 min-height: calc(100vh - 300px);
-                ;
                 margin: 0 auto;
                 padding: 20px;
                 box-sizing: border-box;
@@ -35,7 +34,12 @@
             /* 사이드 메뉴 */
             .side-menu {
                 width: 200px;
-                margin-right: 30px;
+                height: 100%;
+                border: 1px solid #ddd;
+                position: sticky;
+                top: 0;
+                background: white;
+                transition: top 0.3s;
             }
 
             .side-menu ul {
@@ -52,6 +56,14 @@
                 text-decoration: none;
                 color: #333;
                 font-weight: 500;
+            }
+
+            .side-menu li a.active {
+                display: block;
+                background-color: #3e4a97;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
             }
 
             .side-menu a:hover {
@@ -153,11 +165,35 @@
             <!-- 좌측 사이드 메뉴 -->
             <div class="side-menu">
                 <ul>
-                    <li><a href="http://localhost:8080/mypage/user-mypage.do">회원 정보수정</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-purchase-history.do">구매한 상품</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-rivews.do">이용후기 관리</a></li>
-                    <li><a href="http://localhost:8080/cs/qna.do">문의하기</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-unregister.do">회원 탈퇴</a></li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-mypage.do' }"
+                            href="http://localhost:8080/mypage/user-mypage.do">
+                            회원 정보수정
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-purchase-history.do' }"
+                            href="http://localhost:8080/mypage/user-purchase-history.do">
+                            구매한 상품
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-reviews.do' }"
+                            href="http://localhost:8080/mypage/user-reviews.do">
+                            이용후기 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8080/cs/qna.do">
+                            문의하기
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-unregister.do' }"
+                            href="http://localhost:8080/mypage/user-unregister.do">
+                            회원 탈퇴
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -280,6 +316,7 @@
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
+                        currentPage: "",
                     };
                 },
                 methods: {
@@ -339,9 +376,9 @@
                                     self.userInfo = data.userInfo;
                                     console.log(self.userInfo);
                                     self.pwdCheckFlg = true;
-                                } else if(data.result == "fail"){
+                                } else if (data.result == "fail") {
                                     alert("비밀번호를 확인해주세요");
-                                } else{
+                                } else {
                                     alert("정보를 가지고 오는데 실패했습니다.");
                                 }
                             }
@@ -360,7 +397,8 @@
                         alert("일반회원만 이용가능합니다.");
                         location.href = "http://localhost:8080/main.do";
                     }
-                    
+                    this.currentPage = window.location.pathname.split('/').pop();
+                    console.log("Current page:", this.currentPage);
                 }
             });
             app.mount('#app');
