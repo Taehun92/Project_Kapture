@@ -278,6 +278,7 @@
                             socialType: '',
                         },
                         sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
                     };
                 },
@@ -350,10 +351,16 @@
                 mounted() {
                     // 페이지 로드시 필요한 초기화 로직
                     // 세션롤이 가이드가 아니거나 세션아이디가 널이면 알림창
-                    if (this.sessionId === null) {
+                    console.log(this.sessionId);
+                    if (this.sessionId == '') {
                         alert("로그인 후 이용해주세요.");
-                        location.href = "localhost:8080/main.do";
+                        location.href = "http://localhost:8080/main.do";
                     }
+                    if (this.sessionRole != 'TOURIST') {
+                        alert("일반회원만 이용가능합니다.");
+                        location.href = "http://localhost:8080/main.do";
+                    }
+                    
                 }
             });
             app.mount('#app');
