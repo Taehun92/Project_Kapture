@@ -6,6 +6,7 @@
   <title>Kapture - Join</title>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,13 +25,14 @@
       margin-bottom: 25px;
       color: #333;
     }
-    input {
+    .form-input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
+      font-size: 14px;
     }
     button {
       width: 100%;
@@ -49,28 +51,113 @@
       text-align: center;
       color: #555;
     }
+    .modal-wrapper {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .modal-box {
+      background: white;
+      padding: 50px;
+      border-radius: 2px;
+      max-width: 500px;
+      max-height: 70vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .terms-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    .terms-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .checkbox {
+      width: auto;
+      margin: 0;
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+    .terms-item span {
+      flex: 1;
+      word-break: keep-all;
+    }
+    .terms-item a {
+      color: #2b74e4;
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .terms-item a:hover {
+      text-decoration: underline;
+    }
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    .radio-group label {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .name-tag {
+      font-size: 14px; 
+      margin-top: 10px; 
+      font-weight: bold; 
+      color: #444;
+    }
   </style>
 </head>
 <body>
+  <!-- 뒤로가기 버튼 -->
+<div style="position: absolute; top: 20px; left: 20px; ">
+  <button onclick="window.history.back()" style="
+    background-color: transparent;
+    border: none;
+    color: black;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+  ">
+    <i class="fas fa-arrow-left"></i> Back
+  </button>
+</div>
 <div id="app">
   <h2>Join Kapture</h2>
-
-  <!-- Email + 인증 -->
-  <input type="text" placeholder="Email" v-model="user.email" :disabled="emailVerified"/>
+  <!-- 국적 선택 -->
+  <div class="radio-group">
+    <label><input type="radio" value="N" v-model="user.isForeigner"> <h3>내국인</h3></label>
+    <label><input type="radio" value="Y" v-model="user.isForeigner"> <h3>외국인</h3></label>
+  </div>
+  <div class="name-tag">이메일</div>
+  <!-- Email -->
+  <input type="text" class="form-input" placeholder="Email" v-model="user.email" :disabled="emailVerified" />
   <div v-if="emailCheckMessage && !emailVerified" :style="{ color: emailCheckColor, fontSize: '13px', marginTop: '5px' }">
     {{ emailCheckMessage }}
   </div>
   <button @click="sendVerificationCode">Send Code</button>
 
   <div v-if="emailCodeSent && !emailVerified">
-    <input type="text" v-model="userInputCode" placeholder="Enter verification code" />
+    <div class="name-tag">인증번호</div>
+    <input type="text" class="form-input" v-model="userInputCode" placeholder="Enter verification code" />
     <button @click="verifyCode">Verify</button>
   </div>
   <div v-if="emailVerified" style="color: green; font-size: 13px; margin-top: 5px;">✅ Email verified successfully.</div>
   <div v-if="emailError" style="color: red; font-size: 13px;">{{ emailError }}</div>
-
-  <!-- Password -->
-  <input type="password" v-model="user.password" placeholder="Password" />
+  
+  <div class="name-tag">비밀번호</div>
+  <input type="password" class="form-input" v-model="user.password" placeholder="Password" />
   <div v-if="user.password.length > 0 && !passwordValid" style="font-size: 13px;">
     <div :style="{ color: passwordRules.length ? 'green' : 'orange' }">
       {{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters' }}
@@ -89,29 +176,74 @@
     </div>
   </div>
 
-  <input type="password" v-model="user.password2" placeholder="Re-enter Password" />
-  <div
+<!-- 비밀번호 확인 입력 필드 -->
+<input type="password" class="form-input" v-model="user.password2" placeholder="Re-enter Password" />
+<!-- 비밀번호 일치 여부 안내 -->
+<div
     v-if="user.password2.length > 0 && passwordValid"
     :style="{ color: passwordsMatch ? 'green' : 'red', fontSize: '13px' }"
   >
     {{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
   </div>
 
-  <!-- Personal Info -->
-  <input placeholder="First Name" v-model="user.firstName" />
-  <input placeholder="Last Name" v-model="user.lastName" />
-  <input placeholder="Phone Number" v-model="user.phone" />
+  <hr>
+  <div class="name-tag">이름</div>
+  <!-- 이름 입력 -->
+  <div v-if="user.isForeigner === 'N'">
+    <input type="text" class="form-input" placeholder="Name" v-model="user.firstName" />
+  </div>
+  <div v-else>
+    <input type="text" class="form-input" placeholder="First Name" v-model="user.firstName" />
+    <input type="text" class="form-input" placeholder="Last Name" v-model="user.lastName" />
+  </div>
+  <div class="name-tag">연락처</div>
+  <!-- Phone & Birthdate -->
+  <input type="text" class="form-input" placeholder="Phone Number" v-model="user.phone" />
+  <div class="name-tag">생년월일</div>
   <div style="display: flex; gap: 8px;">
-    <input type="text" v-model="birth.mm" maxlength="2" placeholder="MM" style="flex: 1;" />
-    <input type="text" v-model="birth.dd" maxlength="2" placeholder="DD" style="flex: 1;" />
-    <input type="text" v-model="birth.yyyy" maxlength="4" placeholder="YYYY" style="flex: 2;" />
+    <input type="text" class="form-input" v-model="birth.mm" maxlength="2" placeholder="MM" style="flex: 1;" />
+    <input type="text" class="form-input" v-model="birth.dd" maxlength="2" placeholder="DD" style="flex: 1;" />
+    <input type="text" class="form-input" v-model="birth.yyyy" maxlength="4" placeholder="YYYY" style="flex: 2;" />
   </div>
   <div v-if="!isBirthdayValid" style="color: red; font-size: 13px; margin-top: 5px;">
     ❌ 생년월일을 올바르게 입력해주세요.
   </div>
+  <div class="name-tag">성별</div>
+  <div class="radio-group" style="margin-top: 15px;">
+    <label><input type="radio" value="M" v-model="user.gender" /> 남자</label>
+    <label><input type="radio" value="F" v-model="user.gender" /> 여자</label>
+  </div>
+  <hr>
+  <!-- 약관 동의 -->
+  <h2>이용 약관 동의</h2>
+  <div class="terms-group">
+    <label class="terms-item">
+      <input type="checkbox" v-model="allAgreed" @change="toggleAllTerms" class="checkbox" />
+      <span style="font-weight: bold;">전체 약관에 동의합니다</span>
+    </label>
+    <label class="terms-item">
+      <input type="checkbox" v-model="terms.use" class="checkbox" />
+      <span>이용약관 동의 (필수)</span>
+      <a href="#" @click.prevent="openTerms('use')">[보기]</a>
+    </label>
+    <label class="terms-item">
+      <input type="checkbox" v-model="terms.privacy" class="checkbox" />
+      <span>개인정보 수집 및 이용 동의 (필수)</span>
+      <a href="#" @click.prevent="openTerms('privacy')">[보기]</a>
+    </label>
+    <label class="terms-item">
+      <input type="checkbox" v-model="terms.marketing" class="checkbox" />
+      <span>마케팅 정보 수신 동의 (선택)</span>
+      <a href="#" @click.prevent="openTerms('marketing')">[보기]</a>
+    </label>
+  </div>
 
-  <div v-if="!emailVerified && userInputCode.length > 0" style="color: red; font-size: 13px;">
-    ❗ You must verify your email to proceed with sign up.
+  <!-- 모달 -->
+  <div v-if="modalVisible" class="modal-wrapper" @click.self="closeTerms">
+    <div class="modal-box">
+      <div v-html="termsContent"></div>
+      <button @click="closeTerms">닫기</button>
+    </div>
   </div>
 
   <!-- Join Button -->
@@ -123,7 +255,7 @@
       cursor: canSubmit ? 'pointer' : 'not-allowed'
     }"
   >
-    Continue
+    회원가입
   </button>
 
   <div class="terms">
@@ -141,9 +273,12 @@ const app = Vue.createApp({
         password: '', 
         password2: '', 
         firstName: '', 
-        lastName: '', 
+        lastName: null, 
         phone: '', 
-        birthday: ''
+        birthday: '',
+        gender: 'M',
+        isForeigner : 'Y',
+        pushYn : 'N'
       },
       birth: {
         mm: '', 
@@ -162,7 +297,16 @@ const app = Vue.createApp({
       emailAvailable: false,
       passwordRules: { length: false, upper: false, lower: false, special: false },
       passwordValid: false,
-      passwordsMatch: false
+      passwordsMatch: false,
+      agreeChecked: false,
+      modalVisible: false,
+      termsContent: '',
+      currentTermsType: '',
+      terms: {
+        use: false,
+        privacy: false,
+        marketing: false
+      }
     };
   },
   watch: {
@@ -195,10 +339,19 @@ const app = Vue.createApp({
         this.passwordValid &&
         this.passwordsMatch &&
         this.user.firstName &&
-        this.user.lastName &&
         this.user.phone &&
-        this.user.birthday
+        this.user.birthday &&
+        this.terms.use &&           // 🔒 필수 약관
+        this.terms.privacy          // 🔒 필수 약관
+
       );
+    },
+    allAgreed() {
+      return this.terms.use && this.terms.privacy && this.terms.marketing;
+    },
+
+    allRequiredAgreed() {
+      return this.terms.use && this.terms.privacy;
     }
   },
   methods: {
@@ -325,6 +478,7 @@ const app = Vue.createApp({
     },
 
     fnJoin() {
+      const self = this;
       this.validateBirthdayParts();
     
       if (!this.canSubmit || !this.isBirthdayValid) {
@@ -334,11 +488,28 @@ const app = Vue.createApp({
 
       console.log("전송 전 birthday:", this.user.birthday);
 
+      if(!self.terms.marketing){
+        self.user.pushYn = 'N'
+      } else {
+        self.user.pushYn = 'Y'
+      }
+
+
       $.ajax({
         url: "join.dox",
         type: "POST",
         dataType: "json",
-        data: this.user,
+        data: {
+          email : self.user.email, 
+          password : self.user.password,
+          firstName : self.user.firstName, 
+          lastName : self.user.lastName, 
+          phone : self.user.phone, 
+          birthday : self.user.birthday,
+          gender : self.user.gender,
+          isForeigner : self.user.isForeigner,
+          pushYn : self.user.pushYn
+        },
         success: function (data) {
           alert("Congratulations on becoming a member.");
           location.href = "/login.do";
@@ -351,7 +522,6 @@ const app = Vue.createApp({
       let nparmap = {
         email: self.user.email
       };
-
       $.ajax({
         url: "/login/email/send.dox",
         type: "POST",
@@ -372,7 +542,42 @@ const app = Vue.createApp({
           alert("❌ 서버 통신 오류 발생");
         }
       });
+    },
+
+    toggleAllTerms() {
+      const newValue = !this.allAgreed;
+      this.terms.use = newValue;
+      this.terms.privacy = newValue;
+      this.terms.marketing = newValue;
+    },
+
+    openTerms(type) {
+      if (!type) {
+        console.warn("❗ 약관 타입(type)이 정의되지 않았습니다.");
+        return;
+      }
+      this.currentTermsType = type;
+      this.modalVisible = true;
+      this.loadTerms(type);
+    },
+
+    loadTerms(type) {
+      if (!type) return;
+      fetch("/html/terms_" + type + ".html")
+        .then(res => res.text())
+        .then(html => {
+          this.termsContent = html;
+        })
+        .catch(() => {
+          this.termsContent = '<p>⚠️ 약관을 불러오지 못했습니다.</p>';
+        });
+    },
+
+    closeTerms() {
+      this.modalVisible = false;
     }
+
+
   }
 });
 app.mount("#app");

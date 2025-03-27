@@ -100,6 +100,7 @@
 				<img src="../../img/google.png" alt="Google 로그인" style="width: 50px;" />
 			</a>
 
+
 			<!-- X 로그인 버튼 -->
 			<button @click="getTwitAuthCodeUrl"
 					style="width: 50px; height: 50px; border: none; border-radius: 50%; background-color: black; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
@@ -113,6 +114,17 @@
 		</div>
 	</div>
 	<jsp:include page="../common/footer.jsp" />
+
+        <div class="signup-link">
+			<div style="margin-bottom: 10px;">
+				Don't have an account? <a href="/join.do">Sign up here</a>
+			</div>
+			<div>
+				Forgot your email / password? <a href="/find-id.do">Find it here</a>
+			</div>
+        </div>
+    </div>
+    <jsp:include page="../common/footer.jsp" />
 </body>
 <script>
 	const app = Vue.createApp({
