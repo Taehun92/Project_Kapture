@@ -29,5 +29,10 @@ public interface LoginMapper {
 
 	int updateUserPassword(HashMap<String, Object> map);
 
-	
+	 // 트위터 ID로 사용자 조회
+    Map<String, Object> selectUserByTwitterId(String twitterId);
+
+    // 트위터 사용자 신규 등록
+    int insertTwitterUser(Map<String, Object> param);
+
 }
