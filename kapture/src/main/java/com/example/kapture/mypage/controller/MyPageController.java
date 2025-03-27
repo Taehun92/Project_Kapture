@@ -20,13 +20,18 @@ public class MyPageController {
 
 		@Autowired
 		MyPageService myPageService;
-		// 유저 마이페이지 주소
+		// 유저 마이페이지 주소(회원 정보 수정)
 		@RequestMapping("/mypage/user-mypage.do")
-		public String testRegional(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		public String userMypage(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			request.setAttribute("map", map);
 			return "/mypage/user-mypage";
 		}
-		
+		// 유저 마이페이지 주소(구매한 상품)
+		@RequestMapping("/mypage/user-purchase-history.do")
+		public String purchaseHistory(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/user-purchase-history";
+		}
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		// 유저 정보 가져오기
 		@RequestMapping(value = "/mypage/user-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -44,6 +49,15 @@ public class MyPageController {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = myPageService.userInfoEdit(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 구매내역 
+		@RequestMapping(value = "/mypage/user-purchase-history.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String payList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.getPayList(map);
 			return new Gson().toJson(resultMap);
 		}
 }

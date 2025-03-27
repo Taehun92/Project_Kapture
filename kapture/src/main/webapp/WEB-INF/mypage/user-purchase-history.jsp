@@ -30,7 +30,7 @@
                 /* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
                 display: flex;
                 max-width: 1200px;
-                height: calc(100vh - 300px);
+                min-height: calc(100vh - 300px);
                 ;
                 margin: 0 auto;
                 padding: 20px;
@@ -147,6 +147,48 @@
                 text-align: center;
                 gap: 10px;
             }
+
+            /* customButtons 스타일 */
+            .fc-button.fc-button-primary.all-day-btn1,
+            .fc-button.fc-button-primary.all-day-btn2,
+            .fc-button.fc-button-primary.all-day-btn3 {
+                background-color: white !important;
+                border-color: #ccc !important;
+                color: black !important;
+                /* 필요 시 padding, font-size 등도 지정 */
+                padding: 5px 10px;
+                font-size: 14px;
+            }
+
+            /* CSS 코드: 버튼 모양과 스타일 지정 */
+            .custom-buttons {
+                list-style: none;
+                /* 기본 목록 스타일 제거 */
+                padding: 0;
+                margin: 0;
+                display: flex;
+                /* 가로로 정렬 */
+                gap: 10px;
+                /* 버튼 간 간격 */
+            }
+
+            .custom-button {
+                /* 배경 흰색 */
+                color: black;
+                /* 글씨 검은색 */
+                padding: 5px 10px;
+                /* 적당한 여백 */
+                display: flex;
+                /* 내부 항목을 가로 정렬 */
+                align-items: center;
+                /* 수직 중앙 정렬 */
+                font-size: 14px;
+            }
+
+            .custom-button .dot {
+                margin-right: 4px;
+                /* 점과 텍스트 사이 간격 */
+            }
         </style>
     </head>
 
@@ -158,17 +200,31 @@
             <!-- 좌측 사이드 메뉴 -->
             <div class="side-menu">
                 <ul>
-                    <li><a href="#">회원 정보수정</a></li>
-                    <li><a href="#">구매한 상품</a></li>
-                    <li><a href="#">이용후기 관리</a></li>
-                    <li><a href="#">문의하기</a></li>
-                    <li><a href="#">회원 탈퇴</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-mypage.do">회원 정보수정</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-purchase-history.do">구매한 상품</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-rivews.do">이용후기 관리</a></li>
+                    <li><a href="http://localhost:8080/cs/qna.do">문의하기</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-unregister.do">회원 탈퇴</a></li>
                 </ul>
             </div>
 
             <!-- 우측 메인 콘텐츠 -->
             <div class="content-area">
-                <div id='calendar'></div>
+                <ol class="custom-buttons">
+                    <li class="custom-button">
+                        <span class="dot" style="color: #3788d8;">●</span>
+                        <span class="label">종일</span>
+                    </li>
+                    <li class="custom-button">
+                        <span class="dot" style="color: red;">●</span>
+                        <span class="label">오전</span>
+                    </li>
+                    <li class="custom-button">
+                        <span class="dot" style="color: green;">●</span>
+                        <span class="label">오후</span>
+                    </li>
+                </ol>
+                <div ref="calendar"></div>
             </div>
         </div>
 
@@ -176,41 +232,86 @@
         <jsp:include page="../common/footer.jsp" />
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                themeSystem: 'bootstrap5',
-                initialView: 'dayGridMonth',
-                validRange: function (now) {
-                    return {
-                        start: now,                     // 오늘 날짜
-                        // end: now.add(30, 'days')        // 오늘부터 30일 후까지
-                    };
-                },
-                events: [
-                    { title: '일정1', start: '2025-03-29T10:00:00', allDay: true, backgroundColor: 'red', borderColor: 'red' },
-                    { title: '일정2', start: '2025-03-29T12:30:00', allDay: true }
-                ]
-            });
-            calendar.render();
-        });
             const app = Vue.createApp({
                 data() {
                     return {
                         // 예: 이미 인증된 이메일 정보(샘플)
                         sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
+                        payList: [],
                     };
                 },
                 methods: {
+                    fnGetPayments(callback) {
+                        let self = this;
+                        let nparmap = {
+                            sessionId: self.sessionId,
+                        };
+
+                        $.ajax({
+                            url: "/mypage/user-purchase-history.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log("Data : " + data);
+                                    self.payList = data.payList;
+                                    console.log(self.payList);
+                                    callback();
+                                } else {
+                                    console.error("데이터 로드 실패");
+                                }
+                            },
+                            error: function (error) {
+                                console.error("AJAX 에러:", error);
+                            }
+                        });
+                    }
                 },
                 mounted() {
-                    // 페이지 로드시 필요한 초기화 로직
-                    // 세션롤이 가이드가 아니거나 세션아이디가 널이면 알림창
+
                     if (this.sessionId === null) {
                         alert("로그인 후 이용해주세요.");
                         location.href = "localhost:8080/main.do";
                     }
+                    if (this.sessionRole != 'TOURIST') {
+                        alert("일반회원만 이용가능합니다.");
+                        location.href = "http://localhost:8080/main.do";
+                    }
+
+                    this.fnGetPayments(() => {
+                        const eventsArray = [];
+                        for (let i = 0; i < this.payList.length; i++) {
+                            const item = this.payList[i];
+                            const colorMapping = {
+                                "오전": "red",
+                                "오후": "green",
+                                "종일": "#3788d8"
+                            };
+                            eventsArray.push({
+                                title: item.title || '투어',       // 실제 데이터에 맞게 속성명을 조정하세요.
+                                start: item.tourDate,                // 날짜 형식은 FullCalendar에서 인식하는 형식이어야 합니다.
+                                allDay: true,    // "종일"이면 allDay는 true, 아니면 false
+                                backgroundColor: colorMapping[item.duration] || "gray",
+                                borderColor: colorMapping[item.duration] || "gray"
+                            });
+                        }
+                        console.log("eventsArray:", eventsArray);
+
+                        const calendarEl = this.$refs.calendar;
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
+                            themeSystem: 'bootstrap5',
+                            initialView: 'dayGridMonth',
+                            validRange: function (now) {
+                                return { start: now };
+                            },
+                            events: eventsArray
+                        });
+                        calendar.render();
+                    });
                 }
+
             });
             app.mount('#app');
         </script>
