@@ -14,4 +14,6 @@ public interface BasketMapper {
 
 	int selectCount(HashMap<String, Object> map);
 
+	void deleteBasketItem(int userNo, int tourNo);
+
 }

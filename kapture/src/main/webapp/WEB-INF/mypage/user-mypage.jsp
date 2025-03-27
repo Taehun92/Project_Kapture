@@ -25,8 +25,11 @@
                 /* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
                 display: flex;
                 max-width: 1200px;
+                height: calc(100vh - 300px);
+                ;
                 margin: 0 auto;
                 padding: 20px;
+                box-sizing: border-box;
             }
 
             /* 사이드 메뉴 */
@@ -127,6 +130,18 @@
             .btn-save:hover {
                 background-color: #ff3333;
             }
+
+            .center-box {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                margin-top: 150px;
+
+                /* 필요 시 조정 */
+                text-align: center;
+                gap: 10px;
+            }
         </style>
     </head>
 
@@ -163,56 +178,81 @@
                         <input type="password" id="confirmPassword" v-model="confirmPassword" />
                     </div>
                 </div> -->
+                <!-- 비밀번호 확인 -->
+                <template v-if="!pwdCheckFlg && userInfo.socialType != 'SOCIAL'">
+                    <div class="center-box">
+                        <label>비밀 번호 : </label>
+                        <input type="password" v-model="userInfo.confirmPassword" placeholder="비밀번호를 입력해주세요."
+                            @keyup.enter="fnGetInfo">
+                        <button @click="fnGetInfo">확인</button>
+                    </div>
+                </template>
+                <template v-if="pwdCheckFlg">
+                    <!-- 회원 정보 섹션 -->
+                    <div class="box">
+                        <h3 class="title">회원 정보</h3>
+                        <!-- 퍼스트 네임 -->
+                        <div class="form-group">
+                            <label for="firstName" class="required">FirstName</label>
+                            <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled />
+                        </div>
+                        <!-- 라스트 네임 -->
+                        <div class="form-group" v-if="userInfo.userLastName != null">
+                            <label for="lastName">LastName</label>
+                            <input type="text" id="lastName" v-model="userInfo.userLastName" disabled />
+                        </div>
+                        <div class="form-group" v-if="userInfo.userLastName = null && socialType === 'SOCIAL'">
+                            <label for="lastName">LastName</label>
+                            <input type="text" id="lastName" v-model="userInfo.userLastName" />
+                        </div>
+                        <!-- 연락처 -->
+                        <div class="form-group">
+                            <label for="phone" class="required">연락처</label>
+                            <input type="text" id="phone" v-model="userInfo.phone" />
+                        </div>
 
-                <!-- 회원 정보 섹션 -->
-                <div class="box">
-                    <h3 class="title">회원 정보</h3>
-                    <div class="form-group">
-                        <label for="firstName" class="required">FirstName</label>
-                        <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled/>
-                    </div>
-                    <div class="form-group" v-if="userInfo.userLastName != null">
-                        <label for="lastName">LastName</label>
-                        <input type="text" id="lastName" v-model="userInfo.userLastName" disabled/>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">연락처</label>
-                        <input type="text" id="phone" v-model="userInfo.phone" />
-                    </div>
-                    <div class="form-group">
-                        <label for="email" class="required">이메일</label>
-                        <input type="text" id="email" v-model="userInfo.email" disabled/>
-                    </div>
-                    <div class="form-group">
-                        <label class="required">성별</label>
-                        <div class="radio-group" style="flex: 1;">
-                            <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
-                            <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
+                        <!-- 이메일 -->
+                        <div class="form-group">
+                            <label for="email" class="required">이메일</label>
+                            <input type="text" id="email" v-model="userInfo.email" disabled />
+                        </div>
+                        <!-- 성별 -->
+                        <div class="form-group" v-if="userInfo.gender != null">
+                            <label>성별</label>
+                            <div class="radio-group" style="flex: 1;">
+                                <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
+                                <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
+                            </div>
+                        </div>
+                        <div class="form-group" v-else>
+                            <label class="required">성별</label>
+                            <div class="radio-group" style="flex: 1;">
+                                <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
+                                <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
+                            </div>
+                        </div>
+                        <!-- 생년월일 -->
+                        <div class="form-group">
+                            <label for="birthday" class="required">생년월일</label>
+                            <!-- placeholder는 예시, 실제로 type="date"로 변경도 가능 -->
+                            <input type="text" id="birthday" v-model="userInfo.birthday" disabled />
                         </div>
                     </div>
-                    <!-- 생년월일 입력 -->
-                    <div class="form-group">
-                        <label for="birthday" class="required">생년월일</label>
-                        <!-- placeholder는 예시, 실제로 type="date"로 변경도 가능 -->
-                        <input type="text" id="birthday" v-model="userInfo.birthday" disabled />
-                    </div>
-                </div>
-
-                <!-- 메일링 수신여부 섹션 -->
-                <div class="box">
-                    <h3 class="title">메일링 수신여부</h3>
-                    <div class="form-group">
-                        <label style="width:auto;">수신 동의</label>
-                        <div class="radio-group">
-                            <label><input type="radio" value="Y" v-model="userInfo.pushYN" /> 예</label>
-                            <label><input type="radio" value="N" v-model="userInfo.pushYN" /> 아니요</label>
+                    <!-- 푸쉬알림 동의여부 -->
+                    <div class="box">
+                        <h3 class="title">푸쉬알림 동의여부</h3>
+                        <div class="form-group">
+                            <label style="width:auto;">수신 동의</label>
+                            <div class="radio-group">
+                                <label><input type="radio" value="Y" v-model="userInfo.pushYN" /> 예</label>
+                                <label><input type="radio" value="N" v-model="userInfo.pushYN" /> 아니요</label>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 저장하기 버튼 -->
-                <button class="btn-save" @click="saveInfo">저장하기</button>
-
+                    <!-- 저장하기 버튼 -->
+                    <button class="btn-save" @click="saveInfo">저장하기</button>
+                </template>
             </div>
         </div>
 
@@ -227,54 +267,46 @@
                         userInfo: {
                             email: '',
                             userFirstName: '',
-                            userLastName:'',
+                            userLastName: '',
                             phone: '',
                             password: '',
                             confirmPassword: '',
                             pushYN: '',
                             gender: '',
-                            birthday: ''
+                            birthday: '',
+                            isForeigner: '',
+                            socialType: '',
                         },
                         sessionId: "${sessionId}",
+                        pwdCheckFlg: false,
                     };
                 },
                 methods: {
                     // '저장하기' 버튼 클릭 시
                     saveInfo() {
                         // 간단한 유효성 검사 예시
-                        if (!this.password) {
-                            alert("비밀번호를 입력해주세요.");
+                        let self = this;
+                        if (self.phone === null) {
+                            alert("연락처를 입력해주세요.");
                             return;
                         }
-                        if (this.password !== this.confirmPassword) {
-                            alert("비밀번호가 일치하지 않습니다.");
-                            return;
-                        }
-                        if (!this.name) {
-                            alert("이름을 입력해주세요.");
-                            return;
-                        }
-                        if (!this.email2) {
-                            alert("이메일을 입력해주세요.");
-                            return;
-                        }
-
                         // 서버로 전송할 데이터
                         let nparmap = {
-                            name: this.name,
-                            phone: this.phone,
-                            password: this.password,
-                            confirmPassword: this.confirmPassword,
-                            email: this.email,
-                            gender: this.gender,
-                            birthday: this.birthday,
-                            mailingAgree: this.mailingAgree,
-                            pushYN: this.pushYN,
+                            name: self.userInfo.name,
+                            phone: self.userInfo.phone,
+                            password: self.userInfo.password,
+                            email: self.userInfo.email,
+                            gender: self.userInfo.gender,
+                            birthday: self.userInfo.birthday,
+                            pushYN: self.userInfo.pushYN,
+                            isForeigner: self.userInfo.isForeigner,
+                            socialType: self.userInfo.socialType,
+                            sessionId: self.sessionId,
                         };
 
                         // Ajax 요청
                         $.ajax({
-                            url: "/mypage/info-Update.dox", // 실제 처리할 URL로 수정
+                            url: "/mypage/info-edit.dox", // 실제 처리할 URL로 수정
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -291,24 +323,37 @@
                     fnGetInfo() {
                         let self = this;
                         let nparmap = {
-                            sessionId: self.sessionId
+                            sessionId: self.sessionId,
+                            confirmPassword: self.userInfo.confirmPassword
                         };
+                        console.log(self.sessionId);
                         $.ajax({
                             url: "/mypage/user-info.dox",
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
                             success: function (data) {
-                                console.log("userData: " + data);
-                                self.userInfo = data.userInfo;
-                                console.log(self.userInfo);
+                                if (data.result == "success") {
+                                    console.log("userData: " + data);
+                                    self.userInfo = data.userInfo;
+                                    console.log(self.userInfo);
+                                    self.pwdCheckFlg = true;
+                                } else if(data.result == "fail"){
+                                    alert("비밀번호를 확인해주세요");
+                                } else{
+                                    alert("정보를 가지고 오는데 실패했습니다.");
+                                }
                             }
                         });
                     }
                 },
                 mounted() {
                     // 페이지 로드시 필요한 초기화 로직
-                    this.fnGetInfo();
+                    // 세션롤이 가이드가 아니거나 세션아이디가 널이면 알림창
+                    if (this.sessionId === null) {
+                        alert("로그인 후 이용해주세요.");
+                        location.href = "localhost:8080/main.do";
+                    }
                 }
             });
             app.mount('#app');

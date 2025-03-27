@@ -18,6 +18,8 @@ public interface ToursMapper {
   
 	Tours selectTourInfo(HashMap<String, Object> map);
 
+	void updateDeleteYn(int tourNo, String string);
+
 	
 	
 
