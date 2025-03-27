@@ -90,8 +90,12 @@
         </div>
 
         <div class="signup-link">
-            Don't have an account? <a href="/join.do">Sign up here</a><br/>
-            Forgot your password? <a href="/find-id.do">Find it here</a>
+			<div style="margin-bottom: 10px;">
+				Don't have an account? <a href="/join.do">Sign up here</a>
+			</div>
+			<div>
+				Forgot your email / password? <a href="/find-id.do">Find it here</a>
+			</div>
         </div>
     </div>
     <jsp:include page="../common/footer.jsp" />
