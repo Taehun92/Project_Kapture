@@ -16,6 +16,12 @@
 	    	GENDER = #{gender}
 	    WHERE USER_NO = #{sessionId}
 	</update>
+	<select id="selectPayList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
+		SELECT P.*, TITLE, DURATION, TOUR_DATE
+		FROM PAYMENTS P
+		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+		WHERE USER_NO = #{sessionId}
+	</select>
 	
 </mapper>
 
