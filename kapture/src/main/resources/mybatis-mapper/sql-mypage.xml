@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.mypage.mapper.MyPageMapper">
+	<select id="selectUser" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
+		SELECT USER_NO, PASSWORD, EMAIL, PHONE, ROLE, TO_CHAR(BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, ADDRESS, GENDER, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME, SOCIAL_TYPE, ISFOREIGNER, PUSHYN
+		FROM USERS
+		WHERE USER_NO = #{sessionId}
+	</select>
+	
+	<update id="userInfoUpdate" parameterType="hashmap">
+		UPDATE USERS
+	    SET PHONE = #{phone},
+	    	PUSHYN = #{pushYN},
+	    	GENDER = #{gender}
+	    WHERE USER_NO = #{sessionId}
+	</update>
+	
+</mapper>
+
+
+
+
