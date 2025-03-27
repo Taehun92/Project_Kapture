@@ -32,6 +32,18 @@ public class MyPageController {
 			request.setAttribute("map", map);
 			return "/mypage/user-purchase-history";
 		}
+		
+		@RequestMapping("/mypage/user-reviews.do")
+		public String userReviews(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/user-reviews";
+		}
+		
+		@RequestMapping("/mypage/user-unregister.do")
+		public String userUnRegister(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/user-unregister";
+		}
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		// 유저 정보 가져오기
 		@RequestMapping(value = "/mypage/user-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
