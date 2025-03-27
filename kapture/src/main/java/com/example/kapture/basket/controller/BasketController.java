@@ -54,6 +54,15 @@ public class BasketController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 최대 날짜 구하기
+	@RequestMapping(value = "/basket/getMaxTourDate.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getMaxTourDate(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = basketService.getMaxTourDate(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 	// 장바구니에 담은 날짜 리스트 출력
 	@RequestMapping(value = "/basket/getTourDateList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -62,5 +71,16 @@ public class BasketController {
 		resultMap = basketService.getTourDateList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 장바구니에 담은 아이템 가져오기
+	@RequestMapping(value = "/basket/getBasketList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getBasket(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = basketService.getBasketList(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	
 	
 }

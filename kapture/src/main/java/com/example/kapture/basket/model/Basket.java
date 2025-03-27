@@ -9,5 +9,11 @@ public class Basket {
 	private String tourNo;
 	private String userNo;
 	private String status;
+	
+	private String title;
+	private String duration;
+	private String numPeople;
+	private String price;
+	private String tourDate;
 
 }
