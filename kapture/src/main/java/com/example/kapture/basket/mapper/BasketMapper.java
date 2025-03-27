@@ -24,5 +24,8 @@ public interface BasketMapper {
 
 	Date selectMaxTourDate(HashMap<String, Object> map);
 
+	void deleteBasketItem(int userNo, int tourNo);
+
 	List<Basket> selectBasketList(HashMap<String, Object> map);
+
 }

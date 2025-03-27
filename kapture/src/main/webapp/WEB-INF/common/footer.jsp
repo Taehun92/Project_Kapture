@@ -11,9 +11,9 @@
 	<div id="footer">
 		<!-- 상단 텍스트 링크 -->
 		<div class="footer-links">
-		  <a href="#" @click="fnPrivacy">공지사항</a>
-		  <a href="#" @click="fnPrivacy">이용약관</a>
-		  <a href="#" @click="fnPrivacy">개인정보 처리방침</a>
+		  <a href="/cs/notice.do" @click="fnPrivacy">공지사항</a>
+		  <a href="/cs/privacy.do" @click="fnPrivacy">이용약관</a>
+		  <a href="/cs/privacy.do" @click="fnPrivacy">개인정보 처리방침</a>
 		</div>
 	  
 		<!-- 메인 내용 -->
