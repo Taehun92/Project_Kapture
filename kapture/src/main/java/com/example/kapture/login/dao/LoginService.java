@@ -89,6 +89,18 @@ public class LoginService {
             resultMap.put("message", "잘못된 생년월일 형식입니다.");
             return resultMap;
         }
+
+        
+        // 
+        if (map.containsKey("lastName")) {
+        	String lastName = (String) map.get("lastName");
+        	if (lastName == null || lastName.trim().isEmpty()) {
+        	    map.put("lastName", "");
+        	}
+        }
+        
+        // DB 저장
+
         int num = loginMapper.insertUser(map);
         resultMap.put("result", num > 0 ? "success" : "fail");
         resultMap.put("num", num);

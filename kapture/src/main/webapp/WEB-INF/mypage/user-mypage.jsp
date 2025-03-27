@@ -25,7 +25,7 @@
                 /* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
                 display: flex;
                 max-width: 1200px;
-                height: calc(100vh - 300px);
+                min-height: calc(100vh - 300px);
                 ;
                 margin: 0 auto;
                 padding: 20px;
@@ -153,11 +153,11 @@
             <!-- 좌측 사이드 메뉴 -->
             <div class="side-menu">
                 <ul>
-                    <li><a href="#">회원 정보수정</a></li>
-                    <li><a href="#">구매한 상품</a></li>
-                    <li><a href="#">이용후기 관리</a></li>
-                    <li><a href="#">문의하기</a></li>
-                    <li><a href="#">회원 탈퇴</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-mypage.do">회원 정보수정</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-purchase-history.do">구매한 상품</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-rivews.do">이용후기 관리</a></li>
+                    <li><a href="http://localhost:8080/cs/qna.do">문의하기</a></li>
+                    <li><a href="http://localhost:8080/mypage/user-unregister.do">회원 탈퇴</a></li>
                 </ul>
             </div>
 
@@ -278,6 +278,7 @@
                             socialType: '',
                         },
                         sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
                     };
                 },
@@ -350,10 +351,16 @@
                 mounted() {
                     // 페이지 로드시 필요한 초기화 로직
                     // 세션롤이 가이드가 아니거나 세션아이디가 널이면 알림창
-                    if (this.sessionId === null) {
+                    console.log(this.sessionId);
+                    if (this.sessionId == '') {
                         alert("로그인 후 이용해주세요.");
-                        location.href = "localhost:8080/main.do";
+                        location.href = "http://localhost:8080/main.do";
                     }
+                    if (this.sessionRole != 'TOURIST') {
+                        alert("일반회원만 이용가능합니다.");
+                        location.href = "http://localhost:8080/main.do";
+                    }
+                    
                 }
             });
             app.mount('#app');
