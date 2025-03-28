@@ -77,7 +77,7 @@ const header = Vue.createApp({
             }
 
             const encoded = encodeURIComponent(keyword.trim());
-            location.href = `/tours/list.do?keyword=${encoded}`;
+            location.href = "/tours/list.do?keyword=" + encoded;
         },
 
         fnGetBasket() {

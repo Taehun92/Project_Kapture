@@ -13,5 +13,8 @@ public class Payment {
 	private String paymentStatus; 
 	private String method;
 	
+	private String basketNo;
+	private String numPeople;
+	
 	
 }
