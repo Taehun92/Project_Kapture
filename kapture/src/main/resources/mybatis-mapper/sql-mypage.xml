@@ -23,6 +23,17 @@
 		WHERE USER_NO = #{sessionId}
 	</select>
 	
+	
+	
+	
+	<insert id="insertTour" parameterType="hashmap">
+		INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, PRICE, DELETEYN)
+		SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{price}, 'N'
+		FROM GUIDES G
+		WHERE G.USER_NO = #{sessionId}
+	</insert>
+	
+	
 </mapper>
 
 

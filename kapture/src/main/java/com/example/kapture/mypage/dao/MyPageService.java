@@ -74,4 +74,16 @@ public class MyPageService {
 		return resultMap;
 		
 	}
+	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.insertTour(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	
+	
+	
 }

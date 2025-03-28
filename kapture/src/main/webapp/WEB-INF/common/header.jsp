@@ -29,6 +29,7 @@
                 <template v-if="sessionId != ''">
                     <a href="#">장바구니({{basketCount}})</a>
                     <a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
+                    <a href="http://localhost:8080/mypage/guide-mypage.do" v-if="sessionRole == 'GUIDE'">마이페이지</a>
                     <a href="http://localhost:8080/mypage/user-mypage.do" v-else>마이페이지</a>
                 </template>
             </div>

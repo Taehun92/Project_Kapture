@@ -17,5 +17,9 @@ public interface MyPageMapper {
 	void userInfoUpdate(HashMap<String, Object> map);
 
 	List<Payments> selectPayList(HashMap<String, Object> map);
+
+	void insertTour(HashMap<String, Object> map);
+	
+	
 	
 }
