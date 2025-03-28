@@ -72,13 +72,22 @@ public class MyPageController {
 			resultMap = myPageService.getPayList(map);
 			return new Gson().toJson(resultMap);
 		}
-    // 이용후기 관리
+		// 이용후기 불러오기
 		@RequestMapping(value = "/mypage/user-reviews.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String userReviews(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = myPageService.getUserReviews(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 이용후기 등록
+		@RequestMapping(value = "/mypage/user-reviewAdd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String reviewEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.reviewEdit(map);
 			return new Gson().toJson(resultMap);
 		}
 //--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  
@@ -119,10 +128,6 @@ public class MyPageController {
 			resultMap = myPageService.addTour(map);
 			return new Gson().toJson(resultMap);
 		}
-		
-}
-
-		
 		
 }
 

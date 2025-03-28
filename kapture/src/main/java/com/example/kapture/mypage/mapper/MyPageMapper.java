@@ -22,5 +22,7 @@ public interface MyPageMapper {
 	void insertTour(HashMap<String, Object> map);
 
 	List<Reviews> selectUserReviewsList(HashMap<String, Object> map);
+
+	int insertUserReview(HashMap<String, Object> map);
 	
 }
