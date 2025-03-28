@@ -522,6 +522,7 @@
 								self.fnGetMaxTourDate();
 								self.fnGetTourDateList();
 								self.fnGetBasketList();
+								self.fnGetBasket();
 							} else {
 								alert("이미 담은 상품입니다!");
 							}
@@ -543,7 +544,7 @@
 						data: nparmap,
 						success: function (data) {
 							if(data.count > 0) {
-								self.showCartButton = true;
+								
 							} else {
 								
 							}
@@ -674,7 +675,27 @@
 						if (a.duration !== '오전' && b.duration === '오전') return 1;
 						return 0;
 					});
-				}
+				},
+
+				fnGetBasket() {
+					let self = this;
+					let nparmap = {
+						sessionId : self.sessionId
+					};
+					$.ajax({
+						url: "/basket/getCount.dox",
+						type: "POST",
+						data: nparmap,
+						dataType: "json",
+						success: function(data) {
+							console.log(data);
+							if(data.count > 0) {
+								self.showCartButton = true;
+							}
+							
+						}
+					});
+				},
 			
 
 			},
@@ -686,6 +707,7 @@
 				self.fnGetMaxTourDate();
 				self.fnGetTourDateList();
 				self.fnGetBasketList();
+				self.fnGetBasket();
 			}
 		});
 		app.component('star-rating', VueStarRating.default)

@@ -56,11 +56,9 @@ public class PaymentController {
 	@ResponseBody
 	public String basketInfoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap = paymentService.savePayment(map);
+		resultMap = paymentService.getBasketInfoList(map);
 		return new Gson().toJson(resultMap);
 	}
-	
-	
 	
 	
 	// 결제 정보 저장
