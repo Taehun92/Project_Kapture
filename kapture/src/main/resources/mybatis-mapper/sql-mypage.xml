@@ -41,7 +41,14 @@
 		WHERE P.USER_NO = #{sessionId}
         ORDER BY PAYMENT_NO
 	</select>
-
+	
+	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
+		SELECT *
+        FROM GUIDES G
+          	INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
+        	INNER JOIN USERS U ON U.USER_NO = G.USER_NO
+                WHERE G.USER_NO = #{sessionId}
+	</select>
 </mapper>
 
 
