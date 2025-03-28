@@ -237,11 +237,13 @@ public class LoginController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             session.setAttribute("returnUrl", returnUrl);
+          
             String loginUrl = "https://www.facebook.com/v18.0/dialog/oauth"
                     + "?client_id=" + facebookClientId
-                    + "&redirect_uri=" + URLEncoder.encode(facebookRedirectUri, "UTF-8")
+                    + "&redirect_uri=" + facebookRedirectUri  // ✅ 인코딩 없이 그대로!
                     + "&response_type=code"
-                    + "&scope=email,public_profile";
+                    + "&scope=email,public_profile";    
+
             resultMap.put("result", "success");
             resultMap.put("url", loginUrl);
         } catch (Exception e) {
