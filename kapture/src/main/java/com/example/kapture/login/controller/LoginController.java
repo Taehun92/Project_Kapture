@@ -49,20 +49,24 @@ public class LoginController {
     private String facebookClientSecret;
     @Value("${facebook.redirect-uri}")
     private String facebookRedirectUri;
+    @Value("${client_id}")
+ 	private String client_id;
+ 
+
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping("/login.do") 
     public String login(Model model) throws Exception{
+
         return "/login/login"; 
     }
-
-
-	@RequestMapping("/join.do")
+    
+    @RequestMapping("/join.do")
     public String goJoinPage(Model model) throws Exception{
         return "/login/join";
-    }
 
+    }
 	@RequestMapping("/find-id.do") 
 		public String findId(Model model) throws Exception{
 	    return "/login/find-id";
