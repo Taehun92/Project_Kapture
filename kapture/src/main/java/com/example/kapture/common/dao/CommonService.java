@@ -48,6 +48,19 @@ public class CommonService {
 		
 		return resultMap;
 	}
+
+	public HashMap<String, Object> getThemeList(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Theme> themeNameList = commonMapper.selectThemeNameList(map);
+		
+		resultMap.put("themeNameList", themeNameList);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+		
+	}
 	
 	
 	
