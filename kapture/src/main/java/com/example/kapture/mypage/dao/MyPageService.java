@@ -75,7 +75,7 @@ public class MyPageService {
 		return resultMap;
 		
 	}
-	// 구매한 상품에 대한 유저 리뷰 리스트
+  // 구매한 상품에 대한 유저 리뷰 리스트
 	public HashMap<String, Object> getUserReviews(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -90,4 +90,15 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+//-------------------------------------------------------------------------------------------------------------------------------------------------  
+	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.insertTour(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	
 }

@@ -22,8 +22,17 @@
 		FROM PAYMENTS P
 		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
 		WHERE USER_NO = #{sessionId}
-	</select>
+	</select>	
 	
+	<insert id="insertTour" parameterType="hashmap">
+		INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
+		SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{duration}, #{price},'4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+		FROM GUIDES G
+		JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
+		JOIN THEME T ON T.THEME_NAME = #{themeName}
+		WHERE G.USER_NO = #{sessionId}
+  	</insert>
+  	
 	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
 		SELECT P.*, TITLE, DURATION, TOUR_DATE, U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
 		FROM PAYMENTS P
@@ -33,8 +42,5 @@
 		WHERE P.USER_NO = #{sessionId}
         ORDER BY PAYMENT_NO
 	</select>
+
 </mapper>
-
-
-
-

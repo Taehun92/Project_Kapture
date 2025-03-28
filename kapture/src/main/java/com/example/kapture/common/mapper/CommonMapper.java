@@ -17,4 +17,12 @@ public interface CommonMapper {
 	List<Theme> selectThemeList(HashMap<String, Object> map);
 	
 	List<Reviews> selectReviewsList(HashMap<String, Object> map);
+	
+	List<Region> selectSiNameList(HashMap<String, Object> map);
+	
+	List<Region> selectGuNameList(HashMap<String, Object> map);
+
+	List<Theme> selectThemeParentList(HashMap<String, Object> map);
+
+	List<Theme> selectThemeNameList(HashMap<String, Object> map);
 }
