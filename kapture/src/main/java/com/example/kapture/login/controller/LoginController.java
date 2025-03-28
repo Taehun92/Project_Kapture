@@ -1,19 +1,17 @@
 package com.example.kapture.login.controller;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 
 import com.example.kapture.login.dao.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,12 +49,22 @@ public class LoginController {
     private String facebookClientSecret;
     @Value("${facebook.redirect-uri}")
     private String facebookRedirectUri;
+    @Value("${client_id}")
+ 	private String client_id;
+ 
+
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @RequestMapping("/login.do")
-    public String login() {
-        return "/login/login";
+    @RequestMapping("/login.do") 
+    public String login(Model model) throws Exception{
+//        model.addAttribute("location", location);
+        return "/login/login"; 
+    }
+    
+    @RequestMapping("/join.do")
+    public String goJoinPage(Model model) throws Exception{
+        return "/login/join";
     }
     
     // 로그인
@@ -68,46 +76,7 @@ public class LoginController {
   		return new Gson().toJson(resultMap);
   	}
 
-    @RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String loginProc(@RequestParam HashMap<String, Object> map, HttpSession session) {
-        HashMap<String, Object> resultMap = new HashMap<>();
-
-        try {
-            String email = (String) map.get("email");
-            String password = (String) map.get("password");
-
-            if (email == null || password == null) {
-                resultMap.put("result", "fail");
-                resultMap.put("message", "이메일 또는 비밀번호가 누락되었습니다.");
-                return new Gson().toJson(resultMap);
-            }
-
-            HashMap<String, Object> user = loginService.findUserByEmail(email);
-
-            if (user == null) {
-                resultMap.put("result", "fail");
-                resultMap.put("message", "존재하지 않는 사용자입니다.");
-                return new Gson().toJson(resultMap);
-            }
-
-            if (!password.equals(user.get("PASSWORD"))) {
-                resultMap.put("result", "fail");
-                resultMap.put("message", "비밀번호가 일치하지 않습니다.");
-                return new Gson().toJson(resultMap);
-            }
-
-            loginService.saveLoginSession(user);
-            resultMap.put("result", "success");
-            resultMap.put("login", user);
-        } catch (Exception e) {
-            resultMap.put("result", "fail");
-            resultMap.put("message", "서버 오류 발생");
-            e.printStackTrace();
-        }
-
-        return new Gson().toJson(resultMap);
-    }
+    
 
     @RequestMapping(value = "/logout.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
