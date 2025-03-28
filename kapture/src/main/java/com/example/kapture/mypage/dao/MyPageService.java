@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Payments;
@@ -74,6 +75,22 @@ public class MyPageService {
 		return resultMap;
 		
 	}
+  // 구매한 상품에 대한 유저 리뷰 리스트
+	public HashMap<String, Object> getUserReviews(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+	        List<Reviews> reviewsList = myPageMapper.selectUserReviewsList(map);
+	        System.out.println(reviewsList);
+	        resultMap.put("reviewsList", reviewsList);
+	        resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+//-------------------------------------------------------------------------------------------------------------------------------------------------  
 	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		
@@ -82,8 +99,6 @@ public class MyPageService {
 		
 		return resultMap;
 	}
-	
-	
 	
 	
 }

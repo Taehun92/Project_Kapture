@@ -32,13 +32,13 @@ public class MyPageController {
 			request.setAttribute("map", map);
 			return "/mypage/user-purchase-history";
 		}
-		
+		// 이용후기 관리 페이지
 		@RequestMapping("/mypage/user-reviews.do")
 		public String userReviews(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			request.setAttribute("map", map);
 			return "/mypage/user-reviews";
 		}
-		
+		// 회원 탈퇴 페이지
 		@RequestMapping("/mypage/user-unregister.do")
 		public String userUnRegister(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			request.setAttribute("map", map);
@@ -72,7 +72,16 @@ public class MyPageController {
 			resultMap = myPageService.getPayList(map);
 			return new Gson().toJson(resultMap);
 		}
-		
+    // 이용후기 관리
+		@RequestMapping(value = "/mypage/user-reviews.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String userReviews(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.getUserReviews(map);
+			return new Gson().toJson(resultMap);
+		}
+//--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  
 		
 		// 가이드 페이지
 		@RequestMapping("/mypage/guide-mypage.do")
@@ -112,3 +121,8 @@ public class MyPageController {
 		}
 		
 }
+
+		
+		
+}
+
