@@ -140,8 +140,3 @@ public class MyPageController {
 		
 		
 }
-
-		
-		
-}
-

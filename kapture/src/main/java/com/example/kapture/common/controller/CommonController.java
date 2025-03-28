@@ -48,4 +48,14 @@ public class CommonController {
 		resultMap = commonService.getThemeParentList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 하위테마 이름 가져오기
+	@RequestMapping(value = "/common/getThemeList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getThemeList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.getThemeList(map);
+		return new Gson().toJson(resultMap);
+	}
 }
