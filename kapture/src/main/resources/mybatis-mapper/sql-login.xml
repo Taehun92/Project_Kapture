@@ -69,6 +69,41 @@
 	    WHERE EMAIL = #{email}
 	</update>
 
+	<!-- 트위터 ID로 사용자 조회 -->
+<select id="selectUserByTwitterId" parameterType="string" resultType="hashmap">
+    SELECT 
+        USER_NO,
+        USER_FIRSTNAME,
+        USER_LASTNAME,
+        'TOURIST',
+        EMAIL,
+    FROM USERS
+    WHERE EMAIL = #{email}
+</select>
+
+	<!-- 트위터 사용자 신규 등록 -->
+	<insert id="insertTwitterUser" parameterType="hashmap">
+    INSERT INTO USERS (
+        USER_NO,
+        PASSWORD,
+        EMAIL,
+        ROLE,
+        USER_FIRSTNAME,
+        USER_LASTNAME,
+        SOCIAL_TYPE,
+        
+    ) VALUES (
+        USER_SEQ.NEXTVAL,
+        'Test1234!',
+        #{email},            <!-- 트위터 username 기반 이메일 -->
+        'TOURIST',
+        #{userFirstName},
+        #{userLastName},
+        'SOCIAL'
+    )
+	</insert>
+	
+	
 </mapper>
 
 
