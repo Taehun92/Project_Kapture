@@ -1,6 +1,7 @@
 package com.example.kapture.login.dao;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
@@ -90,16 +91,12 @@ public class LoginService {
             return resultMap;
         }
 
-        
-        // 
         if (map.containsKey("lastName")) {
-        	String lastName = (String) map.get("lastName");
-        	if (lastName == null || lastName.trim().isEmpty()) {
-        	    map.put("lastName", "");
-        	}
+            String lastName = (String) map.get("lastName");
+            if (lastName == null || lastName.trim().isEmpty()) {
+                map.put("lastName", "");
+            }
         }
-        
-        // DB 저장
 
         int num = loginMapper.insertUser(map);
         resultMap.put("result", num > 0 ? "success" : "fail");
@@ -145,7 +142,7 @@ public class LoginService {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < 6; i++) {
-            code.append(characters.charAt((int)(Math.random() * characters.length())));
+            code.append(characters.charAt((int) (Math.random() * characters.length())));
         }
         return code.toString();
     }
@@ -214,7 +211,7 @@ public class LoginService {
             userInfo.put("email", user.get("email").asText());
             userInfo.put("userFirstName", user.get("name").asText());
             userInfo.put("userLastName", "");
-            userInfo.put("socialType", "google");
+            userInfo.put("socialType", "SOCIAL");
         } else if ("twitter".equals(type)) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -238,7 +235,27 @@ public class LoginService {
             userInfo.put("email", email);
             userInfo.put("userFirstName", user.get("data").get("name").asText());
             userInfo.put("userLastName", "");
-            userInfo.put("socialType", "twitter");
+            userInfo.put("socialType", "SOCIAL");
+        } else if ("facebook".equals(type)) {
+            // 수정: redirect_uri URL 인코딩 제거 (인코딩하면 Facebook에서 절대 URI로 인식하지 못하는 문제가 발생)
+            String tokenUrl = "https://graph.facebook.com/v18.0/oauth/access_token"
+                    + "?client_id=" + clientId
+                    + "&redirect_uri=" + redirectUri
+                    + "&client_secret=" + clientSecret
+                    + "&code=" + code;
+
+            ResponseEntity<String> tokenResponse = restTemplate.getForEntity(tokenUrl, String.class);
+            JsonNode tokenJson = objectMapper.readTree(tokenResponse.getBody());
+            String accessToken = tokenJson.get("access_token").asText();
+
+            String profileUrl = "https://graph.facebook.com/me?fields=id,name,email&access_token=" + accessToken;
+            ResponseEntity<JsonNode> userResponse = restTemplate.getForEntity(profileUrl, JsonNode.class);
+            JsonNode user = userResponse.getBody();
+
+            userInfo.put("email", user.get("email").asText());
+            userInfo.put("userFirstName", user.get("name").asText());
+            userInfo.put("userLastName", "");
+            userInfo.put("socialType", "SOCIAL");
         }
 
         return userInfo;
@@ -251,4 +268,4 @@ public class LoginService {
         session.setAttribute("sessionFirstName", user.get("USERFIRSTNAME"));
         session.setAttribute("sessionLastName", user.get("USERLASTNAME"));
     }
-} 
+}
