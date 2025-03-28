@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Payments;
 
@@ -17,5 +18,7 @@ public interface MyPageMapper {
 	void userInfoUpdate(HashMap<String, Object> map);
 
 	List<Payments> selectPayList(HashMap<String, Object> map);
+
+	List<Reviews> selectUserReviewsList(HashMap<String, Object> map);
 	
 }

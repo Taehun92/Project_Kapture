@@ -52,6 +52,15 @@ public class LoginController {
     public String login() {
         return "/login/login";
     }
+    
+    // 로그인
+  	@RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+  	@ResponseBody
+  	public String login(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+  		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+  		resultMap = loginService.userLogin(map);
+  		return new Gson().toJson(resultMap);
+  	}
 
     // ✅ 로그아웃 처리
     @RequestMapping(value = "/logout.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
