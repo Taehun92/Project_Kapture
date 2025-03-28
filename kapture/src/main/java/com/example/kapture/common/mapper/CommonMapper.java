@@ -21,4 +21,6 @@ public interface CommonMapper {
 	List<Region> selectSiNameList(HashMap<String, Object> map);
 	
 	List<Region> selectGuNameList(HashMap<String, Object> map);
+
+	List<Theme> selectThemeParentList(HashMap<String, Object> map);
 }

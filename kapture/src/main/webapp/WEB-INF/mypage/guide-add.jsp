@@ -48,6 +48,22 @@
 					</template>
 				</select></td>
             </tr>
+			<tr>
+                <th>상위테마 :</th>
+                <td><select @change="fnSelectTheme()" v-model="themeParent">
+					<option value="">:: 선택 ::</option>
+					<template v-for="item in themeParentList">
+						<option :value="item.themeParentList">{{item.themeName}}</option>
+					</template>
+				</select></td>
+                <th>테마 :</th>
+                <td><select v-model="themeName">
+					<option value="">:: 선택 ::</option>
+					<template v-for="item in themeNameList">
+						<option :value="item.themeNameList">{{item.themeName}}</option>
+					</template>
+				</select></td>
+            </tr>
             <tr>
                 <th>내용 :</th>
                 <td colspan="3">
@@ -79,7 +95,11 @@
 				guList: [],
 				siName: "",
 				guName: "",
-
+				themeParentList: [],
+				themeList: [],
+				themeName : "",
+				themeParent : "",
+				themeNameList : []
 
             };
         },
@@ -110,6 +130,7 @@
 					}
 				});
             },
+
 			fnSelectSi() {
 				let self = this;
 				let nparmap = {
@@ -128,6 +149,7 @@
 					}
 				});
 			},
+
 			fnSelectGu() {
 				let self = this;
 				// if(){}
@@ -145,6 +167,44 @@
 					}
 				});
 			},
+
+			fnGetThemeParentList() {
+				let self = this;
+				let nparmap = {
+				};
+				$.ajax({
+					url: "/common/getThemeParentList.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+						self.themeParentList = data.themeParentList;
+						
+					}
+				});
+			},
+
+			fnSelectTheme() {
+				let self = this;
+				let nparmap = {
+					themeParent: self.themeParent
+				};
+				$.ajax({
+					url: "/common/getThemeList.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+						self.themeNameList = data.themeNameList;
+					}
+				});
+			},
+
+
+
+
         },
         mounted() {
 			var self = this;
@@ -168,6 +228,7 @@
 			});
 
 			self.fnSelectSi();
+			self.fnGetThemeParentList();
         }
     });
     app.mount('#app');

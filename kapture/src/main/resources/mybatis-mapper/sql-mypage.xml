@@ -27,8 +27,8 @@
 	
 	
 	<insert id="insertTour" parameterType="hashmap">
-		INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, PRICE, DELETEYN, SI_NO, GU_NO)
-		SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{price}, 'N', R.SI_NO, R.GU_NO
+		INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, DELETEYN, SI_NO, GU_NO)
+		SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{duration}, #{price}, 'N', R.SI_NO, R.GU_NO
 		FROM GUIDES G
 		JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
 		WHERE G.USER_NO = #{sessionId}
