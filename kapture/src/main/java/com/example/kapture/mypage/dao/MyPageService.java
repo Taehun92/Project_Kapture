@@ -90,6 +90,20 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	// 리뷰 등록
+	public HashMap<String, Object> reviewEdit(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println("리뷰등록 맵: " + map);
+	        int result = myPageMapper.insertUserReview(map);
+	        resultMap.put("result", result > 0 ? "success" : "fail");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "queryFail");
+		}
+		return resultMap;
+	}
 //-------------------------------------------------------------------------------------------------------------------------------------------------  
 	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -99,6 +113,7 @@ public class MyPageService {
 		
 		return resultMap;
 	}
+	
 	
 	
 }

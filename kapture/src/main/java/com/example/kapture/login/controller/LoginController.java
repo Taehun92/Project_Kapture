@@ -144,7 +144,7 @@ public class LoginController {
             HashMap<String, Object> user = loginService.findUserByEmail((String) userInfo.get("email"));
 
             if (user == null) {
-                user = loginService.createUserFromSocial(userInfo);
+                user = loginService.createUserFromSocial(userInfo);            
             }
 
             loginService.saveLoginSession(user);
