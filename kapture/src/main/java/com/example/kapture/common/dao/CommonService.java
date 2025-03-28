@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.kapture.common.mapper.CommonMapper;
 import com.example.kapture.common.model.Region;
+import com.example.kapture.common.model.Theme;
 
 @Service
 public class CommonService {
@@ -32,6 +33,17 @@ public class CommonService {
 		List<Region> guList = commonMapper.selectGuNameList(map);
 		
 		resultMap.put("guList", guList);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getThemeParentList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Theme> themeParentList = commonMapper.selectThemeParentList(map);
+		
+		resultMap.put("themeParentList", themeParentList);
 		resultMap.put("result", "success");
 		
 		return resultMap;
