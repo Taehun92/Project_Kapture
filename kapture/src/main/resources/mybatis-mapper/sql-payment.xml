@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.payment.mapper.PaymentMapper">
+	<select id="selectBasketInfoList" parameterType="hashmap" resultType="com.example.kapture.payment.model.Payment">
+		SELECT *
+	    FROM BASKET B
+	    JOIN TOURS T ON B.TOUR_NO = T.TOUR_NO
+	    WHERE B.BASKET_NO IN 
+	    <foreach item="no" collection="list" open="(" separator="," close=")">
+	        #{no}
+	    </foreach>
+	</select>
+	
+	
+
+</mapper>

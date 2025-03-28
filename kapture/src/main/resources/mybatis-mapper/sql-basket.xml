@@ -35,7 +35,7 @@
 	</select>
 	
 	<select id='selectBasketList' parameterType="hashmap" resultType="com.example.kapture.basket.model.Basket">
-		SELECT TITLE, DURATION, NUM_PEOPLE, PRICE, TOUR_DATE
+		SELECT *
 		FROM BASKET B
 		INNER JOIN TOURS T
 		ON B.TOUR_NO = T.TOUR_NO
