@@ -237,9 +237,10 @@ public class LoginService {
             userInfo.put("userLastName", "");
             userInfo.put("socialType", "SOCIAL");
         } else if ("facebook".equals(type)) {
+            // 수정: redirect_uri URL 인코딩 제거 (인코딩하면 Facebook에서 절대 URI로 인식하지 못하는 문제가 발생)
             String tokenUrl = "https://graph.facebook.com/v18.0/oauth/access_token"
                     + "?client_id=" + clientId
-                    + "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8")
+                    + "&redirect_uri=" + redirectUri
                     + "&client_secret=" + clientSecret
                     + "&code=" + code;
 
