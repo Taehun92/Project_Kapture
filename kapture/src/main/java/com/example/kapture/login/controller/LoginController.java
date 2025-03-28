@@ -1,21 +1,21 @@
 package com.example.kapture.login.controller;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.kapture.login.dao.LoginService;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
@@ -45,25 +45,70 @@ public class LoginController {
     @Value("${google.redirect.url}")
     private String googleRedirectUri;
 
+    @Value("${facebook.client-id}")
+    private String facebookClientId;
+    @Value("${facebook.client-secret}")
+    private String facebookClientSecret;
+    @Value("${facebook.redirect-uri}")
+    private String facebookRedirectUri;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 로그인 페이지
     @RequestMapping("/login.do")
     public String login() {
         return "/login/login";
     }
 
-    // ✅ 로그아웃 처리
+    @RequestMapping(value = "/login.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String loginProc(@RequestParam HashMap<String, Object> map, HttpSession session) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        try {
+            String email = (String) map.get("email");
+            String password = (String) map.get("password");
+
+            if (email == null || password == null) {
+                resultMap.put("result", "fail");
+                resultMap.put("message", "이메일 또는 비밀번호가 누락되었습니다.");
+                return new Gson().toJson(resultMap);
+            }
+
+            HashMap<String, Object> user = loginService.findUserByEmail(email);
+
+            if (user == null) {
+                resultMap.put("result", "fail");
+                resultMap.put("message", "존재하지 않는 사용자입니다.");
+                return new Gson().toJson(resultMap);
+            }
+
+            if (!password.equals(user.get("PASSWORD"))) {
+                resultMap.put("result", "fail");
+                resultMap.put("message", "비밀번호가 일치하지 않습니다.");
+                return new Gson().toJson(resultMap);
+            }
+
+            loginService.saveLoginSession(user);
+            resultMap.put("result", "success");
+            resultMap.put("login", user);
+        } catch (Exception e) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "서버 오류 발생");
+            e.printStackTrace();
+        }
+
+        return new Gson().toJson(resultMap);
+    }
+
     @RequestMapping(value = "/logout.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String logout(HttpSession session) {
         HashMap<String, Object> resultMap = new HashMap<>();
-        session.invalidate(); // 세션 초기화
+        session.invalidate();
         resultMap.put("result", "success");
         return new Gson().toJson(resultMap);
     }
 
-    // ✅ 구글 로그인
     @RequestMapping("/google/login")
     public String googleLoginRedirect() {
         String loginUrl = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -76,8 +121,8 @@ public class LoginController {
 
     @RequestMapping("/google/callback")
     public String googleCallback(@RequestParam("code") String code,
-    		@RequestParam(value = "returnUrl", defaultValue = "/main.do")String returnUrl,
-            HttpSession session) {
+                                  @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
+                                  HttpSession session) {
         try {
             HashMap<String, Object> userInfo = loginService.handleSocialLogin(
                     "google", code, null,
@@ -98,7 +143,6 @@ public class LoginController {
         }
     }
 
-    // ✅ 트위터 로그인
     @RequestMapping("/twitter/login")
     public String twitterLoginRedirect(HttpSession session) {
         String state = UUID.randomUUID().toString();
@@ -125,7 +169,6 @@ public class LoginController {
                                   @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
                                   HttpSession session) {
         try {
-            // 파라미터 유효성 확인
             if (code == null || state == null) {
                 return "redirect:/login.do";
             }
@@ -137,7 +180,6 @@ public class LoginController {
                 throw new IllegalStateException("state mismatch!");
             }
 
-            // 사용자 정보 요청
             HashMap<String, Object> userInfo = loginService.handleSocialLogin(
                     "twitter", code, codeChallenge,
                     twitterClientId, null,
@@ -149,8 +191,6 @@ public class LoginController {
             }
 
             loginService.saveLoginSession(user);
-
-            // ✅ redirect 할 returnUrl로 이동
             return "redirect:" + returnUrl;
 
         } catch (Exception e) {
@@ -159,10 +199,6 @@ public class LoginController {
         }
     }
 
-
-
-
-    // ✅ Vue에서 사용하는 트위터 로그인 URL 요청
     @RequestMapping(value = "/twitter/auth-code-url.dox", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> getTwitterAuthCodeUrl(@RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
@@ -174,7 +210,7 @@ public class LoginController {
 
             session.setAttribute("twitter_state", state);
             session.setAttribute("code_challenge", codeChallenge);
-            session.setAttribute("returnUrl", returnUrl); // 저장해두기
+            session.setAttribute("returnUrl", returnUrl);
 
             String loginUrl = "https://twitter.com/i/oauth2/authorize"
                     + "?response_type=code"
@@ -194,8 +230,51 @@ public class LoginController {
         return resultMap;
     }
 
+    @RequestMapping(value = "/facebook/login-url.dox", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> getFacebookAuthCodeUrl(@RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
+                                                      HttpSession session) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            session.setAttribute("returnUrl", returnUrl);
+            String loginUrl = "https://www.facebook.com/v18.0/dialog/oauth"
+                    + "?client_id=" + facebookClientId
+                    + "&redirect_uri=" + URLEncoder.encode(facebookRedirectUri, "UTF-8")
+                    + "&response_type=code"
+                    + "&scope=email,public_profile";
+            resultMap.put("result", "success");
+            resultMap.put("url", loginUrl);
+        } catch (Exception e) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "URL 생성 중 오류 발생");
+        }
+        return resultMap;
+    }
 
-    // ✅ 테스트용 메일 발송
+    @RequestMapping("/oauth/facebook/callback")
+    public String facebookCallback(@RequestParam("code") String code,
+                                   @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
+                                   HttpSession session) {
+        try {
+            HashMap<String, Object> userInfo = loginService.handleSocialLogin(
+                "facebook", code, null,
+                facebookClientId, facebookClientSecret,
+                facebookRedirectUri, null, null
+            );
+
+            HashMap<String, Object> user = loginService.findUserByEmail((String) userInfo.get("email"));
+            if (user == null) {
+                user = loginService.createUserFromSocial(userInfo);
+            }
+
+            loginService.saveLoginSession(user);
+            return "redirect:" + returnUrl;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/login.do";
+        }
+    }
+
     @RequestMapping("/test-mail")
     @ResponseBody
     public String testMail() {
