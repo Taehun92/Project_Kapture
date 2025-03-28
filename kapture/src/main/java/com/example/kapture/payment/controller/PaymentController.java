@@ -1,19 +1,26 @@
 package com.example.kapture.payment.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.kapture.payment.dao.PaymentService;
-
-import jakarta.servlet.http.HttpSession;
+import com.google.gson.Gson;
 
 @Controller
 public class PaymentController {
@@ -26,51 +33,62 @@ public class PaymentController {
 
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
+	
+	@Value("${exchange.api.key}")
+	private String exchangeApiKey;
+	
+	@Autowired
+	private Environment env;
 
 	
 	@RequestMapping("/payment.do")
-    public String payment() {
+    public String payment(Model model) throws Exception{
         return "/payment/payment";
     }
 	
+	@RequestMapping("/payment/success.do")
+    public String success(Model model) throws Exception{
+        return "/payment/success";
+    }
 	
-	@RequestMapping(value = "/payment/complete.dox", method = RequestMethod.POST)
+	// 결제 목록 조회
+	@RequestMapping(value = "/payment/getBasketInfoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public Map<String, Object> completePayment(@RequestBody Map<String, Object> payload, HttpSession session) {
-	    Map<String, Object> result = new HashMap<>();
-
-	    try {
-	        // 세션에서 로그인 사용자 번호 추출
-	        String userNo = (String) session.getAttribute("USER_NO");
-	        if (userNo == null) {
-	            result.put("status", "fail");
-	            result.put("message", "로그인이 필요합니다.");
-	            return result;
-	        }
-
-	        // 필수 파라미터 체크
-	        if (!payload.containsKey("impUid") || !payload.containsKey("merchantUid") ||
-	            !payload.containsKey("paidAmount") || !payload.containsKey("method")) {
-	            result.put("status", "fail");
-	            result.put("message", "필수 정보 누락");
-	            return result;
-	        }
-
-	        // 유저 번호 추가
-	        payload.put("userNo", userNo);
-
-	        // 결제 처리 서비스 호출
-	        paymentService.processPayment(payload);
-
-	        result.put("status", "success");
-	    } catch (Exception e) {
-	        result.put("status", "fail");
-	        result.put("message", e.getMessage());
-	    }
-
-	    return result;
+	public String basketInfoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = paymentService.savePayment(map);
+		return new Gson().toJson(resultMap);
 	}
 	
 	
 	
+	
+	// 결제 정보 저장
+	@RequestMapping(value = "/payment/save.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String savePayment(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = paymentService.savePayment(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	
+	
+	// 환율 계산 API
+	@RequestMapping("/exchangeRate/USD")
+	@ResponseBody
+    public Map<String, Object> getUsdExchangeRate() throws Exception {
+        String apiKey = env.getProperty("exchange.api.key"); // application.properties에 저장한 키
+        String urlStr = "https://v6.exchangerate-api.com/v6/" + apiKey + "/pair/USD/KRW";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(urlStr, String.class);
+
+        JSONObject json = new JSONObject(response.getBody());
+        double rate = json.getDouble("conversion_rate");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("rate", rate);
+        return result;
+    }
 }
