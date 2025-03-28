@@ -47,6 +47,25 @@
 		WHERE TOUR_NO = #{tourNo}
 	</select>
 	
+	<select id="selectSiNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NAME FROM REGION
+	</select>
+	
+	<select id="selectGuNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT GU_NAME FROM REGION
+		WHERE SI_NAME = #{siName} AND GU_NAME IS NOT NULL
+	</select>
+	
+	<select id="selectThemeParentList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME
+		WHERE THEME_NO IN (100, 200, 300, 400, 500)
+	</select>
+	
+	<select id="selectThemeNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT T2.THEME_NAME FROM THEME T1
+		INNER JOIN THEME T2 ON T1.THEME_NO = T2.THEME_PARENT_NO
+		WHERE T2.THEME_PARENT_NO = 100
+	</select>
 </mapper>
 
 
