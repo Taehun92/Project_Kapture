@@ -11,6 +11,8 @@ import com.example.kapture.payment.model.Payment;
 @Mapper
 public interface PaymentMapper {
 
-	List<Payment> selectBasketInfoList(HashMap<String, Object> map);
+	List<Payment> selectPaymentList(HashMap<String, Object> map);
+
+	int insertPayment(HashMap<String, Object> map);
 
 }
