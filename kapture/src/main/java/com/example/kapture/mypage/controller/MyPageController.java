@@ -72,7 +72,7 @@ public class MyPageController {
 			resultMap = myPageService.getPayList(map);
 			return new Gson().toJson(resultMap);
 		}
-		// 이용후기 관리
+    // 이용후기 관리
 		@RequestMapping(value = "/mypage/user-reviews.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String userReviews(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -81,5 +81,48 @@ public class MyPageController {
 			resultMap = myPageService.getUserReviews(map);
 			return new Gson().toJson(resultMap);
 		}
+//--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  
+		
+		// 가이드 페이지
+		@RequestMapping("/mypage/guide-mypage.do")
+		public String guideMypage(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-mypage";
+		}
+		
+		// 가이드 글쓰기 페이지
+		@RequestMapping("/mypage/guide-add.do")
+		public String guideAdd(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-add";
+		}
+		
+		// 가이드 글쓰기 수정
+		@RequestMapping("/mypage/guide-edit.do")
+		public String guideEdit(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-edit";
+		}
+		
+		
+		
+		
+		
+		
+		
+		// 가이드 글쓰기
+		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String addTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.addTour(map);
+			return new Gson().toJson(resultMap);
+		}
 		
 }
+
+		
+		
+}
+
