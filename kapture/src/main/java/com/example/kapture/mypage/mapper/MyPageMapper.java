@@ -24,5 +24,10 @@ public interface MyPageMapper {
 	List<Reviews> selectUserReviewsList(HashMap<String, Object> map);
 
 	int insertUserReview(HashMap<String, Object> map);
+
+	int updateUserReview(HashMap<String, Object> map);
 	
+	int deleteUserReview(HashMap<String, Object> map);
+
+	int deleteUser(HashMap<String, Object> map);
 }

@@ -27,6 +27,10 @@ public class MyPageService {
 		
 		try {
 			Login userInfo = myPageMapper.selectUser(map);
+			if(Boolean.parseBoolean((String) map.get("unregisterFlg"))) {
+				resultMap.put("userInfo", userInfo);
+	            resultMap.put("result", "success");
+			}
 	        boolean loginFlg = false;
 	        if (userInfo != null) {
 	            loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
@@ -90,13 +94,49 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
-	// 리뷰 등록
-	public HashMap<String, Object> reviewEdit(HashMap<String, Object> map) {
+	// 리뷰 등록 or 수정
+	public HashMap<String, Object> reviewSave(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			System.out.println("리뷰등록 맵: " + map);
-	        int result = myPageMapper.insertUserReview(map);
+			System.out.println("editFlg : " + Boolean.parseBoolean((String) map.get("editFlg")));
+			boolean editFlg = Boolean.parseBoolean((String) map.get("editFlg"));
+			if(!editFlg) {
+				System.out.println("리뷰등록 맵: " + map);
+	        	int result = myPageMapper.insertUserReview(map);
+	        	resultMap.put("result", result > 0 ? "success" : "fail");
+			}
+			if(editFlg) {
+				System.out.println("리뷰수정 맵: " + map);
+				int result = myPageMapper.updateUserReview(map);
+	        	resultMap.put("result", result > 0 ? "success" : "fail");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "queryFail");
+		}
+		return resultMap;
+	}
+	// 리뷰 삭제
+	public HashMap<String, Object> userReviewRemove(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println("리뷰삭제 맵: " + map);
+			int result = myPageMapper.deleteUserReview(map);
+	        resultMap.put("result", result > 0 ? "success" : "fail");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "queryFail");
+		}
+		return resultMap;
+	}
+	// 회원 탈퇴
+	public HashMap<String, Object> userUnregister(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = myPageMapper.deleteUser(map);
 	        resultMap.put("result", result > 0 ? "success" : "fail");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -113,6 +153,7 @@ public class MyPageService {
 		
 		return resultMap;
 	}
+	
 	
 	
 	
