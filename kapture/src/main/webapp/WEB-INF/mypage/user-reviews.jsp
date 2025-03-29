@@ -264,13 +264,24 @@
                                     <span>작성일: {{review.rUpdatedAt}}</span>
                                     <div>
                                         평점: <star-rating :rating="review.rating" :read-only="true" :star-size="10"
-                                            :increment="0.01" :border-width="5" :show-rating="false"
+                                            :increment="1" :border-width="5" :show-rating="false"
                                             :rounded-corners="true"
                                             style="display: inline-block; vertical-align: middle;"></star-rating>
                                     </div>
                                 </div>
                                 <div class="review-text">
                                     {{review.comment}}
+                                </div>
+                                <div>
+                                    <span>
+                                        <button @click="fnReviewEdit(review.reviewNo, review.title,
+                                                                    review.rating, review.comment)">
+                                            수정
+                                        </button>
+                                    </span>
+                                    <span>
+                                        <button @click="fnReviewRemove(review.reviewNo)">삭제</button>
+                                    </span>
                                 </div>
                             </div>
                         </template>
@@ -292,7 +303,7 @@
                             <th>상품명</th>
                             <td>
                                 <!-- 상품명 (제목) -->
-                                <input type="text" v-model="newReviewTitle" readonly />
+                                <input type="text" v-model="ReviewTitle" readonly />
                                 <!-- 필요하다면 readonly 제거하고 수정 가능하도록 -->
                             </td>
                         </tr>
@@ -300,7 +311,7 @@
                             <th>이용후기</th>
                             <td>
                                 <!-- textarea로 후기 입력 -->
-                                <textarea v-model="newReviewComment" rows="5" cols="50"
+                                <textarea v-model="ReviewComment" rows="5" cols="50"
                                     placeholder="이용후기를 입력해주세요."></textarea>
                             </td>
                         </tr>
@@ -308,8 +319,9 @@
                             <th>평점</th>
                             <td>
                                 <!-- 별 5개 (max-rating=5), 사용자가 선택할 수 있도록 v-model -->
-                                <star-rating :rating="0" :increment="0.5" :star-size="20" :border-width="2"
-                                    :show-rating="false" :rounded-corners="true"></star-rating>
+                                <star-rating :rating="rating" :increment="1" :star-size="20" :border-width="2"
+                                    :show-rating="false" :rounded-corners="true"
+                                    @update:rating="setRating"></star-rating>
                             </td>
                         </tr>
                     </table>
@@ -322,7 +334,7 @@
             </div>
         </div>
 
-        
+
 
         <!-- 공통 푸터 -->
         <jsp:include page="../common/footer.jsp" />
@@ -337,10 +349,13 @@
                         currentPage: "",
 
                         showReviewModal: false,
-                        newReviewTitle: "",
-                        newReviewComment: "",
+                        ReviewTitle: "",
+                        ReviewComment: "",
                         rating: 0,
                         tourNo: 0,
+
+                        editFlg: false,
+                        reviewNo: 0,
                     };
                 },
                 methods: {
@@ -360,7 +375,6 @@
                                     console.log("Data : " + data);
                                     self.reviewsList = data.reviewsList;
                                     console.log(self.reviewsList);
-
                                 } else {
                                     console.error("데이터 로드 실패");
                                 }
@@ -371,9 +385,12 @@
                         });
                     },
                     fnReviewAdd(title, tourNo) {
-                        this.newReviewTitle = title || "";  // 혹시 값이 없으면 빈 문자열
+                        this.ReviewTitle = title || "";  // 혹시 값이 없으면 빈 문자열
                         this.showReviewModal = true;
+                        this.ReviewComment = "";
+                        this.rating = 0;
                         this.tourNo = tourNo;
+                        this.editFlg = false;
                     },
                     // ▼ 추가된 부분: 작성 완료 버튼 클릭 시 처리
                     fnReviewSubmit() {
@@ -383,10 +400,12 @@
                             tourNo: self.tourNo,
                             userNo: self.sessionId,
                             rating: self.rating,
-                            comment: self.newReviewComment
+                            comment: self.ReviewComment,
+                            reviewNo: self.reviewNo,
+                            editFlg: self.editFlg,
                         };
                         $.ajax({
-                            url: "/mypage/user-reviewAdd.dox",
+                            url: "/mypage/user-reviewSave.dox",
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -394,6 +413,7 @@
                                 if (data.result == "success") {
                                     console.log("Data : " + data);
                                     self.fnReviews();
+                                    self.editFlg ?  alert("리뷰가 수정되었습니다.") : alert("리뷰가 등록되었습니다.");
                                     // 완료 후 모달 닫기
                                     self.showReviewModal = false;
                                 } else {
@@ -408,7 +428,47 @@
                     // ▼ 추가된 부분: 모달 닫기
                     fnReviewClose() {
                         this.showReviewModal = false;
+                    },
+                    setRating: function (rating) {
+                        this.rating = rating;
+                        console.log("this.rating : " + this.rating);
+                    },
+                    fnReviewEdit(reviewNo, title, rating, comment) {
+                        this.ReviewTitle = title || "";  // 혹시 값이 없으면 빈 문자열
+                        this.showReviewModal = true;
+                        this.ReviewComment = comment;
+                        this.rating = rating;
+                        this.reviewNo = reviewNo;
+                        this.editFlg = true;
+                    },
+                    fnReviewRemove(reviewNo) {
+                        let self = this;
+                        if(!confirm("정말로 삭제하시겠습니까?")){
+                            return;
+                        }
+                        let nparmap = {
+                            reviewNo: reviewNo,
+                        };
+                        $.ajax({
+                            url: "/mypage/user-reviewRemove.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log("Data : " + data);
+                                    self.fnReviews();
+                                    alert("리뷰가 삭제되었습니다.");
+                                } else {
+                                    console.error("데이터 로드 실패");
+                                }
+                            },
+                            error: function (error) {
+                                console.error("AJAX 에러:", error);
+                            }
+                        });
                     }
+
                 },
                 mounted() {
                     if (this.sessionId === null) {

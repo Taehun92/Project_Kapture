@@ -81,13 +81,31 @@ public class MyPageController {
 			resultMap = myPageService.getUserReviews(map);
 			return new Gson().toJson(resultMap);
 		}
-		// 이용후기 등록
-		@RequestMapping(value = "/mypage/user-reviewAdd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		// 이용후기 등록, 수정
+		@RequestMapping(value = "/mypage/user-reviewSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
-		public String reviewEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		public String reviewSave(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
-			resultMap = myPageService.reviewEdit(map);
+			resultMap = myPageService.reviewSave(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 이용후기 삭제
+		@RequestMapping(value = "/mypage/user-reviewRemove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String userReviewRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.userReviewRemove(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 회원 탈퇴
+		@RequestMapping(value = "/mypage/user-unregister.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String userUnregister(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.userUnregister(map);
 			return new Gson().toJson(resultMap);
 		}
 //--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  

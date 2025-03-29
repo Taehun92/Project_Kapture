@@ -42,11 +42,28 @@
         ORDER BY PAYMENT_NO
 	</select>
 	
-	
 	<insert id="insertUserReview" parameterType="hashmap">
 		INSERT INTO REVIEWS (REVIEW_NO, TOUR_NO, USER_NO, RATING, "COMMENT", R_UPDATED_AT)
 		VALUES (REVIEWS_SEQ.NEXTVAL, #{tourNo}, #{userNo}, #{rating}, #{comment}, SYSDATE)
 	</insert>
+	
+	<update id="updateUserReview" parameterType="hashmap">
+		UPDATE REVIEWS
+	    SET "COMMENT" = #{comment},
+	    	RATING = #{rating},
+	    	R_UPDATED_AT = SYSDATE
+	    WHERE REVIEW_NO = #{reviewNo}
+	</update>
+	
+	<delete id="deleteUserReview" parameterType="hashmap">
+		DELETE FROM REVIEWS
+		WHERE REVIEW_NO = #{reviewNo}
+	</delete>
+	
+	<delete id="deleteUser" parameterType="hashmap">
+		DELETE FROM USERS
+		WHERE USER_NO = #{sessionId}
+	</delete>
 
 </mapper>
 
