@@ -221,7 +221,7 @@
                         </a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'guide-chedule.do' }"
+                        <a :class="{ active: currentPage === 'guide-schedule.do' }"
                             href="http://localhost:8080/mypage/guide-schedule.do">
                             나의 스케줄
                         </a>
@@ -245,7 +245,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+       
 
         <!-- 우측 메인 콘텐츠 -->
         <div class="content-area">
@@ -265,7 +265,7 @@
             </ol>
             <div ref="calendar"></div>
         </div>
-
+    </div>
         <!-- 공통 푸터 -->
         <jsp:include page="../common/footer.jsp" />
 
@@ -282,7 +282,7 @@
                     };
                 },
                 methods: {
-                    fnGetSchedule() {
+                    fnGetSchedule(callback) {
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
@@ -295,10 +295,8 @@
                             success: function (data) {
                                 console.log(data);
                                 if (data.result == "success") {
-                                    console.log("Data : " + data);
                                     self.schedule = data.schedule;
-                                    console.log(self.schedule);
-                                    
+                                    if(callback) callback();
                                 } else {
                                     console.error("데이터 로드 실패");
                                 }
@@ -310,37 +308,36 @@
                     }
                 },
                 mounted() {
-                    this.fnGetSchedule();
-                    // this.fnGetSchedule(() => {
-                    //     const eventsArray = [];
-                    //     for (let i = 0; i < this.schedule.length; i++) {
-                    //         const item = this.schedule[i];
-                    //         const colorMapping = {
-                    //             "오전": "red",
-                    //             "오후": "green",
-                    //             "종일": "#3788d8"
-                    //         };
-                    //         eventsArray.push({
-                    //             title: item.title || '투어',       // 실제 데이터에 맞게 속성명을 조정하세요.
-                    //             start: item.tourDate,                // 날짜 형식은 FullCalendar에서 인식하는 형식이어야 합니다.
-                    //             allDay: true,    // "종일"이면 allDay는 true, 아니면 false
-                    //             backgroundColor: colorMapping[item.duration] || "gray",
-                    //             borderColor: colorMapping[item.duration] || "gray"
-                    //         });
-                    //     }
-                    //     console.log("eventsArray:", eventsArray);
+                    this.fnGetSchedule(() => {
+                        const eventsArray = [];
+                        for (let i = 0; i < this.schedule.length; i++) {
+                            const item = this.schedule[i];
+                            const colorMapping = {
+                                "오전": "red",
+                                "오후": "green",
+                                "종일": "#3788d8"
+                            };
+                            eventsArray.push({
+                                title: item.title || '투어',       // 실제 데이터에 맞게 속성명을 조정하세요.
+                                start: item.tourDate,                // 날짜 형식은 FullCalendar에서 인식하는 형식이어야 합니다.
+                                allDay: true,    // "종일"이면 allDay는 true, 아니면 false
+                                backgroundColor: colorMapping[item.duration] || "gray",
+                                borderColor: colorMapping[item.duration] || "gray"
+                            });
+                        }
+                        console.log("eventsArray:", eventsArray);
 
-                    //     const calendarEl = this.$refs.calendar;
-                    //     const calendar = new FullCalendar.Calendar(calendarEl, {
-                    //         themeSystem: 'bootstrap5',
-                    //         initialView: 'dayGridMonth',
-                    //         validRange: function (now) {
-                    //             return { start: now };
-                    //         },
-                    //         events: eventsArray
-                    //     });
-                    //     calendar.render();
-                    // });
+                        const calendarEl = this.$refs.calendar;
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
+                            themeSystem: 'bootstrap5',
+                            initialView: 'dayGridMonth',
+                            validRange: function (now) {
+                                return { start: now };
+                            },
+                            events: eventsArray
+                        });
+                        calendar.render();
+                    });
                     console.log("sessionId"+this.sessionId);
                     this.currentPage = window.location.pathname.split('/').pop();
                     console.log("Current page:", this.currentPage);

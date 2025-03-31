@@ -74,13 +74,40 @@ public class MyPageController {
 			resultMap = myPageService.getPayList(map);
 			return new Gson().toJson(resultMap);
 		}
-    // 이용후기 관리
+		// 이용후기 불러오기
 		@RequestMapping(value = "/mypage/user-reviews.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String userReviews(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = myPageService.getUserReviews(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 이용후기 등록, 수정
+		@RequestMapping(value = "/mypage/user-reviewSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String reviewSave(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.reviewSave(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 이용후기 삭제
+		@RequestMapping(value = "/mypage/user-reviewRemove.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String userReviewRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.userReviewRemove(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 회원 탈퇴
+		@RequestMapping(value = "/mypage/user-unregister.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String userUnregister(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.userUnregister(map);
 			return new Gson().toJson(resultMap);
 		}
 //--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  
@@ -111,12 +138,7 @@ public class MyPageController {
 		public String guideschedule(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			request.setAttribute("map", map);
 			return "/mypage/guide-schedule";
-		}
-		
-		
-		
-		
-		
+		}		
 		
 		// 가이드 글쓰기
 		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -127,6 +149,7 @@ public class MyPageController {
 			resultMap = myPageService.addTour(map);
 			return new Gson().toJson(resultMap);
 		}
+
 		// 가이드 스케줄 관리
 		@RequestMapping(value = "/mypage/guide-schedule.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
@@ -136,7 +159,7 @@ public class MyPageController {
 			resultMap = myPageService.getGuideSchedule(map);
 			return new Gson().toJson(resultMap);
 		}
-	
-		
+
 		
 }
+
