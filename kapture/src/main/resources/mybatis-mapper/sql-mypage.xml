@@ -42,6 +42,30 @@
 		WHERE P.USER_NO = #{sessionId}
         ORDER BY PAYMENT_NO
 	</select>
+	
+	<insert id="insertUserReview" parameterType="hashmap">
+		INSERT INTO REVIEWS (REVIEW_NO, TOUR_NO, USER_NO, RATING, "COMMENT", R_UPDATED_AT)
+		VALUES (REVIEWS_SEQ.NEXTVAL, #{tourNo}, #{userNo}, #{rating}, #{comment}, SYSDATE)
+	</insert>
+	
+	<update id="updateUserReview" parameterType="hashmap">
+		UPDATE REVIEWS
+	    SET "COMMENT" = #{comment},
+	    	RATING = #{rating},
+	    	R_UPDATED_AT = SYSDATE
+	    WHERE REVIEW_NO = #{reviewNo}
+	</update>
+	
+	<delete id="deleteUserReview" parameterType="hashmap">
+		DELETE FROM REVIEWS
+		WHERE REVIEW_NO = #{reviewNo}
+	</delete>
+	
+	<update id="unregisterUser" parameterType="hashmap">
+		UPDATE USERS
+		SET UNREGISTERYN = 'Y'
+		WHERE USER_NO = #{sessionId}
+	</update>
 
 	
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">

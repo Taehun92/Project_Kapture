@@ -312,6 +312,7 @@
                             birthday: '',
                             isForeigner: '',
                             socialType: '',
+                            currentPage: '',
                         },
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
