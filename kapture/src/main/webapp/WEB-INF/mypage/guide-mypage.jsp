@@ -35,25 +35,41 @@
             /* 사이드 메뉴 */
             .side-menu {
                 width: 200px;
-                margin-right: 30px;
+                height: 100%;
+                border: 1px solid #ddd;
+                position: sticky;
+                top: 0;
+                background: white;
+                transition: top 0.3s;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             }
-
+    
             .side-menu ul {
                 list-style: none;
                 padding: 0;
                 margin: 0;
+    
             }
-
+    
             .side-menu li {
                 margin-bottom: 10px;
+    
             }
-
+    
+            .side-menu li a.active {
+                display: block;
+                background-color: #3e4a97;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
+            }
+    
             .side-menu a {
                 text-decoration: none;
                 color: #333;
                 font-weight: 500;
             }
-
+    
             .side-menu a:hover {
                 color: #ff5555;
             }
@@ -153,11 +169,41 @@
             <!-- 좌측 사이드 메뉴 -->
             <div class="side-menu">
                 <ul>
-                    <li><a href="http://localhost:8080/mypage/user-mypage.do">회원 정보수정</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-purchase-history.do">구매한 상품</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-rivews.do">이용후기 관리</a></li>
-                    <li><a href="http://localhost:8080/cs/qna.do">문의하기</a></li>
-                    <li><a href="http://localhost:8080/mypage/user-unregister.do">회원 탈퇴</a></li>
+                    <li>
+                        <a :class="{ active: currentPage === 'guide-mypage.do' }"
+                            href="http://localhost:8080/mypage/guide-mypage.do">
+                            가이드 정보수정
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'guide-schedule.do' }"
+                            href="http://localhost:8080/mypage/guide-schedule.do">
+                            나의 스케줄
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-reviews.do' }"
+                            href="http://localhost:8080/mypage/user-reviews.do">
+                            이용후기 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://localhost:8080/cs/qna.do">
+                            문의하기
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-unregister.do' }"
+                            href="http://localhost:8080/mypage/user-unregister.do">
+                            회원 탈퇴
+                        </a>
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'guide-add.do' }"
+                            href="http://localhost:8080/mypage/guide-add.do">
+                            여행상품 등록
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -280,6 +326,7 @@
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
+                        currentPage: ''
                     };
                 },
                 methods: {
@@ -356,6 +403,8 @@
                         alert("로그인 후 이용해주세요.");
                         location.href = "http://localhost:8080/main.do";
                     }
+
+                    this.currentPage = window.location.pathname.split('/').pop();
                 }
             });
             app.mount('#app');

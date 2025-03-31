@@ -11,70 +11,169 @@
 	<title>첫번째 페이지</title>
 </head>
 <style>
+	/* 사이드 메뉴 */
+	.side-menu {
+		width: 200px;
+		height: 100%;
+		border: 1px solid #ddd;
+		position: sticky;
+		top: 0;
+		background: white;
+		transition: top 0.3s;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.side-menu ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+	}
+
+	.side-menu li {
+		margin-bottom: 10px;
+
+	}
+
+	.side-menu li a.active {
+		display: block;
+		background-color: #3e4a97;
+		color: white;
+		padding: 10px;
+		text-decoration: none;
+	}
+
+	.side-menu a {
+		text-decoration: none;
+		color: #333;
+		font-weight: 500;
+	}
+
+	.side-menu a:hover {
+		color: #ff5555;
+	}
+
+	.content-area {
+		flex: 1;
+	}
+
+	.container {
+		/* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
+		display: flex;
+		max-width: 1200px;
+		min-height: calc(100vh - 300px);
+		;
+		margin: 0 auto;
+		padding: 20px;
+		box-sizing: border-box;
+	}
+
 </style>
 <body>
 	<jsp:include page="../common/header.jsp" />
-	<div id="app">
-		<table>
-            <tr>
-                <th>제목 :</th>
-                <td colspan="3"><input v-model="title" /></td>
-            </tr>
-            <tr>
-                <th>소요시간 :</th>
-                <td><input v-model="duration" placeholder="오전, 오후, 종일" /></td>
-                <th>가격 :</th>
-                <td><input v-model="price" /></td>
-			</tr>
-			<tr>
-                <th>날짜 :</th>
-                <td><input v-model="tourDate" placeholder="2025-04-10"/></td>
-                <th>시 :</th>
-                <td>
-					<select @change="fnSelectGu()" v-model="siName">
+	<div id="app" class="container">
+
+		<!-- 좌측 사이드 메뉴 -->
+		<div class="side-menu">
+			<ul>
+				<li>
+					<a :class="{ active: currentPage === 'guide-mypage.do' }"
+						href="http://localhost:8080/mypage/guide-mypage.do">
+						가이드 정보수정
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'guide-schedule.do' }"
+						href="http://localhost:8080/mypage/guide-schedule.do">
+						나의 스케줄
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'user-reviews.do' }"
+						href="http://localhost:8080/mypage/user-reviews.do">
+						이용후기 관리
+					</a>
+				</li>
+				<li>
+					<a href="http://localhost:8080/cs/qna.do">
+						문의하기
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'user-unregister.do' }"
+						href="http://localhost:8080/mypage/user-unregister.do">
+						회원 탈퇴
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'guide-add.do' }"
+						href="http://localhost:8080/mypage/guide-add.do">
+						여행상품 등록
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="content-area">
+			<table>
+            	<tr>
+                	<th>제목 :</th>
+                	<td colspan="3"><input v-model="title" /></td>
+				</tr>
+            	<tr>
+                	<th>소요시간 :</th>
+                	<td><input v-model="duration" placeholder="오전, 오후, 종일" /></td>
+                	<th>가격 :</th>
+                	<td><input v-model="price" /></td>
+				</tr>
+				<tr>
+                	<th>날짜 :</th>
+                	<td><input v-model="tourDate" placeholder="2025-04-10"/></td>
+                	<th>시 :</th>
+                	<td>
+						<select @change="fnSelectGu()" v-model="siName">
+							<option value="">:: 선택 ::</option>
+							<template v-for="item in siList">
+								<option :value="item.siName">{{item.siName}}</option>
+							</template>
+						</select>
+					</td>
+				</tr>
+				<tr>
+                	<th>구 :</th>
+                	<td><select v-model="guName">
 						<option value="">:: 선택 ::</option>
-						<template v-for="item in siList">
-							<option :value="item.siName">{{item.siName}}</option>
+						<template v-for="item in guList">
+							<option :value="item.guName">{{item.guName}}</option>
 						</template>
-					</select>
-				</td>
-			</tr>
-			<tr>
-                <th>구 :</th>
-                <td><select v-model="guName">
-					<option value="">:: 선택 ::</option>
-					<template v-for="item in guList">
-						<option :value="item.guName">{{item.guName}}</option>
-					</template>
-				</select></td>
-            </tr>
-			<tr>
-                <th>상위테마 :</th>
-                <td><select @change="fnSelectTheme()" v-model="themeParent">
-					<option value="">:: 선택 ::</option>
-					<template v-for="item in themeParentList">
-						<option :value="item.themeName">{{item.themeName}}</option>
-					</template>
-				</select></td>
-                <th>테마 :</th>
-                <td><select v-model="themeName">
-					<option value="">:: 선택 ::</option>
-					<template v-for="item in themeNameList">
-						<option :value="item.themeName">{{item.themeName}}</option>
-					</template>
-				</select></td>
-            </tr>
-            <tr>
-                <th>내용 :</th>
-                <td colspan="3">
-                    <div id="editor" style="width: 800px; height: 400px;"></div>
-                </td>
-            </tr>
-        </table>
-        <div style="margin-top: 20px;">
-            <button @click="fnSave">저장</button>
-        </div>
-	</div>
+					</select></td>
+            	</tr>
+				<tr>
+                	<th>상위테마 :</th>
+                	<td><select @change="fnSelectTheme()" v-model="themeParent">
+						<option value="">:: 선택 ::</option>
+						<template v-for="item in themeParentList">
+							<option :value="item.themeName">{{item.themeName}}</option>
+						</template>
+					</select></td>
+                	<th>테마 :</th>
+                	<td><select v-model="themeName">
+						<option value="">:: 선택 ::</option>
+						<template v-for="item in themeNameList">
+							<option :value="item.themeName">{{item.themeName}}</option>
+						</template>
+					</select></td>
+            	</tr>
+            	<tr>
+                	<th>내용 :</th>
+                	<td colspan="3">
+                    	<div id="editor" style="width: 800px; height: 400px;"></div>
+                	</td>
+            	</tr>
+        	</table>
+        	<div style="margin-top: 20px; padding-left: 80px;">
+            	<button @click="fnSave">저장</button>
+        	</div>
+		</div>
 	</div>
 	<jsp:include page="../common/footer.jsp" />
 </body>
@@ -99,7 +198,8 @@
 				themeList: [],
 				themeName : "",
 				themeParent : "",
-				themeNameList : []
+				themeNameList : [],
+				currentPage: ""
 
             };
         },
@@ -230,6 +330,7 @@
 
 			self.fnSelectSi();
 			self.fnGetThemeParentList();
+			this.currentPage = window.location.pathname.split('/').pop();
         }
     });
     app.mount('#app');
