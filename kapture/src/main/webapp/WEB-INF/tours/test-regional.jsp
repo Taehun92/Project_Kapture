@@ -155,7 +155,7 @@
 
     <body>
 
-        <!-- <jsp:include page="../common/header.jsp" /> -->
+        <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
 
@@ -219,7 +219,7 @@
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
                         <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
                             <p>{{ tour.title }}</p>

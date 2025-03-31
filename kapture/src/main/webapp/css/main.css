@@ -22,7 +22,7 @@
         display: block; /* 이미지 아래 불필요한 여백 제거 */
         width: 100%;
         height: auto; /* 이미지 비율 유지 */
-        max-height: 300px; /* 최대 높이 설정 */
+        max-height: 500px; /* 최대 높이 설정 */
         object-fit: cover; /* 이미지가 영역에 맞춰 비율 유지하며 채우도록 설정 */
         padding: 0; /* 내부 padding 제거 */
         margin: 0; /* 내부 margin 제거 */

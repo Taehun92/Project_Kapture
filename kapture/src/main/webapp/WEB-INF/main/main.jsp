@@ -46,7 +46,7 @@
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                     <div class="col" v-for="tour in limitedToursList" @click="goToTourInfo(tour.tourNo)">
                         <div class="card shadow-sm">
-                            <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="../../img/tour2.jpg" alt="Card image cap">
+                            <img class="bd-placeholder-img card-img-top" width="100%" height="225" :src="tour.filePath" alt="Card image cap">
                             <div class="card-body">
                                 <p class="card-text">{{ tour.title }}</p>
                                 <div class="d-flex justify-content-between align-items-center">
