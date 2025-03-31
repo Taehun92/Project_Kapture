@@ -59,21 +59,41 @@ public class LoginService {
 
     public HashMap<String, Object> userLogin(HashMap<String, Object> map) {
         HashMap<String, Object> resultMap = new HashMap<>();
-        Login login = loginMapper.getlogin(map);
-        boolean loginFlg = false;
-        if (login != null) {
-            loginFlg = passwordEncoder.matches((String) map.get("password"), login.getPassword());
+        Login login = loginMapper.getlogin(map); // DB에서 사용자 정보 조회
+
+        // 1. 사용자 없음
+        if (login == null) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "존재하지 않는 사용자입니다.");
+            return resultMap;
         }
+
+        // 2. 탈퇴한 회원
+        if ("Y".equals(login.getUnregisterYN())) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", "This account is no longer active.");
+            return resultMap;
+        }
+
+        // 3. 비밀번호 일치 확인
+        boolean loginFlg = passwordEncoder.matches((String) map.get("password"), login.getPassword());
+
         if (loginFlg) {
+            // 4. 로그인 성공
             session.setAttribute("sessionId", login.getUserNo());
             session.setAttribute("sessionRole", login.getRole());
             session.setAttribute("sessionFirstName", login.getUserFirstName());
             session.setAttribute("sessionLastName", login.getUserLastName());
+
             resultMap.put("login", login);
             resultMap.put("result", "success");
+            resultMap.put("message", "로그인 성공");
         } else {
+            // 5. 비밀번호 불일치
             resultMap.put("result", "fail");
+            resultMap.put("message", "비밀번호가 일치하지 않습니다.");
         }
+
         return resultMap;
     }
 

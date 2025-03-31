@@ -19,5 +19,6 @@ public class Login {
 	private String socialType;
 	private String isForeigner;
 	private String pushYN;
+	private String unregisterYN;
 	
 }	
