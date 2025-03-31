@@ -45,16 +45,12 @@
 
 	
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
-		SELECT *
-        FROM GUIDES G
-          	INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
-        	INNER JOIN USERS U ON U.USER_NO = G.USER_NO
+	SELECT TITLE,DURATION,DELETEYN,TOUR_DATE
+		FROM 
+		    USERS U
+		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
+		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
                 WHERE G.USER_NO = #{sessionId}
 	</select>
 </mapper>
 
-
-
-
-
-</mapper>
