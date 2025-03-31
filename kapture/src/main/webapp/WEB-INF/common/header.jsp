@@ -28,9 +28,9 @@
                 <a href="/cs/main.do">고객센터</a>
                 <template v-if="sessionId != ''">
                     <a href="#">장바구니({{basketCount}})</a>
-                    <a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
-                    <a href="http://localhost:8080/mypage/user-mypage.do" v-if="sessionRole == 'TOURIST'">마이페이지</a>
-                    <a href="http://localhost:8080/mypage/guide-schedule.do" v-if="sessionRole == 'GUIDE'">가이드페이지</a>
+					          <a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
+					          <a href="http://localhost:8080/mypage/user-mypage.do" v-if="sessionRole == 'TOURIST'">마이페이지</a>
+					          <a href="http://localhost:8080/mypage/guide-schedule.do" v-if="sessionRole == 'GUIDE'">가이드페이지</a>
                 </template>
             </div>
             <div>
@@ -106,6 +106,9 @@ const header = Vue.createApp({
         if(this.sessionId != '') {
             this.fnGetBasket();
         }
+		console.log("세션아이디 : " + self.sessionId);
+		console.log("세션롤 : " + self.sessionRole);
+		
     }
 });
 
