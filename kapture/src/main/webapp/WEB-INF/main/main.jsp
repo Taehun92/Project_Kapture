@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <link rel="stylesheet" href="../../css/main.css">
 	<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
@@ -14,27 +14,31 @@
 	<title>메인 페이지</title>
 </head>
 <style>
+ .div{ padding-bottom: 50px;}
 </style>
 <body>
     <jsp:include page="../common/header.jsp"></jsp:include>
     <div id="app">
-        <div>
-            <h1>K-apture 에 오신 것을 환영합니다!!!</h1>
-        </div>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-               <div class="swiper-slide">
-                    <img class="banner" src="../../img/banner.jpg">
-                </div>
-                <div class="swiper-slide">
-                    <img class="banner" src="../../img/banner2.jpg">
-                </div>
-                <div class="swiper-slide">
-                    <img class="banner" src="../../img/banner3.jpg">
-                </div>
-                
+        <div class="swiper-container" style="position: relative;">
+            <!-- ✅ 고정 문구 텍스트 -->
+            <div class="hero-text">
+              <h1 class="title">YOUR WORLD OF JOY</h1>
+              <p class="subtitle">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
             </div>
-        </div>
+          
+            <!-- ✅ Swiper 이미지 슬라이드 -->
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <img class="banner" src="../../img/city.jpg">
+              </div>
+              <div class="swiper-slide">
+                <img class="banner" src="../../img/han.jpg">
+              </div>
+              <div class="swiper-slide">
+                <img class="banner" src="../../img/banner3.jpg">
+              </div>
+            </div>
+          </div>
 
         <div>
             <hr>

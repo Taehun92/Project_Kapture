@@ -75,5 +75,6 @@
 		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
 		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
                 WHERE G.USER_NO = #{sessionId}
-  </select>
+	</select>
 </mapper>
+
