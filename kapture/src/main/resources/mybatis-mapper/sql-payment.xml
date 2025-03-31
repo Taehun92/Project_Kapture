@@ -12,7 +12,26 @@
 	        #{no}
 	    </foreach>
 	</select>
-	
-	
-
-</mapper>
+	<insert id="insertPayment" parameterType="map">
+	    INSERT INTO PAYMENTS (PAYMENT_NO, USER_NO, AMOUNT, METHOD, MERCHANT_ID, PAYMENT_STATUS, TOUR_NO, PAYMENT_DATE) 
+		VALUES (PAYMENT_SEQ.NEXTVAL, #{userNo}, #{amount}, #{method}, #{merchantId}, 'PAID', #{basketNo}, SYSDATE)
+	</insert>
+	<select id="selectPayment" resultType="com.example.kapture.payment.model.Payment">
+	    SELECT P.PAYMENT_NO, P.USER_NO, P.TOUR_NO, P.AMOUNT, P.PAYMENT_DATE, B.BASKET_NO, B.NUM_PEOPLE, T.TITLE,
+        	T.PRICE, T.DURATION, T.MAX_PEOPLE, T.TOUR_DATE
+	    FROM PAYMENTS P
+	    INNER JOIN BASKET B ON P.USER_NO = B.USER_NO
+	    INNER JOIN TOURS T ON B.TOUR_NO = T.TOUR_NO
+	    WHERE P.MERCHANT_ID = #{merchantId}
+	</select>
+	<update id="updateTourDeleteYn">
+	    UPDATE TOURS SET DELETEYN = 'Y' WHERE TOUR_NO = #{tourNo}
+	</update>
+	<delete id="deleteBasketsByNo">
+	    DELETE FROM BASKET
+	    WHERE BASKET_NO IN
+	    <foreach item="no" collection="basketNoList" open="(" separator="," close=")">
+	        #{no}
+	    </foreach>
+	</delete>
+</mapper> 
