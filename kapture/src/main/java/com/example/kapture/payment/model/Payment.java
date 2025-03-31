@@ -16,5 +16,10 @@ public class Payment {
 	private String basketNo;
 	private String numPeople;
 	
+	private String title;       // 상품명
+	private int price;          // 상품 가격
+	private String duration;    // 여행 일정
+	private int maxPeople;      // 최대 인원
+	private String tourDate;    // 출발 날짜
 	
 }

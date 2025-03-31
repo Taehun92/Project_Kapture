@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>

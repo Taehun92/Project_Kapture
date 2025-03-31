@@ -9,7 +9,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <!-- Vue.js -->
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 
         <style>
             /* 전체 레이아웃 설정 */
@@ -223,7 +223,7 @@
                         <button @click="fnGetInfo">확인</button>
                     </div>
                 </template>
-                <template v-if="pwdCheckFlg">
+                <template v-if="pwdCheckFlg || userInfo.socialType === 'SOCIAL'">
                     <!-- 회원 정보 섹션 -->
                     <div class="box">
                         <h3 class="title">회원 정보</h3>
@@ -233,11 +233,12 @@
                             <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled />
                         </div>
                         <!-- 라스트 네임 -->
-                        <div class="form-group" v-if="userInfo.userLastName != null">
+                        <div class="form-group" v-if="!userInfo.userLastName">
                             <label for="lastName">LastName</label>
                             <input type="text" id="lastName" v-model="userInfo.userLastName" disabled />
                         </div>
-                        <div class="form-group" v-if="userInfo.userLastName = null && socialType === 'SOCIAL'">
+                        <div class="form-group"
+                            v-if="userInfo.userLastName == null && userInfo.socialType === 'SOCIAL'">
                             <label for="lastName">LastName</label>
                             <input type="text" id="lastName" v-model="userInfo.userLastName" />
                         </div>
@@ -246,32 +247,32 @@
                             <label for="phone" class="required">연락처</label>
                             <input type="text" id="phone" v-model="userInfo.phone" />
                         </div>
-
                         <!-- 이메일 -->
                         <div class="form-group">
                             <label for="email" class="required">이메일</label>
                             <input type="text" id="email" v-model="userInfo.email" disabled />
                         </div>
-                        <!-- 성별 -->
-                        <div class="form-group" v-if="userInfo.gender != null">
-                            <label>성별</label>
-                            <div class="radio-group" style="flex: 1;">
-                                <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
-                                <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
-                            </div>
+                        <!-- 주소 -->
+                        <div class="form-group">
+                            <label for="address" class="required">주소</label>
+                            <input type="text" id="address" v-model="userInfo.address" />
                         </div>
-                        <div class="form-group" v-else>
-                            <label class="required">성별</label>
+                        <!-- 성별 -->
+                        <div class="form-group">
+                            <label for="gender" class="required">성별</label>
                             <div class="radio-group" style="flex: 1;">
                                 <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
                                 <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
                             </div>
                         </div>
                         <!-- 생년월일 -->
-                        <div class="form-group">
+                        <div class="form-group" v-if="!userInfo.birthday">
                             <label for="birthday" class="required">생년월일</label>
-                            <!-- placeholder는 예시, 실제로 type="date"로 변경도 가능 -->
                             <input type="text" id="birthday" v-model="userInfo.birthday" disabled />
+                        </div>
+                        <div class="form-group" v-else>
+                            <label for="birthday" class="required">생년월일</label>
+                            <input type="date" id="birthday" v-model="userInfo.birthday" />
                         </div>
                     </div>
                     <!-- 푸쉬알림 동의여부 -->
@@ -300,20 +301,8 @@
                 data() {
                     return {
                         // 예: 이미 인증된 이메일 정보(샘플)
-                        userInfo: {
-                            email: '',
-                            userFirstName: '',
-                            userLastName: '',
-                            phone: '',
-                            password: '',
-                            confirmPassword: '',
-                            pushYN: '',
-                            gender: '',
-                            birthday: '',
-                            isForeigner: '',
-                            socialType: '',
-                            currentPage: '',
-                        },
+                        userInfo: {},
+                        confirmPassword: '',
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
@@ -325,8 +314,16 @@
                     saveInfo() {
                         // 간단한 유효성 검사 예시
                         let self = this;
-                        if (self.phone === null) {
+                        if (self.userInfo.phone === null) {
                             alert("연락처를 입력해주세요.");
+                            return;
+                        }
+                        if (self.userInfo.birthday === null) {
+                            alert("생년월일을 입력해주세요.");
+                            return;
+                        }
+                        if (self.userInfo.gender === null) {
+                            alert("성별을 입력해주세요.");
                             return;
                         }
                         // 서버로 전송할 데이터
@@ -335,6 +332,7 @@
                             phone: self.userInfo.phone,
                             password: self.userInfo.password,
                             email: self.userInfo.email,
+                            address: self.userInfo.address,
                             gender: self.userInfo.gender,
                             birthday: self.userInfo.birthday,
                             pushYN: self.userInfo.pushYN,
@@ -363,7 +361,7 @@
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
-                            confirmPassword: self.userInfo.confirmPassword
+                            confirmPassword: self.confirmPassword
                         };
                         console.log(self.sessionId);
                         $.ajax({
