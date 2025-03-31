@@ -9,7 +9,7 @@
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="/js/page-Change.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
-
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 		<title>상품 상세페이지</title>
 	</head>
 	<style>
@@ -36,9 +36,7 @@
 		.thumbnail {
 			width: 40%;
 			height: 150px;
-			background: #ccc;
 			display: flex;
-			align-items: center;
 			justify-content: center;
 			font-size: 16px;
 		}
@@ -275,7 +273,9 @@
 		<jsp:include page="../common/header.jsp" />
 		<div id="app" class="container">
 			<div class="top-section">
-				<div class="thumbnail"><img src="tourInfo.filePath"></div>
+				<div class="thumbnail">
+					<img class="img-thumbnail" :src="tourInfo.filePath">
+				</div>
 				<div class="info">
 					<div class="title">{{ tourInfo.title }}</div>
 					<div class="guide-info">{{tourInfo.experience}}</div>
