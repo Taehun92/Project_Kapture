@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
+import com.example.kapture.mypage.model.Guide;
 import com.example.kapture.mypage.model.Payments;
 
 
@@ -26,6 +27,8 @@ public interface MyPageMapper {
 	int insertUserReview(HashMap<String, Object> map);
 
 	int updateUserReview(HashMap<String, Object> map);
+
+	List<Guide> selectGuideSchedule(HashMap<String, Object> map);
 	
 	int deleteUserReview(HashMap<String, Object> map);
 

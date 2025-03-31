@@ -44,6 +44,8 @@ public class MyPageController {
 			request.setAttribute("map", map);
 			return "/mypage/user-unregister";
 		}
+		
+	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		// 유저 정보 가져오기
 		@RequestMapping(value = "/mypage/user-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -131,11 +133,12 @@ public class MyPageController {
 			return "/mypage/guide-edit";
 		}
 		
-		
-		
-		
-		
-		
+		//가이드 스케줄
+		@RequestMapping("/mypage/guide-schedule.do")
+		public String guideschedule(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-schedule";
+		}		
 		
 		// 가이드 글쓰기
 		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -146,6 +149,14 @@ public class MyPageController {
 			resultMap = myPageService.addTour(map);
 			return new Gson().toJson(resultMap);
 		}
-		
-}
 
+		// 가이드 스케줄 관리
+		@RequestMapping(value = "/mypage/guide-schedule.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String guideSchedule(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+					
+			resultMap = myPageService.getGuideSchedule(map);
+			return new Gson().toJson(resultMap);
+		}
+}

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
+import com.example.kapture.mypage.model.Guide;
 import com.example.kapture.mypage.model.Payments;
 
 import jakarta.servlet.http.HttpSession;
@@ -168,6 +169,20 @@ public class MyPageService {
 		myPageMapper.insertTour(map);
 		resultMap.put("result", "success");
 		
+		return resultMap;
+	}
+	public HashMap<String, Object> getGuideSchedule(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println(map);
+	        List<Guide> schedule = myPageMapper.selectGuideSchedule(map);
+	        System.out.println("스케줄 " + schedule);
+	        resultMap.put("schedule", schedule);
+	        resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
 		return resultMap;
 	}
 	
