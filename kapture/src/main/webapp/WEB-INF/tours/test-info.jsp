@@ -34,8 +34,8 @@
 		}
 
 		.thumbnail {
-			width: 40%;
-			height: 150px;
+			width: 37%;
+			height: 300px;
 			display: flex;
 			justify-content: center;
 			font-size: 16px;
@@ -289,7 +289,12 @@
 				</div>
 			</div>
 			<div class="contents">{{tourInfo.description}}</div>
-
+				<div class="">
+					여행일정
+					</div>
+					<div>
+						오전:
+					</div>
 			<div class="reviews">
 				<div class="review-score">
 					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"
