@@ -22,7 +22,7 @@
         <div class="swiper-container" style="position: relative;">
             <!-- ✅ 고정 문구 텍스트 -->
             <div class="hero-text">
-              <h1 class="title">YOUR WORLD OF JOY</h1>
+              <h1 class="title">Let’s Kapture the moment.</h1>
               <p class="subtitle">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
             </div>
           
@@ -36,6 +36,9 @@
               </div>
               <div class="swiper-slide">
                 <img class="banner" src="../../img/banner3.jpg">
+              </div>
+              <div class="swiper-slide">
+                <img class="banner" src="../../img/han2.jpg">
               </div>
             </div>
           </div>
