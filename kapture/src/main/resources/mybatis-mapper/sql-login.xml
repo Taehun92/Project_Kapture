@@ -26,7 +26,8 @@
         SELECT USER_NO AS userNo,
                EMAIL AS email,
                USER_FIRSTNAME AS userFirstName,
-               USER_LASTNAME AS userLastName
+               USER_LASTNAME AS userLastName,
+               ROLE AS role
           FROM USERS
          WHERE EMAIL = #{email, jdbcType=VARCHAR}
     )
