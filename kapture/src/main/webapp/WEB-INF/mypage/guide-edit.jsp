@@ -13,6 +13,49 @@
 <body>
 	<jsp:include page="../common/header.jsp" />
 	<div id="app">
+		<!-- 좌측 사이드 메뉴 -->
+		<div class="side-menu">
+			<ul>
+				<li>
+					<a :class="{ active: currentPage === 'guide-mypage.do' }"
+						href="http://localhost:8080/mypage/guide-mypage.do">
+						가이드 정보수정
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'guide-schedule.do' }"
+						href="http://localhost:8080/mypage/guide-schedule.do">
+						나의 스케줄
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'user-reviews.do' }"
+						href="http://localhost:8080/mypage/user-reviews.do">
+						이용후기 관리
+					</a>
+				</li>
+				<li>
+					<a href="http://localhost:8080/cs/qna.do">
+						문의하기
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'user-unregister.do' }"
+						href="http://localhost:8080/mypage/user-unregister.do">
+						회원 탈퇴
+					</a>
+				</li>
+				<li>
+					<a :class="{ active: currentPage === 'guide-add.do' }"
+						href="http://localhost:8080/mypage/guide-add.do">
+						여행상품 등록
+					</a>
+				</li>
+			</ul>
+		</div>
+
+
+
 		
 	</div>
 	<jsp:include page="../common/footer.jsp" />
