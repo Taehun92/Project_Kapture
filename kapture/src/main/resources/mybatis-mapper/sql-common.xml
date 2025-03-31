@@ -64,7 +64,11 @@
 	<select id="selectThemeNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
 		SELECT T2.THEME_NAME FROM THEME T1
 		INNER JOIN THEME T2 ON T1.THEME_NO = T2.THEME_PARENT_NO
-		WHERE T2.THEME_PARENT_NO = 100
+		WHERE T2.THEME_PARENT_NO = (
+    		SELECT THEME_NO 
+    		FROM THEME 
+    		WHERE THEME_NAME = #{themeParent}
+		)
 	</select>
 </mapper>
 

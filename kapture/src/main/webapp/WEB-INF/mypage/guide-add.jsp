@@ -53,14 +53,14 @@
                 <td><select @change="fnSelectTheme()" v-model="themeParent">
 					<option value="">:: 선택 ::</option>
 					<template v-for="item in themeParentList">
-						<option :value="item.themeParentList">{{item.themeName}}</option>
+						<option :value="item.themeName">{{item.themeName}}</option>
 					</template>
 				</select></td>
                 <th>테마 :</th>
                 <td><select v-model="themeName">
 					<option value="">:: 선택 ::</option>
 					<template v-for="item in themeNameList">
-						<option :value="item.themeNameList">{{item.themeName}}</option>
+						<option :value="item.themeName">{{item.themeName}}</option>
 					</template>
 				</select></td>
             </tr>
@@ -114,7 +114,8 @@
 					tourDate: self.tourDate,
 					siName: self.siName,
 					guName: self.guName,
-					sessionId : self.sessionId
+					sessionId : self.sessionId,
+					themeName : self.themeName
 				};
 				$.ajax({
 					url:"/mypage/guide-add.dox",
