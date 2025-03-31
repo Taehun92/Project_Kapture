@@ -136,7 +136,6 @@ public class MyPageController {
 			resultMap = myPageService.getGuideSchedule(map);
 			return new Gson().toJson(resultMap);
 				
-	
-		
-		
+					
+		}
 }
