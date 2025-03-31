@@ -12,7 +12,6 @@
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <!-- rating -->
         <script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
-
         <style>
             /* 전체 레이아웃 설정 */
             body {
@@ -143,16 +142,63 @@
                 margin-right: 10px;
             }
 
-            /* 평점 표시 (별) */
-            star-rating {
-                display: inline-block;
-            }
-
             /* 후기 본문 텍스트 */
             .review-text {
                 font-size: 15px;
                 line-height: 1.4;
                 color: #333;
+            }
+
+            /* 모달 오버레이 (뒷배경) */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                /* 모달을 화면 가운데 정렬하기 위해 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                /* 다른 요소 위에 표시 */
+            }
+
+            /* 모달 컨테이너 */
+            .modal-container {
+                background-color: #fff;
+                width: 500px;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                border-radius: 5px;
+            }
+
+            /* 테이블 예시 */
+            .review-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px;
+            }
+
+            .review-table th,
+            .review-table td {
+                text-align: left;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+                vertical-align: top;
+                width: 30%;
+            }
+
+            /* 버튼 영역 */
+            .btn-area {
+                text-align: right;
+                margin-top: 10px;
+            }
+
+            .btn-area button {
+                padding: 6px 12px;
+                margin-left: 5px;
             }
         </style>
     </head>
@@ -160,7 +206,6 @@
     <body>
         <!-- 공통 헤더 -->
         <jsp:include page="../common/header.jsp" />
-
         <div id="app" class="container">
             <!-- 좌측 사이드 메뉴 -->
             <div class="side-menu">
@@ -204,28 +249,6 @@
                     <div class="review-header">
                         <h2>사용후기</h2>
                     </div>
-
-                    <!-- <div class="review-list">
-                    
-                    <div class="review-item">
-                        <div class="review-img">
-                    
-                            <img src="https://via.placeholder.com/80" alt="상품이미지">
-                        </div>
-                        <div class="review-content">
-                            <div class="review-meta">
-                                <span>작성자: 장씨</span>
-                                <span>작성일: 2018-07-11</span>
-                                <span>평점수:
-                                    <span class="stars">★★★★★</span>
-                                </span>
-                            </div>
-                            <div class="review-text">
-                                여행후기입니다.
-                            </div>
-                        </div>
-                    </div> -->
-
                     <!-- 두 번째 후기 -->
                     <div class="review-item" v-for="review in reviewsList">
 
@@ -239,31 +262,79 @@
                                     <span>작성자: {{review.userFirstName}} </span>
                                     <span v-if="review.userLastName != null">{{review.userLastName}}</span>
                                     <span>작성일: {{review.rUpdatedAt}}</span>
-                                    <div >
+                                    <div>
                                         평점: <star-rating :rating="review.rating" :read-only="true" :star-size="10"
-                                            :increment="0.01" :border-width="5" :show-rating="false"
-                                            :rounded-corners="true" style="display: inline-block; vertical-align: middle;"></star-rating>
+                                            :increment="1" :border-width="5" :show-rating="false"
+                                            :rounded-corners="true"
+                                            style="display: inline-block; vertical-align: middle;"></star-rating>
                                     </div>
                                 </div>
                                 <div class="review-text">
                                     {{review.comment}}
                                 </div>
+                                <div>
+                                    <span>
+                                        <button @click="fnReviewEdit(review.reviewNo, review.title,
+                                                                    review.rating, review.comment)">
+                                            수정
+                                        </button>
+                                    </span>
+                                    <span>
+                                        <button @click="fnReviewRemove(review.reviewNo)">삭제</button>
+                                    </span>
+                                </div>
                             </div>
                         </template>
                         <template v-else>
                             <div class="review-text">
-                                <button @click="fnReviewAdd">리뷰 등록</button>
+                                <button @click="fnReviewAdd(review.title,review.tourNo)">리뷰 등록</button>
                             </div>
                         </template>
-
                     </div>
-
-                    <!-- 필요하다면 후기 아이템 추가 -->
                 </div>
             </div>
             <!-- ========== 사용후기 레이아웃 끝 ========== -->
+            <div v-if="showReviewModal" class="modal-overlay">
+                <!-- 모달 창 -->
+                <div class="modal-container">
+                    <h3>사용후기 작성</h3>
+                    <table class="review-table">
+                        <tr>
+                            <th>상품명</th>
+                            <td>
+                                <!-- 상품명 (제목) -->
+                                <input type="text" v-model="ReviewTitle" readonly />
+                                <!-- 필요하다면 readonly 제거하고 수정 가능하도록 -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>이용후기</th>
+                            <td>
+                                <!-- textarea로 후기 입력 -->
+                                <textarea v-model="ReviewComment" rows="5" cols="50"
+                                    placeholder="이용후기를 입력해주세요."></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>평점</th>
+                            <td>
+                                <!-- 별 5개 (max-rating=5), 사용자가 선택할 수 있도록 v-model -->
+                                <star-rating :rating="rating" :increment="1" :star-size="20" :border-width="2"
+                                    :show-rating="false" :rounded-corners="true"
+                                    @update:rating="setRating"></star-rating>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- 작성 완료, 닫기 버튼 -->
+                    <div class="btn-area">
+                        <button @click="fnReviewSubmit">작성 완료</button>
+                        <button @click="fnReviewClose">닫기</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        </div>
+
+
 
         <!-- 공통 푸터 -->
         <jsp:include page="../common/footer.jsp" />
@@ -276,6 +347,15 @@
                         sessionRole: "${sessionRole}",
                         reviewsList: [],
                         currentPage: "",
+
+                        showReviewModal: false,
+                        ReviewTitle: "",
+                        ReviewComment: "",
+                        rating: 0,
+                        tourNo: 0,
+
+                        editFlg: false,
+                        reviewNo: 0,
                     };
                 },
                 methods: {
@@ -295,7 +375,6 @@
                                     console.log("Data : " + data);
                                     self.reviewsList = data.reviewsList;
                                     console.log(self.reviewsList);
-
                                 } else {
                                     console.error("데이터 로드 실패");
                                 }
@@ -305,9 +384,91 @@
                             }
                         });
                     },
-                    fnReviewAdd(){
-                        
+                    fnReviewAdd(title, tourNo) {
+                        this.ReviewTitle = title || "";  // 혹시 값이 없으면 빈 문자열
+                        this.showReviewModal = true;
+                        this.ReviewComment = "";
+                        this.rating = 0;
+                        this.tourNo = tourNo;
+                        this.editFlg = false;
+                    },
+                    // ▼ 추가된 부분: 작성 완료 버튼 클릭 시 처리
+                    fnReviewSubmit() {
+                        // 실제 DB에 저장하려면 여기서 AJAX POST 등으로 서버에 전송
+                        let self = this;
+                        let nparmap = {
+                            tourNo: self.tourNo,
+                            userNo: self.sessionId,
+                            rating: self.rating,
+                            comment: self.ReviewComment,
+                            reviewNo: self.reviewNo,
+                            editFlg: self.editFlg,
+                        };
+                        $.ajax({
+                            url: "/mypage/user-reviewSave.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log("Data : " + data);
+                                    self.fnReviews();
+                                    self.editFlg ?  alert("리뷰가 수정되었습니다.") : alert("리뷰가 등록되었습니다.");
+                                    // 완료 후 모달 닫기
+                                    self.showReviewModal = false;
+                                } else {
+                                    console.error("데이터 로드 실패");
+                                }
+                            },
+                            error: function (error) {
+                                console.error("AJAX 에러:", error);
+                            }
+                        });
+                    },
+                    // ▼ 추가된 부분: 모달 닫기
+                    fnReviewClose() {
+                        this.showReviewModal = false;
+                    },
+                    setRating: function (rating) {
+                        this.rating = rating;
+                        console.log("this.rating : " + this.rating);
+                    },
+                    fnReviewEdit(reviewNo, title, rating, comment) {
+                        this.ReviewTitle = title || "";  // 혹시 값이 없으면 빈 문자열
+                        this.showReviewModal = true;
+                        this.ReviewComment = comment;
+                        this.rating = rating;
+                        this.reviewNo = reviewNo;
+                        this.editFlg = true;
+                    },
+                    fnReviewRemove(reviewNo) {
+                        let self = this;
+                        if(!confirm("정말로 삭제하시겠습니까?")){
+                            return;
+                        }
+                        let nparmap = {
+                            reviewNo: reviewNo,
+                        };
+                        $.ajax({
+                            url: "/mypage/user-reviewRemove.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log("Data : " + data);
+                                    self.fnReviews();
+                                    alert("리뷰가 삭제되었습니다.");
+                                } else {
+                                    console.error("데이터 로드 실패");
+                                }
+                            },
+                            error: function (error) {
+                                console.error("AJAX 에러:", error);
+                            }
+                        });
                     }
+
                 },
                 mounted() {
                     if (this.sessionId === null) {
@@ -323,6 +484,7 @@
                     this.currentPage = window.location.pathname.split('/').pop();
                     console.log("Current page:", this.currentPage);
                     this.fnReviews();
+                    console.log("쇼모달 " + this.showReviewModal);
                 }
             });
             app.component('star-rating', VueStarRating.default)
