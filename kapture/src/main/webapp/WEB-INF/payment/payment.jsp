@@ -9,6 +9,7 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="../../js/page-Change.js"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -52,7 +53,7 @@
         <button @click="openPaypalModal" class="bg-yellow-300 hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded">
           PayPal 결제
         </button>
-        <button @click="payWithPaymentwall" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="payWithCard" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           다른방법으로 결제
         </button>
       </div>
@@ -103,7 +104,10 @@
           if (this.selectedItems.length === 0) return "한국 여행 패키지";
           if (this.selectedItems.length === 1) return this.selectedItems[0].title;
           return this.selectedItems[0].title + " 외 " + (this.selectedItems.length - 1) + "건";
-        }
+        },
+        selectedIds() {
+          return this.selectedItems.map(item => item.basketNo);
+        },
       },
       methods: {
         getBasketInfoList() {
@@ -146,38 +150,32 @@
           this.selectAll = this.selectedItems.length === this.basketList.length;
         },
         
-        payWithPaymentwall() {
+        payWithCard() {
+          const self = this;
           if (this.selectedItems.length === 0) {
             alert("결제할 상품을 선택해주세요!");
             return;
           }
-
           const IMP = window.IMP;
           IMP.init("imp08653517");
-
           IMP.request_pay({
-            projectKey: "store-29de8ccc-5022-4e55-94db-056f7c02a373",
-            channelKey: "channel-key-b1fa67aa-a1eb-4a2b-8512-3cde91f933c2", // 너의 채널 키로 변경
+            channelKey: "channel-key-8ebf626d-6066-4986-bebd-8d5b5db76054", // 너의 채널 키로 변경
+            pg: "eximbay",
             merchant_uid: "order_" + new Date().getTime(), // ✅ 고유한 주문번호
             name: this.dynamicTitle,
-            amount: this.totalAmount, 
-            buyer_name : "홍 길동",
-            buyer_email : "toon92@naver.com",
+            amount: 100,  //this.totalAmount, 
             currency: "KRW",
-            m_redirect_url: "/payment/success.do",
-            use_test_method: true,
-            bypass: {
-              widget_code: "t3_1",
-              ps: "test",
-              country_code: "AM"
-            }
+            buyer_email: "test@portone.io",
+            buyer_name: "구매자이름",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "서울특별시 강남구 삼성동",
+            popup: true,
           }, function(rsp) {
             if (rsp.success) {
-              alert("✅ Paymentwall 결제 성공!");
-              const selectedIds = this.selectedItems.map(item => item.basketNo);
-              this.fnPaymentSave(selectedIds, rsp.paid_amount);
+              alert("✅ 결제 성공!");
+              self.fnPaymentSave(rsp.paid_amount, rsp.pay_method, rsp.merchant_uid);
             } else {
-              alert("❌ Paymentwall 결제 실패: " + rsp.error_msg);
+              alert("❌ 결제 실패: " + rsp.error_msg);
             }
           });
         },
@@ -188,7 +186,9 @@
             this.loadPaypalButton(); // 모달 DOM 렌더링 후 실행
           });
         },
+
         loadPaypalButton() {
+          const self = this;
           const IMP = window.IMP;
           IMP.init("imp08653517");
           const amount = this.totalAmountUSDValue;
@@ -205,30 +205,39 @@
           if (container) {
             IMP.loadUI("paypal-spb", requestData, (rsp) => {
               if (rsp.success) {
-                const selectedIds = this.selectedItems.map(item => item.basketNo);
-                this.fnPaymentSave(selectedIds, rsp.paid_amount);
+                self.fnPaymentSave(rsp.paid_amount, rsp.pay_method, rsp.merchant_uid);
               } else {
                 alert("❌ PayPal 결제 실패: " + rsp.error_msg);
               }
             });
           }
         },
-        fnPaymentSave(selectedIds, amount) {
+
+        fnPaymentSave(amount, method, merchant_uid) {
+          const self = this;
+          let nparam = {
+            selectedIds: self.selectedIds,
+              userNo: self.sessionId,
+              amount: amount,
+              method: method,
+              merchantId: merchant_uid
+          }
           $.ajax({
             url: "/payment/save.dox",
             type: "POST",
+            contentType: "application/json",
             dataType: "json",
-            data: {
-              selectedIds: selectedIds,
-              userNo: this.sessionId,
-              amount: amount,
-              selectedBasketList: selectedIds
-            },
-            success() {
-              window.location.href = "/payment/success.do";
+            data: JSON.stringify(nparam),
+            success(res) {
+              if (res.result === "success") {
+                // ✅ POST 방식으로 결제 완료 페이지 이동
+                pageChange("/payment/success.do", { merchantId: merchant_uid });
+              } else {
+                  alert("결제 정보 저장 실패");
+              }
             },
             error() {
-              alert("결제 정보 저장 실패");
+              alert("서버와 통신 중 오류 발생");
             }
           });
         }
