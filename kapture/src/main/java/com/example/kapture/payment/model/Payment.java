@@ -13,8 +13,8 @@ public class Payment {
 	private String paymentStatus; 
 	private String method;
 	
-	private String basketNo;
-	private String numPeople;
+	private int basketNo;
+	private int numPeople;
 	
 	private String title;       // 상품명
 	private int price;          // 상품 가격
