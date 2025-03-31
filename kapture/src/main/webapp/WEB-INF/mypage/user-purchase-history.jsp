@@ -287,6 +287,7 @@
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
+                            currentPage: '',
                         };
 
                         $.ajax({

@@ -12,6 +12,8 @@ import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Payments;
 
+import jakarta.servlet.http.HttpSession;
+
 @Service
 public class MyPageService {
 
@@ -20,6 +22,9 @@ public class MyPageService {
 	
 	@Autowired
     PasswordEncoder passwordEncoder;
+	
+	@Autowired
+    HttpSession session;
 	// 회원정보 리스트
 	public HashMap<String, Object> getUserInfo(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -31,15 +36,17 @@ public class MyPageService {
 				resultMap.put("userInfo", userInfo);
 	            resultMap.put("result", "success");
 			}
-	        boolean loginFlg = false;
-	        if (userInfo != null) {
-	            loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
-	        }
-	        if (loginFlg) {
-	        	resultMap.put("userInfo", userInfo);
-	            resultMap.put("result", "success");        
-	        } else {
-	        	resultMap.put("result", "fail");
+			else {
+				boolean loginFlg = false;
+	        	if (userInfo != null) {
+	            	loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
+	        	}
+	        	if (loginFlg) {
+	        		resultMap.put("userInfo", userInfo);
+	            	resultMap.put("result", "success");        
+	        	} else {
+	        		resultMap.put("result", "fail");
+	        	}
 	        }
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -136,8 +143,18 @@ public class MyPageService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			int result = myPageMapper.deleteUser(map);
-	        resultMap.put("result", result > 0 ? "success" : "fail");
+			Login userInfo = myPageMapper.selectUser(map);
+			boolean loginFlg = false;
+			if (userInfo != null) {
+            	loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
+        	}
+			if(loginFlg) {
+				int result = myPageMapper.unregisterUser(map);
+	        	resultMap.put("result", result > 0 ? "success" : "unregisterFail");
+	        	session.invalidate();
+			} else {
+				resultMap.put("result", "pwdCheckFail");
+			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "queryFail");

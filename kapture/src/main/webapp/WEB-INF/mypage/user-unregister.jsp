@@ -10,12 +10,6 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <!-- Vue.js -->
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <!-- 캘린더 -->
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-        <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
-        <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
         <style>
             /* 전체 레이아웃 설정 */
             body {
@@ -96,7 +90,7 @@
                 gap: 10px;
             }
 
-            .center-box {
+            .center-box-row {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -177,7 +171,7 @@
                         <button class="btn-unregister" @click="unregisterN">아니오</button>
                     </div>
                 </div>
-                <template v-if="unregisterFlg && password.length > 20" >
+                <template v-if="unregisterFlg && userInfo.password.length > 20" >
                     <div class="center-box-row">
                         <label>비밀 번호 : </label>
                         <input type="password" v-model="confirmPassword" placeholder="비밀번호를 입력해주세요."
@@ -185,7 +179,7 @@
                         <button @click="fnUserUnregister">확인</button>
                     </div>
                 </template>
-                <template v-else @></template>
+                
             </div>
         </div>
 
@@ -197,22 +191,20 @@
                 data() {
                     return {
                         // 예: 이미 인증된 이메일 정보(샘플)
-                        userinfo:{
-                            password: '',
-                            socialType: '',
-                        },
+                        userInfo:{},
                         confirmPassword: '',
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
-                        password: "",
+                        currentPage: '',
                         unregisterFlg: false,
                     };
                 },
                 methods: {
-                    fnUserUnregister(callback) {
+                    fnUserUnregister() {
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
+                            confirmPassword: self.confirmPassword
                         };
 
                         $.ajax({
@@ -224,12 +216,12 @@
                                 if (data.result == "success") {
                                     console.log("Data : " + data);
                                     alert("탈퇴되었습니다.");
-                                    location.href = "localhost:8080/main.do";
-
-                                    callback();
+                                    location.href = "http://localhost:8080/main.do";         
+                                } else if(data.result == "pwdCheckFail"){
+                                    alert("비밀번호를 확인해주세요.");
                                 } else {
-                                    console.error("데이터 로드 실패");
-                                }
+                                    alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
+                                } 
                             },
                             error: function (error) {
                                 console.error("AJAX 에러:", error);
@@ -237,7 +229,7 @@
                         });
                     },
                     unregisterY() {
-                        unregisterFlg = true;
+                        this.unregisterFlg = true;
                     },
                     unregisterN() {
                         location.href = "/mypage/user-purchase-history.do";
@@ -256,7 +248,7 @@
                             data: nparmap,
                             success: function (data) {
                                 if (data.result == "success") {
-                                    console.log("userData: " + data);
+                                    console.log(data);
                                     self.userInfo = data.userInfo;
                                     console.log(self.userInfo);
                                 } else {

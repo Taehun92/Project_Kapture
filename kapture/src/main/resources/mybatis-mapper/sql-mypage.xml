@@ -60,10 +60,11 @@
 		WHERE REVIEW_NO = #{reviewNo}
 	</delete>
 	
-	<delete id="deleteUser" parameterType="hashmap">
-		DELETE FROM USERS
+	<update id="unregisterUser" parameterType="hashmap">
+		UPDATE USERS
+		SET UNREGISTERYN = 'Y'
 		WHERE USER_NO = #{sessionId}
-	</delete>
+	</update>
 
 </mapper>
 
