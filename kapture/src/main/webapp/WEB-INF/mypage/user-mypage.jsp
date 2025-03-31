@@ -9,7 +9,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <!-- Vue.js -->
-        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
         <style>
             /* 전체 레이아웃 설정 */
@@ -96,7 +96,7 @@
             }
 
             .form-group label {
-                width: 100px;
+                width: 115px;
                 font-weight: 600;
                 margin-right: 10px;
             }
@@ -132,15 +132,16 @@
             .btn-save {
                 margin-top: 20px;
                 padding: 10px 20px;
-                background-color: #ff5555;
+                background-color: #3e4a97;
                 border: none;
                 color: #fff;
                 font-size: 14px;
                 cursor: pointer;
+                border-radius: 5px;
             }
 
             .btn-save:hover {
-                background-color: #ff3333;
+                background-color: #2e3d9c;
             }
 
             .center-box {
@@ -153,6 +154,54 @@
                 /* 필요 시 조정 */
                 text-align: center;
                 gap: 10px;
+            }
+
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            /* 팝업(모달) 콘텐츠 스타일 */
+            .modal-content {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 5px;
+                width: 450px;
+                margin-bottom: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modal-group {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            /* 모달 인풋 스타일 */
+            .modal-input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                margin-bottom: 8px;
+                box-sizing: border-box;
+            }
+
+            /* 유효성 검사 메시지 스타일 */
+            .modal-validation {
+                font-size: 13px;
+                line-height: 1.4;
             }
         </style>
     </head>
@@ -199,41 +248,30 @@
 
             <!-- 우측 메인 콘텐츠 -->
             <div class="content-area">
-
-                <!-- 전체 폼을 하나로 감싸기 -->
-
-                <!-- 비밀번호 섹션 -->
-                <!-- <div class="box">
-                    <h3 class="title">비밀번호</h3>
-                    <div class="form-group">
-                        <label for="password" class="required">비밀번호</label>
-                        <input type="password" id="password" v-model="password" />
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword" class="required">비밀번호 확인</label>
-                        <input type="password" id="confirmPassword" v-model="confirmPassword" />
-                    </div>
-                </div> -->
                 <!-- 비밀번호 확인 -->
                 <template v-if="!pwdCheckFlg && userInfo.socialType != 'SOCIAL'">
                     <div class="center-box">
                         <label>비밀 번호 : </label>
-                        <input type="password" v-model="userInfo.confirmPassword" placeholder="비밀번호를 입력해주세요."
+                        <input type="password" v-model="confirmPassword" placeholder="비밀번호를 입력해주세요."
                             @keyup.enter="fnGetInfo">
                         <button @click="fnGetInfo">확인</button>
                     </div>
                 </template>
-                <template v-if="pwdCheckFlg || userInfo.socialType === 'SOCIAL'">
+                <template v-if="pwdCheckFlg">
                     <!-- 회원 정보 섹션 -->
                     <div class="box">
                         <h3 class="title">회원 정보</h3>
+                        <!-- 비밀번호 변경 -->
+                        <div class="form-group">
+                            <button class="btn-save" @click="fnNewPassword">비밀번호 변경</button>
+                        </div>
                         <!-- 퍼스트 네임 -->
                         <div class="form-group">
                             <label for="firstName" class="required">FirstName</label>
                             <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled />
                         </div>
                         <!-- 라스트 네임 -->
-                        <div class="form-group" v-if="!userInfo.userLastName">
+                        <div class="form-group" v-if="userInfo.userLastName != null">
                             <label for="lastName">LastName</label>
                             <input type="text" id="lastName" v-model="userInfo.userLastName" disabled />
                         </div>
@@ -254,7 +292,7 @@
                         </div>
                         <!-- 주소 -->
                         <div class="form-group">
-                            <label for="address" class="required">주소</label>
+                            <label for="address">주소</label>
                             <input type="text" id="address" v-model="userInfo.address" />
                         </div>
                         <!-- 성별 -->
@@ -290,6 +328,46 @@
                     <!-- 저장하기 버튼 -->
                     <button class="btn-save" @click="saveInfo">저장하기</button>
                 </template>
+                <template v-if="showPasswordModal">
+                    <div class="modal-overlay" @click.self="closeModal">
+                        <div class="modal-content">
+                            <!-- 비밀번호 -->
+                            <div class="modal-group">
+                                <label for="newPassword1" class="required">비밀번호</label>
+                                <input type="password" id="newPassword1" v-model="newPassword1"
+                                       @input="validateNewPassword" class="modal-input" />
+                                <div v-if="newPassword1.length > 0 && !passwordValid" class="modal-validation">
+                                  <div :style="{ color: passwordRules.length ? 'green' : 'red' }">
+                                    {{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters' }}
+                                  </div>
+                                  <div :style="{ color: passwordRules.number ? 'green' : 'red' }">
+                                    {{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
+                                  </div>
+                                  <div :style="{ color: passwordRules.upper ? 'green' : 'red' }">
+                                    {{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
+                                  </div>
+                                  <div :style="{ color: passwordRules.lower ? 'green' : 'red' }">
+                                    {{ passwordRules.lower ? '✅ At least one lowercase letter' : '❌ At least one lowercase letter' }}
+                                  </div>
+                                  <div :style="{ color: passwordRules.special ? 'green' : 'red' }">
+                                    {{ passwordRules.special ? '✅ At least one special character' : '❌ At least one special character' }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="modal-group">
+                                <label for="newPassword2" class="required">비밀번호 확인</label>
+                                <input type="password" id="newPassword2" v-model="newPassword2"
+                                    @input="validateNewPassword"   
+                                    @keyup.enter="fnChangePassword" class="modal-input" />
+                                <div v-if="newPassword2.length > 0 && passwordValid"
+                                     class="modal-validation"
+                                     :style="{ color: passwordsMatch ? 'green' : 'red' }">
+                                  {{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
+                                </div>
+                            </div>
+                            <button class="btn-save" @click="fnChangePassword">변경</button>
+                        </div>
+                </template>
             </div>
         </div>
 
@@ -301,12 +379,24 @@
                 data() {
                     return {
                         // 예: 이미 인증된 이메일 정보(샘플)
-                        userInfo: {},
-                        confirmPassword: '',
+                        userInfo: {
+                            phone: "",
+                            birthday: "",
+                            gender: "",
+                            address: "",
+                            userLastName: "",
+                        },
+                        confirmPassword: "",
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         pwdCheckFlg: false,
                         currentPage: "",
+                        showPasswordModal: false,
+                        newPassword1: "",
+                        newPassword2: "",
+                        passwordRules: { length: false, upper: false, lower: false, special: false, number: false },
+                        passwordValid: false,
+                        passwordsMatch: false
                     };
                 },
                 methods: {
@@ -326,18 +416,19 @@
                             alert("성별을 입력해주세요.");
                             return;
                         }
+                        if (self.userInfo.socialType === "SOCIAL" && self.userInfo.password === "Test1234!") {
+                            alert("비밀번호를 변경해주세요.");
+                            return;
+                        }
+
                         // 서버로 전송할 데이터
                         let nparmap = {
-                            name: self.userInfo.name,
+                            userLastName: self.userInfo.userLastName,
                             phone: self.userInfo.phone,
-                            password: self.userInfo.password,
-                            email: self.userInfo.email,
                             address: self.userInfo.address,
                             gender: self.userInfo.gender,
                             birthday: self.userInfo.birthday,
                             pushYN: self.userInfo.pushYN,
-                            isForeigner: self.userInfo.isForeigner,
-                            socialType: self.userInfo.socialType,
                             sessionId: self.sessionId,
                         };
 
@@ -382,7 +473,60 @@
                                 }
                             }
                         });
-                    }
+                    },
+                    fnNewPassword() {
+                        // 비밀번호 변경 버튼 클릭 시 팝업을 띄웁니다.
+                        this.showPasswordModal = true;
+                    },
+                    validateNewPassword() {
+                        const pw = this.newPassword1;
+                        const pw2 = this.newPassword2;
+                        this.passwordRules.length = pw.length >= 6;
+                        this.passwordRules.upper = /[A-Z]/.test(pw);
+                        this.passwordRules.lower = /[a-z]/.test(pw);
+                        this.passwordRules.special = /[^A-Za-z0-9]/.test(pw);
+                        this.passwordRules.number = /[0-9]/.test(pw);
+                        this.passwordValid = this.passwordRules.length && this.passwordRules.upper &&
+                            this.passwordRules.lower && this.passwordRules.special && this.passwordRules.number;
+                        this.passwordsMatch = pw && pw2 && (pw === pw2);
+                    },
+                    fnChangePassword() {
+                        // 실제 비밀번호 변경 AJAX 요청 추가 가능
+                        let self = this;
+                        let nparmap = {
+                            newPassword1: self.newPassword1,
+                            sessionId: self.sessionId,
+                        };
+                        console.log(self.sessionId);
+                        $.ajax({
+                            url: "/mypage/changePassword.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log(data);
+                                    self.showPasswordModal = false;
+                                    self.newPassword1 = "";
+                                    self.newPassword2 = "";
+                                    self.passwordRules = { length: false, upper: false, lower: false, special: false, number: false };
+                                    self.passwordValid = false;
+                                    self.passwordsMatch = false;
+                                    alert("비밀번호가 변경되었습니다.");
+                                } else {
+                                    alert("비밀번호 변경에 실패했습니다.");
+                                }
+                            }
+                        });
+                    },
+                    closeModal() {
+                        this.showPasswordModal = false;
+                        this.newPassword1 = "";
+                        this.newPassword2 = "";
+                        this.passwordRules = { length: false, upper: false, lower: false, special: false, number: false };
+                        this.passwordValid = false;
+                        this.passwordsMatch = false;
+                    },
                 },
                 mounted() {
                     // 페이지 로드시 필요한 초기화 로직
