@@ -31,7 +31,22 @@
             <input type="checkbox" :value="item" v-model="selectedItems" @change="updateSelectAll" />
             <div>
               <h3 class="text-lg font-semibold">{{ item.title }}</h3>
-              <p class="text-sm text-gray-600">인원: {{ item.numPeople }}명</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">인원:</span>
+                <button 
+                  @click="decreasePeople(item)"
+                  :disabled="item.numPeople <= 1"
+                  class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50">
+                  -
+                </button>
+                <span class="w-6 text-center text-sm font-medium">{{ item.numPeople }}</span>
+                <button 
+                  @click="increasePeople(item)"
+                  :disabled="item.numPeople >= 4"
+                  class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50">
+                  +
+                </button>
+              </div>
               <p class="text-sm text-gray-600">일자: {{ item.tourDate }}</p>
             </div>
           </div>
@@ -126,6 +141,16 @@
             }
           });
         },
+        increasePeople(item) {
+          if (item.numPeople < 4) {
+            item.numPeople++;
+          }
+        },
+        decreasePeople(item) {
+          if (item.numPeople > 1) {
+            item.numPeople--;
+          }
+        },
         getExchangeRate() {
           const self = this;
           $.ajax({
@@ -145,6 +170,7 @@
         },
         toggleAll() {
           this.selectedItems = this.selectAll ? [...this.basketList] : [];
+          console.log("✅ 선택된 항목 목록:", this.selectedItems);
         },
         updateSelectAll() {
           this.selectAll = this.selectedItems.length === this.basketList.length;
@@ -163,7 +189,7 @@
             pg: "eximbay",
             merchant_uid: "order_" + new Date().getTime(), // ✅ 고유한 주문번호
             name: this.dynamicTitle,
-            amount: 100,  //this.totalAmount, 
+            amount: 10, //this.totalAmount, 
             currency: "KRW",
             buyer_email: "test@portone.io",
             buyer_name: "구매자이름",
@@ -216,7 +242,7 @@
         fnPaymentSave(amount, method, merchant_uid) {
           const self = this;
           let nparam = {
-            selectedIds: self.selectedIds,
+            selectedItems: self.selectedItems,
               userNo: self.sessionId,
               amount: amount,
               method: method,
@@ -240,6 +266,14 @@
               alert("서버와 통신 중 오류 발생");
             }
           });
+        }
+      },
+      watch: {
+        basketList: {
+          handler(newVal) {
+            this.selectedItems = this.basketList.filter(item => this.selectedItems.map(i => i.basketNo).includes(item.basketNo));
+          },
+          deep: true
         }
       },
       mounted() {

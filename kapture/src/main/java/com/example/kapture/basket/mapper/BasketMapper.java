@@ -28,4 +28,6 @@ public interface BasketMapper {
 
 	List<Basket> selectBasketList(HashMap<String, Object> map);
 
+	Basket selectBasketByNo(Integer basketNo);
+
 }

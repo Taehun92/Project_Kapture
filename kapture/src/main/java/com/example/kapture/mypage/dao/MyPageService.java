@@ -162,6 +162,21 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	// 비밀번호 수정
+	public HashMap<String, Object> changePassword(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			String hashPwd = passwordEncoder.encode((String) map.get("newPassword1"));
+	        map.put("password", hashPwd);
+			int result = myPageMapper.updatePassword(map);
+	        resultMap.put("result", result > 0 ? "success" : "fail");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "queryFail");
+		}
+		return resultMap;
+	}
 //-------------------------------------------------------------------------------------------------------------------------------------------------  
 	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -185,6 +200,7 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	
 	
 	
 	

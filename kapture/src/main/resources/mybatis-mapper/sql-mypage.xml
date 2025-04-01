@@ -13,7 +13,13 @@
 		UPDATE USERS
 	    SET PHONE = #{phone},
 	    	PUSHYN = #{pushYN},
-	    	GENDER = #{gender}
+	    	BIRTHDAY = #{birthday},
+	    	ADDRESS = #{address},
+	    	GENDER = #{gender},
+	    	U_UPDATED_AT = SYSDATE,
+	    	<if test="userLastName != null">
+	    	USER_LASTNAME = #{userLastName}
+	    	</if>
 	    WHERE USER_NO = #{sessionId}
 	</update>
 	
@@ -67,7 +73,6 @@
 		WHERE USER_NO = #{sessionId}
 	</update>
 
-	
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
 	SELECT TITLE,DURATION,DELETEYN,TOUR_DATE
 		FROM 
@@ -76,5 +81,11 @@
 		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
                 WHERE G.USER_NO = #{sessionId}
 	</select>
+	
+	<update id="updatePassword" parameterType="hashmap">
+		UPDATE USERS
+		SET PASSWORD = #{password}
+		WHERE USER_NO = #{sessionId}
+	</update>
 </mapper>
 

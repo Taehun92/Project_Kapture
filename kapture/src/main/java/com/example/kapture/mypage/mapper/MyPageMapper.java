@@ -33,4 +33,6 @@ public interface MyPageMapper {
 	int deleteUserReview(HashMap<String, Object> map);
 
 	int unregisterUser(HashMap<String, Object> map);
+
+	int updatePassword(HashMap<String, Object> map);
 }
