@@ -9,7 +9,6 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="../../js/page-Change.js"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -268,7 +267,7 @@
             success(res) {
               if (res.result === "success") {
                 // ✅ POST 방식으로 결제 완료 페이지 이동
-                pageChange("/payment/success.do", { merchantId: merchant_uid });
+                location.href="/product/view.do?merchantId=" + merchant_uid;
               } else {
                   alert("결제 정보 저장 실패");
               }

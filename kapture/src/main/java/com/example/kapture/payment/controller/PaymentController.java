@@ -50,8 +50,7 @@ public class PaymentController {
 	
 	// 결제 성공 시 주소(회원 정보 수정)
 	@RequestMapping("/payment/success.do")
-	public String paymentSuccess(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
+	public String paymentSuccess(Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		return "/payment/success";
 	}
 	

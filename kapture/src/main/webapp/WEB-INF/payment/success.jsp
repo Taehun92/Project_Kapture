@@ -52,7 +52,7 @@ const app = Vue.createApp({
     data() {
         return {
             payments: [],
-            merchantId : "${map.merchantId}",
+            merchantId : "",
             paymentList: []
         };
     },
@@ -86,6 +86,9 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        const params = new URLSearchParams(window.location.search);
+        // return (this)에 productId 먼저 선언
+        self.merchantId = params.get("merchantId") || "";
         this.fetchPaymentList();
     }
 });

@@ -1,8 +1,15 @@
 package com.example.kapture.main.mapper;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.example.kapture.tours.model.Tours;
 
 @Mapper
 public interface MainMapper {
+
+	List<Tours> selectTourandRatingList(HashMap<String, Object> map);
 
 }
