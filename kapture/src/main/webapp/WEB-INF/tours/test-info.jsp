@@ -71,7 +71,6 @@
 
 		.contents {
 			width: 100%;
-			height: 200px;
 			background: #ddd;
 			display: flex;
 			align-items: center;
@@ -288,13 +287,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="contents">{{tourInfo.description}}</div>
-				<div class="">
-					여행일정
-					</div>
-					<div>
-						오전:
-					</div>
+	
+			<div class="contents" v-html="tourInfo.description"></div>
+
 			<div class="reviews">
 				<div class="review-score">
 					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"

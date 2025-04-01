@@ -27,10 +27,10 @@
                 <a href="/cs/faq.do">FAQ</a>
                 <a href="/cs/main.do">고객센터</a>
                 <template v-if="sessionId != ''">
-                    <a href="#">장바구니({{basketCount}})</a>
-					          <a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
-					          <a href="http://localhost:8080/mypage/user-mypage.do" v-if="sessionRole == 'TOURIST'">마이페이지</a>
-					          <a href="http://localhost:8080/mypage/guide-schedule.do" v-if="sessionRole == 'GUIDE'">가이드페이지</a>
+                    <a href="/payment.do">장바구니({{basketCount}})</a>
+					<a href="#" v-if="sessionRole == 'ADMIN'">관리자 페이지</a>
+					<a href="http://localhost:8080/mypage/user-mypage.do" v-if="sessionRole == 'TOURIST'">마이페이지</a>
+					<a href="http://localhost:8080/mypage/guide-schedule.do" v-if="sessionRole == 'GUIDE'">가이드페이지</a>
                 </template>
             </div>
             <div>
