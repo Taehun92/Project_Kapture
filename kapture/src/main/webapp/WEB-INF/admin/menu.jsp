@@ -53,6 +53,7 @@
 </style>
 <body>
 <div class="sidebar">
+    <a href="/main.do"><img id="logo" src="../../img/kapture_Logo.png" style="width: 200px;"></a> 
     <ul>
         <li><a href="/admin/tours.do">상품 관리</a></li>
         <li><a href="/admin/guide.do">가이드 관리</a></li>

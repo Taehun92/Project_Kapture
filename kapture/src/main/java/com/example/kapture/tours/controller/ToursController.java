@@ -75,7 +75,7 @@ public class ToursController {
 	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
 		
-	// 상품 목록 조회(dept(1,2) 공통)
+	// 상품 목록 조회
 	@RequestMapping(value = "/tours/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String toursList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {

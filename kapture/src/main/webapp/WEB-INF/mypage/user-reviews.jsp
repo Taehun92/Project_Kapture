@@ -475,7 +475,7 @@
                         alert("로그인 후 이용해주세요.");
                         location.href = "http://localhost:8080/main.do";
                     }
-                    if (this.sessionRole != 'TOURIST') {
+                    if (this.sessionRole === 'GUIDE') {
                         alert("일반회원만 이용가능합니다.");
                         location.href = "http://localhost:8080/main.do";
                     }

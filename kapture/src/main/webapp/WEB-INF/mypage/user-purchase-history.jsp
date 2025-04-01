@@ -16,6 +16,8 @@
         <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
+        <!-- 페이지 체인지 -->
+        <script src="/js/page-Change.js"></script>
         <style>
             /* 전체 레이아웃 설정 */
             body {
@@ -205,6 +207,10 @@
                 margin-right: 4px;
                 /* 점과 텍스트 사이 간격 */
             }
+
+            .fc-event {
+                cursor: pointer;
+            }
         </style>
     </head>
 
@@ -217,34 +223,34 @@
             <div class="side-menu">
                 <ul>
                     <li>
-                        <a :class="{ active: currentPage === 'user-mypage.do' }" 
-                           href="http://localhost:8080/mypage/user-mypage.do">
-                          회원 정보수정
+                        <a :class="{ active: currentPage === 'user-mypage.do' }"
+                            href="http://localhost:8080/mypage/user-mypage.do">
+                            회원 정보수정
                         </a>
-                      </li>
-                      <li>
-                        <a :class="{ active: currentPage === 'user-purchase-history.do' }" 
-                           href="http://localhost:8080/mypage/user-purchase-history.do">
-                          구매한 상품
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-purchase-history.do' }"
+                            href="http://localhost:8080/mypage/user-purchase-history.do">
+                            구매한 상품
                         </a>
-                      </li>
-                      <li>
-                        <a :class="{ active: currentPage === 'user-reviews.do' }" 
-                           href="http://localhost:8080/mypage/user-reviews.do">
-                          이용후기 관리
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-reviews.do' }"
+                            href="http://localhost:8080/mypage/user-reviews.do">
+                            이용후기 관리
                         </a>
-                      </li>
-                      <li>
+                    </li>
+                    <li>
                         <a href="http://localhost:8080/cs/qna.do">
-                          문의하기
+                            문의하기
                         </a>
-                      </li>
-                      <li>
-                        <a :class="{ active: currentPage === 'user-unregister.do' }" 
-                           href="http://localhost:8080/mypage/user-unregister.do">
-                          회원 탈퇴
+                    </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'user-unregister.do' }"
+                            href="http://localhost:8080/mypage/user-unregister.do">
+                            회원 탈퇴
                         </a>
-                      </li>
+                    </li>
                 </ul>
             </div>
 
@@ -317,7 +323,7 @@
                         alert("로그인 후 이용해주세요.");
                         location.href = "localhost:8080/main.do";
                     }
-                    if (this.sessionRole != 'TOURIST') {
+                    if (this.sessionRole === 'GUIDE') {
                         alert("일반회원만 이용가능합니다.");
                         location.href = "http://localhost:8080/main.do";
                     }
@@ -332,6 +338,7 @@
                                 "종일": "#3788d8"
                             };
                             eventsArray.push({
+                                id: item.tourNo,
                                 title: item.title || '투어',       // 실제 데이터에 맞게 속성명을 조정하세요.
                                 start: item.tourDate,                // 날짜 형식은 FullCalendar에서 인식하는 형식이어야 합니다.
                                 allDay: true,    // "종일"이면 allDay는 true, 아니면 false
@@ -348,7 +355,13 @@
                             validRange: function (now) {
                                 return { start: now };
                             },
-                            events: eventsArray
+                            events: eventsArray,
+                            eventClick: function (info) {
+                                // 클릭된 이벤트의 기본 동작을 막습니다.
+                                info.jsEvent.preventDefault();
+                                // 투어 상세페이지로 이동 (URL은 프로젝트에 맞게 수정하세요)
+                                pageChange("/tours/test-info.do", { tourNo: info.event.id });
+                            }
                         });
                         calendar.render();
                     });
