@@ -71,7 +71,6 @@
 
 		.contents {
 			width: 100%;
-			height: 200px;
 			background: #ddd;
 			display: flex;
 			align-items: center;
@@ -288,7 +287,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="contents">{{tourInfo.description}}</div>
+			<div class="contents" v-html="tourInfo.description"></div>
 
 			<div class="reviews">
 				<div class="review-score">
