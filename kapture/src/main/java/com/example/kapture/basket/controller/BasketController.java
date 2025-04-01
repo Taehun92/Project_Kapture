@@ -81,6 +81,18 @@ public class BasketController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 장바구니 업데이트
+	@RequestMapping(value = "/basket/update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String editBasket(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = basketService.editBasket(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
 	
 	
 }
