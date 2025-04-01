@@ -206,7 +206,6 @@
                             sessionId: self.sessionId,
                             confirmPassword: self.confirmPassword
                         };
-
                         $.ajax({
                             url: "/mypage/user-unregister.dox",
                             dataType: "json",
@@ -238,7 +237,6 @@
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
-                            unregisterFlg: true
                         };
                         console.log(self.sessionId);
                         $.ajax({
@@ -264,7 +262,7 @@
                         alert("로그인 후 이용해주세요.");
                         location.href = "localhost:8080/main.do";
                     }
-                    if (this.sessionRole != 'TOURIST') {
+                    if (this.sessionRole != 'TOURIST' || this.sessionRole != 'ADMIN') {
                         alert("일반회원만 이용가능합니다.");
                         location.href = "http://localhost:8080/main.do";
                     }

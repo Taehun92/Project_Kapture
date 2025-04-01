@@ -13,8 +13,10 @@
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
         <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
         <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
+        <!-- 페이지 체인지 -->
+        <script src="/js/page-Change.js"></script>
     </head>
     <style>
         /* 전체 레이아웃 설정 */
@@ -205,6 +207,10 @@
             margin-right: 4px;
             /* 점과 텍스트 사이 간격 */
         }
+
+        .fc-event {
+            cursor: pointer;
+        }
     </style>
 
 
@@ -251,27 +257,27 @@
                     </li>
                 </ul>
             </div>
-       
 
-        <!-- 우측 메인 콘텐츠 -->
-        <div class="content-area">
-            <ol class="custom-buttons">
-                <li class="custom-button">
-                    <span class="dot" style="color: #3788d8;">●</span>
-                    <span class="label">종일</span>
-                </li>
-                <li class="custom-button">
-                    <span class="dot" style="color: red;">●</span>
-                    <span class="label">오전</span>
-                </li>
-                <li class="custom-button">
-                    <span class="dot" style="color: green;">●</span>
-                    <span class="label">오후</span>
-                </li>
-            </ol>
-            <div ref="calendar"></div>
+
+            <!-- 우측 메인 콘텐츠 -->
+            <div class="content-area">
+                <ol class="custom-buttons">
+                    <li class="custom-button">
+                        <span class="dot" style="color: #3788d8;">●</span>
+                        <span class="label">종일</span>
+                    </li>
+                    <li class="custom-button">
+                        <span class="dot" style="color: red;">●</span>
+                        <span class="label">오전</span>
+                    </li>
+                    <li class="custom-button">
+                        <span class="dot" style="color: green;">●</span>
+                        <span class="label">오후</span>
+                    </li>
+                </ol>
+                <div ref="calendar"></div>
+            </div>
         </div>
-    </div>
         <!-- 공통 푸터 -->
         <jsp:include page="../common/footer.jsp" />
 
@@ -302,7 +308,7 @@
                                 console.log(data);
                                 if (data.result == "success") {
                                     self.schedule = data.schedule;
-                                    if(callback) callback();
+                                    if (callback) callback();
                                 } else {
                                     console.error("데이터 로드 실패");
                                 }
@@ -314,6 +320,15 @@
                     }
                 },
                 mounted() {
+                    console.log(this.sessionId);
+                    if (this.sessionId == '') {
+                        alert("로그인 후 이용해주세요.");
+                        location.href = "http://localhost:8080/main.do";
+                    }
+                    if (this.sessionRole != 'GUIDE' || this.sessionRole != 'ADMIN') {
+                        alert("가이드만 이용가능합니다.");
+                        location.href = "http://localhost:8080/main.do";
+                    }
                     this.fnGetSchedule(() => {
                         const eventsArray = [];
                         for (let i = 0; i < this.schedule.length; i++) {
@@ -324,6 +339,7 @@
                                 "종일": "#3788d8"
                             };
                             eventsArray.push({
+                                id: item.tourNo,
                                 title: item.title || '투어',       // 실제 데이터에 맞게 속성명을 조정하세요.
                                 start: item.tourDate,                // 날짜 형식은 FullCalendar에서 인식하는 형식이어야 합니다.
                                 allDay: true,    // "종일"이면 allDay는 true, 아니면 false
@@ -340,11 +356,17 @@
                             validRange: function (now) {
                                 return { start: now };
                             },
-                            events: eventsArray
+                            events: eventsArray,
+                            eventClick: function (info) {
+                                // 클릭된 이벤트의 기본 동작을 막습니다.
+                                info.jsEvent.preventDefault();
+                                // 투어 상세페이지로 이동 (URL은 프로젝트에 맞게 수정하세요)
+                                pageChange("/tours/test-info.do", { tourNo: info.event.id });
+                            }
                         });
                         calendar.render();
                     });
-                    console.log("sessionId"+this.sessionId);
+                    console.log("sessionId" + this.sessionId);
                     this.currentPage = window.location.pathname.split('/').pop();
                     console.log("Current page:", this.currentPage);
                 }
