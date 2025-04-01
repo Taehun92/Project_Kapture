@@ -58,6 +58,15 @@ public class MyPageController {
 			resultMap = myPageService.getUserInfo(map);
 			return new Gson().toJson(resultMap);
 		}
+		// 비밀번호 확인
+		@RequestMapping(value = "/mypage/user-checkPwd.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String checkPassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.checkPassword(map);
+			return new Gson().toJson(resultMap);
+		}
 		// 정보수정
 		@RequestMapping(value = "/mypage/info-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
