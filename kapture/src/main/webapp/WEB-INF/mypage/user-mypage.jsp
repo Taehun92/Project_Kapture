@@ -249,12 +249,12 @@
             <!-- 우측 메인 콘텐츠 -->
             <div class="content-area">
                 <!-- 비밀번호 확인 -->
-                <template v-if="!pwdCheckFlg && userInfo.socialType != 'SOCIAL'">
+                <template v-if="(!pwdCheckFlg && !userInfo.socialType) || (!pwdCheckFlg && userInfo.socialType === 'SOCIAL' && userInfo.password !='Test1234!')">
                     <div class="center-box">
                         <label>비밀 번호 : </label>
                         <input type="password" v-model="confirmPassword" placeholder="비밀번호를 입력해주세요."
-                            @keyup.enter="fnGetInfo">
-                        <button @click="fnGetInfo">확인</button>
+                            @keyup.enter="fnCheckPassword">
+                        <button @click="fnCheckPassword">확인</button>
                     </div>
                 </template>
                 <template v-if="pwdCheckFlg">
@@ -271,12 +271,7 @@
                             <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled />
                         </div>
                         <!-- 라스트 네임 -->
-                        <div class="form-group" v-if="userInfo.userLastName != null">
-                            <label for="lastName">LastName</label>
-                            <input type="text" id="lastName" v-model="userInfo.userLastName" disabled />
-                        </div>
-                        <div class="form-group"
-                            v-if="userInfo.userLastName == null && userInfo.socialType === 'SOCIAL'">
+                        <div class="form-group">
                             <label for="lastName">LastName</label>
                             <input type="text" id="lastName" v-model="userInfo.userLastName" />
                         </div>
@@ -304,12 +299,12 @@
                             </div>
                         </div>
                         <!-- 생년월일 -->
-                        <div class="form-group" v-if="!userInfo.birthday">
+                        <div class="form-group" v-if="userInfo.birthday != null">
                             <label for="birthday" class="required">생년월일</label>
                             <input type="text" id="birthday" v-model="userInfo.birthday" disabled />
                         </div>
                         <div class="form-group" v-else>
-                            <label for="birthday" class="required">생년월일</label>
+                            <label for="birthday" >생년월일</label>
                             <input type="date" id="birthday" v-model="userInfo.birthday" />
                         </div>
                     </div>
@@ -380,11 +375,9 @@
                     return {
                         // 예: 이미 인증된 이메일 정보(샘플)
                         userInfo: {
-                            phone: "",
                             birthday: "",
                             gender: "",
                             address: "",
-                            userLastName: "",
                         },
                         confirmPassword: "",
                         sessionId: "${sessionId}",
@@ -404,15 +397,12 @@
                     saveInfo() {
                         // 간단한 유효성 검사 예시
                         let self = this;
-                        if (self.userInfo.phone === null) {
+                        if (!self.userInfo.phone) {
                             alert("연락처를 입력해주세요.");
                             return;
                         }
-                        if (self.userInfo.birthday === null) {
-                            alert("생년월일을 입력해주세요.");
-                            return;
-                        }
-                        if (self.userInfo.gender === null) {
+                    
+                        if (!self.userInfo.gender) {
                             alert("성별을 입력해주세요.");
                             return;
                         }
@@ -420,7 +410,7 @@
                             alert("비밀번호를 변경해주세요.");
                             return;
                         }
-
+                        
                         // 서버로 전송할 데이터
                         let nparmap = {
                             userLastName: self.userInfo.userLastName,
@@ -440,7 +430,12 @@
                             data: nparmap,
                             success: function (data) {
                                 console.log("서버 응답:", data);
-                                alert("회원정보가 저장되었습니다.");
+                                if(data.result === "success"){
+                                    alert("회원정보가 저장되었습니다.");
+                                    // location.href = "/mypage/user-purchase-history.do";
+                                } else{
+                                    alert("회원정보가 저장이 실패했습니다.");
+                                }
                             },
                             error: function (err) {
                                 console.log(err);
@@ -452,7 +447,6 @@
                         let self = this;
                         let nparmap = {
                             sessionId: self.sessionId,
-                            confirmPassword: self.confirmPassword
                         };
                         console.log(self.sessionId);
                         $.ajax({
@@ -462,9 +456,37 @@
                             data: nparmap,
                             success: function (data) {
                                 if (data.result == "success") {
-                                    console.log("userData: " + data);
+                                    console.log(data);
                                     self.userInfo = data.userInfo;
-                                    console.log(self.userInfo);
+                                    if(self.userInfo.socialType === 'SOCIAL' && self.userInfo.password === 'Test1234!'){
+                                         self.pwdCheckFlg = true;
+                                         self.userInfo.phone = null;
+                                    }
+                                    if(self.userInfo.userLastName === 'N/A'){
+                                        self.userInfo.userLastName = null; 
+                                    }
+
+                                } else {
+                                    alert("정보를 가지고 오는데 실패했습니다.");
+                                }
+                            }
+                        });
+                    },
+                    fnCheckPassword() {
+                        let self = this;
+                        let nparmap = {
+                            sessionId: self.sessionId,
+                            confirmPassword: self.confirmPassword
+                        };
+                        console.log(self.sessionId);
+                        $.ajax({
+                            url: "/mypage/user-checkPwd.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                if (data.result == "success") {
+                                    console.log(data);
                                     self.pwdCheckFlg = true;
                                 } else if (data.result == "fail") {
                                     alert("비밀번호를 확인해주세요");
@@ -512,6 +534,7 @@
                                     self.passwordRules = { length: false, upper: false, lower: false, special: false, number: false };
                                     self.passwordValid = false;
                                     self.passwordsMatch = false;
+                                    self.userInfo.password = self.newPassword1;
                                     alert("비밀번호가 변경되었습니다.");
                                 } else {
                                     alert("비밀번호 변경에 실패했습니다.");
@@ -536,12 +559,14 @@
                         alert("로그인 후 이용해주세요.");
                         location.href = "http://localhost:8080/main.do";
                     }
-                    if (this.sessionRole != 'TOURIST') {
+                    if (this.sessionRole != 'TOURIST' || this.sessionRole != 'ADMIN') {
                         alert("일반회원만 이용가능합니다.");
                         location.href = "http://localhost:8080/main.do";
                     }
                     this.currentPage = window.location.pathname.split('/').pop();
                     console.log("Current page:", this.currentPage);
+
+                    this.fnGetInfo();
                 }
             });
             app.mount('#app');
