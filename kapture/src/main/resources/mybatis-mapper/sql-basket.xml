@@ -48,5 +48,9 @@
 		WHERE B.BASKET_NO = #{barsketNo}
 	</select>
 	
-
+	<update id="updateBasket" parameterType="hashmap">
+		UPDATE BASKET SET NUM_PEOPLE = #{count}
+		WHERE BASKET_NO = #{basketNo}
+		
+	</update>
 </mapper>

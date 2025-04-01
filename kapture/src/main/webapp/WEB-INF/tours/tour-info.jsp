@@ -9,263 +9,11 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 		<script src="/js/page-Change.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
-				<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+		<link rel="stylesheet" href="../../css/tourInfo.css">
 		<title>상품 상세페이지</title>
 	</head>
 	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-			font-family: Arial, sans-serif;
-		}
-
-		.container {
-			width: 80%;
-			margin: 20px auto;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
-
-		.top-section {
-			display: flex;
-			gap: 10px;
-		}
-
-		.thumbnail {
-					width: 37%;
-					height: 300px;
-					display: flex;
-					justify-content: center;
-					font-size: 16px;
-				}
-
-		.info {
-			width: 60%;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
-
-		.title {
-			font-size: 20px;
-			font-weight: bold;
-			text-align: center;
-			padding: 10px;
-			background: #eee;
-		}
-
-		.guide-info {
-			text-align: center;
-			padding: 10px;
-			background: #ddd;
-		}
-
-		.actions {
-			display: flex;
-			justify-content: space-between;
-			padding: 10px;
-			background: #f1f1f1;
-		}
-
-		.contents {
-					width: 100%;
-					background: #ddd;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					font-size: 18px;
-				}
-				
-				.tags {
-							margin-top: 5px;
-							display: flex;
-							gap: 5px;
-						}
-
-						.tag {
-							font-size: 12px;
-							padding: 3px 6px;
-							background: #ddd;
-							border-radius: 5px;
-						}
-						
-		.reviews {
-									padding: 15px;
-									background: #fff;
-									border-top: 2px solid #f00;
-		}
-
-		.review-score {
-					font-size: 18px;
-					font-weight: bold;
-					margin-bottom: 10px;
-		}
-
-		.user-review {
-			margin-top: 10px;
-			font-size: 14px;
-		}
-		
-		.stars {
-					color: gold;
-		}
-		
-		.profile-img {
-			width: 40px;
-			/* 가로 크기 */
-			height: 40px;
-			/* 세로 크기 */
-			border-radius: 50%;
-			/* 동그랗게 */
-			object-fit: cover;
-			/* 이미지가 잘리지 않도록 */
-		}
-		
-		.rating-bars {
-					margin: 10px 0;
-				}
-
-				.rating-bar {
-					display: flex;
-					align-items: center;
-					gap: 10px;
-					font-size: 14px;
-					margin-bottom: 5px;
-				}
-
-				.progress-bar {
-					flex: 1;
-					height: 8px;
-					background: #ddd;
-					border-radius: 5px;
-					overflow: hidden;
-				}
-
-				.fill {
-					height: 100%;
-					background: #ffa500;
-				}
-
-				.clickable-area {
-					width: 50px;
-					height: 150px;
-					margin-left: auto;
-					margin-right: 0;
-					margin-top: 20px;
-					background-color: #f0f0f0;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: center;
-					cursor: pointer;
-					position: fixed;
-					top: 50%;
-					right: 0;
-					transform: translateY(-50%);
-					overflow: hidden;
-					z-index: 1001;
-				  }
-				  
-				  .modal {
-					background-color: lightblue;
-					padding: 20px;
-					overflow: hidden;
-					position: fixed;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-					width: 1200px;
-					height: 900px;
-					max-height: 900px;
-					z-index: 1000;
-					display: flex;
-					flex-direction: column;
-					border: 1px solid #ccc;
-					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-					align-items: center;
-					justify-content: flex-start;
-				  }
-				  
-				  .modal-enter-from {
-					opacity: 0;
-					transform: translateX(100%);
-				  }
-				  
-				  .modal-enter-active {
-					transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-				  }
-				  
-				  .modal-enter-to {
-					opacity: 1;
-					transform: translateX(0%);
-				  }
-				  
-				  .modal-leave-from {
-					opacity: 1;
-					transform: translateX(0%);
-				  }
-				  
-				  .modal-leave-active {
-					transition: opacity 0.2s ease-in, transform 0.2s ease-in;
-				  }
-				  
-				  .modal-leave-to {
-					opacity: 0;
-					transform: translateX(100%);
-				  }
-				  
-				  .close-button {
-					position: absolute;
-					top: 10px;
-					right: 10px;
-					cursor: pointer;
-					padding: 5px;
-					background-color: #ddd;
-					border-radius: 5px;
-				  }
-
-				  .black-box {
-					background-color: black;
-					color: white;
-					padding: 10px;
-					text-align: center;
-					border: 1px solid #000;
-					border-radius: 5px;
-				}
-				
-				.white-box {
-					background-color: white;
-					color: black;
-					padding: 10px;
-					text-align: center;
-					border: 1px solid #ccc;
-					border-radius: 5px;
-				}
-
-				table {
-					width: 100%; /* 테이블 너비를 100%로 설정 */
-					max-width: 1200px; /* 최대 너비를 1200px로 제한 */
-					margin: 20px auto; /* 테이블을 가운데 정렬 */
-					border-collapse: collapse; /* 테이블 경계선 병합 */
-					font-size: 16px; /* 글자 크기 조정 */
-				}
-				
-				th, td {
-					padding: 15px; /* 셀 안쪽 여백 */
-					text-align: center; /* 텍스트 가운데 정렬 */
-					border: 1px solid #ccc; /* 셀 경계선 */
-				}
-				
-				th {
-					background-color: #f4f4f4; /* 헤더 배경색 */
-					font-weight: bold; /* 헤더 글자 굵게 */
-				}
-				
-				td {
-					background-color: #fff; /* 셀 배경색 */
-				}
 	</style>
 
 	<body>
@@ -289,6 +37,12 @@
 				</div>
 		
 				<div class="contents" v-html="tourInfo.description"></div>
+				<div v-if="sessionId == tourInfo.userNo">
+					<button @click="fnEdit">
+						수정
+					</button>
+
+				</div>
 
 				<div class="reviews">
 					<div class="review-score">
@@ -507,6 +261,42 @@
 							return;
 						}
 
+						let existingItem = self.cartList.find(item =>
+							item.tourNo == self.tourNo &&
+							self.formatDate(new Date(item.tourDate)) === self.formatDate(new Date(self.tourInfo.tourDate)) &&
+							item.duration === self.tourInfo.duration
+					  	);
+
+					  	console.log('existingItem : ', existingItem);
+					
+
+					  	if(existingItem) {
+							if(existingItem.numPeople != self.count) {
+								$.ajax({
+									url: "/basket/update.dox",
+									dataType: "json",
+									type: "POST",
+									data: {
+										basketNo: existingItem.basketNo,  // 기존 항목의 고유 ID
+										count: self.count 
+									},
+									success: function (data) {
+										alert('인원수가 변경되었습니다.');
+										self.fnGetCart();
+										self.fnGetMinTourDate();
+										self.fnGetMaxTourDate();
+										self.fnGetTourDateList();
+										self.fnGetBasketList();
+										self.fnGetBasket();
+									}
+								});
+								return;
+							} else {
+								alert("이미 담은 상품입니다!");
+								return;
+							}
+						}
+
 						$.ajax({
 							url: "/basket/add.dox",
 							dataType: "json",
@@ -700,6 +490,7 @@
 				},
 				mounted() {
 					let self = this;
+
 					self.fnTourInfo();
 					self.fnGetCart();
 					self.fnGetMinTourDate();
