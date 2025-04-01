@@ -1,167 +1,180 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="../../css/main.css">
-	<script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
-    <script src="/js/page-Change.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<title>메인 페이지</title>
-</head>
-<style>
- .div{ padding-bottom: 50px;}
-</style>
-<body>
-    <jsp:include page="../common/header.jsp"></jsp:include>
-    <div id="app">
-        <div class="swiper-container" style="position: relative;">
-            <!-- ✅ 고정 문구 텍스트 -->
-            <div class="hero-text">
-              <h1 class="title">YOUR WORLD OF JOY</h1>
-              <p class="subtitle">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
-            </div>
-          
-            <!-- ✅ Swiper 이미지 슬라이드 -->
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <img class="banner" src="../../img/city.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img class="banner" src="../../img/han.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img class="banner" src="../../img/banner3.jpg">
-              </div>
-            </div>
-          </div>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <!DOCTYPE html>
+    <html>
 
-        <div>
-            <hr>
-            추천상품
-        </div>
-        <!-- 관광지 리스트 -->
-        <div class="album py-5 bg-light">
-            <div class="container">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    <div class="col" v-for="tour in limitedToursList" @click="goToTourInfo(tour.tourNo)">
-                        <div class="card shadow-sm">
-                            <img class="bd-placeholder-img card-img-top" width="100%" height="225" :src="tour.filePath" alt="Card image cap">
-                            <div class="card-body">
-                                <p class="card-text">{{ tour.title }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="goToTourInfo(tour.tourNo)">자세히 보기</button>
-                                    </div>
-                                    <small class="text-muted">{{ tour.price }} 원</small>
-                                </div>
-                            </div>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
+        <link rel="stylesheet" href="../../css/main.css">
+        <link rel="stylesheet" href="../../css/components/card.css">
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
+        <script src="/js/page-Change.js"></script>
+        <title>메인 페이지</title>
+    </head>
+    <style>
+        .div {
+            padding-bottom: 50px;
+        }
+    </style>
+
+    <body>
+        <jsp:include page="../common/header.jsp"></jsp:include>
+        <div id="app">
+            <div class="swiper-container" style="position: relative;">
+                <!-- ✅ 고정 문구 텍스트 -->
+                <div class="hero-text">
+                    <h1 class="title">YOUR WORLD OF JOY</h1>
+                    <p class="subtitle">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
+                </div>
+
+                <!-- ✅ Swiper 이미지 슬라이드 -->
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img class="banner" src="../../img/city.jpg">
+                    </div>
+                    <div class="swiper-slide">
+                        <img class="banner" src="../../img/han.jpg">
+                    </div>
+                    <div class="swiper-slide">
+                        <img class="banner" src="../../img/banner3.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="main-container">
+                <div class="main-title">
+                    <hr>
+                    추 천 상 품
+                </div>
+                <!-- 관광지 리스트 -->
+                <div class="card-list">
+                    <div class="card" v-for="tour in limitedToursList" :key="tour.tourNo">
+                        <div class="card-image">
+                            <img :src="tour.filePath" alt="썸네일" />
                         </div>
+                        <div class="card-content">
+                            <div class="card-top">
+                                <div class="card-date">{{ formatDate(tour.tourDate) }}</div>
+                                <div class="favorite" :class="{ active: tour.isFavorite }" @click="toggleFavorite(tour)"></div>
+                            </div>
+                            <div class="card-title">{{ tour.title }}</div>
+                            <div class="card-desc">{{ truncateText(tour.description) }}</div>
+                            <div class="card-info">
+                                <div v-if="tour.rating >= 0" class="rating">⭐ {{ tour.rating }}</div>
+                                <div v-else class="rating"> {{ tour.rating }}</div>
+                                <div class="price">₩{{ tour.price.toLocaleString() }}</div>
+                            </div>
+                            <button class="card-btn" @click="goToTourInfo(tour.tourNo)">예약하기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-title">
+                    <hr>
+                    추 천 리 뷰
+                </div>
+                <div class="review-page">
+                    <div class="review-box">
+                        <div class="review-author">사용자 A</div>
+                        <img class="review-image" src="../../img/1.jpg" alt="리뷰 이미지 1">
+                        <div class="review-content">이 상품 정말 좋아요! 배송도 빠르고 품질도 만족스럽습니다.</div>
+                        <div class="review-rating">★★★★★</div>
+                    </div>
+
+                    <div class="review-box">
+                        <div class="review-author">사용자 B</div>
+                        <img class="review-image" src="../../img/2.jpg" alt="리뷰 이미지 2">
+                        <div class="review-content">가격 대비 성능이 훌륭합니다. 추천합니다!</div>
+                        <div class="review-rating">★★★★☆</div>
+                    </div>
+
+                    <div class="review-box">
+                        <div class="review-author">사용자 C</div>
+                        <img class="review-image" src="../../img/3.jpg" alt="리뷰 이미지 3">
+                        <div class="review-content">잘 받았습니다. 다음에 또 구매할게요.</div>
+                        <div class="review-rating">★★★★</div>
                     </div>
                 </div>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp"></jsp:include>
+    </body>
 
-        <div>
-            <hr>
-            추천 리뷰
-        </div>
-        <div class="review-page">
-            <div class="review-box">
-                <div class="review-author">사용자 A</div>
-                <img class="review-image" src="../../img/1.jpg" alt="리뷰 이미지 1">
-                <div class="review-content">이 상품 정말 좋아요! 배송도 빠르고 품질도 만족스럽습니다.</div>
-                <div class="review-rating">★★★★★</div>
-            </div>
-
-            <div class="review-box">
-                <div class="review-author">사용자 B</div>
-                <img class="review-image" src="../../img/2.jpg" alt="리뷰 이미지 2">
-                <div class="review-content">가격 대비 성능이 훌륭합니다. 추천합니다!</div>
-                <div class="review-rating">★★★★☆</div>
-            </div>
-
-            <div class="review-box">
-                <div class="review-author">사용자 C</div>
-                <img class="review-image" src="../../img/3.jpg" alt="리뷰 이미지 3">
-                <div class="review-content">잘 받았습니다. 다음에 또 구매할게요.</div>
-                <div class="review-rating">★★★★</div>
-            </div>
-        </div>
-	</div>
-    <jsp:include page="../common/footer.jsp"></jsp:include>
-</body>
-</html>
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-				swiper : null,
-                toursList: []
-            };
-        },
-
-        computed: {
-            limitedToursList() {
-                return this.toursList.slice(0, 9); // 최대 9개만 반환
-            }
-        },
-
-        methods: {
-            fnToursList() {
-                let self = this;
-                console.log("selectedDates >> " + self.selectedDates);
-                let nparmap = {
-                    selectedDates: JSON.stringify(self.selectedDates),
-                    selectedRegions: JSON.stringify(self.selectedRegions),
-                    selectedLanguages: JSON.stringify(self.selectedLanguages),
-                    selectedThemes: JSON.stringify(self.selectedThemes),
+    </html>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    swiper: null,
+                    toursList: []
                 };
+            },
 
-                $.ajax({
-                    url: "/tours/list.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: nparmap,
-                    success: function (data) {
-                        console.log("DATA", data);
-                        self.toursList = data.toursList;
-                        self.regionList = data.regionList;
-                        self.themeList = data.themeList;
-                        console.log("LANG", self.selectedLanguages);
-                        console.log("LIST", self.toursList);
-                    }
+            computed: {
+                limitedToursList() {
+                    return this.toursList.slice(0, 12); // 최대 9개만 반환
+                }
+            },
+
+            methods: {
+                formatDate(dateStr) {
+                    if (!dateStr) return '';
+                    return dateStr.split(' ')[0]; // "2025-04-12 00:00:00" → "2025-04-12"
+                },
+
+                truncateText(text, maxLength = 50) {
+                    if (!text) return '';
+                    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+                },
+
+                fnToursList() {
+                    let self = this;
+                    let nparmap = {
+                    };
+                    $.ajax({
+                        url: "/main/getTourandRatingList.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data);
+                            self.toursList = data.list;
+                        }
+                    });
+                },
+
+                toggleFavorite(tour) {
+                    tour.isFavorite = !tour.isFavorite;
+                },
+
+
+                goToTourInfo(tourNo) {
+                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                },
+            },
+            mounted() {
+                let self = this;
+                let swiper = new Swiper('.swiper-container', {
+                    // 기본 옵션 설정
+                    loop: true, // 반복
+                    spaceBetween: 0,
+                    slidesPerView: 1,
+                    autoplay: {
+                        delay: 2500,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
                 });
-            },
-            goToTourInfo(tourNo) {
-                pageChange("/tours/test-info.do", { tourNo: tourNo });
-            },
-        },
-        mounted() {
-            let self = this;
-            let swiper = new Swiper('.swiper-container', {
-				// 기본 옵션 설정
-				loop: true, // 반복
-                spaceBetween: 0,
-                slidesPerView: 1,
-				autoplay: {
-					delay: 2500,
-				},
-				pagination: {
-					el: '.swiper-pagination',
-					clickable: true,
-				},
-				navigation: {
-					nextEl: '.swiper-button-next',
-					prevEl: '.swiper-button-prev',
-				},
-			});
-            self.fnToursList();
-        }
-    });
-    app.mount('#app');
-</script>
+                self.fnToursList();
+            }
+        });
+        app.mount('#app');
+    </script>

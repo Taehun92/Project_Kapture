@@ -36,7 +36,7 @@ public class PaymentService {
 			resultMap.put("basketList", basketList);
 //			resultMap.put("paymentList", paymentList);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO: handle exception 
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
