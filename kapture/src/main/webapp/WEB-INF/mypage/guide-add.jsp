@@ -377,27 +377,68 @@
 					}
 				});
 			},
+
+		
+
         },
         mounted() {
-			let self = this;
-			let quill = new Quill('#editor', {
-				theme: 'snow',
-				modules: {
-					toolbar: [
-						[{ 'header': [1, 2, 3, false] }],
-						['bold', 'italic', 'underline'],
-						[{ 'list': 'ordered' }, { 'list': 'bullet' }],
-						['link', 'image'],
-						[{ 'color': [] }, { 'background': [] }],
-						[{ 'align': [] }],
-						['clean']
-					]
-				}
-			});
-	
-			quill.on('text-change', function() {
-				self.description = quill.root.innerHTML;
-			});
+			
+				let self = this;
+				let quill = new Quill('#editor', {
+					theme: 'snow',
+					modules: {
+						toolbar: {
+							container: [
+								[{ 'header': [1, 2, 3, false] }],
+								['bold', 'italic', 'underline'],
+								[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+								['link', 'image'],
+								[{ 'color': [] }, { 'background': [] }],
+								[{ 'align': [] }],
+								['clean']
+							],
+							handlers: {
+								image: function () {
+									let input = document.createElement('input');
+									input.setAttribute('type', 'file');
+									input.setAttribute('accept', 'image/*');
+									input.click();
+			
+									input.onchange = async () => {
+										let file = input.files[0];
+										if (!file) return;
+			
+										let formData = new FormData();
+										formData.append("file", file);
+			
+										try {
+											let response = await fetch("/upload/image", {
+												method: "POST",
+												body: formData
+											});
+			
+											let result = await response.json();
+			
+											if (result.success) {
+												let range = quill.getSelection();
+												quill.insertEmbed(range.index, 'image', result.imageUrl);
+											} else {
+												alert("이미지 업로드 실패");
+											}
+										} catch (error) {
+											console.error("이미지 업로드 중 오류 발생:", error);
+										}
+									};
+								}
+							}
+						}
+					}
+				});
+			
+				quill.on('text-change', function () {
+					self.description = quill.root.innerHTML;
+				});
+			
 
 			self.fnSelectSi();
 			self.fnGetThemeParentList();

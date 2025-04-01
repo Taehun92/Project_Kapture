@@ -1,16 +1,24 @@
 package com.example.kapture.mypage.controller;
 
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.example.kapture.login.dao.LoginService;
 import com.example.kapture.mypage.dao.MyPageService;
 import com.google.gson.Gson;
 
@@ -190,6 +198,56 @@ public class MyPageController {
 			resultMap = myPageService.getTour(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		// 파일 처리
+		
+		@PostMapping("/upload/image")
+	    public ResponseEntity<Map<String, Object>> uploadImage(@RequestPart("file") MultipartFile file,
+	                                                           HttpServletRequest request) {
+	        Map<String, Object> response = new HashMap<>();
+	        
+	        // 파일 저장할 경로 (예: 프로젝트 내 static 폴더)
+	        String uploadDir = request.getServletContext().getRealPath("/uploads/");
+	        File uploadFolder = new File(uploadDir);
+
+	        // 폴더가 없으면 생성
+	        if (!uploadFolder.exists()) {
+	            uploadFolder.mkdirs();
+	        }
+
+	        try {
+	            // 원본 파일 이름과 확장자 추출
+	            String originalFilename = file.getOriginalFilename();
+	            String extName = originalFilename.substring(originalFilename.lastIndexOf("."));
+	            
+	            // 파일명 중복 방지를 위해 UUID 사용
+	            String saveFileName = UUID.randomUUID() + extName;
+	            
+	            // 저장할 파일 경로
+	            File destFile = new File(uploadDir, saveFileName);
+	            file.transferTo(destFile);
+	            
+	            // 저장된 이미지의 URL 생성
+	            String imageUrl = request.getContextPath() + "/uploads/" + saveFileName;
+
+	            // DB 저장을 원하면 여기에 boardService.addBoardImg() 호출 가능
+	            HashMap<String, Object> map = new HashMap<>();
+	            map.put("filename", saveFileName);
+	            map.put("path", "/uploads/" + saveFileName);
+	            map.put("originFilename", originalFilename);
+	            myPageService.addToursImg(map);
+
+	            // 성공 응답
+	            response.put("success", true);
+	            response.put("imageUrl", imageUrl);
+	            return ResponseEntity.ok(response);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            response.put("success", false);
+	            response.put("message", "이미지 업로드 실패");
+	            return ResponseEntity.status(500).body(response);
+	        }
+	    }
 		
 }
 
