@@ -30,4 +30,6 @@ public interface BasketMapper {
 
 	Basket selectBasketByNo(Integer basketNo);
 
+	void updateBasket(HashMap<String, Object> map);
+
 }
