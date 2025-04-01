@@ -13,12 +13,16 @@
 		UPDATE USERS
 	    SET PHONE = #{phone},
 	    	PUSHYN = #{pushYN},
-	    	BIRTHDAY = #{birthday},
-	    	ADDRESS = #{address},
 	    	GENDER = #{gender},
+	    	<if test="address != null">
+	    		ADDRESS = #{address},
+	    	</if>
 	    	U_UPDATED_AT = SYSDATE,
+	    	<if test="birthday != null">
+	    		BIRTHDAY = #{birthday},
+	    	</if>
 	    	<if test="userLastName != null">
-	    	USER_LASTNAME = #{userLastName}
+	    		USER_LASTNAME = #{userLastName}
 	    	</if>
 	    WHERE USER_NO = #{sessionId}
 	</update>
@@ -30,15 +34,6 @@
 		WHERE USER_NO = #{sessionId}
 	</select>	
 	
-	<insert id="insertTour" parameterType="hashmap">
-		INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
-		SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{duration}, #{price},'4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
-		FROM GUIDES G
-		JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
-		JOIN THEME T ON T.THEME_NAME = #{themeName}
-		WHERE G.USER_NO = #{sessionId}
-  	</insert>
-  	
 	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
 		SELECT P.*, TITLE, DURATION, TOUR_DATE, U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
 		FROM PAYMENTS P
@@ -74,7 +69,7 @@
 	</update>
 
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
-	SELECT TITLE,DURATION,DELETEYN,TOUR_DATE
+	SELECT TITLE,DURATION,DELETEYN,TOUR_DATE,TOUR_NO
 		FROM 
 		    USERS U
 		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
@@ -87,5 +82,25 @@
 		SET PASSWORD = #{password}
 		WHERE USER_NO = #{sessionId}
 	</update>
+	
+	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo">
+    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
+    	SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+    	FROM GUIDES G
+    	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
+    	JOIN THEME T ON T.THEME_NAME = #{themeName}
+    	WHERE G.USER_NO = #{sessionId}
+    	
+	</insert>
+
+	<insert id="insertToursFile" parameterType="hashmap">
+    	INSERT INTO IMG (FILE_NO, FILE_PATH, FILE_NAME, FILE_ORG_NAME)
+    	VALUES (FILE_SEQ.NEXTVAL,  #{path}, #{filename}, #{originFilename})
+	</insert>
+	
+	
+	
+	
+	
 </mapper>
 

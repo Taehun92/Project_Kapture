@@ -199,6 +199,10 @@
   <div class="name-tag">연락처</div>
   <!-- Phone & Birthdate -->
   <input type="text" class="form-input" placeholder="Phone Number" v-model="user.phone" />
+  <div v-if="user.phone.length > 0 && !isPhoneValid()" style="color: red; font-size: 13px; margin-top: 5px;">
+    ❌ Phone number must contain digits only
+  </div>
+
   <div class="name-tag">생년월일</div>
   <div style="display: flex; gap: 8px;">
     <input type="text" class="form-input" v-model="birth.mm" maxlength="2" placeholder="MM" style="flex: 1;" />
@@ -341,6 +345,7 @@ const app = Vue.createApp({
         this.user.firstName &&
         this.user.phone &&
         this.user.birthday &&
+        this.isPhoneValid() &&
         this.terms.use &&           // 🔒 필수 약관
         this.terms.privacy          // 🔒 필수 약관
 
@@ -385,6 +390,9 @@ const app = Vue.createApp({
     isValidEmail(email) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(email);
+    },
+    isPhoneValid() {
+    return /^[0-9]*$/.test(this.user.phone);
     },
 
     fnIdCheck() {

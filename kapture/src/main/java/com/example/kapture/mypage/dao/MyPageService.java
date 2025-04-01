@@ -12,6 +12,7 @@ import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Guide;
 import com.example.kapture.mypage.model.Payments;
+import com.example.kapture.tours.model.Tours;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,25 +31,32 @@ public class MyPageService {
 	public HashMap<String, Object> getUserInfo(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
 		try {
 			Login userInfo = myPageMapper.selectUser(map);
-			if(Boolean.parseBoolean((String) map.get("unregisterFlg"))) {
-				resultMap.put("userInfo", userInfo);
-	            resultMap.put("result", "success");
-			}
-			else {
-				boolean loginFlg = false;
-	        	if (userInfo != null) {
-	            	loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
-	        	}
-	        	if (loginFlg) {
-	        		resultMap.put("userInfo", userInfo);
-	            	resultMap.put("result", "success");        
-	        	} else {
-	        		resultMap.put("result", "fail");
-	        	}
+			resultMap.put("userInfo", userInfo);
+	        resultMap.put("result", "success");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "sqlFail");
+		}
+		return resultMap;
+	}
+	//비밀번호 체크
+	public HashMap<String, Object> checkPassword(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Login userInfo = myPageMapper.selectUser(map);
+			boolean loginFlg = false;
+	        if (userInfo != null) {
+	            loginFlg = passwordEncoder.matches((String) map.get("confirmPassword"), userInfo.getPassword());
 	        }
+	        if (loginFlg) {
+	            resultMap.put("result", "success");        
+	        } else {
+	        	resultMap.put("result", "fail");
+	        }
+	        
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "sqlFail");
@@ -186,6 +194,7 @@ public class MyPageService {
 		
 		return resultMap;
 	}
+	
 	public HashMap<String, Object> getGuideSchedule(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
@@ -200,6 +209,34 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	
+	public HashMap<String, Object> editTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.updateTour(map);
+		
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Tours tours = myPageMapper.selectTour(map);
+		resultMap.put("tours", tours);
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> addToursImg(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.insertToursFile(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+	
 	
 	
 	
