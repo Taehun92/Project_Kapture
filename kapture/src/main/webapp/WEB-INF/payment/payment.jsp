@@ -9,12 +9,19 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="../../js/page-Change.js"></script>
 </head>
 
 <body class="bg-gray-100">
+  <!-- ✅ 장바구니 외부에 위치한 뒤로가기 버튼 -->
+  <div class="max-w-3xl mx-auto px-6 mt-6">
+    <button
+      onclick="history.back()"
+      class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center"
+    >
+      ← 뒤로가기
+    </button>
+  </div>
   <div id="app" class="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md mt-10">
-
     <h2 class="text-2xl font-semibold mb-6">🛒 장바구니 내역</h2>
 
     <div class="flex items-center mb-4">
@@ -53,6 +60,9 @@
           <div class="text-blue-600 font-bold text-lg">
             ₩{{ (item.price * item.numPeople).toLocaleString() }}
           </div>
+          <button @click="fnRemoveBasket(item)" class="ml-4 text-red-500 hover:text-red-700 text-sm">
+            🗑️ 삭제
+          </button>
         </div>
       </div>
 
@@ -257,7 +267,7 @@
             success(res) {
               if (res.result === "success") {
                 // ✅ POST 방식으로 결제 완료 페이지 이동
-                pageChange("/payment/success.do", { merchantId: merchant_uid });
+                location.href="/product/view.do?merchantId=" + merchant_uid;
               } else {
                   alert("결제 정보 저장 실패");
               }
@@ -266,7 +276,33 @@
               alert("서버와 통신 중 오류 발생");
             }
           });
+        },
+
+        fnRemoveBasket(item) {
+          const self = this;
+          if (!confirm("  "+ item.title +"  " + "항목을 삭제하시겠습니까?")){
+            return;
+          }
+
+          $.ajax({
+            url: "/payment/removeBasket.dox", // 🔁 여기에 맞는 실제 URL 사용
+            type: "POST",
+            dataType: "json",
+            data: { basketNo: item.basketNo },
+            success(data) {
+              if (data.result === "success") {
+                alert("🗑️ 항목이 삭제되었습니다.");
+                self.getBasketInfoList(); // 리스트 다시 불러오기
+              } else {
+                alert("❌ 삭제 실패: " + data.message);
+              }
+            },
+            error() {
+              alert("❌ 서버 통신 중 오류가 발생했습니다.");
+            }
+          });
         }
+
       },
       watch: {
         basketList: {
