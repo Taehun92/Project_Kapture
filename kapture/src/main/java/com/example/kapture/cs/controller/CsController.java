@@ -46,6 +46,12 @@ public class CsController {
         return "cs/privacy";
     }
 	
+	@RequestMapping("/cs/search.do")
+    public String search(Model model) throws Exception{
+        return "cs/search";
+    }
+
+	
 	
 	
 	// 게시글 목록
@@ -77,8 +83,13 @@ public class CsController {
 				resultMap = csService.qnaAdd(map);
 				return new Gson().toJson(resultMap);
 			}
+		
 			
-
-
+		@RequestMapping(value = "/cs/search.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String search(@RequestParam HashMap<String, Object> map) throws Exception {
+		    HashMap<String, Object> resultMap = csService.searchAll(map);
+		    return new Gson().toJson(resultMap);
+		}
 		
 }

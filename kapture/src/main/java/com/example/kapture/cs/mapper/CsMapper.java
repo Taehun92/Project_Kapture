@@ -20,4 +20,7 @@ public interface CsMapper {
 
 	void insertQna(HashMap<String, Object> map);
 
+	List<HashMap<String, Object>> searchFaq(HashMap<String, Object> map);
+
+	List<HashMap<String, Object>> searchQna(HashMap<String, Object> map);
 }

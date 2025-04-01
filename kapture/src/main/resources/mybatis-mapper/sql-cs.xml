@@ -76,5 +76,21 @@
   		VALUES(INQUIRIES_SEQ.NEXTVAL, #{userNo}, #{category}, #{question}, SYSDATE, SYSDATE, #{title})
 	</insert>
 	
+	<select id="searchFaq" parameterType="hashmap" resultType="hashmap">
+    SELECT *
+    FROM FAQ
+    WHERE QUESTION LIKE '%' || #{keyword} || '%'
+       OR ANSWER LIKE '%' || #{keyword} || '%'
+       OR CATEGORY LIKE '%' || #{keyword} || '%'
+	</select>
+	
+	<select id="searchQna" parameterType="hashmap" resultType="hashmap">
+	    SELECT TITLE, CONTENT
+	    FROM NOTICES
+	    WHERE TITLE LIKE '%' || #{keyword} || '%'
+	       OR CONTENT LIKE '%' || #{keyword} || '%'
+	</select>
+
+	
 	
 </mapper>
