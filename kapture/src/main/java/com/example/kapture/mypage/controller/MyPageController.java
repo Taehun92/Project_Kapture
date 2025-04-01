@@ -160,6 +160,25 @@ public class MyPageController {
 			return new Gson().toJson(resultMap);
 		}
 
+		// 가이드 글 수정
+		@RequestMapping(value = "/mypage/guide-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String editTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.editTour(map);
+			return new Gson().toJson(resultMap);
+		}
+		
+		// 가이드 글 정보
+		@RequestMapping(value = "/mypage/guide-get.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String getTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.getTour(map);
+			return new Gson().toJson(resultMap);
+		}
 		
 }
 
