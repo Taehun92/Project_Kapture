@@ -131,7 +131,7 @@
 
     <body>
 
-        <!-- <jsp:include page="../common/header.jsp" /> -->
+        <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
             
@@ -210,9 +210,7 @@
                 </div>
             </div>
         </div>
-        <!-- <jsp:include page="../common/footer.jsp" /> -->
-         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
-          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
+        <jsp:include page="../common/footer.jsp" />
     </body>
 
     </html>
