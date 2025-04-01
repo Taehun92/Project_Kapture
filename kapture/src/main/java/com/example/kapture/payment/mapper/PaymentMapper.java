@@ -23,4 +23,6 @@ public interface PaymentMapper {
 	
 	void deleteBasketsByNo(@Param("basketNoList") List<Integer> basketNoList);
 
+	int deleteBasket(HashMap<String, Object> map);
+
 }

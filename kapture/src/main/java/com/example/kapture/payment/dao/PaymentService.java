@@ -107,6 +107,15 @@ public class PaymentService {
 	    
 	}
 
+	public HashMap<String, Object> removeBasket(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+		int num = paymentMapper.deleteBasket(map);
+		resultMap.put("result", "success");
+		resultMap.put("num", num);
+	    return resultMap;
+	}
+
 	
 
 }
