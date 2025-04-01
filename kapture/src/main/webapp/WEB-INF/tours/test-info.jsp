@@ -34,8 +34,8 @@
 		}
 
 		.thumbnail {
-			width: 40%;
-			height: 150px;
+			width: 37%;
+			height: 300px;
 			display: flex;
 			justify-content: center;
 			font-size: 16px;
@@ -287,6 +287,7 @@
 					</div>
 				</div>
 			</div>
+	
 			<div class="contents" v-html="tourInfo.description"></div>
 
 			<div class="reviews">
