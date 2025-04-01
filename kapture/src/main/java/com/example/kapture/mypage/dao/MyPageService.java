@@ -12,6 +12,7 @@ import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Guide;
 import com.example.kapture.mypage.model.Payments;
+import com.example.kapture.tours.model.Tours;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -186,6 +187,7 @@ public class MyPageService {
 		
 		return resultMap;
 	}
+	
 	public HashMap<String, Object> getGuideSchedule(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
@@ -198,6 +200,33 @@ public class MyPageService {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> editTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.updateTour(map);
+		
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Tours tours = myPageMapper.selectTour(map);
+		resultMap.put("tours", tours);
+		
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> addToursImg(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.insertToursFile(map);
+		resultMap.put("result", "success");
 		return resultMap;
 	}
 	

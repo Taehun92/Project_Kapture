@@ -20,6 +20,8 @@ public interface ToursMapper {
 
 	void updateDeleteYn(int tourNo, String string);
 
+	void insertToursFile(HashMap<String, Object> map);
+
 	
 	
 

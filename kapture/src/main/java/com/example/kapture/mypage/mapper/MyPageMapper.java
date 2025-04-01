@@ -9,6 +9,7 @@ import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
 import com.example.kapture.mypage.model.Payments;
+import com.example.kapture.tours.model.Tours;
 
 
 @Mapper
@@ -34,5 +35,11 @@ public interface MyPageMapper {
 
 	int unregisterUser(HashMap<String, Object> map);
 
+	void updateTour(HashMap<String, Object> map);
+
+	Tours selectTour(HashMap<String, Object> map);
+
 	int updatePassword(HashMap<String, Object> map);
+
+	void insertToursFile(HashMap<String, Object> map);
 }

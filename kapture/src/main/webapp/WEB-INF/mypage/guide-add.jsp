@@ -121,13 +121,19 @@
 				</tr>
             	<tr>
                 	<th>소요시간 :</th>
-                	<td><input v-model="duration" placeholder="오전, 오후, 종일" /></td>
+                	<td>
+						<select v-model="duration">
+							<option value="">:: 선택 ::</option>
+							<option value="오전">오전</option>
+							<option value="오후">오후</option>
+							<option value="종일">종일</option>
+					</td>
                 	<th>가격 :</th>
                 	<td><input v-model="price" /></td>
 				</tr>
 				<tr>
                 	<th>날짜 :</th>
-                	<td><input v-model="tourDate" placeholder="2025-04-10"/></td>
+                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10"/></td>
                 	<th>시 :</th>
                 	<td>
 						<select @change="fnSelectGu()" v-model="siName">
@@ -217,10 +223,77 @@
 					sessionId : self.sessionId,
 					themeName : self.themeName
 				};
+
+				if(self.sessionId == ""){
+					alert("로그인 후 이용 가능합니다.");
+					location.href="/login.do";
+					return;
+				}
+
+				if(self.title == ""){
+					alert("제목을 입력하세요.");
+					return;
+				}
+
+				if(self.duration == ""){
+					alert("소요시간을 선택하세요.");
+					return;
+				}
+				
+				if(self.price == ""){
+					alert("가격을 입력하세요.");
+					return;
+				}
+				
+				if(isNaN(self.price)){
+					alert("가격은 숫자만 입력 가능합니다.");
+					return;
+				}
+				
+				if(self.price < 0){
+					alert("가격은 0보다 커야합니다.");
+					return;
+				}
+				
+				if(self.tourDate == ""){
+					alert("날짜를 입력하세요.");
+					return;
+				}
+				
+				if(self.siName == ""){
+					alert("시를 선택하세요.");
+					return;
+				}
+				
+				if(self.guName == ""){
+					alert("구를 선택하세요.");
+					return;
+				}
+
+				if(self.themeParent == ""){
+					alert("상위테마를 선택하세요.");
+					return;
+				}
+				
+				if(self.themeName == ""){
+					alert("테마를 선택하세요.");
+					return;
+				}
+				
+				if(self.description == ""){
+					alert("내용을 입력하세요.");
+					return;
+				}
+				
+				
+
+
+
+
 				$.ajax({
 					url:"/mypage/guide-add.dox",
-					dataType:"json",	
-					type : "POST", 
+					dataType:"json",
+					type : "POST",
 					data : nparmap,
 					success : function(data) {
 						if(data.result == 'success'){
@@ -305,30 +378,67 @@
 				});
 			},
 
-
-
+		
 
         },
         mounted() {
-			var self = this;
-			var quill = new Quill('#editor', {
-				theme: 'snow',
-				modules: {
-					toolbar: [
-						[{ 'header': [1, 2, 3, false] }],
-						['bold', 'italic', 'underline'],
-						[{ 'list': 'ordered' }, { 'list': 'bullet' }],
-						['link', 'image'],
-						[{ 'color': [] }, { 'background': [] }],
-						[{ 'align': [] }],
-						['clean']
-					]
-				}
-			});
-	
-			quill.on('text-change', function() {
-				self.description = quill.root.innerHTML;
-			});
+			
+				let self = this;
+				let quill = new Quill('#editor', {
+					theme: 'snow',
+					modules: {
+						toolbar: {
+							container: [
+								[{ 'header': [1, 2, 3, false] }],
+								['bold', 'italic', 'underline'],
+								[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+								['link', 'image'],
+								[{ 'color': [] }, { 'background': [] }],
+								[{ 'align': [] }],
+								['clean']
+							],
+							handlers: {
+								image: function () {
+									let input = document.createElement('input');
+									input.setAttribute('type', 'file');
+									input.setAttribute('accept', 'image/*');
+									input.click();
+			
+									input.onchange = async () => {
+										let file = input.files[0];
+										if (!file) return;
+			
+										let formData = new FormData();
+										formData.append("file", file);
+			
+										try {
+											let response = await fetch("/upload/image", {
+												method: "POST",
+												body: formData
+											});
+			
+											let result = await response.json();
+			
+											if (result.success) {
+												let range = quill.getSelection();
+												quill.insertEmbed(range.index, 'image', result.imageUrl);
+											} else {
+												alert("이미지 업로드 실패");
+											}
+										} catch (error) {
+											console.error("이미지 업로드 중 오류 발생:", error);
+										}
+									};
+								}
+							}
+						}
+					}
+				});
+			
+				quill.on('text-change', function () {
+					self.description = quill.root.innerHTML;
+				});
+			
 
 			self.fnSelectSi();
 			self.fnGetThemeParentList();
