@@ -284,12 +284,12 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
                 },
                 fnRegionalTours(siNo){
                     console.log("siNo"+siNo);
-                    alert("타임");
-                    pageChange("/tours/test-regional.do",{siNo: siNo});
+   
+                    pageChange("/tours/regionalTours.do",{siNo: siNo});
                 },
             },
 
