@@ -382,6 +382,15 @@
 
         },
         mounted() {
+
+			if (this.sessionId == '') {
+				alert("로그인 후 이용해주세요.");
+				location.href = "http://localhost:8080/main.do";
+			}
+			if (this.sessionRole != 'GUIDE' || this.sessionRole != 'ADMIN') {
+				alert("가이드만 이용가능합니다.");
+				location.href = "http://localhost:8080/main.do";
+			}
 			
 				let self = this;
 				let quill = new Quill('#editor', {
@@ -443,6 +452,9 @@
 			self.fnSelectSi();
 			self.fnGetThemeParentList();
 			this.currentPage = window.location.pathname.split('/').pop();
+
+
+
         }
     });
     app.mount('#app');
