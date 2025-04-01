@@ -1,0 +1,120 @@
+/* ✅ card.css - 카드 컴포넌트 전용 스타일 (반응형 대응 버전) */
+
+:root {
+    --card-bg: #ffffff;
+    --card-point: #171d41;
+    --card-font: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
+.card-container {
+    padding: 2vw;
+    background-color: var(--card-bg);
+    font-family: var(--card-font);
+}
+
+.card {
+    width: 100%;
+    max-width: 90vw;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.4vw 1.2vw rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    background: url('../../img/tour4.jpg') center/cover no-repeat;
+    margin: 0 auto;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card-image {
+    position: relative;
+    height: 40vw;
+    margin: 2vw;
+    border-radius: 1vw;
+}
+
+.card-content {
+    padding: 3vw;
+    border-radius: 1vw;
+    background-color: #2727279f;
+    position: relative;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1vw;
+}
+
+.card-date {
+    font-size: 0.9rem;
+    color: #eee;
+}
+
+.favorite {
+    width: 9vw;
+    height: 9vw;
+    max-width: 36px;
+    max-height: 36px;
+    background-image: url("/svg/taeguk-white-outline.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.favorite:hover {
+    transform: scale(1.2);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #fff;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: #f1f1f1;
+    margin-bottom: 0.8rem;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5vw;
+}
+
+.rating {
+    font-size: 1rem;
+    color: #FFD700;
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    padding: 0.5vw 1vw;
+    border-radius: 0.8vw;
+    background-color: var(--card-point);
+}
+
+.card-btn {
+    width: 100%;
+    background: #171d41;
+    color: #fff;
+    border: none;
+    padding: 2.2vw;
+    font-size: 1rem;
+    border-radius: 1vw;
+    cursor: pointer;
+}
+
+.card-btn:hover {
+    background-color: #162c67;
+}

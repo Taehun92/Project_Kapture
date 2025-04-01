@@ -94,6 +94,15 @@ public class PaymentController {
 	    return new Gson().toJson(resultMap); 
 	}
 	
+	// 장바구니 목록 삭제
+	@RequestMapping(value = "/payment/removeBasket.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String basketRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = paymentService.removeBasket(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 	
 	// 환율 계산 API
 	@RequestMapping("/exchangeRate/USD")
