@@ -38,4 +38,6 @@ public interface MyPageMapper {
 	void updateTour(HashMap<String, Object> map);
 
 	Tours selectTour(HashMap<String, Object> map);
+
+	int updatePassword(HashMap<String, Object> map);
 }

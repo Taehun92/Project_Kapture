@@ -223,11 +223,13 @@
 					type : "POST", 
 					data : nparmap,
 					success : function(data) {
+						if(data.result == 'success'){
 						console.log(data);
 						console.log(self.sessionId);
 						console.log(self.siName);
 						console.log(self.guName);
 						alert("등록되었습니다.");
+						}
 					}
 				});
             },

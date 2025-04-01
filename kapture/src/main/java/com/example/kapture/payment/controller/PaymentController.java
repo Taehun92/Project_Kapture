@@ -22,6 +22,8 @@ import com.example.kapture.payment.dao.PaymentService;
 import com.example.kapture.payment.model.Payment;
 import com.google.gson.Gson;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class PaymentController {
 	
@@ -34,7 +36,7 @@ public class PaymentController {
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 	
-	@Value("${exchange.api.key}")
+	@Value("${exchange.api.key}") 
 	private String exchangeApiKey;
 	
 	@Autowired
@@ -46,18 +48,17 @@ public class PaymentController {
         return "/payment/payment";
     }
 	
+	// 결제 성공 시 주소(회원 정보 수정)
 	@RequestMapping("/payment/success.do")
-	public String showPaymentSuccess(@RequestParam("merchantId") String merchantId, Model model) {
-	    // 1. 결제 정보 조회 (여러 건일 수 있으므로 List 사용)
-	    List<Payment> paymentList = paymentService.getPaymentList(merchantId);
-	    // 2. 결제된 상품 예약 상태 처리 + 장바구니 삭제 처리
-	    paymentService.processPaymentSuccess(paymentList);
-	    // 3. 화면에 결제 정보 전달
-	    model.addAttribute("paymentList", paymentList);
-	    return "/payment/success"; 
+	public String paymentSuccess(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		request.setAttribute("map", map);
+		return "/payment/success";
 	}
 	
-	// 결제 목록 조회
+	
+	
+	
+	// 장바구니 목록 조회
 	@RequestMapping(value = "/payment/getBasketInfoList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String basketInfoList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -75,6 +76,23 @@ public class PaymentController {
 	    return new Gson().toJson(resultMap);
 	}
 	
+	//결제 완료 시 작업
+	@RequestMapping(value = "/payment/success.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String showPaymentSuccess(@RequestParam("merchantId") String merchantId, Model model) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		// 1. 구매 내역 조회
+		resultMap = paymentService.getPaymentList(merchantId);
+		
+	    // 2. 결제된 상품 예약 상태 처리 + 장바구니 삭제 처리
+		@SuppressWarnings("unchecked")
+		List<Payment> paymentList = (List<Payment>) resultMap.get("paymentList");
+	    paymentService.processPaymentSuccess(paymentList);
+	    
+	    System.out.println("최종 응답 resultMap: " + resultMap);
+	    return new Gson().toJson(resultMap); 
+	}
 	
 	
 	// 환율 계산 API

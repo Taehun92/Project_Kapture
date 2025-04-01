@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.kapture.login.dao.LoginService;
 import com.example.kapture.mypage.dao.MyPageService;
 import com.google.gson.Gson;
 
@@ -20,6 +21,7 @@ public class MyPageController {
 
 		@Autowired
 		MyPageService myPageService;
+		
 		// 유저 마이페이지 주소(회원 정보 수정)
 		@RequestMapping("/mypage/user-mypage.do")
 		public String userMypage(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
@@ -108,6 +110,15 @@ public class MyPageController {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = myPageService.userUnregister(map);
+			return new Gson().toJson(resultMap);
+		}
+		//
+		@RequestMapping(value = "/mypage/changePassword.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String changePassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.changePassword(map);
 			return new Gson().toJson(resultMap);
 		}
 //--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  

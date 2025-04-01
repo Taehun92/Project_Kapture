@@ -21,6 +21,6 @@ public interface PaymentMapper {
 	
 	List<Payment> selectPayment(String merchantId);
 	
-	void deleteBasketsByNo(@Param("basketNoList") List<String> basketNoList);
+	void deleteBasketsByNo(@Param("basketNoList") List<Integer> basketNoList);
 
 }

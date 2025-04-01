@@ -41,7 +41,12 @@
 		ON B.TOUR_NO = T.TOUR_NO
 		WHERE USER_NO = #{sessionId}
 	</select>
-	
+	<select id="selectBasketByNo" parameterType="int">
+		SELECT *
+		FROM BASKET B
+		INNER JOIN TOURS T ON B.TOUR_NO = T.TOUR_NO
+		WHERE B.BASKET_NO = #{barsketNo}
+	</select>
 	
 
 </mapper>
