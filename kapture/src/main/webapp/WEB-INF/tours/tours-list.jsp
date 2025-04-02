@@ -39,6 +39,7 @@
                             여행기간 {{ filters.date ? '∧' : '∨' }}
                         </button>
                         <div class="filter-content" v-if="filters.date">
+
                             <!-- ✅ 날짜 선택 완료 후 -->
                             <div v-if="Array.isArray(selectedDates) && selectedDates.length > 0 && !showDatePicker">
                                 <p>선택한 날짜: {{ formatDateRange(selectedDates) }}</p>
@@ -259,6 +260,7 @@
         const app = Vue.createApp({
             data() {
                 return {
+
                     regions: [{
                         region: "서울", siNo: 11, image: "../../img/region/서울.jpg"
                     }, {
@@ -283,7 +285,6 @@
                         region: false,
                         theme: false
                     },
-
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -291,7 +292,7 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-
+                  
                     keyword: "${keyword}",
 
                     sessionId: "${sessionId}",
@@ -312,15 +313,12 @@
 
                     showDatePicker: true
 
-
                 };
             },
             components: {
                 VueDatePicker
             },
-            watch: {
 
-            },
             methods: {
                 resetDatePicker() {
                     this.selectedDates = [];
@@ -515,16 +513,15 @@
             },
 
             mounted() {
-                var self = this;
+                let self = this;
                 self.fnToursList();
-
                 self.fnGetMinTourDate();
                 self.fnGetMaxTourDate();
                 self.fnGetTourDateList();
-
                 self.fnGetBasket();
                 self.fnGetBasketList();
             }
         });
+
         app.mount('#app');
     </script>
