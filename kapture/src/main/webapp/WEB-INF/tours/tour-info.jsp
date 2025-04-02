@@ -7,7 +7,6 @@
 		<script src="https://code.jquery.com/jquery-3.7.1.js"
 			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-		<script src="/js/page-Change.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -61,109 +60,148 @@
 			</div>
 
 			<!-- 장바구니 트리거 바 -->
-			<div class="bottom-cart-bar" v-if="!showModal">
-				<div class="clickable-area" @click="showModal = true">
-					🛒 장바구니 열기
-				</div>
-			</div>
 
-			<!-- 하단 모달 창 -->
-			<div class="bottom-cart-modal" :class="{ show: showModal }">
-				<button class="close-button" @click="showModal = false">닫기</button>
-				<h2 class="modal-title">🗓️ 일정 확인</h2>
+            <div class="bottom-cart-bar" v-if="!showModal">
+                <div class="clickable-area" @click="showModal = true">
+                    🛒 장바구니 열기
+                </div>
+            </div>
+            <!-- 하단 모달 창 -->
+            <div class="bottom-cart-modal" :class="{ show: showModal }">
+                <button class="close-button" @click="handleCartClose">닫기</button>
+                <h2 class="modal-title">🗓️ 일정 확인</h2>
 
-				<table class="modal-table">
-					<thead>
-						<tr>
-							<th style="width: 15%">날짜</th>
-							<th style="width: 10%">시간</th>
-							<th style="width: 30%">상품 제목</th>
-							<th style="width: 15%">인원 수</th>
-							<th style="width: 25%">금액</th>
-						</tr>
-					</thead>
-					<tbody>
-						<template v-for="n in 7" :key="'day-' + n">
-							<tr v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
-								<td>{{ formatDate(addDays(minDate, n - 1)) }}</td>
-								<td>종일</td>
-								<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').title }}</td>
-								<td>
-									<div class="item-controls">
-										<button
-											@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), -1)">-</button>
-										<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople
-											}}명</span>
-										<button
-											@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), 1)">+</button>
-									</div>
-								</td>
-								<td>\ {{ Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
-									'종일').price).toLocaleString() }}원</td>
-							</tr>
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">날짜</th>
+                            <th style="width: 10%">시간</th>
+                            <th style="width: 30%">상품 제목</th>
+                            <th style="width: 15%">인원 수</th>
+                            <th style="width: 20%">금액</th>
+                            <th style="width: 5%">삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="n in 7" :key="'day-' + n">
+                            <tr v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
+                                <td>{{ formatDate(addDays(minDate, n - 1)) }}</td>
+                                <td>종일</td>
+                                <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').title }}</td>
+                                <td>
+                                    <div class="item-controls">
+                                        <button
+                                            @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), -1)"
+                                            :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople <= 1">
+                                            - </button>
+                                        <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                            '종일').numPeople}}명</span>
+                                        <button
+                                            @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), 1)"
+                                            :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople >= 4">
+                                            + </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'종일').price) *
+                                    Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                    1),'종일').numPeople)).toLocaleString() }}원
+                                </td>
+                                <td>
+                                    <button
+                                        @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'))"
+                                        class="delete-btn">🗑️</button>
+                                </td>
+                            </tr>
 
-							<template v-else>
-								<!-- 오전 -->
-								<tr>
-									<td rowspan="2">{{ formatDate(addDays(minDate, n - 1)) }}</td>
-									<td>오전</td>
-									<template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')">
-										<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').title }}</td>
-										<td>
-											<div class="item-controls">
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), -1)">-</button>
-												<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
-													'오전').numPeople }}명</span>
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), 1)">+</button>
-											</div>
-										</td>
-										<td>\ {{ Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
-											'오전').price).toLocaleString() }}원</td>
-									</template>
-									<template v-else>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-									</template>
-								</tr>
+                            <template v-else>
+                                <!-- 오전 -->
+                                <tr>
+                                    <td rowspan="2">{{ formatDate(addDays(minDate, n - 1)) }}</td>
+                                    <td>오전</td>
+                                    <template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')">
+                                        <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').title }}</td>
+                                        <td>
+                                            <div class="item-controls">
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), -1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople <= 1">
+                                                    - </button>
+                                                <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                                    '오전').numPeople}}명</span>
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), 1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople >= 4">
+                                                    + </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오전').price) *
+                                            Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                            1),'오전').numPeople)).toLocaleString() }}원
+                                        </td>
+                                        <td>
+                                            <button
+                                                @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'))"
+                                                class="delete-btn">🗑️</button>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </template>
+                                </tr>
 
-								<!-- 오후 -->
-								<tr>
-									<td>오후</td>
-									<template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')">
-										<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').title }}</td>
-										<td>
-											<div class="item-controls">
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), -1)">-</button>
-												<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
-													'오후').numPeople }}명</span>
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), 1)">+</button>
-											</div>
-										</td>
-										<td>\ {{ Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
-											'오후').price).toLocaleString() }}원</td>
-									</template>
-									<template v-else>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-									</template>
-								</tr>
-							</template>
-						</template>
-					</tbody>
-				</table>
+                                <!-- 오후 -->
+                                <tr>
+                                    <td>오후</td>
+                                    <template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')">
+                                        <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').title }}</td>
+                                        <td>
+                                            <div class="item-controls">
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), -1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople <= 1">
+                                                    - </button>
+                                                <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                                    '오후').numPeople}}명</span>
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), 1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople >= 4">
+                                                    + </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오후').price) *
+                                            Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                            1),'오후').numPeople)).toLocaleString() }}원
+                                        </td>
+                                        <td>
+                                            <button
+                                                @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'))"
+                                                class="delete-btn">🗑️</button>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </template>
+                                </tr>
+                            </template>
+                        </template>
+                    </tbody>
+                </table>
 
-				<div class="total-price">
-					💰 최종 금액: <strong>{{ getTotalPrice().toLocaleString() }}</strong> 원
-				</div>
+                <div class="total-price">
+                    💰 최종 금액: <strong>{{ getTotalPrice().toLocaleString() }}</strong> 원
+                </div>
 
-				<button class="confirm-btn">결제</button>
-			</div>
+                <button class="confirm-btn" @click="fnPay">결제</button>
+            </div>
 		</div>
 	</body>
 
@@ -316,12 +354,14 @@
 								},
 								success: function (data) {
 									alert('인원수가 변경되었습니다.');
+									localStorage.setItem("basketChanged", Date.now());
 									self.fnGetCart();
 									self.fnGetMinTourDate();
 									self.fnGetMaxTourDate();
 									self.fnGetTourDateList();
 									self.fnGetBasketList();
 									self.fnGetBasket();
+									
 								}
 							});
 							return;
@@ -346,6 +386,7 @@
 								self.fnGetTourDateList();
 								self.fnGetBasketList();
 								self.fnGetBasket();
+								location.reload();
 							} else {
 								alert("이미 담은 상품입니다!");
 							}
@@ -489,10 +530,6 @@
 						}
 					});
 				},
-				// 최종 금액 계산 메서드
-				getTotalPrice() {
-					return this.cartList.reduce((total, item) => total + Number(item.price), 0);
-				},
 
 				getSortedCartList() {
 					return this.cartList.slice().sort((a, b) => {
@@ -527,8 +564,77 @@
 						this.formatDate(new Date(item.tourDate)) === formattedDate &&
 						item.duration === time
 					) || null;
-				}
+				},
 
+				changePeople(item, diff) {
+                    const self = this;
+                    const index = self.cartList.findIndex(i => i.basketNo === item.basketNo);
+
+                    if (index !== -1) {
+                        // 반드시 숫자로 변환해서 연산
+                        const current = Number(self.cartList[index].numPeople);
+                        const newCount = current + diff;
+                        self.cartList[index].numPeople = newCount < 1 ? 1 : newCount;
+                    }
+                },
+
+				// 최종 금액 계산 메서드
+                getTotalPrice() {
+                    return this.cartList.reduce((total, item) => total + Number(item.price) * Number(item.numPeople), 0);
+                },
+
+                deleteFromCart(item) {
+                    const self = this;
+                    if (!item || !item.basketNo) return;
+                    if (confirm("이 항목을 장바구니에서 삭제할까요?")) {
+                        $.ajax({
+                            url: "/payment/removeBasket.dox",
+                            type: "POST",
+                            data: { basketNo: item.basketNo },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    alert("삭제되었습니다.");
+                                    localStorage.setItem("basketChanged", Date.now());
+                                    self.fnGetBasketList();  // 장바구니 목록 갱신
+                                    self.fnGetBasket();      // 아이콘 등 상태 갱신
+                                    self.fnGetMinTourDate(); // 날짜 갱신
+                                    self.fnGetMaxTourDate();
+                                    location.reload();
+                                }
+                            }
+                        });
+                    }
+                },
+
+                handleCartClose() {
+                    let self = this;
+                    self.showModal = false;
+
+                    // 모든 장바구니 항목 업데이트
+                    let updatedCartList = self.cartList.map(item => ({
+                        basketNo: item.basketNo,
+                        count: item.numPeople
+                    }));
+                    $.ajax({
+                        url: "/basket/updateList.dox",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ cartList: updatedCartList }),
+                        success: function (data) {
+                            console.log("장바구니 업데이트 완료", data);
+                            localStorage.setItem("basketChanged", Date.now());
+                        },
+                        error: function (err) {
+                            console.error("장바구니 업데이트 실패", err);
+                        }
+                    });
+                },
+
+                fnPay(){
+                    this.handleCartClose();
+                    location.href="/payment.do"
+                }
 
 			},
 			mounted() {

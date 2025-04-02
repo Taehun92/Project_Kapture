@@ -8,8 +8,8 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-        <script src="/js/page-Change.js"></script>
         <link rel="stylesheet" href="../../css/tourList.css">
+        <link rel="stylesheet" href="../../css/components/card.css">
         <title>관광지 목록</title>
         <style>
 
@@ -95,12 +95,27 @@
                     <!-- 콘텐츠 영역 -->
                     <div class="content">
                         <!-- 관광지 리스트 -->
-                        <div class="tour-list">
-                            <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
-                                <img :src="tour.filePath" alt="Tour Image">
-                                <div class="desc">
-                                    <p>{{ tour.title }}</p>
-                                    <p>{{ tour.price }}</p>
+                        <div class="card-list">
+                            <div class="card" v-for="tour in toursList" :key="tour.tourNo">
+                                <div class="card-image">
+                                    <img :src="tour.filePath" alt="썸네일" />
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-top">
+                                        <div class="card-date">{{ formatDate(tour.tourDate) }}</div>
+                                        <div class="hashtags">
+                                            <span class="theme-hashtag"># {{ tour.themeName }}</span>
+                                        </div>
+                                        <div class="favorite" :class="{ active: tour.isFavorite }" @click="toggleFavorite(tour)"></div>
+                                    </div>
+                                    <div class="card-title">{{ tour.title }}</div>
+                                    <div class="card-desc">{{ truncateText(tour.description) }}</div>
+                                    <div class="card-info">
+                                        <div v-if="tour.rating >= 0" class="rating">⭐ {{ tour.rating }}</div>
+                                        <div v-else class="rating"> {{ tour.rating }}</div>
+                                        <div class="price">₩ {{ tour.price.toLocaleString() }}</div>
+                                    </div>
+                                    <button class="card-btn" @click="goToTourInfo(tour.tourNo)">예약하기</button>
                                 </div>
                             </div>
                         </div>
@@ -247,7 +262,7 @@
                     💰 최종 금액: <strong>{{ getTotalPrice().toLocaleString() }}</strong> 원
                 </div>
 
-                <button class="confirm-btn">결제</button>
+                <button class="confirm-btn" @click="fnPay">결제</button>
             </div>
         </div>
         <jsp:include page="../common/footer.jsp" />
@@ -334,13 +349,26 @@
                     if (dates.length === 1) return this.formatDate(dates[0]);
                     return this.formatDate(dates[0]) + ' ~ ' + this.formatDate(dates[1]);
                 },
-                formatDate(date) {
-                    if (!date) return '';
-                    const year = date.getFullYear();
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const day = date.getDate().toString().padStart(2, '0');
-                    return year + '-' + month + '-' + day;
+                formatDate(input) {
+                    if (!input) return '';
+                    
+                    // 문자열인 경우: "2025-04-12 00:00:00"
+                    if (typeof input === 'string') {
+                        return input.split(' ')[0];
+                    }
+
+                    // Date 객체인 경우
+                    const year = input.getFullYear();
+                    const month = (input.getMonth() + 1).toString().padStart(2, '0');
+                    const day = input.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 },
+                
+                truncateText(text, maxLength = 30) {
+                    if (!text) return '';
+                    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+                },
+
                 addDays(date, days) {
                     const newDate = new Date(date);
                     newDate.setDate(newDate.getDate() + days);
@@ -371,10 +399,11 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo ;
                 },
                 fnRegionalTours(siNo) {
-                    location.href="/tours/regionalTours.do?siNo=" + siNo;
+                    location.href="/tours/regionalTours.do?siNo=" + siNo ;
+
                 },
                 fnGetMinTourDate() {
                     const self = this;
@@ -466,10 +495,12 @@
                             success: function (data) {
                                 if (data.result === "success") {
                                     alert("삭제되었습니다.");
+                                    localStorage.setItem("basketChanged", Date.now());
                                     self.fnGetBasketList();  // 장바구니 목록 갱신
                                     self.fnGetBasket();      // 아이콘 등 상태 갱신
                                     self.fnGetMinTourDate(); // 날짜 갱신
                                     self.fnGetMaxTourDate();
+                                    location.reload();
                                 }
                             }
                         });
@@ -483,9 +514,8 @@
                     // 모든 장바구니 항목 업데이트
                     let updatedCartList = self.cartList.map(item => ({
                         basketNo: item.basketNo,
-                        numPeople: item.numPeople
+                        count: item.numPeople
                     }));
-
                     $.ajax({
                         url: "/basket/updateList.dox",
                         type: "POST",
@@ -493,12 +523,18 @@
                         data: JSON.stringify({ cartList: updatedCartList }),
                         success: function (data) {
                             console.log("장바구니 업데이트 완료", data);
+                            localStorage.setItem("basketChanged", Date.now());
                         },
                         error: function (err) {
                             console.error("장바구니 업데이트 실패", err);
                         }
                     });
                 },
+
+                fnPay(){
+                    this.handleCartClose();
+                    location.href="/payment.do"
+                }
 
             },
 
