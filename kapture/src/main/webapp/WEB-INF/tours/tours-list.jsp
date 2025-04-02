@@ -10,45 +10,47 @@
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
         <link rel="stylesheet" href="../../css/tourList.css">
-        <link rel="stylesheet" href="../../css/tourInfo.css">
         <title>관광지 목록</title>
         <style>
-           
+
         </style>
     </head>
 
     <body>
-
         <jsp:include page="../common/header.jsp" />
-        <div id="app" class="container">
+        <div id="app">
             <!-- 주요 관광지 그룹 -->
-            
-            <div class="tour-header-group">
+            <div class="tour-header-group"
+                :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region.region">{{ region.region }}</button>
-
+                    <button v-for="region in regions" @mouseover="hoveredRegionImage = region.image"
+                        @mouseleave="hoveredRegionImage = null" @click="fnRegionalTours(region.siNo)"
+                        :key="region.region">
+                        {{ region.region }}
+                    </button>
                 </div>
             </div>
-
-            <!-- 현재 경로 -->
-            <div class="breadcrumb">홈 > 상품</div>
-            <hr>
-
-            <!-- 콘텐츠 영역 -->
-            <div class="content">
+            <div class="layout">
                 <!-- 사이드바 -->
                 <div class="sidebar">
                     <div class="filter">
-                        <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
+                        <button @click="toggleFilter('date')">
+                            여행기간 {{ filters.date ? '∧' : '∨' }}
+                        </button>
                         <div class="filter-content" v-if="filters.date">
-                            
-                            <div>날짜  선택: {{ selectedDates }}</div>
-                            <vue-date-picker v-model="selectedDates" multi-calendars model-auto range :min-date="new Date()"
-                                @input="params.startDate = _formatedDatepicker($event)" locale="ko" />
-                                
-                        </div>
+                            <!-- ✅ 날짜 선택 완료 후 -->
+                            <div v-if="Array.isArray(selectedDates) && selectedDates.length > 0 && !showDatePicker">
+                                <p>선택한 날짜: {{ formatDateRange(selectedDates) }}</p>
+                                <button @click="resetDatePicker" style="font-size: 15px;">📅 날짜 다시 선택</button>
+                            </div>
 
+                            <!-- ✅ 날짜 선택 중 -->
+                            <div v-else>
+                                <vue-date-picker v-model="selectedDates" multi-calendars model-auto range
+                                    :min-date="new Date()" locale="ko" @update:model-value="handleDateInput" />
+                            </div>
+                        </div>
                     </div>
                     <div class="filter">
                         <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
@@ -85,92 +87,195 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 관광지 리스트 -->
-                <div class="tour-list">
-                    <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
-                        <img :src="tour.filePath" alt="Tour Image">
-                        <div class="desc">
-                            <p>{{ tour.title }}</p>
-                            <p>{{ tour.price }}</p>
+                <div class="container">
+                    <!-- 현재 경로 -->
+                    <div class="breadcrumb">홈 > 상품</div>
+                    <hr>
+                    <!-- 콘텐츠 영역 -->
+                    <div class="content">
+                        <!-- 관광지 리스트 -->
+                        <div class="tour-list">
+                            <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
+                                <img :src="tour.filePath" alt="Tour Image">
+                                <div class="desc">
+                                    <p>{{ tour.title }}</p>
+                                    <p>{{ tour.price }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div v-if="showCartButton">
-                <div class="clickable-area" @click="showModal = true" v-if="!showModal">
-                    <p>🛒</p>
+            <!-- 장바구니 트리거 바 -->
+            <div class="bottom-cart-bar" v-if="!showModal">
+                <div class="clickable-area" @click="showModal = true">
+                    🛒 장바구니 열기
                 </div>
             </div>
-            <transition name="modal">
-                <div v-if="showModal" class="modal">
-                    <span class="close-button" @click="showModal = false">닫기</span>
-                    <h2>일정</h2>
-                    <div>
-                        <table>
-                            <tr v-for="n in 7" :key="n">
-                                <td>{{ formatDate(addDays(minDate, n-1))  }}</td>
+            <!-- 하단 모달 창 -->
+            <div class="bottom-cart-modal" :class="{ show: showModal }">
+                <button class="close-button" @click="handleCartClose">닫기</button>
+                <h2 class="modal-title">🗓️ 일정 확인</h2>
+
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">날짜</th>
+                            <th style="width: 10%">시간</th>
+                            <th style="width: 30%">상품 제목</th>
+                            <th style="width: 15%">인원 수</th>
+                            <th style="width: 20%">금액</th>
+                            <th style="width: 5%">삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="n in 7" :key="'day-' + n">
+                            <tr v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
+                                <td>{{ formatDate(addDays(minDate, n - 1)) }}</td>
+                                <td>종일</td>
+                                <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').title }}</td>
                                 <td>
-                                    <div
-                                        v-bind:class="{
-                                            'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전'|| item.duration === '종일') ),
-                                            'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일'))
-                                        }"
-                                    >
-                                        오전
+                                    <div class="item-controls">
+                                        <button
+                                            @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), -1)"
+                                            :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople <= 1">
+                                            - </button>
+                                        <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                            '종일').numPeople}}명</span>
+                                        <button
+                                            @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), 1)"
+                                            :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople >= 4">
+                                            + </button>
                                     </div>
                                 </td>
                                 <td>
-                                    <div
-                                        v-bind:class="{
-                                            'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')),
-                                            'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일'))
-                                        }"
-                                    >
-                                        오후
-                                    </div>
+                                    \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'종일').price) *
+                                    Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                    1),'종일').numPeople)).toLocaleString() }}원
                                 </td>
-                                <template v-for="item in getSortedCartList()">
-                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일')">
-                                        오전 : {{ item.title }}
-                                    </td>
-                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')">
-                                        오후 : {{ item.title }}
-                                    </td>
-                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
-                                        인원 : {{ item.numPeople }}
-                                    </td>
-                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
-                                        금액 : {{ item.price }}
-                                    </td>
-                                </template>
+                                <td>
+                                    <button
+                                        @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'))"
+                                        class="delete-btn">🗑️</button>
+                                </td>
                             </tr>
-                        </table>
-                        <div>
-                            최종금액 : {{ getTotalPrice().toLocaleString() }} 원
-                        </div>
-                        <button>결제</button>
-                    </div>
+
+                            <template v-else>
+                                <!-- 오전 -->
+                                <tr>
+                                    <td rowspan="2">{{ formatDate(addDays(minDate, n - 1)) }}</td>
+                                    <td>오전</td>
+                                    <template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')">
+                                        <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').title }}</td>
+                                        <td>
+                                            <div class="item-controls">
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), -1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople <= 1">
+                                                    - </button>
+                                                <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                                    '오전').numPeople}}명</span>
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), 1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople >= 4">
+                                                    + </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오전').price) *
+                                            Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                            1),'오전').numPeople)).toLocaleString() }}원
+                                        </td>
+                                        <td>
+                                            <button
+                                                @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'))"
+                                                class="delete-btn">🗑️</button>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </template>
+                                </tr>
+
+                                <!-- 오후 -->
+                                <tr>
+                                    <td>오후</td>
+                                    <template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')">
+                                        <td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').title }}</td>
+                                        <td>
+                                            <div class="item-controls">
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), -1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople <= 1">
+                                                    - </button>
+                                                <span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+                                                    '오후').numPeople}}명</span>
+                                                <button
+                                                    @click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), 1)"
+                                                    :disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople >= 4">
+                                                    + </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            \ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오후').price) *
+                                            Number(getCartItemByDateAndTime(addDays(minDate, n -
+                                            1),'오후').numPeople)).toLocaleString() }}원
+                                        </td>
+                                        <td>
+                                            <button
+                                                @click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'))"
+                                                class="delete-btn">🗑️</button>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </template>
+                                </tr>
+                            </template>
+                        </template>
+                    </tbody>
+                </table>
+
+                <div class="total-price">
+                    💰 최종 금액: <strong>{{ getTotalPrice().toLocaleString() }}</strong> 원
                 </div>
-            </transition>
 
-
-
+                <button class="confirm-btn">결제</button>
+            </div>
         </div>
         <jsp:include page="../common/footer.jsp" />
-         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
-          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
+        <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+        <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
 
     </html>
     <script>
-
         const app = Vue.createApp({
             data() {
                 return {
-                    regions: [{region:"서울", siNo:11}, {region:"제주", siNo:39}, {region:"부산", siNo:21}, {region:"전주", siNo:35},
-                             {region:"강원", siNo:32}, {region:"인천", siNo:23}, {region:"경기", siNo:31}, {region:"그 외", siNo:999}],
+                    regions: [{
+                        region: "서울", siNo: 11, image: "../../img/region/서울.jpg"
+                    }, {
+                        region: "제주", siNo: 39, image: "../../img/region/제주.jpg"
+                    }, {
+                        region: "부산", siNo: 21, image: "../../img/region/부산.jpg"
+                    }, {
+                        region: "전주", siNo: 35, image: "../../img/region/전주.jpg"
+                    }, {
+                        region: "강원", siNo: 32, image: "../../img/region/속초.jpg"
+                    }, {
+                        region: "인천", siNo: 23, image: "../../img/region/월미도.jpg"
+                    }, {
+                        region: "경기", siNo: 31, image: "../../img/region/용인.jpg"
+                    }, {
+                        region: "그 외", siNo: 999, image: "../../img/region/대천.jpg"
+                    }],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -187,41 +292,68 @@
                     selectedLanguages: [],
                     selectedThemes: [],
 
-                    keyword : "${keyword}",
+                    keyword: "${keyword}",
 
                     sessionId: "${sessionId}",
                     showModal: false,
                     date: new Date(),
-                    showCartButton : false,
-                    tourDate : null,
-                    dateList : [],
-                    minDate : null,
-                    maxDate : null,
+                    showCartButton: false,
+                    tourDate: null,
+                    dateList: [],
+                    minDate: null,
+                    maxDate: null,
 
-                    cartList : [],
-                    
-                    
+                    showModal: false,
+                    cartList: [],
+                    minDate: new Date(),
+
+                    defaultHeaderImage: "../../img/region/default.jpg",
+                    hoveredRegionImage: null,
+
+                    showDatePicker: true
+
+
                 };
             },
             components: {
-				VueDatePicker
-			},
+                VueDatePicker
+            },
             watch: {
-				selectedDates() {
-                    this.fnToursList();
-				}
-			},
+
+            },
             methods: {
+                resetDatePicker() {
+                    this.selectedDates = [];
+                    this.showDatePicker = true;
+                },
+                handleDateInput(dates) {
+                    this.selectedDates = dates;
+                    this.showDatePicker = false;
+                    this.fnToursList();
+                },
+                formatDateRange(dates) {
+                    if (!dates || dates.length === 0) return '선택 안 됨';
+                    if (dates.length === 1) return this.formatDate(dates[0]);
+                    return this.formatDate(dates[0]) + ' ~ ' + this.formatDate(dates[1]);
+                },
+                formatDate(date) {
+                    if (!date) return '';
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return year + '-' + month + '-' + day;
+                },
+                addDays(date, days) {
+                    const newDate = new Date(date);
+                    newDate.setDate(newDate.getDate() + days);
+                    return newDate;
+                },
                 toggleFilter(type) {
-                    let self = this;
-                    self.filters[type] = !self.filters[type];
-                    console.log(self.regionList);
-                    console.log(self.themeList);
+                    this.filters[type] = !this.filters[type];
                 },
                 fnToursList() {
-                    let self = this;
-                    console.log("selectedDates >> " + self.selectedDates);
-                    let nparmap = {
+                    const self = this;
+                    const nparmap = {
                         selectedDates: JSON.stringify(self.selectedDates),
                         selectedRegions: JSON.stringify(self.selectedRegions),
                         selectedLanguages: JSON.stringify(self.selectedLanguages),
@@ -234,175 +366,141 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log("DATA", data);
                             self.toursList = data.toursList;
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
-                            console.log("LANG", self.selectedLanguages);
-                            console.log("LIST", self.toursList);
                         }
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
+                    pageChange("/tours/tour-info.do", { tourNo });
                 },
-                fnRegionalTours(siNo){
-                    console.log("siNo"+siNo);
-   
-                    pageChange("/tours/regionalTours.do",{siNo: siNo});
+                fnRegionalTours(siNo) {
+                    pageChange("/tours/regionalTours.do", { siNo });
                 },
-
-
-               
                 fnGetMinTourDate() {
-                    let self = this;
-                    let nparmap = {
+                    const self = this;
+                    $.post("/basket/getMinTourDate.dox", {
                         tourNo: self.tourNo,
-                        sessionId: self.sessionId,
-                        
-                    };
-    
-                    $.ajax({
-                        url: "/basket/getMinTourDate.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log('fnGetMinTourDate 호출' , data);
-                            if (data.minDate) {
-                                // "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
-                                const parts = data.minDate.split(' ');
-                                const month = parts[0].replace('월', '');
-                                const day = parseInt(parts[1].replace(',', ''), 10);
-                                const year = parseInt(parts[2], 10);
-    
-                                // 월은 0부터 시작하므로 1을 빼줍니다.
-                                const monthIndex = parseInt(month, 10) - 1;
-                                const dateObj = new Date(year, monthIndex, day);
-                                self.minDate = dateObj;
-                            }
+                        sessionId: self.sessionId
+                    }, function (data) {
+                        if (data.minDate) {
+                            const parts = data.minDate.split(' ');
+                            const month = parseInt(parts[0].replace('월', '')) - 1;
+                            const day = parseInt(parts[1].replace(',', ''));
+                            const year = parseInt(parts[2]);
+                            self.minDate = new Date(year, month, day);
                         }
-                    });
+                    }, "json");
                 },
-    
                 fnGetMaxTourDate() {
-                    let self = this;
-                    let nparmap = {
+                    const self = this;
+                    $.post("/basket/getMaxTourDate.dox", {
                         tourNo: self.tourNo,
-                        sessionId: self.sessionId,
-                        
-                    };
-    
-                    $.ajax({
-                        url: "/basket/getMaxTourDate.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log('fnGetMaxTourDate 호출' , data);
-                            if (data.maxDate) {
-                                // "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
-                                const parts = data.maxDate.split(' ');
-                                const month = parts[0].replace('월', '');
-                                const day = parseInt(parts[1].replace(',', ''), 10);
-                                const year = parseInt(parts[2], 10);
-    
-                                // 월은 0부터 시작하므로 1을 빼줍니다.
-                                const monthIndex = parseInt(month, 10) - 1;
-                                const dateObj = new Date(year, monthIndex, day);
-                                self.maxDate = dateObj;
-                            }
+                        sessionId: self.sessionId
+                    }, function (data) {
+                        if (data.maxDate) {
+                            const parts = data.maxDate.split(' ');
+                            const month = parseInt(parts[0].replace('월', '')) - 1;
+                            const day = parseInt(parts[1].replace(',', ''));
+                            const year = parseInt(parts[2]);
+                            self.maxDate = new Date(year, month, day);
                         }
-                    });
+                    }, "json");
                 },
-    
                 fnGetTourDateList() {
-                    let self = this;
-                    let nparmap = {
+                    const self = this;
+                    $.post("/basket/getTourDateList.dox", {
                         tourNo: self.tourNo,
-                        sessionId: self.sessionId,
-                        
-                    };
-    
-                    $.ajax({
-                        url: "/basket/getTourDateList.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log(data);
-                            self.dateList = data.dateList;
-                            console.log(self.dateList);
-                        }
-                    });
+                        sessionId: self.sessionId
+                    }, function (data) {
+                        self.dateList = data.dateList;
+                    }, "json");
                 },
-    
-                addDays(date, days) {
-                    const newDate = new Date(date);
-                    newDate.setDate(newDate.getDate() + days); // Use newDate here
-                    return newDate;
-                },
-                formatDate(date) {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    return year + '-' + month + '-' + day;
-                },
-    
-                
-                // 최종 금액 계산 메서드
-                getTotalPrice() {
-                    return this.cartList.reduce((total, item) => total + Number(item.price), 0);
-                },
-    
-                getSortedCartList() {
-                    return this.cartList.slice().sort((a, b) => {
-                        if (a.duration === '오전' && b.duration !== '오전') return -1;
-                        if (a.duration !== '오전' && b.duration === '오전') return 1;
-                        return 0;
-                    });
-                },
-    
                 fnGetBasket() {
-                    let self = this;
-                    let nparmap = {
-                        sessionId : self.sessionId
-                    };
-                    $.ajax({
-                        url: "/basket/getCount.dox",
-                        type: "POST",
-                        data: nparmap,
-                        dataType: "json",
-                        success: function(data) {
-                            console.log('getCount 호출 : ', data);
-                            if(data.count > 0) {
-                                self.showCartButton = true;
-                            }
-                            
+                    const self = this;
+                    $.post("/basket/getCount.dox", {
+                        sessionId: self.sessionId
+                    }, function (data) {
+                        if (data.count > 0) {
+                            self.showCartButton = true;
                         }
-                    });
+                    }, "json");
                 },
-
                 fnGetBasketList() {
+                    const self = this;
+                    $.post("/basket/getBasketList.dox", {
+                        sessionId: self.sessionId
+                    }, function (data) {
+                        self.cartList = data.basketList;
+                    }, "json");
+                },
+                getCartItemByDateAndTime(date, time) {
+                    const formattedDate = this.formatDate(date);
+                    return this.cartList.find(item =>
+                        this.formatDate(new Date(item.tourDate)) === formattedDate &&
+                        item.duration === time
+                    ) || null;
+                },
+                changePeople(item, diff) {
+                    const self = this;
+                    const index = self.cartList.findIndex(i => i.basketNo === item.basketNo);
+
+                    if (index !== -1) {
+                        // 반드시 숫자로 변환해서 연산
+                        const current = Number(self.cartList[index].numPeople);
+                        const newCount = current + diff;
+                        self.cartList[index].numPeople = newCount < 1 ? 1 : newCount;
+                    }
+                },
+                getTotalPrice() {
+                    return this.cartList.reduce((total, item) => total + Number(item.price) * Number(item.numPeople), 0);
+                },
+                deleteFromCart(item) {
+                    const self = this;
+                    if (!item || !item.basketNo) return;
+                    if (confirm("이 항목을 장바구니에서 삭제할까요?")) {
+                        $.ajax({
+                            url: "/payment/removeBasket.dox",
+                            type: "POST",
+                            data: { basketNo: item.basketNo },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    alert("삭제되었습니다.");
+                                    self.fnGetBasketList();  // 장바구니 목록 갱신
+                                    self.fnGetBasket();      // 아이콘 등 상태 갱신
+                                    self.fnGetMinTourDate(); // 날짜 갱신
+                                    self.fnGetMaxTourDate();
+                                }
+                            }
+                        });
+                    }
+                },
+
+                handleCartClose() {
                     let self = this;
-                    let nparmap = {
-                        sessionId: self.sessionId,
-                    };
+                    self.showModal = false;
+
+                    // 모든 장바구니 항목 업데이트
+                    let updatedCartList = self.cartList.map(item => ({
+                        basketNo: item.basketNo,
+                        numPeople: item.numPeople
+                    }));
 
                     $.ajax({
-                        url: "/basket/getBasketList.dox",
-                        dataType: "json",
+                        url: "/basket/updateList.dox",
                         type: "POST",
-                        data: nparmap,
+                        contentType: "application/json",
+                        data: JSON.stringify({ cartList: updatedCartList }),
                         success: function (data) {
-                            console.log(data);
-                            self.cartList = data.basketList;
-                            
+                            console.log("장바구니 업데이트 완료", data);
+                        },
+                        error: function (err) {
+                            console.error("장바구니 업데이트 실패", err);
                         }
                     });
                 },
-
-
 
             },
 
@@ -423,12 +521,10 @@
                 self.fnGetMinTourDate();
                 self.fnGetMaxTourDate();
                 self.fnGetTourDateList();
-                
+
                 self.fnGetBasket();
                 self.fnGetBasketList();
-                
             }
         });
-        
         app.mount('#app');
     </script>
