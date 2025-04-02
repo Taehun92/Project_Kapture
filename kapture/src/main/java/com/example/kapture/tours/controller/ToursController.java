@@ -31,34 +31,16 @@ public class ToursController {
 		model.addAttribute("keyword", keyword);
 		return "/tours/tours-list";
     }
-	// 상품 페이지 테스트 주소(추후 삭제 예정)
-	@RequestMapping("/tours/test-list.do")
-    public String testList(Model model) throws Exception{
-        return "/tours/test-list";
-    }
+	
 	// 지역별 상품 페이지 dept(2) 주소
 	@RequestMapping("/tours/regionalTours.do")
 	public String regionalTours(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
 		return "/tours/regional-tours";
-	}
-	// 지역별 상품 페이지 테스트 주소(추후 삭제 예정)
-	@RequestMapping("/tours/test-regional.do")
-	public String testRegional(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
-		return "/tours/test-regional";
 	}
 	// 상품 상세페이지 dept(3) 주소
 	@RequestMapping("/tours/tour-info.do")
     public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
 		return "/tours/tour-info";
-    }
-	//  상품 상세페이지 테스트 주소(추후 삭제 예정)
-	@RequestMapping("/tours/test-info.do")
-    public String testDetailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
-		return "/tours/test-info";
     }
 	// 데이트피커 테스트 주소(추후 삭제예정)
 	@RequestMapping("/tours/date-picker-test.do")
