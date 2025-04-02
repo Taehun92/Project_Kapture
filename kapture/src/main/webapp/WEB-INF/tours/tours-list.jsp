@@ -9,123 +9,11 @@
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <script src="/js/page-Change.js"></script>
+        <link rel="stylesheet" href="../../css/tourList.css">
+        <link rel="stylesheet" href="../../css/tourInfo.css">
         <title>관광지 목록</title>
         <style>
-            body {
-                font-family: Arial, sans-serif;
-            }
-
-            .container {
-                width: 80%;
-                margin: auto;
-            }
-
-            /* 주요 관광지 + 지역 선택 버튼 그룹 */
-            .tour-header-group {
-                background-color: #f0f0f0;
-                padding: 20px;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
-            .tour-header {
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-
-            .tour-buttons {
-                display: flex;
-                justify-content: center;
-                gap: 10px;
-            }
-
-            .tour-buttons button {
-                padding: 10px 15px;
-                border: 1px solid #ccc;
-                background-color: #f8f8f8;
-                cursor: pointer;
-            }
-
-            /* 경로 표시 */
-            .breadcrumb {
-                margin: 10px 0;
-                font-size: 14px;
-            }
-
-            hr {
-                border: 1px solid #ccc;
-            }
-
-            /* 사이드바 및 고정 기능 */
-            .content {
-                display: flex;
-                gap: 20px;
-            }
-
-            .sidebar {
-                width: 250px;
-                padding: 10px;
-                border: 1px solid #ddd;
-                position: sticky;
-                top: 0;
-                background: white;
-                transition: top 0.3s;
-            }
-
-            .filter {
-                width: 145px;
-                margin-bottom: 10px;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 5px;
-            }
-
-            .filter button {
-                width: 100%;
-                background: none;
-                border: none;
-                font-size: 16px;
-                text-align: left;
-                cursor: pointer;
-                padding: 5px;
-            }
-
-            .filter-content {
-
-                padding: 5px 10px;
-            }
-
-            /* 상품 카드 (폴라로이드 스타일) */
-            .tour-list {
-                flex-grow: 1;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-
-            .tour-card {
-                width: 200px;
-                height: 257px;
-                background: white;
-                border: 2px solid black;
-                padding: 10px;
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .tour-card img {
-                width: 180px;
-                height: 150px;
-                object-fit: cover;
-            }
-
-            .tour-card .desc {
-                width: 100%;
-                background: white;
-                padding: 10px;
-            }
+           
         </style>
     </head>
 
@@ -211,6 +99,66 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="showCartButton">
+                <div class="clickable-area" @click="showModal = true" v-if="!showModal">
+                    <p>🛒</p>
+                </div>
+            </div>
+            <transition name="modal">
+                <div v-if="showModal" class="modal">
+                    <span class="close-button" @click="showModal = false">닫기</span>
+                    <h2>일정</h2>
+                    <div>
+                        <table>
+                            <tr v-for="n in 7" :key="n">
+                                <td>{{ formatDate(addDays(minDate, n-1))  }}</td>
+                                <td>
+                                    <div
+                                        v-bind:class="{
+                                            'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전'|| item.duration === '종일') ),
+                                            'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일'))
+                                        }"
+                                    >
+                                        오전
+                                    </div>
+                                </td>
+                                <td>
+                                    <div
+                                        v-bind:class="{
+                                            'black-box': cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')),
+                                            'white-box': !cartList.some(item => formatDate(addDays(minDate, n - 1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일'))
+                                        }"
+                                    >
+                                        오후
+                                    </div>
+                                </td>
+                                <template v-for="item in getSortedCartList()">
+                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오전' || item.duration === '종일')">
+                                        오전 : {{ item.title }}
+                                    </td>
+                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate)) && (item.duration === '오후' || item.duration === '종일')">
+                                        오후 : {{ item.title }}
+                                    </td>
+                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
+                                        인원 : {{ item.numPeople }}
+                                    </td>
+                                    <td v-if="formatDate(addDays(minDate, n-1)) === formatDate(new Date(item.tourDate))">
+                                        금액 : {{ item.price }}
+                                    </td>
+                                </template>
+                            </tr>
+                        </table>
+                        <div>
+                            최종금액 : {{ getTotalPrice().toLocaleString() }} 원
+                        </div>
+                        <button>결제</button>
+                    </div>
+                </div>
+            </transition>
+
+
+
         </div>
         <jsp:include page="../common/footer.jsp" />
         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
@@ -232,7 +180,6 @@
                         region: false,
                         theme: false
                     },
-
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -240,10 +187,16 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-
-                    keyword: "${keyword}",
-                    // page: "",
-
+                    keyword : "${keyword}",
+                    sessionId: "${sessionId}",
+                    showModal: false,
+                    date: new Date(),
+                    showCartButton : false,
+                    tourDate : null,
+                    dateList : [],
+                    minDate : null,
+                    maxDate : null,
+                    cartList : [],
                 };
             },
             components: {
@@ -299,6 +252,159 @@
                     // pageChange("/tours/regionalTours.do", { siNo: siNo });
                     location.href="/tours/regionalTours.do?siNo=" + siNo;
                 },
+
+
+               
+                fnGetMinTourDate() {
+                    let self = this;
+                    let nparmap = {
+                        tourNo: self.tourNo,
+                        sessionId: self.sessionId,
+                        
+                    };
+    
+                    $.ajax({
+                        url: "/basket/getMinTourDate.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log('fnGetMinTourDate 호출' , data);
+                            if (data.minDate) {
+                                // "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+                                const parts = data.minDate.split(' ');
+                                const month = parts[0].replace('월', '');
+                                const day = parseInt(parts[1].replace(',', ''), 10);
+                                const year = parseInt(parts[2], 10);
+    
+                                // 월은 0부터 시작하므로 1을 빼줍니다.
+                                const monthIndex = parseInt(month, 10) - 1;
+                                const dateObj = new Date(year, monthIndex, day);
+                                self.minDate = dateObj;
+                            }
+                        }
+                    });
+                },
+    
+                fnGetMaxTourDate() {
+                    let self = this;
+                    let nparmap = {
+                        tourNo: self.tourNo,
+                        sessionId: self.sessionId,
+                        
+                    };
+    
+                    $.ajax({
+                        url: "/basket/getMaxTourDate.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log('fnGetMaxTourDate 호출' , data);
+                            if (data.maxDate) {
+                                // "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+                                const parts = data.maxDate.split(' ');
+                                const month = parts[0].replace('월', '');
+                                const day = parseInt(parts[1].replace(',', ''), 10);
+                                const year = parseInt(parts[2], 10);
+    
+                                // 월은 0부터 시작하므로 1을 빼줍니다.
+                                const monthIndex = parseInt(month, 10) - 1;
+                                const dateObj = new Date(year, monthIndex, day);
+                                self.maxDate = dateObj;
+                            }
+                        }
+                    });
+                },
+    
+                fnGetTourDateList() {
+                    let self = this;
+                    let nparmap = {
+                        tourNo: self.tourNo,
+                        sessionId: self.sessionId,
+                        
+                    };
+    
+                    $.ajax({
+                        url: "/basket/getTourDateList.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data);
+                            self.dateList = data.dateList;
+                            console.log(self.dateList);
+                        }
+                    });
+                },
+    
+                addDays(date, days) {
+                    const newDate = new Date(date);
+                    newDate.setDate(newDate.getDate() + days); // Use newDate here
+                    return newDate;
+                },
+                formatDate(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return year + '-' + month + '-' + day;
+                },
+    
+                
+                // 최종 금액 계산 메서드
+                getTotalPrice() {
+                    return this.cartList.reduce((total, item) => total + Number(item.price), 0);
+                },
+    
+                getSortedCartList() {
+                    return this.cartList.slice().sort((a, b) => {
+                        if (a.duration === '오전' && b.duration !== '오전') return -1;
+                        if (a.duration !== '오전' && b.duration === '오전') return 1;
+                        return 0;
+                    });
+                },
+    
+                fnGetBasket() {
+                    let self = this;
+                    let nparmap = {
+                        sessionId : self.sessionId
+                    };
+                    $.ajax({
+                        url: "/basket/getCount.dox",
+                        type: "POST",
+                        data: nparmap,
+                        dataType: "json",
+                        success: function(data) {
+                            console.log('getCount 호출 : ', data);
+                            if(data.count > 0) {
+                                self.showCartButton = true;
+                            }
+                            
+                        }
+                    });
+                },
+
+                fnGetBasketList() {
+                    let self = this;
+                    let nparmap = {
+                        sessionId: self.sessionId,
+                    };
+
+                    $.ajax({
+                        url: "/basket/getBasketList.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: nparmap,
+                        success: function (data) {
+                            console.log(data);
+                            self.cartList = data.basketList;
+                            
+                        }
+                    });
+                },
+
+
+
             },
 
             created() {
@@ -313,13 +419,14 @@
 
             mounted() {
                 let self = this;
-                // if (localStorage.getItem('page') == "undefined") {
-                //     self.page = 1;
-                // } else {
-                //     self.page = localStorage.getItem('page');
-                // }
                 self.fnToursList();
-                // localStorage.removeItem('page');
+                self.fnGetMinTourDate();
+                self.fnGetMaxTourDate();
+                self.fnGetTourDateList();
+                self.fnGetBasket();
+                self.fnGetBasketList();
+                
+
             }
         });
 

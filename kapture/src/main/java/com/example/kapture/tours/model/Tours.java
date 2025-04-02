@@ -37,6 +37,7 @@ public class Tours {
 	private String experience;
 	private String profileImage;
 	
+	private String rating;
 	
 	
 }

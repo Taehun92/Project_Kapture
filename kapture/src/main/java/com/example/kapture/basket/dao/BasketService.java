@@ -112,4 +112,13 @@ public class BasketService {
 		return resultMap;
 	}
 
+
+	public HashMap<String, Object> editBasket(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		basketMapper.updateBasket(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
 }

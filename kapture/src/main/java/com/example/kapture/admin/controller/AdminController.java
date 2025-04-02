@@ -67,4 +67,12 @@ public class AdminController {
 		return "/admin/admin-setting";
 	}
 	
+//	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+//	@ResponseBody
+//	public String getChart(@RequestParam HashMap<String, Object> map) throws Exception {
+//	    HashMap<String, Object> resultMap = adminService.getChartData(map); // 👉 서비스에 로직 넘김
+//	    return new Gson().toJson(resultMap);
+//	}
+	
+	
 }

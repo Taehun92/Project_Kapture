@@ -3,6 +3,7 @@ package com.example.kapture.cs.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,4 +58,15 @@ public class CsService {
 		resultMap.put("result", "success");
 		return resultMap;
 	}
+
+	
+	public HashMap<String, Object> searchAll(HashMap<String, Object> map) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<HashMap<String, Object>> faqList = csMapper.searchFaq(map);
+        List<HashMap<String, Object>> qnaList = csMapper.searchQna(map);
+        
+        result.put("faqList", faqList);
+        result.put("qnaList", qnaList);
+        return result;
+    }
 }

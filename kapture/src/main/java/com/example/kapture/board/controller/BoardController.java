@@ -21,4 +21,9 @@ public class BoardController {
 	@Autowired
 	BoardService boardService;
 	
+	@RequestMapping("/board/list.do") 
+	public String list(Model model) throws Exception{
+    return "/board/board-list";
+	}
+	
 }

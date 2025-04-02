@@ -50,8 +50,7 @@ public class PaymentController {
 	
 	// 결제 성공 시 주소(회원 정보 수정)
 	@RequestMapping("/payment/success.do")
-	public String paymentSuccess(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		request.setAttribute("map", map);
+	public String paymentSuccess(Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		return "/payment/success";
 	}
 	
@@ -92,6 +91,15 @@ public class PaymentController {
 	    
 	    System.out.println("최종 응답 resultMap: " + resultMap);
 	    return new Gson().toJson(resultMap); 
+	}
+	
+	// 장바구니 목록 삭제
+	@RequestMapping(value = "/payment/removeBasket.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String basketRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = paymentService.removeBasket(map);
+		return new Gson().toJson(resultMap);
 	}
 	
 	
