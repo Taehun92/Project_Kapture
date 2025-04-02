@@ -371,10 +371,10 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/tour-info.do", { tourNo });
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
                 fnRegionalTours(siNo) {
-                    pageChange("/tours/regionalTours.do", { siNo });
+                    location.href="/tours/regionalTours.do?siNo=" + siNo;
                 },
                 fnGetMinTourDate() {
                     const self = this;
