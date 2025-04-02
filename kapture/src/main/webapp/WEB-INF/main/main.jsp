@@ -64,7 +64,7 @@
                             <div class="card-info">
                                 <div v-if="tour.rating >= 0" class="rating">⭐ {{ tour.rating }}</div>
                                 <div v-else class="rating"> {{ tour.rating }}</div>
-                                <div class="price">₩{{ tour.price.toLocaleString() }}</div>
+                                <div class="price">₩ {{ tour.price.toLocaleString() }}</div>
                             </div>
                             <button class="card-btn" @click="goToTourInfo(tour.tourNo)">예약하기</button>
                         </div>
@@ -124,7 +124,7 @@
                     return dateStr.split(' ')[0]; // "2025-04-12 00:00:00" → "2025-04-12"
                 },
 
-                truncateText(text, maxLength = 50) {
+                truncateText(text, maxLength = 30) {
                     if (!text) return '';
                     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
                 },
