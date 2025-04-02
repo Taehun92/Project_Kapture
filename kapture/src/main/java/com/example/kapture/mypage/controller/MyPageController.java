@@ -4,6 +4,7 @@ package com.example.kapture.mypage.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.mypage.dao.MyPageService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -257,6 +260,25 @@ public class MyPageController {
 	            return ResponseEntity.status(500).body(response);
 	        }
 	    }
+		
+		// 이미지에 투어 아이디 넣기
+		@RequestMapping(value = "/mypage/updateImg.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String updateImg(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			String json = map.get("imgList").toString(); 
+			String json2 = map.get("thumbnailList").toString(); 
+			ObjectMapper mapper = new ObjectMapper();
+			List<Object> list = mapper.readValue(json, new TypeReference<List<Object>>(){});
+			List<Object> list2 = mapper.readValue(json2, new TypeReference<List<Object>>(){});
+			map.put("list", list);
+			map.put("thumbnailList", list2);
+			
+			resultMap = myPageService.updateImg(map);
+			return new Gson().toJson(resultMap);
+		}
+		
 		
 }
 
