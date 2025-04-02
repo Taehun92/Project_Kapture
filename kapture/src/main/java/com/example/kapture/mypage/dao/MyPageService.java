@@ -188,7 +188,7 @@ public class MyPageService {
 //-------------------------------------------------------------------------------------------------------------------------------------------------  
 	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
-		
+		System.out.println(map);
 		myPageMapper.insertTour(map);
 		resultMap.put("result", "success");
 		
@@ -213,9 +213,8 @@ public class MyPageService {
 	public HashMap<String, Object> editTour(HashMap<String, Object> map) {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
-		myPageMapper.updateTour(map);
-		
-		
+
+		myPageMapper.updateTour(map);		
 		return resultMap;
 	}
 	

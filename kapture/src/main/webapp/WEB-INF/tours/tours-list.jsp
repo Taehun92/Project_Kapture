@@ -22,11 +22,12 @@
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="container">
             <!-- 주요 관광지 그룹 -->
-            
+
             <div class="tour-header-group">
                 <div class="tour-header">주요 관광지</div>
                 <div class="tour-buttons">
-                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region.region">{{ region.region }}</button>
+                    <button v-for="region in regions" @click="fnRegionalTours(region.siNo)" :key="region.region">{{
+                        region.region }}</button>
 
                 </div>
             </div>
@@ -42,11 +43,12 @@
                     <div class="filter">
                         <button @click="toggleFilter('date')">여행기간 {{ filters.date ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.date">
-                            
-                            <div>날짜  선택: {{ selectedDates }}</div>
-                            <vue-date-picker v-model="selectedDates" multi-calendars model-auto range :min-date="new Date()"
-                                @input="params.startDate = _formatedDatepicker($event)" locale="ko" />
-                                
+
+                            <div>날짜 선택: {{ selectedDates }}</div>
+                            <vue-date-picker v-model="selectedDates" multi-calendars model-auto range
+                                :min-date="new Date()" @input="params.startDate = _formatedDatepicker($event)"
+                                locale="ko" />
+
                         </div>
 
                     </div>
@@ -159,8 +161,8 @@
 
         </div>
         <jsp:include page="../common/footer.jsp" />
-         <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
-          <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
+        <!-- 푸터 주석하면 인풋박스까지 나오고 데이트피커 X -->
+        <!-- 둘 다 주석 하거나 지우면 데이트피커까지 나옴 -->
     </body>
 
     </html>
@@ -169,8 +171,8 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    regions: [{region:"서울", siNo:11}, {region:"제주", siNo:39}, {region:"부산", siNo:21}, {region:"전주", siNo:35},
-                             {region:"강원", siNo:32}, {region:"인천", siNo:23}, {region:"경기", siNo:31}, {region:"그 외", siNo:999}],
+                    regions: [{ region: "서울", siNo: 11 }, { region: "제주", siNo: 39 }, { region: "부산", siNo: 21 }, { region: "전주", siNo: 35 },
+                    { region: "강원", siNo: 32 }, { region: "인천", siNo: 23 }, { region: "경기", siNo: 31 }, { region: "그 외", siNo: 999 }],
                     languages: [{ eng: "Korean", kor: "한국어" }, { eng: "English", kor: "영어" }, { eng: "Chinese", kor: "중국어" }, { eng: "Japanese", kor: "일본어" }],
                     filters: {
                         date: false,
@@ -178,7 +180,6 @@
                         region: false,
                         theme: false
                     },
-
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -186,9 +187,7 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-
                     keyword : "${keyword}",
-
                     sessionId: "${sessionId}",
                     showModal: false,
                     date: new Date(),
@@ -197,20 +196,17 @@
                     dateList : [],
                     minDate : null,
                     maxDate : null,
-
                     cartList : [],
-                    
-                    
                 };
             },
             components: {
-				VueDatePicker
-			},
+                VueDatePicker
+            },
             watch: {
-				selectedDates() {
+                selectedDates() {
                     this.fnToursList();
-				}
-			},
+                }
+            },
             methods: {
                 toggleFilter(type) {
                     let self = this;
@@ -244,12 +240,17 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
+                    // let self = this;
+                    // localStorage.setItem('page', self.page);
+                    // pageChange("/tours/tour-info.do", { tourNo: tourNo });
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
-                fnRegionalTours(siNo){
-                    console.log("siNo"+siNo);
-   
-                    pageChange("/tours/regionalTours.do",{siNo: siNo});
+                fnRegionalTours(siNo) {
+                    console.log("siNo" + siNo);
+                    // let self = this;
+                    // localStorage.setItem('page', self.page);
+                    // pageChange("/tours/regionalTours.do", { siNo: siNo });
+                    location.href="/tours/regionalTours.do?siNo=" + siNo;
                 },
 
 
@@ -417,18 +418,17 @@
             },
 
             mounted() {
-                var self = this;
+                let self = this;
                 self.fnToursList();
-
                 self.fnGetMinTourDate();
                 self.fnGetMaxTourDate();
                 self.fnGetTourDateList();
-                
                 self.fnGetBasket();
                 self.fnGetBasketList();
                 
+
             }
         });
-        
+
         app.mount('#app');
     </script>

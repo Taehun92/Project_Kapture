@@ -33,25 +33,21 @@ public class MyPageController {
 		// 유저 마이페이지 주소(회원 정보 수정)
 		@RequestMapping("/mypage/user-mypage.do")
 		public String userMypage(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			request.setAttribute("map", map);
 			return "/mypage/user-mypage";
 		}
 		// 유저 마이페이지 주소(구매한 상품)
 		@RequestMapping("/mypage/user-purchase-history.do")
 		public String purchaseHistory(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			request.setAttribute("map", map);
 			return "/mypage/user-purchase-history";
 		}
 		// 이용후기 관리 페이지
 		@RequestMapping("/mypage/user-reviews.do")
 		public String userReviews(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			request.setAttribute("map", map);
 			return "/mypage/user-reviews";
 		}
 		// 회원 탈퇴 페이지
 		@RequestMapping("/mypage/user-unregister.do")
 		public String userUnRegister(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-			request.setAttribute("map", map);
 			return "/mypage/user-unregister";
 		}
 		
