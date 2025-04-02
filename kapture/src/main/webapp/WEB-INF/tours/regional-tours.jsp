@@ -252,10 +252,8 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-                    // siNo: "${map.siNo}",
                     siNo: "",
                     initFlg: false,
-                    page: "",
 
 
                 };
@@ -300,25 +298,15 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    let self = this;
-                    // localStorage.setItem('page', self.page);
-                    // pageChange("/tours/tour-info.do", { tourNo: tourNo });
                     location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
 
             },
             mounted() {
                 let self = this;
-                // if(localStorage.getItem('page') == "undefined"){
-                // 	self.page = 1;
-                // } else {
-                // 	self.page = localStorage.getItem('page');
-                // }
                 const params = new URLSearchParams(window.location.search);
-                // return (this)에 productId 먼저 선언
                 self.siNo = params.get("siNo") || "";
                 self.fnToursList();
-                // localStorage.removeItem('page');
             }
         });
 

@@ -360,6 +360,7 @@
                                 info.jsEvent.preventDefault();
                                 // 투어 상세페이지로 이동 (URL은 프로젝트에 맞게 수정하세요)
                                 location.href="/tours/test-info.do?tourNo=" + info.event.id;
+
                             }
                         });
                         calendar.render();

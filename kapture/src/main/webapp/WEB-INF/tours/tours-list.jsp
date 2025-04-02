@@ -403,6 +403,7 @@
                 },
                 fnRegionalTours(siNo) {
                     location.href="/tours/regionalTours.do?siNo=" + siNo ;
+
                 },
                 fnGetMinTourDate() {
                     const self = this;
