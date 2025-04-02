@@ -1,10 +1,19 @@
 package com.example.kapture.admin.dao;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
+import com.example.kapture.mypage.model.Guide;
 
 @Service
 public class AdminService {
@@ -140,4 +149,41 @@ public class AdminService {
 
         return result;
     }
+
+	public HashMap<String, Object> getGuidesList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Guide> guidesList = adminMapper.selectguidesList(map);
+			resultMap.put("result", "success");
+			resultMap.put("guidesList", guidesList);
+			
+		} catch (Exception e) {
+      System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> editGuide(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int guideInfo = adminMapper.updateGuideInfo(map);
+			int userInfo = adminMapper.updateUserInfo(map);
+			String result;
+			if(guideInfo > 0 && userInfo > 0) {
+				result = "success";
+			} else {
+				result = "fail";
+			}
+			resultMap.put("result", result);
+			
+			
+		} catch (Exception e) {
+		System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 }
