@@ -172,7 +172,7 @@
 							success: function (data) {
 								console.log(data);
 								self.tourInfo = data.tourInfo;
-								console.log(self.tourInfo);
+								console.log('tourInfo 출력 : ',self.tourInfo);
 								self.reviewsList = data.reviewsList;
 								console.log(self.reviewsList);
 								console.log('투어 날짜 : ', self.tourInfo.tourDate);
@@ -354,7 +354,6 @@
 							type: "POST",
 							data: nparmap,
 							success: function (data) {
-								console.log('fnGetMinTourDate 호출' , data);
 								if (data.minDate) {
 									// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
 									const parts = data.minDate.split(' ');
@@ -385,7 +384,6 @@
 							type: "POST",
 							data: nparmap,
 							success: function (data) {
-								console.log('fnGetMaxTourDate 호출' , data);
 								if (data.maxDate) {
 									// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
 									const parts = data.maxDate.split(' ');

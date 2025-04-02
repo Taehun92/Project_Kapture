@@ -42,4 +42,6 @@ public interface MyPageMapper {
 	int updatePassword(HashMap<String, Object> map);
 
 	void insertToursFile(HashMap<String, Object> map);
+
+	void updateToursFile(HashMap<String, Object> map);
 }
