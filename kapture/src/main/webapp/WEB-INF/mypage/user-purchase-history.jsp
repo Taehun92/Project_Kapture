@@ -286,6 +286,8 @@
                         sessionRole: "${sessionRole}",
                         payList: [],
                         currentPage: "",
+                        page: "",
+                        tourNo: "",
                     };
                 },
                 methods: {
@@ -318,7 +320,11 @@
                     }
                 },
                 mounted() {
-
+                    // if (localStorage.getItem('page') == "undefined") {
+                    //     self.page = 1;
+                    // } else {
+                    //     self.page = localStorage.getItem('page');
+                    // }
                     if (this.sessionId === null) {
                         alert("로그인 후 이용해주세요.");
                         location.href = "localhost:8080/main.do";
@@ -357,10 +363,14 @@
                             },
                             events: eventsArray,
                             eventClick: function (info) {
+                                let self = this;
+                                // localStorage.setItem('page', self.page);
                                 // 클릭된 이벤트의 기본 동작을 막습니다.
                                 info.jsEvent.preventDefault();
                                 // 투어 상세페이지로 이동 (URL은 프로젝트에 맞게 수정하세요)
-                                pageChange("/tours/test-info.do", { tourNo: info.event.id });
+                                // pageChange("/tours/tour-info.do", { tourNo: info.event.id });
+                                self.tourNo = info.event.id;
+                                location.href="/tours/tour-info.do?tourNo=" + self.tourNo;
                             }
                         });
                         calendar.render();
@@ -368,6 +378,7 @@
 
                     this.currentPage = window.location.pathname.split('/').pop();
                     console.log("Current page:", this.currentPage);
+                    // localStorage.removeItem('page');
                 }
 
             });

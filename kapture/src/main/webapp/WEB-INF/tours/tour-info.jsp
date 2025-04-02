@@ -10,27 +10,43 @@
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
 			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-		<link rel="stylesheet" href="../../css/tourInfo.css">
+    <link rel="stylesheet" href="../../css/tourInfo.css">
 		<title>상품 상세페이지</title>
 	</head>
-
 	<body>
 		<jsp:include page="../common/header.jsp" />
-		<div id="app">
-			<!-- 기존 컨텐츠 영역 -->
+		<div id="app" class="container">
 			<div class="top-section">
 				<div class="thumbnail">
 					<img class="img-thumbnail" :src="tourInfo.filePath">
 				</div>
 				<div class="info">
 					<div class="title">{{ tourInfo.title }}</div>
+
 					<div class="guide-info">{{ tourInfo.experience }}</div>
+
 					<div class="actions">
 						<button @click="decrease">-</button>
 						<span>인원수 {{ count }}명</span>
 						<button @click="increase">+</button>
-						<button @click="toggleWishlist">{{ isWishlisted ? "❤️ 찜 취소" : "💕 찜" }}</button>
-						<button @click="fnAddedToCart">🛒 장바구니 담기</button>
+
+						<button @click="toggleWishlist">{{ isWishlisted ? "❤️ 찜 취소" : "🤍 찜" }}</button>
+						<button @click="fnAddedToCart">🛒 장바구니 담기</button>		
+				<div class="contents" v-html="tourInfo.description"></div>
+				<div v-if="sessionId == tourInfo.userNo">
+					<button @click="fnEdit">
+						수정
+					</button>
+				</div>
+			</div>
+
+
+				<div class="reviews">
+					<div class="review-score">
+						이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"
+							:show-rating="false" :rounded-corners="true"></star-rating>
+						<span> {{getReviewAvg()}} / 5</span>
+
 					</div>
 				</div>
 			</div>
@@ -39,12 +55,14 @@
 
 			<div class="reviews">
 				<div class="review-score">
-					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01"
-						:show-rating="false" />
-					<span>{{ getReviewAvg() }} / 5</span>
+					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"
+						:show-rating="false" :rounded-corners="true"></star-rating>
+					<span> {{getReviewAvg()}} / 5</span>
 				</div>
+
+				<!-- 점수별 게이지바 -->
 				<div class="rating-bars">
-					<div class="rating-bar" v-for="n in 5" :key="n">
+					<div v-for="n in 5" :key="n" class="rating-bar">
 						<span>{{ n }}점</span>
 						<div class="progress-bar">
 							<div class="fill" :style="{ width: getReviewPercentage(n) + '%' }"></div>
@@ -496,7 +514,6 @@
 						}
 					});
 				},
-
 				addDays(date, days) {
 					const newDate = new Date(date);
 					newDate.setDate(newDate.getDate() + days); // Use newDate here
@@ -634,7 +651,6 @@
                     this.handleCartClose();
                     location.href="/payment.do"
                 }
-
 
 			},
 			mounted() {
