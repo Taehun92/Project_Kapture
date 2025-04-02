@@ -1,115 +1,325 @@
-body {
-    font-family: Arial, sans-serif;
+/* tourList.css */
+@font-face {
+    font-family: 'MangoDdobak';
+    src: url('../css/MangoDdobak-R.ttf') format('truetype');
+}
+
+body * {
+	font-family: 'MangoDdobak', sans-serif;
+}
+
+.layout {
+    display: flex;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 2vw;
+	padding-top: 0;
+    gap: 2vw;
+    align-items: flex-start;
 }
 
 .container {
-    width: 80%;
-    margin: auto;
+    flex: 1; /* 나머지 영역 채움 */
+	margin: 20px;
+    max-width: 1200px;
 }
 
-/* 주요 관광지 + 지역 선택 버튼 그룹 */
+/* 사이드바는 화면 왼쪽 고정 위치 */
+.sidebar {
+    position: relative;
+    top: 50px; /* 주요 관광지 헤더 아래부터 시작하게 설정 */
+	left: 44px;
+    width: 10vw;
+    min-width: 200px;
+    background-color: #ffffff;
+    border: 2px solid #eee;
+    border-radius: 1vw;
+    padding: 1.5vw;
+    height: fit-content;
+    font-size: 0.95vw;
+    flex-shrink: 0; /* 사이드바 크기 고정 */
+}
+
 .tour-header-group {
-    background-color: #f0f0f0;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 10px;
+    width: 100%;               /* 🔥 레이아웃과 분리되므로 전체 너비 */
+    max-width: 1120px;         /* 선택: 너무 넓어지지 않도록 제한 */
+    margin: 2vw auto;
+	margin-bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 2vw;
+    border-radius: 1vw;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .tour-header {
-    font-size: 24px;
+    font-size: 2vw;
     font-weight: bold;
-    margin-bottom: 10px;
+    color: #171d41;
+    background-color: none;
+    display: inline-block;
+    padding: 0.5vw 1vw;
+    border-radius: 1vw;
+	margin-bottom: 2vw;        /* 기존보다 간격 ↑ */
+}
+
+.tour-header {
+    font-size: 3.5vw;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+    z-index: 2;
+    margin-bottom: 1.5vw;
 }
 
 .tour-buttons {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 2vw 2.5vw; 
+    z-index: 2;
+	margin-top: 1vw; 
 }
 
 .tour-buttons button {
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    background-color: #f8f8f8;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5vw;
+	font-weight: 600;
     cursor: pointer;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    transition: transform 0.2s ease;
+	letter-spacing: 0.1em;
 }
 
-/* 경로 표시 */
-.breadcrumb {
-    margin: 10px 0;
-    font-size: 14px;
+.tour-buttons button:hover {
+    transform: scale(1.05);
 }
 
-hr {
-    border: 1px solid #ccc;
-}
-
-/* 사이드바 및 고정 기능 */
 .content {
     display: flex;
-    gap: 20px;
+    gap: 2vw;
 }
 
-.sidebar {
-    width: 250px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    position: sticky;
-    top: 0;
-    background: white;
-    transition: top 0.3s;
-}
 
-.filter {
-    width: 145px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
-
-.filter button {
-    width: 100%;
-    background: none;
-    border: none;
-    font-size: 16px;
-    text-align: left;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.filter-content {
-
-    padding: 5px 10px;
-}
-
-/* 상품 카드 (폴라로이드 스타일) */
 .tour-list {
-    flex-grow: 1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2vw;
 }
 
 .tour-card {
-    width: 200px;
-    height: 257px;
-    background: white;
-    border: 2px solid black;
-    padding: 10px;
+    border: 2px solid #171d41;
+    border-radius: 1vw;
+    padding: 1vw;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tour-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .tour-card img {
-    width: 180px;
+    width: 100%;
     height: 150px;
     object-fit: cover;
+    border-radius: 0.5vw;
+    margin-bottom: 0.5vw;
 }
 
-.tour-card .desc {
+.desc p {
+    margin: 0.2vw 0;
+    font-size: 0.9vw;
+}
+
+.desc p:first-child {
+    font-weight: bold;
+    color: #171d41;
+}
+
+.desc p:last-child {
+    font-weight: 600;
+}
+
+/* 사이드바 부분*/
+
+.filter button {
+    background: none;
+    border: none;
+    font-weight: bold;
+    font-size: 1.1vw;
+    color: #171d41;
+    cursor: pointer;
     width: 100%;
-    background: white;
-    padding: 10px;
+    text-align: left;
+    padding: 0.5vw 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter button:hover {
+    color: #444;
+}
+
+.filter button::after {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8vw;
+    transition: transform 0.2s ease;
+}
+
+
+.filter-content {
+    padding: 0.5vw;
+    border-radius: 0.5vw;
+}
+
+.filter-content > div {
+    font-size: 0.9vw;
+    margin-bottom: 0.5vw;
+    color: #333;
+}
+
+.vue-datepicker {
+    margin-top: 0.5vw;
+    font-size: 0.9vw;
+}
+
+/* date-picker 컴포넌트 감싸기 */
+.filter-content :deep(.dp__main) {
+    font-size: 0.9vw;
+    border: 1px solid #ccc;
+    border-radius: 0.5vw;
+    padding: 0.5vw;
+    background-color: #fff;
+}
+
+/* 🛒 하단 슬라이딩 모달 스타일 */
+.bottom-cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  background-color: #171d41;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.bottom-cart-modal {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: 70%;
+  max-height: 90vh;
+  background-color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  z-index: 999;
+  overflow-y: auto;
+  transition: transform 0.4s ease;
+}
+
+.bottom-cart-modal.show {
+  transform: translate(-50%, 0);
+}
+
+.bottom-cart-modal .close-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 18px;
+  background: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.modal-table td {
+  padding: 9px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.black-box, .white-box {
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.black-box {
+  background-color: #171d41;
+  color: white;
+}
+
+.white-box {
+  background-color: #f4f4f4;
+  color: black;
+  border: 1px solid #ccc;
+}
+
+.total-price {
+  text-align: right;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.confirm-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 25px;
+  font-size: 16px;
+  background-color: #171d41;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* 버튼과 숫자 사이 간격 */
+}
+
+.item-controls button {
+    padding: 2px 8px;
+    font-size: 14px;
 }
