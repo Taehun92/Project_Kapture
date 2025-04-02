@@ -46,45 +46,56 @@
     ORDER BY DAY
 	</select>
 	
-		<!-- 총 거래 금액 -->
-	<select id="selectTotalAmount" resultType="int">
-	    SELECT NVL(SUM(AMOUNT), 0)
-	    FROM PAYMENTS p
-	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE PAYMENT_STATUS = 'PAID'
-	</select>
-	
-	<!-- 어제 거래 금액 -->
-	<select id="selectYesterdayAmount" resultType="int">
-	    SELECT NVL(SUM(AMOUNT), 0)
-	    FROM PAYMENTS p
-	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE PAYMENT_STATUS = 'PAID'
-	      AND TO_CHAR(PAYMENT_DATE, 'YYYYMMDD') = TO_CHAR(SYSDATE - 1, 'YYYYMMDD')
-	</select>
-	
-	<!-- 총 이용 인원 -->
-	<select id="selectTotalUsers" resultType="int">
-	    SELECT NVL(SUM(NUM_PEOPLE), 0)
-	    FROM PAYMENTS p
-	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE PAYMENT_STATUS = 'PAID'
-	</select>
-	
-	<!-- 승인된 건수 -->
-	<select id="selectApprovedCount" resultType="int">
-	    SELECT COUNT(*)
-	    FROM PAYMENTS p
-	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
-	</select>
-	
-	<!-- 취소된 건수 -->
-	<select id="selectRejectedCount" resultType="int">
-	    SELECT COUNT(*)
-	    FROM PAYMENTS p
-	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'REFUNDED'
-	</select>
+	<!-- 총 거래 금액 -->
+    <select id="selectTotalAmount" resultType="int">
+        SELECT NVL(SUM(p.AMOUNT), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 어제 거래 금액 -->
+    <select id="selectYesterdayAmount" resultType="int">
+        SELECT NVL(SUM(p.AMOUNT), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+        AND TO_CHAR(p.PAYMENT_DATE, 'YYYYMMDD') = TO_CHAR(SYSDATE - 1, 'YYYYMMDD')
+    </select>
+
+    <!-- 총 이용 인원 -->
+    <select id="selectTotalUsers" resultType="int">
+        SELECT NVL(SUM(p.NUM_PEOPLE), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 승인된 건수 -->
+    <select id="selectApprovedCount" resultType="int">
+        SELECT COUNT(*)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 취소된 건수 -->
+    <select id="selectRejectedCount" resultType="int">
+        SELECT COUNT(*)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '취소'
+    </select>
+    <!-- 가이드 정보조회 -->
+    <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
+        SELECT *
+        FROM USERS U
+        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+    </select>
+	<update id="updateGuideInfo" parameterType="hashmap">
+	</update>
+	<update id="updateUserInfo" parameterType="hashmap">
+	</update>
+
 		
 </mapper>
