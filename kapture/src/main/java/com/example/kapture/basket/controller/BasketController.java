@@ -1,10 +1,13 @@
 package com.example.kapture.basket.controller;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,6 +96,19 @@ public class BasketController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	
+	// 장바구니 다중 업데이트
+	@RequestMapping(value = "/basket/updateList.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public HashMap<String, Object> updateBasketList(@RequestBody HashMap<String, List<HashMap<String, Object>>> param) {
+	    List<HashMap<String, Object>> cartList = param.get("cartList");
+	    for (HashMap<String, Object> map : cartList) {
+	        basketService.editBasket(map);  // 기존 updateCount 재활용
+	        System.out.println(map);
+	    }
+
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("result", "success");
+	    return result;
+	}
 	
 }

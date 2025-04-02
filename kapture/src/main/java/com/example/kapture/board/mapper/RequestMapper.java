@@ -12,6 +12,8 @@ import com.example.kapture.board.model.Request;
 public interface RequestMapper {
 
 	List<Request> selectRequestList(HashMap<String, Object> map);
+    
+    int countRequestList(HashMap<String, Object> map);
 	
 	Request selectRequest(HashMap<String, Object> map);
 	

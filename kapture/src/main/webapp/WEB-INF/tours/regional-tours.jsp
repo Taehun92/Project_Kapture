@@ -8,7 +8,6 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-        <script src="/js/page-Change.js"></script>
         <title>관광지 목록</title>
         <style>
             body {
@@ -246,7 +245,6 @@
                         region: false,
                         theme: false
                     },
-
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -254,7 +252,7 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-                    siNo: "${map.siNo}",
+                    siNo: "",
                     iniFlg: false,
 
                 };
@@ -299,12 +297,14 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo ;
                 },
 
             },
             mounted() {
                 var self = this;
+                const params = new URLSearchParams(window.location.search);
+                self.siNo = params.get("siNo") || "";
                 self.fnToursList();
             }
         });

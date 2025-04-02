@@ -41,7 +41,7 @@
 const app = Vue.createApp({
     data() {
         return {
-            requestNo: "${map.requestNo}",
+            requestNo: "",
             info: {},
             title: "",
             contents: "",
@@ -96,6 +96,9 @@ const app = Vue.createApp({
     },
     mounted() {
         var self = this;
+
+        const params = new URLSearchParams(window.location.search);
+        this.requestNo = params.get("requestNo") || "";
 
         window.quill = new Quill('#editor', {
             theme: 'snow',

@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="../../css/main.css">
         <link rel="stylesheet" href="../../css/components/card.css">
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
-        <script src="/js/page-Change.js"></script>
         <title>메인 페이지</title>
     </head>
     <style>
@@ -57,6 +56,9 @@
                         <div class="card-content">
                             <div class="card-top">
                                 <div class="card-date">{{ formatDate(tour.tourDate) }}</div>
+                                <div class="hashtags">
+                                    <span class="theme-hashtag"># {{ tour.themeName }}</span>
+                                </div>
                                 <div class="favorite" :class="{ active: tour.isFavorite }" @click="toggleFavorite(tour)"></div>
                             </div>
                             <div class="card-title">{{ tour.title }}</div>
@@ -73,7 +75,7 @@
 
                 <div class="main-title">
                     <hr>
-                    추 천 리 뷰
+                      추 천 리 뷰
                 </div>
                 <div class="review-page">
                     <div class="review-box">
@@ -119,9 +121,19 @@
             },
 
             methods: {
-                formatDate(dateStr) {
-                    if (!dateStr) return '';
-                    return dateStr.split(' ')[0]; // "2025-04-12 00:00:00" → "2025-04-12"
+                formatDate(input) {
+                    if (!input) return '';
+                    
+                    // 문자열인 경우: "2025-04-12 00:00:00"
+                    if (typeof input === 'string') {
+                        return input.split(' ')[0];
+                    }
+
+                    // Date 객체인 경우
+                    const year = input.getFullYear();
+                    const month = (input.getMonth() + 1).toString().padStart(2, '0');
+                    const day = input.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 },
 
                 truncateText(text, maxLength = 30) {
@@ -151,7 +163,7 @@
 
 
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/test-info.do", { tourNo: tourNo });
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
             },
             mounted() {
