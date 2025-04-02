@@ -108,6 +108,14 @@ const header = Vue.createApp({
         if(this.sessionId != '') {
             this.fnGetBasket();
         }
+        
+        window.addEventListener("storage", function(e) {
+            if (e.key === "basketChanged") {
+                console.log("장바구니 변경 감지됨! 헤더 갱신");
+                self.fnGetBasket();
+            }
+        });
+
 		console.log("세션아이디 : " + self.sessionId);
 		console.log("세션롤 : " + self.sessionRole);
 		
