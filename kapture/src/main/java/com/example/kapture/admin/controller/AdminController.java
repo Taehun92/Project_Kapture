@@ -88,4 +88,22 @@ public class AdminController {
 	    
 	    return new Gson().toJson(resultMap);
 	}
+	// 가이드 리스트 조회
+	@RequestMapping(value = "/admin/guides-list.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getGuidesList(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = adminService.getGuidesList(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 가이드 정보수정
+	@RequestMapping(value = "/admin/guide-update.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String editGuide(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = adminService.editGuide(map);
+	    return new Gson().toJson(resultMap);
+	}
 }

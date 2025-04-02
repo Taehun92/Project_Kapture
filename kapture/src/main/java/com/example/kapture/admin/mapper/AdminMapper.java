@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.kapture.mypage.model.Guide;
+
 @Mapper
 public interface AdminMapper {
 	
@@ -27,4 +29,13 @@ public interface AdminMapper {
 	    int selectTotalUsers();          // 총 이용 인원
 	    int selectApprovedCount();       // 승인 건수
 	    int selectRejectedCount();       // 취소 건수
+
+
+		List<Guide> selectguidesList(HashMap<String, Object> map);
+
+
+		int updateGuideInfo(HashMap<String, Object> map);
+
+
+		int updateUserInfo(HashMap<String, Object> map);
 }

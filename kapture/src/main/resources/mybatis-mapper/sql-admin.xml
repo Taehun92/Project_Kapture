@@ -86,6 +86,15 @@
         INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
         WHERE p.PAYMENT_STATUS = '취소'
     </select>
-
+    <!-- 가이드 정보조회 -->
+    <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
+        SELECT *
+        FROM USERS U
+        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+    </select>
+	<update id="updateGuideInfo" parameterType="hashmap">
+	</update>
+	<update id="updateUserInfo" parameterType="hashmap">
+	</update>
 	
 </mapper>
