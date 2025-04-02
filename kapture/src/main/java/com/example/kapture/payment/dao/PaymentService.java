@@ -36,7 +36,7 @@ public class PaymentService {
 			resultMap.put("basketList", basketList);
 //			resultMap.put("paymentList", paymentList);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO: handle exception 
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
@@ -105,6 +105,15 @@ public class PaymentService {
 	        paymentMapper.deleteBasketsByNo(basketNoList);
 	    }
 	    
+	}
+
+	public HashMap<String, Object> removeBasket(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+		int num = paymentMapper.deleteBasket(map);
+		resultMap.put("result", "success");
+		resultMap.put("num", num);
+	    return resultMap;
 	}
 
 	

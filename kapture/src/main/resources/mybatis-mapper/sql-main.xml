@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.main.mapper.MainMapper">
+	<select id="selectTourandRatingList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
+		SELECT *
+		FROM TOURS T
+		LEFT JOIN (
+		    SELECT TOUR_NO, AVG(RATING) AS RATING 
+		    FROM REVIEWS
+		    GROUP BY TOUR_NO
+		) TEMP ON T.TOUR_NO = TEMP.TOUR_NO
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		ORDER BY NVL(RATING, 0) DESC
+	</select>
+	
+	
+</mapper>
+
+
+
+

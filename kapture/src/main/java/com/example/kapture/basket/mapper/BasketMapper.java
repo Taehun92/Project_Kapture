@@ -24,10 +24,10 @@ public interface BasketMapper {
 
 	Date selectMaxTourDate(HashMap<String, Object> map);
 
-	void deleteBasketItem(int userNo, int tourNo);
-
 	List<Basket> selectBasketList(HashMap<String, Object> map);
 
 	Basket selectBasketByNo(Integer basketNo);
+
+	void updateBasket(HashMap<String, Object> map);
 
 }

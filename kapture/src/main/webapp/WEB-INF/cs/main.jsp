@@ -178,8 +178,8 @@
                 methods: {
                     search() {
                         if (this.searchKeyword.trim() !== "") {
-                            const query = encodeURIComponent(this.searchKeyword);
-                            window.location.href = `/cs/faq.do?keyword=${query}`;
+                            // const query = encodeURIComponent(this.searchKeyword);
+                            window.location.href = "/cs/search.do?searchKeyword="+this.searchKeyword;
                         }
                     },
                     goTo(menu) {
@@ -206,7 +206,7 @@
                    
                     goToFaqDetail(item) {
                         const query = encodeURIComponent(item.question);
-                        window.location.href = `/cs/faq.do?keyword=${query}`;
+                        window.location.href = `/cs/search.do?keyword=${query}`;
                     }
                 },
                 mounted() {

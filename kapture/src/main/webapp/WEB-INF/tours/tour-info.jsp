@@ -279,6 +279,7 @@
 			background-color: #fff;
 			/* 셀 배경색 */
 		}
+
 	</style>
 
 	<body>
@@ -296,7 +297,20 @@
 						<span>인원수 {{ count }}명</span>
 						<button @click="increase">+</button>
 						<button @click="toggleWishlist">{{ isWishlisted ? "❤️ 찜 취소" : "🤍 찜" }}</button>
-						<button @click="fnAddedToCart">🛒 장바구니 담기</button>
+						<button @click="fnAddedToCart">🛒 장바구니 담기</button>		
+				<div class="contents" v-html="tourInfo.description"></div>
+				<div v-if="sessionId == tourInfo.userNo">
+					<button @click="fnEdit">
+						수정
+					</button>
+				</div>
+
+				<div class="reviews">
+					<div class="review-score">
+						이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01" :border-width="5"
+							:show-rating="false" :rounded-corners="true"></star-rating>
+						<span> {{getReviewAvg()}} / 5</span>
+
 					</div>
 				</div>
 			</div>
@@ -561,6 +575,164 @@
 
 							} else {
 
+						let existingItem = self.cartList.find(item =>
+							item.tourNo == self.tourNo &&
+							self.formatDate(new Date(item.tourDate)) === self.formatDate(new Date(self.tourInfo.tourDate)) &&
+							item.duration === self.tourInfo.duration
+					  	);
+
+					  	console.log('existingItem : ', existingItem);
+					
+
+					  	if(existingItem) {
+							if(existingItem.numPeople != self.count) {
+								$.ajax({
+									url: "/basket/update.dox",
+									dataType: "json",
+									type: "POST",
+									data: {
+										basketNo: existingItem.basketNo,  // 기존 항목의 고유 ID
+										count: self.count 
+									},
+									success: function (data) {
+										alert('인원수가 변경되었습니다.');
+										self.fnGetCart();
+										self.fnGetMinTourDate();
+										self.fnGetMaxTourDate();
+										self.fnGetTourDateList();
+										self.fnGetBasketList();
+										self.fnGetBasket();
+									}
+								});
+								return;
+							} else {
+								alert("이미 담은 상품입니다!");
+								return;
+							}
+						}
+
+						$.ajax({
+							url: "/basket/add.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								console.log(data);
+								if (data.result == "success") {
+									alert("장바구니에 담겼습니다.");
+									self.fnGetCart();
+									self.fnGetMinTourDate();
+									self.fnGetMaxTourDate();
+									self.fnGetTourDateList();
+									self.fnGetBasketList();
+									self.fnGetBasket();
+								} else {
+									alert("이미 담은 상품입니다!");
+								}
+							}
+						});
+					},
+					fnGetCart() {
+						let self = this;
+						let nparmap = {
+							tourNo: self.tourNo,
+							sessionId: self.sessionId,
+							
+						};
+
+						$.ajax({
+							url: "/basket/get.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								if(data.count > 0) {
+									
+								} else {
+									
+								}
+							}
+						});
+					},
+					fnGetMinTourDate() {
+						let self = this;
+						let nparmap = {
+							tourNo: self.tourNo,
+							sessionId: self.sessionId,
+							
+						};
+
+						$.ajax({
+							url: "/basket/getMinTourDate.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								console.log('fnGetMinTourDate 호출' , data);
+								if (data.minDate) {
+									// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+									const parts = data.minDate.split(' ');
+									const month = parts[0].replace('월', '');
+									const day = parseInt(parts[1].replace(',', ''), 10);
+									const year = parseInt(parts[2], 10);
+		
+									// 월은 0부터 시작하므로 1을 빼줍니다.
+									const monthIndex = parseInt(month, 10) - 1;
+									const dateObj = new Date(year, monthIndex, day);
+									self.minDate = dateObj;
+								}
+							}
+						});
+					},
+
+					fnGetMaxTourDate() {
+						let self = this;
+						let nparmap = {
+							tourNo: self.tourNo,
+							sessionId: self.sessionId,
+							
+						};
+
+						$.ajax({
+							url: "/basket/getMaxTourDate.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								console.log('fnGetMaxTourDate 호출' , data);
+								if (data.maxDate) {
+									// "4월 15, 2025" 형식의 날짜를 Date 객체로 변환
+									const parts = data.maxDate.split(' ');
+									const month = parts[0].replace('월', '');
+									const day = parseInt(parts[1].replace(',', ''), 10);
+									const year = parseInt(parts[2], 10);
+		
+									// 월은 0부터 시작하므로 1을 빼줍니다.
+									const monthIndex = parseInt(month, 10) - 1;
+									const dateObj = new Date(year, monthIndex, day);
+									self.maxDate = dateObj;
+								}
+							}
+						});
+					},
+
+					fnGetTourDateList() {
+						let self = this;
+						let nparmap = {
+							tourNo: self.tourNo,
+							sessionId: self.sessionId,
+							
+						};
+
+						$.ajax({
+							url: "/basket/getTourDateList.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								console.log(data);
+								self.dateList = data.dateList;
+								console.log(self.dateList);
 							}
 						}
 					});
