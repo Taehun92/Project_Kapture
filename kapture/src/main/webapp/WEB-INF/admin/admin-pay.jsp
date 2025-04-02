@@ -47,6 +47,10 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
+        .card-icon {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
         .card h3 {
             font-size: 18px;
             margin-bottom: 10px;
@@ -83,19 +87,22 @@
 <body>
 <jsp:include page="menu.jsp"></jsp:include>
 <div id="app">
-    <div class="date-header">{{ today }}</div>
+    <div class="date-header" v-text="today"></div>
     <div class="card-container">
         <div class="card">
+            <div class="card-icon">💳</div>
             <h3>총 거래 금액</h3>
             <div class="value">{{ formatCurrency(summary.totalAmount) }}</div>
             <div class="subtext">어제 거래 금액: {{ formatCurrency(summary.yesterdayAmount) }}</div>
         </div>
         <div class="card">
+            <div class="card-icon">👥</div>
             <h3>총 이용 인원</h3>
             <div class="value">{{ summary.totalUsers }}명</div>
             <div class="subtext">총 이용 및 인원 수</div>
         </div>
         <div class="card">
+            <div class="card-icon">📋</div>
             <h3>거래 내역</h3>
             <div class="value">{{ summary.approved + summary.rejected }}건</div>
             <div class="subtext">승인: {{ summary.approved }}건 / 취소: {{ summary.rejected }}건</div>
@@ -109,9 +116,9 @@
         <option v-for="m in months" :value="m">{{ m }}월</option>
     </select>
     <div>
-        <button class="tab-btn" :class="{ active: tab === 'month' }" @click="switchTab('month')">월별 매출</button>
-        <button class="tab-btn" :class="{ active: tab === 'combo' }" @click="switchTab('combo')">카테고리+시간대 매출</button>
-        <button class="tab-btn" :class="{ active: tab === 'day' }" @click="switchTab('day')">일별 매출</button>
+        <button class="tab-btn" :class="{ active: tab === 'month' }" @click="switchTab('month')">월별 매주</button>
+        <button class="tab-btn" :class="{ active: tab === 'combo' }" @click="switchTab('combo')">카테고리+시간대 매주</button>
+        <button class="tab-btn" :class="{ active: tab === 'day' }" @click="switchTab('day')">일별 매주</button>
     </div>
     <div id="chart" style="width: 100%; max-width: 1200px; height: 800px; margin-top: 30px;"></div>
 </div>
@@ -119,7 +126,7 @@
 const app = Vue.createApp({
     data() {
         return {
-            today: '',
+            today: '날짜 로딩 중...',
             tab: 'month',
             years: ['2023', '2024', '2025'],
             selectedYear: '2025',
@@ -160,21 +167,24 @@ const app = Vue.createApp({
         setToday() {
             const now = new Date();
             const days = ['일', '월', '화', '수', '목', '금', '토'];
+
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const date = String(now.getDate()).padStart(2, '0');
-            const day = days[now.getDay()];
-            this.today = `${year}/${month}/${date} (${day})`;
+            const dayIndex = now.getDay();
+            const day = days[dayIndex];
+
+            const todayText = `${year}/${month}/${date} (${day})`;
+            this.today = todayText;
         },
         loadSummary() {
             $.ajax({
                 url: '/admin/getSummary.dox',
                 method: 'POST',
                 dataType: 'json',
-                success: res => { 
-                    console.log("summary 응답 확인", res);
+                success: res => {
                     this.summary = res.summary;
-                 },
+                },
                 error: err => console.error("요약 정보 로딩 실패", err)
             });
         },
@@ -206,7 +216,7 @@ const app = Vue.createApp({
                         const list = res.list || [];
                         const labels = list.map(item => item.LABEL);
                         const values = list.map(item => Number(item.TOTAL) || 0);
-                        self.chartOptions.series = [{ name: '매출', data: values }];
+                        self.chartOptions.series = [{ name: '매주', data: values }];
                         self.chartOptions.xaxis.categories = labels;
                         self.chartOptions.colors = ['#3B82F6'];
                     }
@@ -217,8 +227,10 @@ const app = Vue.createApp({
             });
         }
     },
-    mounted() {
+    created() {
         this.setToday();
+    },
+    mounted() {
         this.loadSummary();
         this.loadChart();
     }
