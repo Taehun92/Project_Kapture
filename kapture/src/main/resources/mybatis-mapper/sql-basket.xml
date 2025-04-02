@@ -49,8 +49,8 @@
 	</select>
 	
 	<update id="updateBasket" parameterType="hashmap">
-		UPDATE BASKET SET NUM_PEOPLE = #{count}
-		WHERE BASKET_NO = #{basketNo}
+		UPDATE BASKET SET NUM_PEOPLE = #{count, jdbcType=NUMERIC}
+		WHERE BASKET_NO = #{basketNo, jdbcType=NUMERIC}
 		
 	</update>
 </mapper>

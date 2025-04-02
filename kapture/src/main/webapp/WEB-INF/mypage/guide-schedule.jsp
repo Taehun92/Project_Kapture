@@ -15,8 +15,6 @@
         <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
-        <!-- 페이지 체인지 -->
-        <script src="/js/page-Change.js"></script>
     </head>
     <style>
         /* 전체 레이아웃 설정 */
@@ -361,7 +359,8 @@
                                 // 클릭된 이벤트의 기본 동작을 막습니다.
                                 info.jsEvent.preventDefault();
                                 // 투어 상세페이지로 이동 (URL은 프로젝트에 맞게 수정하세요)
-                                location.href="/tours/tour-info.do?tourNo=" + info.event.id;
+                                location.href="/tours/test-info.do?tourNo=" + info.event.id;
+
                             }
                         });
                         calendar.render();
