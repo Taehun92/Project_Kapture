@@ -83,9 +83,12 @@
 		WHERE USER_NO = #{sessionId}
 	</update>
 	
-	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo">
+	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo" keyColumn="TOUR_NO">
+		<selectKey keyProperty="tourNo" resultType="int" order="BEFORE">
+        	SELECT TOUR_SEQ.NEXTVAL FROM DUAL
+    	</selectKey>
     	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
-    	SELECT TOUR_SEQ.NEXTVAL, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, 4, #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
     	FROM GUIDES G
     	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
     	JOIN THEME T ON T.THEME_NAME = #{themeName}
@@ -97,6 +100,7 @@
     	INSERT INTO IMG (FILE_NO, FILE_PATH, FILE_NAME, FILE_ORG_NAME)
     	VALUES (FILE_SEQ.NEXTVAL,  #{path}, #{filename}, #{originFilename})
 	</insert>
+	
 	
 	
 	
