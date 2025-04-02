@@ -38,7 +38,7 @@
 
 .card-image {
     width: 100%;
-    height: 280px; /* ✅ 이미지 높이 증가 (원래 200px) */
+    height: 240px; /* ✅ 이미지 높이 증가 (원래 200px) */
 	aspect-ratio: 16 / 10;
 	overflow: hidden;
 }
@@ -134,7 +134,7 @@
     border: none;
     padding: 0.8vw;
     font-size: 1.3rem;
-    border-radius: 1vw;
+    border-radius: 0.4vw;
     cursor: pointer;
 }
 

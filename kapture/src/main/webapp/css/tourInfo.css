@@ -1,253 +1,253 @@
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-			font-family: Arial, sans-serif;
-		}
 
-		.container {
-			width: 80%;
-			margin: 20px auto;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'MangoDdobak', sans-serif;
+}
 
-		.top-section {
-			display: flex;
-			gap: 10px;
-		}
+#app {
+  max-width: 70%;
+  margin: 40px auto;
+}
 
-		.thumbnail {
-					width: 37%;
-					height: 300px;
-					display: flex;
-					justify-content: center;
-					font-size: 16px;
-				}
+.container {
+  width: 80%;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-		.info {
-			width: 60%;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+.top-section {
+  display: flex;
+  gap: 10px;
+}
 
-		.title {
-			font-size: 20px;
-			font-weight: bold;
-			text-align: center;
-			padding: 10px;
-			background: #eee;
-		}
+.thumbnail {
+  width: 37%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+}
 
-		.guide-info {
-			text-align: center;
-			padding: 10px;
-			background: #ddd;
-		}
+.thumbnail img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 1rem;
+  object-fit: cover;
+}
 
-		.actions {
-			display: flex;
-			justify-content: space-between;
-			padding: 10px;
-			background: #f1f1f1;
-		}
+.info {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-		.contents {
-					width: 100%;
-					background: #ddd;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					font-size: 18px;
-				}
-				
-				.tags {
-							margin-top: 5px;
-							display: flex;
-							gap: 5px;
-						}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  background: #f8f8f8;
+  border-radius: 10px;
+}
 
-						.tag {
-							font-size: 12px;
-							padding: 3px 6px;
-							background: #ddd;
-							border-radius: 5px;
-						}
-						
-		.reviews {
-									padding: 15px;
-									background: #fff;
-									border-top: 2px solid #f00;
-		}
+.guide-info {
+  text-align: center;
+  padding: 10px;
+  min-height: 180px;
+  background: #eee;
+  border-radius: 10px;
+}
 
-		.review-score {
-					font-size: 18px;
-					font-weight: bold;
-					margin-bottom: 10px;
-		}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
 
-		.user-review {
-			margin-top: 10px;
-			font-size: 14px;
-		}
-		
-		.stars {
-					color: gold;
-		}
-		
-		.profile-img {
-			width: 40px;
-			/* 가로 크기 */
-			height: 40px;
-			/* 세로 크기 */
-			border-radius: 50%;
-			/* 동그랗게 */
-			object-fit: cover;
-			/* 이미지가 잘리지 않도록 */
-		}
-		
-		.rating-bars {
-					margin: 10px 0;
-				}
+.actions button {
+  padding: 10px;
+  background-color: #171d41;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-				.rating-bar {
-					display: flex;
-					align-items: center;
-					gap: 10px;
-					font-size: 14px;
-					margin-bottom: 5px;
-				}
+.actions button:hover {
+  opacity: 0.9;
+}
 
-				.progress-bar {
-					flex: 1;
-					height: 8px;
-					background: #ddd;
-					border-radius: 5px;
-					overflow: hidden;
-				}
+.contents {
+  background: #f4f4f4;
+  max-width: 98%;
+  margin : 5px auto;
+  padding: 10px;
+  font-size: 1rem;
+  line-height: 1.6;
+  border-radius: 10px;
+}
 
-				.fill {
-					height: 100%;
-					background: #ffa500;
-				}
+.reviews {
+  margin-top: 10px;
+  background: #fff;
+  padding: 20px;
+  border-top: 2px solid #171d41;
+  border-radius: 10px;
+}
 
-				.clickable-area {
-					width: 50px;
-					height: 150px;
-					margin-left: auto;
-					margin-right: 0;
-					margin-top: 20px;
-					background-color: #f0f0f0;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: center;
-					cursor: pointer;
-					position: fixed;
-					top: 50%;
-					right: 0;
-					transform: translateY(-50%);
-					overflow: hidden;
-					z-index: 1001;
-				  }
-				  
-				  .modal {
-					background-color: lightblue;
-					padding: 20px;
-					overflow: hidden;
-					position: fixed;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-					width: 1200px;
-					height: 900px;
-					max-height: 900px;
-					z-index: 1000;
-					display: flex;
-					flex-direction: column;
-					border: 1px solid #ccc;
-					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-					align-items: center;
-					justify-content: flex-start;
-				  }
-				  
-				  .modal-enter-from {
-					opacity: 0;
-					transform: translateX(100%);
-				  }
-				  
-				  .modal-enter-active {
-					transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-				  }
-				  
-				  .modal-enter-to {
-					opacity: 1;
-					transform: translateX(0%);
-				  }
-				  
-				  .modal-leave-from {
-					opacity: 1;
-					transform: translateX(0%);
-				  }
-				  
-				  .modal-leave-active {
-					transition: opacity 0.2s ease-in, transform 0.2s ease-in;
-				  }
-				  
-				  .modal-leave-to {
-					opacity: 0;
-					transform: translateX(100%);
-				  }
-				  
-				  .close-button {
-					position: absolute;
-					top: 10px;
-					right: 10px;
-					cursor: pointer;
-					padding: 5px;
-					background-color: #ddd;
-					border-radius: 5px;
-				  }
+.review-score {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 
-				  .black-box {
-					background-color: black;
-					color: white;
-					padding: 10px;
-					text-align: center;
-					border: 1px solid #000;
-					border-radius: 5px;
-				}
-				
-				.white-box {
-					background-color: white;
-					color: black;
-					padding: 10px;
-					text-align: center;
-					border: 1px solid #ccc;
-					border-radius: 5px;
-				}
+.rating-bars {
+  margin: 15px 0;
+}
 
-				table {
-					width: 100%; /* 테이블 너비를 100%로 설정 */
-					max-width: 1200px; /* 최대 너비를 1200px로 제한 */
-					margin: 20px auto; /* 테이블을 가운데 정렬 */
-					border-collapse: collapse; /* 테이블 경계선 병합 */
-					font-size: 16px; /* 글자 크기 조정 */
-				}
-				
-				th, td {
-					padding: 15px; /* 셀 안쪽 여백 */
-					text-align: center; /* 텍스트 가운데 정렬 */
-					border: 1px solid #ccc; /* 셀 경계선 */
-				}
-				
-				th {
-					background-color: #f4f4f4; /* 헤더 배경색 */
-					font-weight: bold; /* 헤더 글자 굵게 */
-				}
-				
-				td {
-					background-color: #fff; /* 셀 배경색 */
-				}
+.rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: #ffa500;
+}
+
+.user-review {
+  margin-top: 15px;
+  font-size: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* 🛒 하단 슬라이딩 모달 스타일 */
+.bottom-cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  background-color: #171d41;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.bottom-cart-modal {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: 70%;
+  max-height: 90vh;
+  background-color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  z-index: 999;
+  overflow-y: auto;
+  transition: transform 0.4s ease;
+}
+
+.bottom-cart-modal.show {
+  transform: translate(-50%, 0);
+}
+
+.bottom-cart-modal .close-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 18px;
+  background: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.modal-table td {
+  padding: 9px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.black-box, .white-box {
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.black-box {
+  background-color: #171d41;
+  color: white;
+}
+
+.white-box {
+  background-color: #f4f4f4;
+  color: black;
+  border: 1px solid #ccc;
+}
+
+.total-price {
+  text-align: right;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.confirm-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 25px;
+  font-size: 16px;
+  background-color: #171d41;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* 버튼과 숫자 사이 간격 */
+}
+
+.item-controls button {
+    padding: 2px 8px;
+    font-size: 14px;
+}
