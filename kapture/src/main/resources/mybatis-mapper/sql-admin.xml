@@ -96,5 +96,6 @@
 	</update>
 	<update id="updateUserInfo" parameterType="hashmap">
 	</update>
-	
+
+		
 </mapper>

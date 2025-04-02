@@ -16,20 +16,29 @@ public class RequestService {
 	@Autowired
 	RequestMapper requestMapper;
 
+	// 요청 글 조회 
 	public HashMap<String, Object> getRequestList(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		try {
-			List<Request> requestList = requestMapper.selectRequestList(map);
-			resultMap.put("result", "success");
-			resultMap.put("requestList", requestList);
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
-		}
-		return resultMap;
-	}
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 파라미터에서 pageSize, offset, page를 그대로 사용
+        	List<Request> requestList = requestMapper.selectRequestList(map);
+            int totalCount = requestMapper.countRequestList(map);
+
+            int pageSize = Integer.parseInt(map.getOrDefault("pageSize", "10").toString());
+            int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+
+            resultMap.put("result", "success");
+            resultMap.put("requestList", requestList);
+            resultMap.put("totalPages", totalPages);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", "fail");
+        }
+
+        return resultMap;
+    }
 
 	public HashMap<String, Object> addRequest(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();

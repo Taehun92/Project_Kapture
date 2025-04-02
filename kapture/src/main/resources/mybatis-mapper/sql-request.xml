@@ -5,10 +5,24 @@
 <mapper namespace="com.example.kapture.board.mapper.RequestMapper">
 	<select id="selectRequestList" parameterType="hashmap" resultType="com.example.kapture.board.model.Request">
 		SELECT *
-		FROM REQUESTS R
-		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
-		ORDER BY REQUEST_NO DESC
+        FROM REQUESTS R
+        INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (TITLE LIKE '%' || #{keyword} || '%' OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR USER_LASTNAME LIKE '%' || #{keyword} || '%')
+        </if>
+        ORDER BY REQUEST_NO DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
+	<select id="countRequestList" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*)
+        FROM REQUESTS R
+        INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (TITLE LIKE '%' || #{keyword} || '%' OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR USER_LASTNAME LIKE '%' || #{keyword} || '%')
+        </if>
+    </select>
 	<select id="selectRequest" parameterType="hashmap" resultType="com.example.kapture.board.model.Request">
 		SELECT *
 		FROM REQUESTS R
