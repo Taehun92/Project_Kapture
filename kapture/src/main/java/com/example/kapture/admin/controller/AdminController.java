@@ -1,6 +1,9 @@
 package com.example.kapture.admin.controller;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,12 +70,22 @@ public class AdminController {
 		return "/admin/admin-setting";
 	}
 	
-//	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//	@ResponseBody
-//	public String getChart(@RequestParam HashMap<String, Object> map) throws Exception {
-//	    HashMap<String, Object> resultMap = adminService.getChartData(map); // 👉 서비스에 로직 넘김
-//	    return new Gson().toJson(resultMap);
-//	}
-	
-	
+	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getChart(@RequestParam HashMap<String, Object> map) {
+		System.out.println("받은 파라미터: " + map);
+	    HashMap<String, Object> resultMap = adminService.getChartByTypeAndYear(map);
+	    return new Gson().toJson(resultMap);
+	}
+
+	@RequestMapping(value = "/admin/getSummary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getSummary(@RequestParam HashMap<String, Object> map) {
+	    System.out.println("📦 getSummary 요청 파라미터: " + map);
+	    
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap.put("summary", adminService.getSummary(map));
+	    
+	    return new Gson().toJson(resultMap);
+	}
 }
