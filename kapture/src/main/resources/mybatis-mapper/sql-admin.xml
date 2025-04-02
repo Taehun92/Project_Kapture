@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.admin.mapper.AdminMapper">
+	
+ <!-- 📅 월별 매출 -->
+    <select id="getMonthChartByYear" parameterType="hashmap" resultType="map">
+        SELECT 
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '01', AMOUNT)), 0) AS "01월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '02', AMOUNT)), 0) AS "02월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '03', AMOUNT)), 0) AS "03월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '04', AMOUNT)), 0) AS "04월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '05', AMOUNT)), 0) AS "05월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '06', AMOUNT)), 0) AS "06월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '07', AMOUNT)), 0) AS "07월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '08', AMOUNT)), 0) AS "08월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '09', AMOUNT)), 0) AS "09월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '10', AMOUNT)), 0) AS "10월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '11', AMOUNT)), 0) AS "11월",
+            NVL(SUM(DECODE(TO_CHAR(PAYMENT_DATE, 'MM'), '12', AMOUNT)), 0) AS "12월"
+        FROM PAYMENTS
+        WHERE TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
+    </select>
+
+    <!-- 📊 카테고리 + 시간대별 매출 -->
+    <select id="getCategoryByDurationChart" parameterType="string" resultType="hashmap">
+        SELECT 
+            TITLE AS CATEGORY,
+            DURATION AS DURATION,
+            SUM(P.AMOUNT) AS TOTAL
+        FROM TOURS T
+        INNER JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
+        WHERE TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
+        GROUP BY TITLE, DURATION
+        ORDER BY TITLE, DURATION
+    </select>
+    
+    <select id="getDayChartByYearMonth" parameterType="map" resultType="map">
+    SELECT TO_CHAR(PAYMENT_DATE, 'DD') || '일' AS DAY,
+           SUM(AMOUNT) AS TOTAL
+    FROM PAYMENTS
+    WHERE TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
+      AND TO_CHAR(PAYMENT_DATE, 'MM') = #{month}
+    GROUP BY TO_CHAR(PAYMENT_DATE, 'DD')
+    ORDER BY DAY
+	</select>
+	
+	<!-- 총 거래 금액 -->
+    <select id="selectTotalAmount" resultType="int">
+        SELECT NVL(SUM(p.AMOUNT), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 어제 거래 금액 -->
+    <select id="selectYesterdayAmount" resultType="int">
+        SELECT NVL(SUM(p.AMOUNT), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+        AND TO_CHAR(p.PAYMENT_DATE, 'YYYYMMDD') = TO_CHAR(SYSDATE - 1, 'YYYYMMDD')
+    </select>
+
+    <!-- 총 이용 인원 -->
+    <select id="selectTotalUsers" resultType="int">
+        SELECT NVL(SUM(p.NUM_PEOPLE), 0)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 승인된 건수 -->
+    <select id="selectApprovedCount" resultType="int">
+        SELECT COUNT(*)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '승인'
+    </select>
+
+    <!-- 취소된 건수 -->
+    <select id="selectRejectedCount" resultType="int">
+        SELECT COUNT(*)
+        FROM PAYMENTS p
+        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+        WHERE p.PAYMENT_STATUS = '취소'
+    </select>
+
+	
+</mapper>
