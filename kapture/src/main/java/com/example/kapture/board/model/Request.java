@@ -19,4 +19,5 @@ public class Request {
 	private String commentNo;
 	private String message;
 	private String parentCommentNo;
+	private String currency;
 }
