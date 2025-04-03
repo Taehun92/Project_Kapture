@@ -8,65 +8,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+	<link rel="stylesheet" href="../../css/guideAdd.css">
 	<title>첫번째 페이지</title>
 </head>
 <style>
-	/* 사이드 메뉴 */
-	.side-menu {
-		width: 200px;
-		height: 100%;
-		border: 1px solid #ddd;
-		position: sticky;
-		top: 0;
-		background: white;
-		transition: top 0.3s;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-	}
-
-	.side-menu ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-
-	}
-
-	.side-menu li {
-		margin-bottom: 10px;
-
-	}
-
-	.side-menu li a.active {
-		display: block;
-		background-color: #3e4a97;
-		color: white;
-		padding: 10px;
-		text-decoration: none;
-	}
-
-	.side-menu a {
-		text-decoration: none;
-		color: #333;
-		font-weight: 500;
-	}
-
-	.side-menu a:hover {
-		color: #ff5555;
-	}
-
-	.content-area {
-		flex: 1;
-	}
-
-	.container {
-		/* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
-		display: flex;
-		max-width: 1200px;
-		min-height: calc(100vh - 300px);
-		;
-		margin: 0 auto;
-		padding: 20px;
-		box-sizing: border-box;
-	}
 
 </style>
 <body>
@@ -89,20 +34,8 @@
 					</a>
 				</li>
 				<li>
-					<a :class="{ active: currentPage === 'user-reviews.do' }"
-						href="http://localhost:8080/mypage/user-reviews.do">
-						이용후기 관리
-					</a>
-				</li>
-				<li>
 					<a href="http://localhost:8080/cs/qna.do">
 						문의하기
-					</a>
-				</li>
-				<li>
-					<a :class="{ active: currentPage === 'user-unregister.do' }"
-						href="http://localhost:8080/mypage/user-unregister.do">
-						회원 탈퇴
 					</a>
 				</li>
 				<li>
@@ -205,7 +138,8 @@
 				themeName : "",
 				themeParent : "",
 				themeNameList : [],
-				currentPage: ""
+				currentPage: "",
+				imgList: [],
 
             };
         },
@@ -285,11 +219,6 @@
 					return;
 				}
 				
-				
-
-
-
-
 				$.ajax({
 					url:"/mypage/guide-add.dox",
 					dataType:"json",
@@ -297,11 +226,12 @@
 					data : nparmap,
 					success : function(data) {
 						if(data.result == 'success'){
-						console.log(data);
-						console.log(self.sessionId);
-						console.log(self.siName);
-						console.log(self.guName);
-						alert("등록되었습니다.");
+							console.log('data : ', data);
+							console.log(self.sessionId);
+							console.log(self.siName);
+							console.log(self.guName);
+							alert("등록되었습니다.");
+							self.fnUpdateImgList(data.tourNo);
 						}
 					}
 				});
@@ -378,6 +308,31 @@
 				});
 			},
 
+			fnUpdateImgList(tourNo) {
+				let self = this;
+				let imageUrls = self.imgList.map(img => img.url);
+				let nparmap = {
+					tourNo: tourNo,
+					imgList: JSON.stringify(imageUrls), // URL만 전송
+        			thumbnailList: JSON.stringify(self.imgList) // 전체 데이터도 전송 (썸네일 구분용)
+
+
+				};
+				console.log('imgList : ', self.imgList);
+				$.ajax({
+					url: "/mypage/updateImg.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						if (data.result == 'success') {
+							console.log('data : ', data);
+							alert("이미지 등록되었습니다.");
+						}
+					}
+				})
+			},
+
 		
 
         },
@@ -431,11 +386,21 @@
 											if (result.success) {
 												let range = quill.getSelection();
 												quill.insertEmbed(range.index, 'image', result.imageUrl);
+												
+												let thumbnailFlag = self.imgList.length === 0 ? "Y" : "N";
+
+												self.imgList.push({
+													url: result.imageUrl,
+													thumbnail: thumbnailFlag
+												});
+
+
 											} else {
 												alert("이미지 업로드 실패");
 											}
 										} catch (error) {
 											console.error("이미지 업로드 중 오류 발생:", error);
+											alert("이미지 크기가 너무 큽니다.");
 										}
 									};
 								}
@@ -448,13 +413,9 @@
 					self.description = quill.root.innerHTML;
 				});
 			
-
 			self.fnSelectSi();
 			self.fnGetThemeParentList();
 			this.currentPage = window.location.pathname.split('/').pop();
-
-
-
         }
     });
     app.mount('#app');

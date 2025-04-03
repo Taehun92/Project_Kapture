@@ -40,7 +40,10 @@ public class ToursController {
 	// 상품 상세페이지 dept(3) 주소
 	@RequestMapping("/tours/tour-info.do")
     public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
-		return "/tours/tour-info";
+
+		request.setAttribute("map", map);
+      
+		return "/tours/test-info";
     }
 	// 데이트피커 테스트 주소(추후 삭제예정)
 	@RequestMapping("/tours/date-picker-test.do")
