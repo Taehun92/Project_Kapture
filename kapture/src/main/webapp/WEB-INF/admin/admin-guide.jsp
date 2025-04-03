@@ -6,12 +6,12 @@
 		<meta charset="UTF-8">
 		<!-- FullCalendar 및 Bootstrap CSS/JS 추가 -->
 		<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
-        <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
-		
-		
-        
+		<link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
+		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
+
+
+
 		<title>관리자 페이지</title>
 		<style>
 			/* 테이블 스타일 */
@@ -187,7 +187,16 @@
 				text-overflow: ellipsis;
 				display: -webkit-box;
 				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2; /* 최대 2줄로 표시 */
+				-webkit-line-clamp: 2;
+				/* 최대 2줄로 표시 */
+				line-clamp: 2;
+			}
+
+			.profile-upload-container {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				/* 요소 사이 간격 */
 			}
 		</style>
 	</head>
@@ -238,8 +247,8 @@
 							<td>{{ guide.phone }}</td>
 							<!-- 사진: 있으면 <img>, 없으면 "No Image" 표시 -->
 							<td>
-								<div v-if="guide.photo && guide.photo !== ''">
-									<img :src="guide.photo" alt="가이드사진" class="guide-img" />
+								<div v-if="guide.pFilePath && guide.pFilePath !== ''">
+									<img :src="guide.pFilePath" alt="가이드사진" class="guide-img" />
 								</div>
 								<div v-else class="no-image">NO Image</div>
 							</td>
@@ -270,11 +279,14 @@
 				<div class="modal-content">
 					<h2>가이드 정보 수정</h2>
 					<div class="modal-form">
-						<!-- 이름 -->
-						<div class="form-group">
-							<img >나중에이미지랑파일업로드
-							<input type="text" v-model="editGuide.profileImage" />
-						</div>
+						<!-- 프로필이미지 -->
+						<span class="form-group profile-upload-container">
+							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
+								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							</span>
+							<span v-else class="no-image">NO Image</span>
+							<input type="file" @change="handleProfileUpload" />
+						</span>
 						<!-- 이름 -->
 						<div class="form-group">
 							<label>이름</label>
@@ -375,10 +387,14 @@
 								<span class="dot" style="color: green;">●</span>
 								<span class="label">오후</span>
 							</li>
+							<li class="custom-button">
+								<span class="dot" style="color: gold;">●</span>
+								<span class="label">판매대기</span>
+							</li>
 						</ol>
 						<div ref="calendar"></div>
 					</div>
-					<button class="btn-manage" @click="fnCloseScheduleModal" >닫기</button>
+					<button class="btn-manage" @click="fnCloseScheduleModal">닫기</button>
 				</div>
 			</div>
 		</div>
@@ -393,7 +409,9 @@
 					selectedGuides: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
 					showScheduleModal: false,  // 일정 모달 표시 여부
-					editGuide: {},          // 수정할 가이드 정보
+					editGuide: {
+						pFilePath: "",
+					},          // 수정할 가이드 정보
 					schedule: [],
 					password: "",
 					confirmPassword: "",
@@ -524,8 +542,8 @@
 						dataType: "json",
 						type: "POST",
 						data: { userNo: userNo },
-						success: function (res) {
-							if (res.result === "success") {
+						success: function (data) {
+							if (data.result === "success") {
 								alert("삭제되었습니다.");
 								// 목록 새로고침
 								location.reload();
@@ -574,16 +592,15 @@
 									const colorMapping = {
 										"오전": "red",
 										"오후": "green",
-										"종일": "#3788d8",
-										"판매대기": "gold"
+										"종일": "#3788d8"
 									};
 									eventsArray.push({
 										id: item.tourNo,
 										title: item.title || '투어',
 										start: item.tourDate,
 										allDay: true,
-										backgroundColor: colorMapping[item.duration] || "gray",
-										borderColor: colorMapping[item.duration] || "gray"
+										backgroundColor: item.deleteYN === 'N' ? "gold" : colorMapping[item.duration],
+										borderColor: item.deleteYN === 'N' ? "gold" : colorMapping[item.duration]
 									});
 								}
 								const calendarEl = self.$refs.calendar;
@@ -591,7 +608,7 @@
 								calendarEl.innerHTML = "";
 								const calendar = new FullCalendar.Calendar(calendarEl, {
 									height: 'auto',            // 캘린더 전체 높이를 600px로 설정
-  									contentHeight: 'auto',  // 콘텐츠 영역 높이를 자동으로 조절
+									contentHeight: 'auto',  // 콘텐츠 영역 높이를 자동으로 조절
 									themeSystem: 'bootstrap5',
 									initialView: 'dayGridMonth',
 									validRange: function (now) {
@@ -613,6 +630,36 @@
 				},
 				fnCloseScheduleModal() {
 					this.showScheduleModal = false;
+				},
+				handleProfileUpload(event) {
+					let self = this;
+					const profile = event.target.files[0];
+					if (!profile) return;
+					const formData = new FormData();
+					formData.append('profile', profile);
+					// 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
+					formData.append('guideNo', self.editGuide.guideNo);
+
+					$.ajax({
+						url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
+						type: 'POST',
+						data: formData,
+						processData: false,   // 파일 업로드 시 필수: 데이터를 문자열로 처리하지 않음
+						contentType: false,   // 필수: multipart/form-data로 전송
+						dataType: 'json',
+						success: function (data) {
+							if (data.result === 'success') {
+								// 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
+								self.editGuide.pFilePath = data.newFilePath;
+							} else {
+								alert('이미지 업로드에 실패했습니다.');
+							}
+						},
+						error: function (err) {
+							console.error('이미지 업로드 중 오류 발생:', err);
+							alert('이미지 업로드 중 오류가 발생했습니다.');
+						}
+					});
 				},
 			},
 			mounted() {

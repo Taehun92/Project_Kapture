@@ -54,7 +54,7 @@
                         </div>
                     </div>
                     <div class="filter">
-                        <button @click="toggleFilter('language')">가이드 언어 {{ filters.date ? '∧' : '∨' }}</button>
+                        <button @click="toggleFilter('language')">가이드 언어 {{ filters.language ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.language">
                             <template v-for="language in languages">
                                 <label>
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <div class="filter">
-                        <button @click="toggleFilter('region')">지역별 {{ filters.date ? '∧' : '∨' }}</button>
+                        <button @click="toggleFilter('region')">지역별 {{ filters.region ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.region">
                             <template v-for="item in regionList">
                                 <label><input @change="fnToursList" type="checkbox" v-model="selectedRegions"
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <div class="filter">
-                        <button @click="toggleFilter('theme')">테마별 {{ filters.date ? '∧' : '∨' }}</button>
+                        <button @click="toggleFilter('theme')">테마별 {{ filters.theme ? '∧' : '∨' }}</button>
                         <div class="filter-content" v-if="filters.theme">
                             <template v-for="theme in themeList">
                                 <label><input @change="fnToursList" type="checkbox" v-model="selectedThemes"
