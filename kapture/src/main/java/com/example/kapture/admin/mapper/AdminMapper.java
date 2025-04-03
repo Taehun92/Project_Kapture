@@ -17,8 +17,8 @@ public interface AdminMapper {
 	// 📅 월별 매출 (12개월 컬럼으로 한 줄 반환)
 	    Map<String, Object> getMonthChartByYear(HashMap<String, Object> map);
 
-	    // 📊 카테고리 + 시간대별 매출
-	    List<Map<String, Object>> getCategoryByDurationChart(String year);
+	    // 지역 + 테마별 매출 
+	    List<Map<String, Object>> getThemeSalesByRegion(HashMap<String, Object> map);
 	    
 	    // 3. 📆 일별 매출 (선택한 연도와 월 기준)
 	    List<Map<String, Object>> getDayChartByYearMonth(Map<String, Object> map);
@@ -38,4 +38,19 @@ public interface AdminMapper {
 
 
 		int updateUserInfo(HashMap<String, Object> map);
+
+
+		List<HashMap<String, Object>> selectTransactionList(HashMap<String, Object> map);
+
+
+		int selectTransactionTotalCount(HashMap<String, Object> map);
+
+
+		List<String> getRegionList();
+
+
+		
+
+
+		
 }
