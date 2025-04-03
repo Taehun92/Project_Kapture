@@ -120,4 +120,33 @@ public class PaymentController {
         result.put("rate", rate);
         return result;
     }
+	
+	// 환율 계산 ( 일, 미, 중 )
+	@RequestMapping("/exchangeRate/all")
+	@ResponseBody
+	public Map<String, Object> getAllExchangeRates() throws Exception {
+	    String apiKey = env.getProperty("exchange.api.key"); // API 키
+	    RestTemplate restTemplate = new RestTemplate();
+
+	    Map<String, Object> result = new HashMap<>();
+
+	    // 통화 리스트
+	    Map<String, String> currencies = new HashMap<>();
+	    currencies.put("USD", "USD");
+	    currencies.put("JPY", "JPY");
+	    currencies.put("CNY", "CNY");
+
+	    for (Map.Entry<String, String> entry : currencies.entrySet()) {
+	        String code = entry.getKey();
+	        String urlStr = "https://v6.exchangerate-api.com/v6/" + apiKey + "/pair/" + code + "/KRW";
+
+	        ResponseEntity<String> response = restTemplate.getForEntity(urlStr, String.class);
+	        JSONObject json = new JSONObject(response.getBody());
+
+	        double rate = json.getDouble("conversion_rate");
+	        result.put(code, rate);
+	    }
+
+	    return result;
+	}
 }
