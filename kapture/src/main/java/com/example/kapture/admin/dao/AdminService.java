@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
@@ -20,6 +21,9 @@ public class AdminService {
 
     @Autowired
     AdminMapper adminMapper;
+    
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public HashMap<String, Object> getChartByTypeAndYear(HashMap<String, Object> map) {
         String type = (String) map.get("type");
@@ -169,6 +173,8 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
+			String hashPwd = passwordEncoder.encode((String) map.get("password"));
+	        map.put("password", hashPwd);
 			int guideInfo = adminMapper.updateGuideInfo(map);
 			int userInfo = adminMapper.updateUserInfo(map);
 			String result;
@@ -181,8 +187,8 @@ public class AdminService {
 			
 			
 		} catch (Exception e) {
-		System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
 		}
 		return resultMap;
 	}
