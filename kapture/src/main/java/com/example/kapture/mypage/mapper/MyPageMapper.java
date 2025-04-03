@@ -2,6 +2,7 @@ package com.example.kapture.mypage.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -47,5 +48,11 @@ public interface MyPageMapper {
 	void updateToursFile(HashMap<String, Object> map);
 
 	Tours insertTourParameters(HashMap<String, Object> map);
+
+	List<Map<String, Object>> selectTransactionList(Map<String, Object> param);
+
+	int selectTransactionTotalCount(Map<String, Object> param);
+
+
   
 }
