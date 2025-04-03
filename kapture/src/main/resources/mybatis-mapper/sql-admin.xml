@@ -168,6 +168,16 @@
         SELECT *
         FROM USERS U
         INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+        LEFT JOIN(
+    		SELECT GI.*
+    		FROM GUIDE_IMG GI
+    		INNER JOIN (
+        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+        		FROM GUIDE_IMG
+       			GROUP BY P_GUIDE_NO
+    	) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
+            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+		) I ON G.GUIDE_NO = I.P_GUIDE_NO
     </select>
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
@@ -207,5 +217,9 @@
 		WHERE USER_NO = #{userNo}
 	</update>
 
+	<insert id="insertGuideProfile" parameterType="hashmap">
+		INSERT INTO GUIDE_IMG
+		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
+	</insert>
 		
 </mapper>

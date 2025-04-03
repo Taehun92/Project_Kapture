@@ -49,6 +49,9 @@ public interface AdminMapper {
 		List<String> getRegionList();
 
 
+		int insertGuideProfile(HashMap<String, Object> map);
+
+
 		
 
 
