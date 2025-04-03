@@ -190,7 +190,14 @@ public class MyPageService {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		System.out.println(map);
 		myPageMapper.insertTour(map);
-		resultMap.put("result", "success");
+		Object tourNo = map.get("tourNo");
+	    if (tourNo != null) {
+	        resultMap.put("tourNo", tourNo); // 생성된 tourNo를 결과에 추가
+	        resultMap.put("result", "success");
+	    } else {
+	        resultMap.put("result", "error");
+	        resultMap.put("message", "tourNo 생성 실패");
+	    }
 		
 		return resultMap;
 	}
@@ -232,6 +239,12 @@ public class MyPageService {
 	public HashMap<String, Object> addToursImg(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		myPageMapper.insertToursFile(map);
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+	public HashMap<String, Object> updateImg(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.updateToursFile(map);
 		resultMap.put("result", "success");
 		return resultMap;
 	}
