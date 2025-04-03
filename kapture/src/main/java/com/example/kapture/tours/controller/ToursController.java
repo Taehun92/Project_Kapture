@@ -52,7 +52,7 @@ public class ToursController {
 	@RequestMapping("/tours/tour-info.do")
     public String detailTour(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 		request.setAttribute("map", map);
-		return "/tours/tour-info";
+		return "/tours/test-info";
     }
 	//  상품 상세페이지 테스트 주소(추후 삭제 예정)
 	@RequestMapping("/tours/test-info.do")
