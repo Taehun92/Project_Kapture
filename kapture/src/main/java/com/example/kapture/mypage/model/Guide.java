@@ -12,7 +12,7 @@ public class Guide {
 	private int maxPeople;
 	private String tourDate;
 	private int themeNo;
-	private String deleteyn;
+	private String deleteYN;
 	private String userFirstName;
 	private String userLastName;
 	private String password;
@@ -32,9 +32,18 @@ public class Guide {
 	
 	private String language;
 	private String experience;
-	private String profileImage;
 	private String gCreatedAt;
 	private String gUpdatedAt;
+	
+	private int pFileNo;
+	private int pGuideNo;
+	private String pFilePath;
+	private String pFileName;
+	private String pFileOrgName;
+	private String pFileSize;
+	private String pFileType;
+	private String pFileExtension;
+	private String pUploadDate;
 	
 	
 }

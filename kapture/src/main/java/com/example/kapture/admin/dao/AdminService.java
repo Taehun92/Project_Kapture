@@ -224,5 +224,20 @@ public class AdminService {
 	    
 	    return resultMap;
 	}
+
+	public HashMap<String, Object> addGuideProfile(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println(map);
+			int result = adminMapper.insertGuideProfile(map);
+			System.out.println(result);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
 	
 }
