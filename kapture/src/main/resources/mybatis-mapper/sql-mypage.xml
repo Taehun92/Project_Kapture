@@ -31,7 +31,7 @@
 		SELECT P.*, TITLE, DURATION, TOUR_DATE
 		FROM PAYMENTS P
 		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-		WHERE USER_NO = #{sessionId}
+		WHERE USER_NO = #{userNo}
 	</select>	
 	
 	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
@@ -74,7 +74,7 @@
 		    USERS U
 		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
 		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
-                WHERE G.USER_NO = #{sessionId}
+                WHERE G.USER_NO = #{userNo}
 	</select>
 	
 	<update id="updatePassword" parameterType="hashmap">
@@ -84,11 +84,12 @@
 	</update>
 	
 	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo" keyColumn="TOUR_NO">
-		<selectKey keyProperty="tourNo" resultType="int" order="BEFORE">
-        	SELECT TOUR_SEQ.NEXTVAL FROM DUAL
-    	</selectKey>
+
+	  <selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
+        SELECT TOUR_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
     	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
-    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, 4, #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
     	FROM GUIDES G
     	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
     	JOIN THEME T ON T.THEME_NAME = #{themeName}
@@ -101,7 +102,76 @@
     	VALUES (FILE_SEQ.NEXTVAL,  #{path}, #{filename}, #{originFilename})
 	</insert>
 	
-	
+	<update id="updateToursFile" parameterType="hashmap">
+    	UPDATE IMG
+    	SET TOUR_NO = #{tourNo},
+        THUMBNAIL = CASE 
+            <foreach collection="thumbnailList" item="img" index="index">
+                WHEN FILE_PATH = #{img.url} THEN #{img.thumbnail}
+            </foreach>
+        	END
+    	WHERE FILE_PATH IN
+    	<foreach collection="list" item="imageUrl" open="(" separator="," close=")">
+        	#{imageUrl}
+    	</foreach>
+	</update>
+<select id="selectTransactionList" resultType="hashmap">	
+		SELECT * FROM (
+    	SELECT ROWNUM AS RNUM, A.* FROM (
+        SELECT 
+            TO_CHAR(P.PAYMENT_DATE, 'YYYY"년"') ||
+            CASE TO_CHAR(PAYMENT_DATE, 'MM')
+                WHEN '01' THEN ' 1월 '
+                WHEN '02' THEN ' 2월 '
+                WHEN '03' THEN ' 3월 '
+                WHEN '04' THEN ' 4월 '
+                WHEN '05' THEN ' 5월 '
+                WHEN '06' THEN ' 6월 '
+                WHEN '07' THEN ' 7월 '
+                WHEN '08' THEN ' 8월 '
+                WHEN '09' THEN ' 9월 '
+                WHEN '10' THEN '10월 '
+                WHEN '11' THEN '11월 '
+                WHEN '12' THEN '12월 '
+            END ||
+            TO_CHAR(P.PAYMENT_DATE, 'DD"일"') AS PAYMENT_DATE,
+            USER_FIRSTNAME,
+            TITLE,
+            AMOUNT,
+            PAYMENT_STATUS,
+            NUM_PEOPLE
+        FROM PAYMENTS P
+        JOIN USERS U ON P.USER_NO = U.USER_NO
+        JOIN TOUR T ON P.TOUR_NO = T.TOUR_NO
+        WHERE T.GUIDE_NO = #{sessionId}
+        AND (
+            USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR 
+            TITLE LIKE '%' || #{keyword} || '%'
+        )
+        ORDER BY PAYMENT_DATE DESC
+    ) A
+	)
+	WHERE RNUM BETWEEN ((#{page} - 1) * #{size} + 1) AND (#{page} * #{size})>
+	</select>
+	<!--가이드 판매내역 페이징처리-->
+	<select id="selectTransactionTotalCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM PAYMENTS P
+	    JOIN USERS U ON P.USER_NO = U.USER_NO
+	    JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+	    <where>
+	        <if test="guideNo != null">
+	            GUIDE_NO = #{sessionId}
+	        </if>
+	        <if test="keyword != null and keyword != ''">
+	            AND (
+	                USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+	                OR TITLE LIKE '%' || #{keyword} || '%'
+	            )
+	        </if>
+	    </where>
+</select>
+
 	
 	
 	

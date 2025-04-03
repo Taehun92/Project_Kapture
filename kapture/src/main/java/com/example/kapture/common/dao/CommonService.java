@@ -61,6 +61,51 @@ public class CommonService {
 		return resultMap;
 		
 	}
+
+	public HashMap<String, Object> getSi(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Region si = commonMapper.selectSiName(map);
+		
+		resultMap.put("si", si);
+		
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getGu(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Region gu = commonMapper.selectGuName(map);
+		
+		resultMap.put("gu", gu);
+		
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getThemeParent(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Theme themeParent = commonMapper.selectThemeParent(map);
+		
+		resultMap.put("themeParent", themeParent);
+		
+		return resultMap;
+		
+	}
+
+	public HashMap<String, Object> getTheme(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Theme themeName = commonMapper.selectThemeName(map);
+		
+		resultMap.put("themeName", themeName);
+		
+		return resultMap;
+	}
 	
 	
 	
