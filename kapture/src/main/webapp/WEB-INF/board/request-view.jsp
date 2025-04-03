@@ -5,34 +5,35 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-    <script src="/js/page-Change.js"></script>
+    <link rel="stylesheet" href="../../css/request.css">
 	<title>첫번째 페이지</title>
 </head>
 <body>
-	<div id="app">
+    <jsp:include page="../common/header.jsp" />
+	<div id="app" class="request-container">
         <!-- 요청 정보 표시 영역 -->
         <section>
-            <table>
+            <table class="request-view-table">
                 <tr>
-                    <th>제목 :</th>
+                    <th>제목</th>
                     <td colspan="3">{{ info.title }}</td>
                 </tr>
                 <tr>
-                    <th>지역 :</th>
+                    <th>지역</th>
                     <td>{{ info.region }}</td>
-                    <th>예산 :</th>
+                    <th>예산</th>
                     <td>{{ info.budget }}</td>
                 </tr>
                 <tr>
-                    <th>내용 :</th>
+                    <th>내용</th>
                     <td colspan="3">
                         <div v-html="info.description"></div>
                     </td>
                 </tr>
                 <tr>
-                    <th>작성자 :</th>
+                    <th>작성자</th>
                     <td>{{ info.userFirstName }} {{ info.userLastName }}</td>
-                    <th>요청상태 :</th>
+                    <th>요청상태</th>
                     <td>
                         <template v-if="info.status === '0'">답변 대기</template>
                         <template v-if="info.status === '1'">답변 중</template>
@@ -41,8 +42,8 @@
                 </tr>
             </table>
             <div v-if="canEditRequest">
-                <button @click="fnEdit">수정</button>
-                <button @click="fnRemove">삭제</button>
+                <button class="request-btn" @click="fnEdit">수정</button>
+                <button class="request-btn" @click="fnRemove">삭제</button>
             </div>
         </section>
 
@@ -50,52 +51,48 @@
 
         <!-- 댓글 및 대댓글 영역 -->
         <section>
-            <table>
-                <tr v-for="comment in getNestedComments(null)" :key="comment.commentNo">
-                    <td colspan="5">
-                        <div>
-                            <strong>{{ comment.userFirstName }} {{ comment.userLastName }}</strong> : {{ comment.message }}
-                            <span v-if="canEditComment(comment)">
-                                <button @click="fnEditComment(comment)">수정</button>
-                                <button @click="fnRemoveComment(comment.commentNo)">삭제</button>
-                            </span>
-                            <span v-if="canAccept">
-                                <button @click="fnAccept">채택</button>
-                            </span>
-                            <button @click="fnReply(comment.commentNo)">대댓글</button>
-                        </div>
+            <div v-for="comment in getNestedComments(null)" :key="comment.commentNo" class="comment-box">
+                <strong>{{ comment.userFirstName }} {{ comment.userLastName }}</strong> : {{ comment.message }}
+                <div class="comment-buttons">
+                    <span v-if="canEditComment(comment)">
+                        <button @click="fnEditComment(comment)">수정</button>
+                        <button @click="fnRemoveComment(comment.commentNo)">삭제</button>
+                    </span>
+                    <span v-if="canAccept">
+                        <button @click="fnAccept">채택</button>
+                    </span>
+                    <button v-if="comment.status == '1'" @click="fnReply(comment.commentNo)">대댓글</button>
+                </div>
 
-                        <div v-for="reply in getNestedComments(comment.commentNo)" :key="reply.commentNo" style="margin-left: 30px; border-left: 2px solid #ccc; padding-left: 10px;">
-                            <strong>{{ reply.userFirstName }} {{ reply.userLastName }}</strong> : {{ reply.message }}
-                            <span v-if="canEditComment(reply)">
-                                <button @click="fnEditComment(reply)">수정</button>
-                                <button @click="fnRemoveComment(reply.commentNo)">삭제</button>
-                            </span>
-                            <span v-if="canAccept">
-                                <button @click="fnAccept">채택</button>
-                            </span>
-                            <button @click="fnReply(reply.commentNo)">대댓글</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr v-if="replyFlg">
-                    <td colspan="5">
-                        댓글입력 <input v-model="reply">
-                        <button @click="fnAddReply">저장</button>
-                        <button @click="fnBack">취소</button>
-                    </td>
-                </tr>
-            </table>
+                <div v-for="reply in getNestedComments(comment.commentNo)" :key="reply.commentNo" class="reply-box">
+                    <strong>{{ reply.userFirstName }} {{ reply.userLastName }}</strong> : {{ reply.message }}
+                    <div class="comment-buttons">
+                        <span v-if="canEditComment(reply)">
+                            <button @click="fnEditComment(reply)">수정</button>
+                            <button @click="fnRemoveComment(reply.commentNo)">삭제</button>
+                        </span>
+                        <span v-if="canAccept">
+                            <button @click="fnAccept">채택</button>
+                        </span>
+                        <button @click="fnReply(reply.commentNo)">대댓글</button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="replyFlg" class="comment-box">
+                <input v-model="reply" placeholder="댓글 입력" style="width: 70%">
+                <button @click="fnAddReply">저장</button>
+                <button @click="fnBack">취소</button>
+            </div>
         </section>
 
         <!-- 답변 작성 영역 -->
-        <section v-if="canWriteAnswer">
+        <section v-if="canWriteAnswer" class="answer-box">
             <button @click="fnAnswer">답변쓰기</button>
         </section>
-        <section v-if="answerFlg">
+        <section v-if="answerFlg" class="answer-box">
             <div>
                 {{ sessionFirstName }} {{ sessionLastName }} :
-                <textarea v-model="answerComment" cols="50" rows="6"></textarea>
+                <textarea v-model="answerComment" rows="6"></textarea>
             </div>
             <div>
                 <button @click="fnCommentSave">작성</button>
@@ -103,13 +100,14 @@
             </div>
         </section>
 	</div>
+    <jsp:include page="../common/footer.jsp" />
 </body>
 
 <script>
 const app = Vue.createApp({
     data() {
         return {
-            requestNo : "${map.requestNo}",
+            requestNo : "",
             sessionId : "${sessionId}",
             sessionRole : "${sessionRole}",
             sessionFirstName : "${sessionFirstName}",
@@ -158,7 +156,7 @@ const app = Vue.createApp({
             });
         },
         fnEdit() {
-            pageChange("/request/edit.do", { requestNo: this.requestNo });
+            location.href="/request/edit.do?requestNo=" + this.requestNo;
         },
         fnRemove() {
             var self = this;
@@ -293,7 +291,10 @@ const app = Vue.createApp({
         }
     },
     mounted() {
+        const params = new URLSearchParams(window.location.search);
+        this.requestNo = params.get("requestNo") || "";
         this.fnview();
+        
     }
 });
 

@@ -53,11 +53,12 @@ public class RequestController {
 	// 게시글 목록 조회
 	@RequestMapping(value = "/request/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String requestList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap = requestService.getRequestList(map);
-		return new Gson().toJson(resultMap);
+	public String requestList(Model model, @RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = requestService.getRequestList(map);
+	    return new Gson().toJson(resultMap);
 	}
+
 	
 	// 게시글 작성
 	@RequestMapping(value = "/request/add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
