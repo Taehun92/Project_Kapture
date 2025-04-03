@@ -70,6 +70,30 @@
     		WHERE THEME_NAME = #{themeParent}
 		)
 	</select>
+	
+	<select id="selectSiName" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NAME FROM REGION
+		WHERE SI_NO = #{siNo}
+	</select>
+	
+	<select id="selectGuName" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT GU_NAME FROM REGION
+		WHERE SI_NO = #{siNo} AND GU_NO = #{guNo}
+	</select>
+	
+	<select id="selectThemeParent" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		WHERE THEME_NO = #{themeParentNo}
+	</select>
+	
+	<select id="selectThemeName" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		WHERE THEME_NO = #{themeNo}
+	</select>
+	
+	
+	
+	
 </mapper>
 
 
