@@ -58,4 +58,52 @@ public class CommonController {
 		resultMap = commonService.getThemeList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 시 이름 No로 가져오기
+	@RequestMapping(value = "/common/getSi.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getSi(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.getSi(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 구 이름 No로 가져오기
+	@RequestMapping(value = "/common/getGu.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getGu(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.getGu(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상위테마 이름 No로 가져오기
+	@RequestMapping(value = "/common/getThemeParent.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getThemeParent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.getThemeParent(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상위테마 이름 No로 가져오기
+	@RequestMapping(value = "/common/getTheme.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getTheme(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.getTheme(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }

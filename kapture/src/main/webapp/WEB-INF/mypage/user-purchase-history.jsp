@@ -294,7 +294,7 @@
                     fnGetPayments(callback) {
                         let self = this;
                         let nparmap = {
-                            sessionId: self.sessionId,
+                            userNo: self.sessionId,
                             currentPage: '',
                         };
 
