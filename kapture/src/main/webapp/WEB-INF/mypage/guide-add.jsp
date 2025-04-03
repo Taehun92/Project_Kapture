@@ -231,7 +231,10 @@
 							console.log(self.siName);
 							console.log(self.guName);
 							alert("등록되었습니다.");
-							self.fnUpdateImgList(data.tourNo);
+
+							if (self.imgList.length > 0) {
+								self.fnUpdateImgList(data.tourNo);
+							}
 						}
 					}
 				});
@@ -400,7 +403,6 @@
 											}
 										} catch (error) {
 											console.error("이미지 업로드 중 오류 발생:", error);
-											alert("이미지 크기가 너무 큽니다.");
 										}
 									};
 								}
