@@ -4,25 +4,33 @@
 
 	<head>
 		<meta charset="UTF-8">
+		<!-- FullCalendar 및 Bootstrap CSS/JS 추가 -->
+		<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+        <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
+		
+		
+        
 		<title>관리자 페이지</title>
 		<style>
 			/* 테이블 스타일 */
-			table {
+			.content table {
 				width: 90%;
 				margin: 20px auto;
 				border-collapse: collapse;
 				font-size: 14px;
 			}
 
-			th,
-			td {
+			.content th,
+			.content td {
 				border: 1px solid #ccc;
 				padding: 10px;
 				text-align: center;
 				vertical-align: middle;
 			}
 
-			th {
+			.content th {
 				background-color: #f4f4f4;
 			}
 
@@ -39,7 +47,7 @@
 			.no-image {
 				width: 60px;
 				height: 60px;
-				border: 1px dashed #999;
+				border: 1px dashed #999999;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -53,6 +61,7 @@
 				color: white;
 				border: none;
 				padding: 5px 8px;
+				margin: 5px;
 				border-radius: 3px;
 				cursor: pointer;
 			}
@@ -65,12 +74,6 @@
 			.check-all {
 				cursor: pointer;
 			}
-
-			/* 상단 메뉴 등 추가 영역
-			.menu-area {
-				background: #f0f0f0;
-				padding: 10px;
-			} */
 
 			/* 제목 스타일 */
 			.page-title {
@@ -105,7 +108,7 @@
 			/* 모달 내용 컨테이너 */
 			.modal-content {
 				background-color: #fff;
-				width: 600px;
+				width: 800px;
 				/* 모달 폭 (필요에 맞게 조절) */
 				padding: 20px;
 				border-radius: 5px;
@@ -152,6 +155,39 @@
 			.modal-validation {
 				font-size: 13px;
 				line-height: 1.4;
+			}
+
+			/* content-area 및 custom 버튼 스타일 (일정 모달 내부) */
+			.content-area {
+				width: 100%;
+			}
+
+			.custom-buttons {
+				list-style: none;
+				padding: 0;
+				margin: 0 0 10px 0;
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+			}
+
+			.custom-button {
+				display: flex;
+				align-items: center;
+				font-size: 14px;
+			}
+
+			.custom-button .dot {
+				margin-right: 4px;
+			}
+
+			.fc-event-title {
+				white-space: normal !important;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2; /* 최대 2줄로 표시 */
 			}
 		</style>
 	</head>
@@ -219,6 +255,9 @@
 								<button class="btn-manage" @click="fnGuideEdit(guide)">
 									수정
 								</button>
+								<button class="btn-manage" @click="fnGuideSchedule(guide.userNo)">
+									일정
+								</button>
 								<button class="btn-manage" @click="fnUnregister(guide.userNo)">
 									삭제
 								</button>
@@ -233,7 +272,7 @@
 					<div class="modal-form">
 						<!-- 이름 -->
 						<div class="form-group">
-							<label>나중에이미지랑파일업로드</label>
+							<img >나중에이미지랑파일업로드
 							<input type="text" v-model="editGuide.profileImage" />
 						</div>
 						<!-- 이름 -->
@@ -310,14 +349,38 @@
 
 						<!-- 저장 / 취소 -->
 						<div>
-							<button @click="fnSaveGuide">저장하기</button>
-							<button @click="fnGuideEditClose()">취소</button>
+							<button @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
+							<button @click="fnGuideEditClose">취소</button>
 						</div>
 					</div>
 
 				</div>
 			</div>
 			<!-- [모달 끝] -->
+			<!-- 일정 모달 추가 -->
+			<div v-if="showScheduleModal" class="modal-overlay" @click.self="fnCloseScheduleModal">
+				<div class="modal-content">
+					<h2>가이드 일정</h2>
+					<div class="content-area">
+						<ol class="custom-buttons">
+							<li class="custom-button">
+								<span class="dot" style="color: #3788d8;">●</span>
+								<span class="label">종일</span>
+							</li>
+							<li class="custom-button">
+								<span class="dot" style="color: red;">●</span>
+								<span class="label">오전</span>
+							</li>
+							<li class="custom-button">
+								<span class="dot" style="color: green;">●</span>
+								<span class="label">오후</span>
+							</li>
+						</ol>
+						<div ref="calendar"></div>
+					</div>
+					<button class="btn-manage" @click="fnCloseScheduleModal" >닫기</button>
+				</div>
+			</div>
 		</div>
 	</body>
 
@@ -329,7 +392,9 @@
 					guidesList: [],
 					selectedGuides: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
+					showScheduleModal: false,  // 일정 모달 표시 여부
 					editGuide: {},          // 수정할 가이드 정보
+					schedule: [],
 					password: "",
 					confirmPassword: "",
 					passwordRules: { length: false, upper: false, lower: false, special: false, number: false },
@@ -402,18 +467,21 @@
 					self.passwordsMatch = false;
 				},
 				// 모달에서 '저장하기' 클릭 시: 수정 API 호출
-				fnSaveGuide() {
+				fnSaveGuide(userNo, guideNo) {
 					let self = this;
 					// 수정된 정보 전송
 					let nparmap = {
-						profileImage: self.editGuide.profileImage,
+						userNo: userNo,
 						userFirstName: self.editGuide.userFirstName,
 						password: self.password,
 						email: self.editGuide.email,
+						address: self.editGuide.address,
 						gender: self.editGuide.gender,
 						phone: self.editGuide.phone,
 						birthday: self.editGuide.birthday,
-						address: self.editGuide.address,
+
+						guideNo: guideNo,
+						profileImage: self.editGuide.profileImage,
 						language: self.editGuide.language,
 						experience: self.editGuide.experience,
 					};
@@ -482,6 +550,69 @@
 					this.passwordValid = this.passwordRules.length && this.passwordRules.upper &&
 						this.passwordRules.lower && this.passwordRules.special && this.passwordRules.number;
 					this.passwordsMatch = pw && pw2 && (pw === pw2);
+				},
+				fnGuideSchedule(userNo) {
+					let self = this;
+					$.ajax({
+						url: "/mypage/guide-schedule.dox",
+						dataType: "json",
+						type: "POST",
+						data: { userNo: userNo },
+						success: function (data) {
+							if (data.result === "success") {
+								console.log(data);
+								self.schedule = data.schedule;
+							} else {
+								console.error("스케줄 데이터 로드 실패");
+							}
+							// 모달 열기 및 FullCalendar 초기화
+							self.showScheduleModal = true;
+							self.$nextTick(() => {
+								const eventsArray = [];
+								for (let i = 0; i < self.schedule.length; i++) {
+									const item = self.schedule[i];
+									const colorMapping = {
+										"오전": "red",
+										"오후": "green",
+										"종일": "#3788d8",
+										"판매대기": "gold"
+									};
+									eventsArray.push({
+										id: item.tourNo,
+										title: item.title || '투어',
+										start: item.tourDate,
+										allDay: true,
+										backgroundColor: colorMapping[item.duration] || "gray",
+										borderColor: colorMapping[item.duration] || "gray"
+									});
+								}
+								const calendarEl = self.$refs.calendar;
+								// 이전에 렌더링된 캘린더 초기화
+								calendarEl.innerHTML = "";
+								const calendar = new FullCalendar.Calendar(calendarEl, {
+									height: 'auto',            // 캘린더 전체 높이를 600px로 설정
+  									contentHeight: 'auto',  // 콘텐츠 영역 높이를 자동으로 조절
+									themeSystem: 'bootstrap5',
+									initialView: 'dayGridMonth',
+									validRange: function (now) {
+										return { start: now };
+									},
+									events: eventsArray,
+									eventClick: function (info) {
+										info.jsEvent.preventDefault();
+										location.href = "/tours/tour-info.do?tourNo=" + info.event.id;
+									}
+								});
+								calendar.render();
+							});
+						},
+						error: function (err) {
+							console.error(err);
+						}
+					});
+				},
+				fnCloseScheduleModal() {
+					this.showScheduleModal = false;
 				},
 			},
 			mounted() {
