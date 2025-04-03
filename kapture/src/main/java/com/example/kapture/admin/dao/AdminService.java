@@ -1,15 +1,17 @@
 package com.example.kapture.admin.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
@@ -20,6 +22,9 @@ public class AdminService {
 
     @Autowired
     AdminMapper adminMapper;
+    
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public HashMap<String, Object> getChartByTypeAndYear(HashMap<String, Object> map) {
         String type = (String) map.get("type");
@@ -49,40 +54,46 @@ public class AdminService {
             result.put("list", list);
         }
 
-        // 📊 카테고리 + 시간대 매출
-        else if ("combo".equals(type)) {
-            List<Map<String, Object>> raw = adminMapper.getCategoryByDurationChart(year);
+        // 지역 + 테마별 + 타이틀
+        else if ("themeByRegion".equals(type)) {
+            List<Map<String, Object>> raw = adminMapper.getThemeSalesByRegion(map);
 
-            List<String> durations = Arrays.asList("오전", "오후", "종일");
+            Set<String> regions = new LinkedHashSet<>();
+            Set<String> themes = new LinkedHashSet<>();
             Map<String, Map<String, Integer>> grouped = new LinkedHashMap<>();
 
             for (Map<String, Object> row : raw) {
-                String category = (String) row.get("CATEGORY");
-                String duration = (String) row.get("DURATION");
+                String region = (String) row.get("REGION");
+                String theme = (String) row.get("THEME");
                 int total = ((Number) row.get("TOTAL")).intValue();
+                
+                if (region == null || theme == null) continue;
+                
+                regions.add(region);
+                themes.add(theme);
 
-                grouped.putIfAbsent(category, new HashMap<>());
-                grouped.get(category).put(duration, total);
+                grouped.putIfAbsent(theme, new HashMap<>());
+                grouped.get(theme).put(region, total);
             }
 
             List<Map<String, Object>> series = new ArrayList<>();
-            for (String duration : durations) {
+            for (String theme : themes) {
                 Map<String, Object> data = new HashMap<>();
-                data.put("name", duration);
+                data.put("name", theme);
 
                 List<Integer> values = new ArrayList<>();
-                for (String category : grouped.keySet()) {
-                    values.add(grouped.get(category).getOrDefault(duration, 0));
+                for (String region : regions) {
+                    values.add(grouped.get(theme).getOrDefault(region, 0));
                 }
 
                 data.put("data", values);
                 series.add(data);
             }
-
-            result.put("series", series);
-            result.put("categories", new ArrayList<>(grouped.keySet()));
+            
+            result.put("series", series); // ✅ stacked chart용
+            result.put("categories", new ArrayList<>(regions)); // ✅ x축 지역
         }
-
+            
         // 📆 일별 매출
         else if ("day".equals(type)) {
             List<Map<String, Object>> raw = adminMapper.getDayChartByYearMonth(map);
@@ -134,7 +145,7 @@ public class AdminService {
     
     public HashMap<String, Object> getSummary(HashMap<String, Object> map) {
         HashMap<String, Object> result = new HashMap<>();
-
+        
         int totalAmount = adminMapper.selectTotalAmount();
         int yesterdayAmount = adminMapper.selectYesterdayAmount();
         int totalUsers = adminMapper.selectTotalUsers();
@@ -146,8 +157,13 @@ public class AdminService {
         result.put("totalUsers", totalUsers);
         result.put("approved", approved);
         result.put("rejected", rejected);
+        
 
         return result;
+    }
+    
+    public List<String> getAllRegionNames() {
+        return adminMapper.getRegionList();
     }
 
 	public HashMap<String, Object> getGuidesList(HashMap<String, Object> map) {
@@ -169,6 +185,8 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
+			String hashPwd = passwordEncoder.encode((String) map.get("password"));
+	        map.put("password", hashPwd);
 			int guideInfo = adminMapper.updateGuideInfo(map);
 			int userInfo = adminMapper.updateUserInfo(map);
 			String result;
@@ -181,9 +199,30 @@ public class AdminService {
 			
 			
 		} catch (Exception e) {
-		System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
 		}
 		return resultMap;
 	}
+	public HashMap<String, Object> getTransactionList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    
+	    int page = Integer.parseInt(String.valueOf(map.get("page")));
+	    int size = Integer.parseInt(String.valueOf(map.get("size")));
+
+	    int start = (page - 1) * size + 1;
+	    int end = page * size;
+
+	    map.put("start", start);
+	    map.put("end", end);
+	    
+	    List<HashMap<String, Object>> list = adminMapper.selectTransactionList(map);
+	    int totalCount = adminMapper.selectTransactionTotalCount(map);
+	    
+	    resultMap.put("list", list); // 프론트에 넘길 데이터 key
+	    resultMap.put("totalCount", totalCount);
+	    
+	    return resultMap;
+	}
+	
 }

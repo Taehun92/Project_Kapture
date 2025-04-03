@@ -77,12 +77,19 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getChartByTypeAndYear(map);
 	    return new Gson().toJson(resultMap);
 	}
+	//지역 리스트 
+	@RequestMapping("/admin/getRegionList.dox")
+	@ResponseBody
+	public String getRegionList() {
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("list", adminService.getAllRegionNames());
+	    return new Gson().toJson(result);
+	}
 
 	@RequestMapping(value = "/admin/getSummary.dox", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSummary(@RequestParam HashMap<String, Object> map) {
-	    System.out.println("📦 getSummary 요청 파라미터: " + map);
-	    
+		
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    resultMap.put("summary", adminService.getSummary(map));
 	    
@@ -105,5 +112,11 @@ public class AdminController {
 		
 		resultMap = adminService.editGuide(map);
 	    return new Gson().toJson(resultMap);
+	}
+	//최근거래 테이블 , 검색 
+	@RequestMapping(value = "/admin/getTransactionList.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getTransactionList(@RequestParam HashMap<String, Object> map) {
+	    return new Gson().toJson(adminService.getTransactionList(map));
 	}
 }
