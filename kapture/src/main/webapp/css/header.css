@@ -1,7 +1,7 @@
 /* MangoDdobak 폰트 */
 @font-face {
     font-family: 'MangoDdobak';
-    src: url('/css/MangoDdobak-R.ttf') format('truetype');
+    src: url('/css/Cafe24Ssurround.woff2') format('truetype');
 }
 body {
     font-family: 'MangoDdobak', sans-serif;
@@ -60,13 +60,14 @@ body {
     display: flex;
     align-items: center;
     border: 1px solid #ccc;
-    border-radius: 0.5rem;
+    border-radius: 0.3rem;
     overflow: hidden;
     width: 400px; /* 추가됨 */
     max-width: 100%;
 }
 
 .search-bar input {
+	font-family: 'MangoDdobak', sans-serif;
     border: none;
     padding: 0.5rem 0.75rem;
     flex: 1;
@@ -75,6 +76,7 @@ body {
 }
 
 .search-bar button {
+	font-family: 'MangoDdobak', sans-serif;
     background-color: #171d41;
     color: white;
     padding: 0.5rem 1rem;
@@ -125,7 +127,7 @@ body {
     color: #ffffff;
 	font-size: 0.8rem;
     padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
+    border-radius: 0.3rem;
     border: none;
     cursor: pointer;
     transition: opacity 0.2s ease-in-out;
