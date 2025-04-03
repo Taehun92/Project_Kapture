@@ -8,7 +8,6 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-        <script src="/js/page-Change.js"></script>
         <title>관광지 목록</title>
         <style>
             body {
@@ -75,7 +74,7 @@
                 background: white;
                 transition: top 0.3s;
                 overflow-y: overlay;
-            
+
             }
 
             .filter {
@@ -219,7 +218,7 @@
 
                 <!-- 관광지 리스트 -->
                 <div class="tour-list">
-                    <div v-for="tour in toursList" class="tour-card" @click="goToDetail(tour.tourNo)">
+                    <div v-for="tour in toursList" class="tour-card" @click="goToTourInfo(tour.tourNo)">
                         <img :src="tour.filePath" alt="Tour Image">
                         <div class="desc">
                             <p>{{ tour.title }}</p>
@@ -229,7 +228,7 @@
                 </div>
             </div>
         </div>
-        
+
     </body>
 
     </html>
@@ -246,7 +245,6 @@
                         region: false,
                         theme: false
                     },
-
                     toursList: [],
                     regionList: [],
                     themeList: [],
@@ -254,8 +252,9 @@
                     selectedRegions: [],
                     selectedLanguages: [],
                     selectedThemes: [],
-                    siNo: "${map.siNo}",
-                    iniFlg: false,
+                    siNo: "",
+                    initFlg: false,
+
 
                 };
             },
@@ -272,10 +271,10 @@
                     let self = this;
 
                     let nparmap = {};
-                    if (!self.iniFlg) {
+                    if (!self.initFlg) {
                         console.log("siNo" + self.siNo);
                         nparmap = { siNo: self.siNo }
-                        self.iniFlg = true;
+                        self.initFlg = true;
                     } else {
                         nparmap = {
                             selectedDates: JSON.stringify(self.selectedDates),
@@ -299,12 +298,14 @@
                     });
                 },
                 goToTourInfo(tourNo) {
-                    pageChange("/tours/tour-info.do", { tourNo: tourNo });
+                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
 
             },
             mounted() {
-                var self = this;
+                let self = this;
+                const params = new URLSearchParams(window.location.search);
+                self.siNo = params.get("siNo") || "";
                 self.fnToursList();
             }
         });

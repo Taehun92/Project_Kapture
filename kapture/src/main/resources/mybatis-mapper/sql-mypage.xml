@@ -84,7 +84,8 @@
 	</update>
 	
 	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo" keyColumn="TOUR_NO">
-	<selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
+
+	  <selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
         SELECT TOUR_SEQ.NEXTVAL FROM DUAL
     </selectKey>
     	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
@@ -114,6 +115,7 @@
         	#{imageUrl}
     	</foreach>
 	</update>
+	
 	
 	
 	

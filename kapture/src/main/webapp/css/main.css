@@ -8,6 +8,7 @@
 		font-size: 2.6rem;
 		color: #000;
 		font-weight: 600;
+		margin-bottom: 1rem;
 	}
 	
 	.main-container {
@@ -126,7 +127,7 @@
 
     /* 추천 상품 제목 스타일 */
     #app > div:nth-child(2) { /* app 내부의 두 번째 div (추천 상품 제목) */
-        text-align: center;
+        text-align: left;
         margin-top: 30px;
         margin-bottom: 20px;
         font-size: 1.5em;
