@@ -102,11 +102,14 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="card-top">
-                                        <div class="card-date">{{ formatDate(tour.tourDate) }}</div>
+                                        <!-- <div class="card-date">{{ formatDate(tour.tourDate) }}</div> -->
+                                        <div class="card-date">
+                                           {{ formatDate(tour.tourDate) }}
+                                          </div>
                                         <div class="hashtags">
                                             <span class="theme-hashtag"># {{ tour.themeName }}</span>
                                         </div>
-                                        <div class="favorite" :class="{ active: tour.isFavorite }" @click="toggleFavorite(tour)"></div>
+                                        <div class="favorite" :class="{ active: tour.isFavorite === 'Y' }" @click="toggleFavorite(tour)"></div>
                                     </div>
                                     <div class="card-title">{{ tour.title }}</div>
                                     <div class="card-desc">{{ truncateText(tour.description) }}</div>
@@ -349,19 +352,22 @@
                     if (dates.length === 1) return this.formatDate(dates[0]);
                     return this.formatDate(dates[0]) + ' ~ ' + this.formatDate(dates[1]);
                 },
-                formatDate(input) {
-                    if (!input) return '';
-                    
-                    // 문자열인 경우: "2025-04-12 00:00:00"
-                    if (typeof input === 'string') {
-                        return input.split(' ')[0];
+
+                formatDate(date) {
+                    if (!date) return '';
+
+                    // 문자열이면 Date 객체로 변환
+                    if (!(date instanceof Date)) {
+                        date = new Date(date);
                     }
 
-                    // Date 객체인 경우
-                    const year = input.getFullYear();
-                    const month = (input.getMonth() + 1).toString().padStart(2, '0');
-                    const day = input.getDate().toString().padStart(2, '0');
-                    return `${year}-${month}-${day}`;
+                    // 변환 실패 시 빈 문자열 반환
+                    if (isNaN(date.getTime())) return '';
+
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return year + '-' + month + '-' + day;
                 },
                 
                 truncateText(text, maxLength = 30) {
@@ -395,6 +401,7 @@
                             self.toursList = data.toursList;
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
+                            console.log(self.toursList);
                         }
                     });
                 },
@@ -455,13 +462,23 @@
                     }, "json");
                 },
                 fnGetBasketList() {
-                    const self = this;
-                    $.post("/basket/getBasketList.dox", {
-                        sessionId: self.sessionId
-                    }, function (data) {
-                        self.cartList = data.basketList;
-                    }, "json");
-                },
+					let self = this;
+					let nparmap = {
+						sessionId: self.sessionId,
+					};
+
+					$.ajax({
+						url: "/basket/getBasketList.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							console.log(data);
+							self.cartList = data.basketList;
+
+						}
+					});
+				},
                 getCartItemByDateAndTime(date, time) {
                     const formattedDate = this.formatDate(date);
                     return this.cartList.find(item =>
@@ -534,7 +551,66 @@
                 fnPay(){
                     this.handleCartClose();
                     location.href="/payment.do"
-                }
+                },
+
+                fnGetWishList() {
+                    let self = this;
+                    let nparmap = {
+                        userNo: parseInt(self.sessionId)
+                    };
+
+                    $.ajax({
+                        url: "/wishList/getWishList.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: nparmap,
+                        success: function(data) {
+                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+                            console.log("찜목록 tourNo 목록: ", wishTourNos);
+
+                            self.toursList = self.toursList.map(function(tour) {
+                                const tourNo = Number(tour.tourNo);
+                                return {
+                                    ...tour,
+                                    isFavorite: wishTourNos.includes(tourNo) ? "Y" : "N"
+                                };
+                            });
+
+                            console.log("최종 toursList: ", self.toursList);
+                        }
+                    });
+                },
+
+                toggleFavorite(tour) {
+                    let self = this;
+                    tour.isFavorite = tour.isFavorite === "Y" ? "N" : "Y";
+                    if (tour.isFavorite === "Y") {
+                        $.ajax({
+                            url: "/wishList/addWishList.dox",
+                            type: "POST",
+                            data: { 
+                                userNo: self.sessionId, 
+                                guideNo : tour.guideNo,
+                                tourNo: tour.tourNo 
+                            },
+                            success: function(res) {
+                                console.log("찜 추가됨", res);
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: "/wishList/removeWishList.dox",
+                            type: "POST",
+                            data: { 
+                                userNo: self.sessionId, 
+                                tourNo: tour.tourNo 
+                            },
+                            success: function(res) {
+                                console.log("찜 제거됨", res);
+                            }
+                        });
+                    }
+                },
 
             },
 
@@ -556,6 +632,14 @@
                 self.fnGetTourDateList();
                 self.fnGetBasket();
                 self.fnGetBasketList();
+
+                setTimeout(() => {
+                    if (self.sessionId === "${sessionId}") {
+                        self.fnGetWishList();
+                    } else {
+                        console.log("세션 로딩이 아직 안됨");
+                    }
+                }, 300);
             }
         });
 
