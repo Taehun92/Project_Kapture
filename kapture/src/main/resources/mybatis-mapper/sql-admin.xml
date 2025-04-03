@@ -93,8 +93,41 @@
         INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
     </select>
 	<update id="updateGuideInfo" parameterType="hashmap">
+		UPDATE GUIDES
+		SET 
+		<if test="profileImage != null">
+			PROFILE_IMAGE = #{profileImage},
+		</if>
+		<if test="language != null">
+			LANGUAGE = #{language},
+		</if>
+		<if test="experience != null">
+			EXPERIENCE = #{experience},
+		</if>
+			G_UPDATED_AT = SYSDATE
+		WHERE GUIDE_NO = #{guideNo}
 	</update>
 	<update id="updateUserInfo" parameterType="hashmap">
+		UPDATE USERS
+		SET USER_FIRSTNAME = #{userFirstName},
+			EMAIL = #{email},
+		<if test="gender != null">
+			GENDER = #{gender},
+		</if>
+		<if test="password != null and password !=''">
+			PASSWORD = #{password},
+		</if>
+		<if test="address != null">
+			ADDRESS = #{address},
+		</if>
+		<if test="phone != null">
+			PHONE = #{phone},
+		</if>
+		<if test="birthday != null">
+			BIRTHDAY = #{birthday},
+		</if>
+			U_UPDATED_AT = SYSDATE
+		WHERE USER_NO = #{userNo}
 	</update>
 
 		
