@@ -25,4 +25,13 @@ public interface CommonMapper {
 	List<Theme> selectThemeParentList(HashMap<String, Object> map);
 
 	List<Theme> selectThemeNameList(HashMap<String, Object> map);
+	
+	Region selectSiName(HashMap<String, Object> map);
+	
+	Region selectGuName(HashMap<String, Object> map);
+	
+	Theme selectThemeParent(HashMap<String, Object> map);
+	
+	Theme selectThemeName(HashMap<String, Object> map);
+	
 }
