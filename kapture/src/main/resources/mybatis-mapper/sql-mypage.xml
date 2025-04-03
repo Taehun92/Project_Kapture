@@ -31,7 +31,7 @@
 		SELECT P.*, TITLE, DURATION, TOUR_DATE
 		FROM PAYMENTS P
 		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-		WHERE USER_NO = #{sessionId}
+		WHERE USER_NO = #{userNo}
 	</select>	
 	
 	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
@@ -74,7 +74,7 @@
 		    USERS U
 		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
 		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
-                WHERE G.USER_NO = #{sessionId}
+                WHERE G.USER_NO = #{userNo}
 	</select>
 	
 	<update id="updatePassword" parameterType="hashmap">
