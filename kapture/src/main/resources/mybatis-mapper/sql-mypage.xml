@@ -196,9 +196,16 @@
 		WHERE TOUR_NO = #{tourNo}
 	</delete>
 	
-	<update id="updateThumbnail" parameterType="hashmap">
+	
+	<update id="resetThumbnail" parameterType="hashmap">
 	 	UPDATE IMG SET THUMBNAIL = 'N'
 	 	WHERE TOUR_NO = #{tourNo}
 	</update>
+	
+	<update id="setThumbnail" parameterType="hashmap">
+		UPDATE IMG SET THUMBNAIL = 'Y'
+		WHERE FILE_PATH = #{thumbnail}
+	</update>
+	
 </mapper>
 

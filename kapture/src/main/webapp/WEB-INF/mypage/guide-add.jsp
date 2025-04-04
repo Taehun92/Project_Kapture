@@ -339,8 +339,8 @@
 						if (data.result == 'success') {
 							console.log('data : ', data);
 							alert("이미지 등록되었습니다.");
+							location.href = "/tours/list.do";
 						}
-						location.href = "/tours/list.do";
 					}
 				})
 			},
