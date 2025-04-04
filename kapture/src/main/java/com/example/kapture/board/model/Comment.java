@@ -12,6 +12,7 @@ public class Comment {
 	private String userFirstName;
 	private String userLastName;
 	private String parentCommentNo;
+	private String deleteYn;
 	
 	
 }
