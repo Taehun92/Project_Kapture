@@ -205,7 +205,7 @@
 		<jsp:include page="menu.jsp"></jsp:include>
 		<div id="app">
 			<!-- 제목 추가 -->
-			<div class="page-title">가이드 정보관리</div>
+			<div class="page-title">가이드 정보 관리</div>
 
 			<hr>
 			<div class="content">
@@ -267,7 +267,7 @@
 								<button class="btn-manage" @click="fnGuideSchedule(guide.userNo)">
 									일정
 								</button>
-								<button class="btn-manage" @click="fnUnregister(guide.userNo)">
+								<button class="btn-manage" @click="fnUnregister(guide.userNo, guide.guideNo)">
 									삭제
 								</button>
 							</td>
@@ -531,17 +531,19 @@
 					});
 				},
 				// 삭제 버튼 클릭 시
-				fnUnregister(userNo) {
+				fnUnregister(userNo, guideNo) {
 					if (!confirm("정말 삭제하시겠습니까?")) {
 						return;
 					}
-					// 삭제 로직 or API
-					// 아래는 예시
+					let nparmap = {
+						userNo: userNo,
+						guideNo: guideNo
+					};
 					$.ajax({
-						url: "/admin/guide-delete.dox",
+						url: "/admin/unregister.dox",
 						dataType: "json",
 						type: "POST",
-						data: { userNo: userNo },
+						data: nparmap,
 						success: function (data) {
 							if (data.result === "success") {
 								alert("삭제되었습니다.");

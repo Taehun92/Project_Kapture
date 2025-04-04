@@ -128,7 +128,7 @@ public class MyPageController {
 			resultMap = myPageService.userUnregister(map);
 			return new Gson().toJson(resultMap);
 		}
-		//
+		// 비밀번호 변경
 		@RequestMapping(value = "/mypage/changePassword.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String changePassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
