@@ -52,6 +52,9 @@ public interface AdminMapper {
 		int insertGuideProfile(HashMap<String, Object> map);
 
 
+		List<HashMap<String, Object>> selectAllReviews();
+
+
 		
 
 

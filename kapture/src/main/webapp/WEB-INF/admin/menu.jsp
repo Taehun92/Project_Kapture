@@ -58,6 +58,7 @@
         <li><a href="/admin/tours.do">상품 관리</a></li>
         <li><a href="/admin/guide.do">가이드 관리</a></li>
         <li><a href="/admin/order.do">주문 및 예약 관리</a></li>
+        <li><a href="/admin/review.do">리뷰 및 평점 관리</a></li>
         <li><a href="/admin/pay.do">결제 및 수익 관리</a></li>
         <li><a href="/admin/customer.do">고객 관리</a></li>
         <li><a href="/admin/promotion.do">마케팅 및 프로모션 관리</a></li>

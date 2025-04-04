@@ -239,5 +239,12 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-	
+
+
+	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    List<HashMap<String, Object>> list = adminMapper.selectAllReviews();
+	    resultMap.put("list", list);
+	    return resultMap;
+	}
 }

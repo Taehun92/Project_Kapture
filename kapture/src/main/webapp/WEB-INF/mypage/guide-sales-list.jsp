@@ -294,12 +294,7 @@
                                 나의 스케줄
                             </a>
                         </li>
-                        <li>
-                            <a :class="{ active: currentPage === 'user-reviews.do' }"
-                                href="http://localhost:8080/mypage/user-reviews.do">
-                                이용후기 관리
-                            </a>
-                        </li>
+          
                         <li>
                             <a href="http://localhost:8080/cs/qna.do">
                                 문의하기
@@ -343,19 +338,25 @@
                                 <th>결제 금액</th>
                                 <th>상태</th>
                                 <th>인원</th>
+                                <th>담당가이드</th>
+                                <th>요구사항</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="item in transactions"
-                                :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
-                                <td>{{ item.PAYMENT_DATE }}</td>
-                                <td>{{ item.USER_FIRSTNAME }}</td>
-                                <td>{{ item.TITLE }}</td>
-                                <td>{{ formatCurrency(item.AMOUNT) }}</td>
-                                <td :style="{ color: item.PAYMENT_STATUS === 'PAID' ? 'green' : 'red' }">
-                                    {{ item.PAYMENT_STATUS }}
+                                :key="item.paymentDate + item.userFirstName + item.title">
+                                <td>{{ item.paymentDate }}</td>
+                                <td>{{ item.memberName || '-'}}</td>
+                                <td>{{ item.title }}</td>
+                                <td>{{ formatCurrency(item.amount) }}</td>
+                                <td>
+                                <span :style="{ color: item.paymentStatus === 'PAID' ? 'green' : 'red' }">
+                                    {{ item.paymentStatus }}
+                                  </span>
                                 </td>
-                                <td>{{ item.NUM_PEOPLE }}명</td>
+                                <td>{{ item.numPeople }}명</td>
+                                <td>{{item.guideName}}</td>
+                                <td>{{item.etc}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -371,67 +372,70 @@
                     </div>
                 </div>
             </div>
-    </div>        
+        </div>
 
 
 
-            <jsp:include page="../common/footer.jsp" />
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    keyword: '',
-                    transactions: [],
-                    page: 1,
-                    size: 10,
-                    totalPages: 1,
-                    sessionId: "${sessionId}",
-                    currentPage: ''
-                };
-            },
-            methods: {
-                setCurrentPage() {
-                    const path = window.location.pathname; // 예: /mypage/guide-sales-list.do
-                    this.currentPage = path.substring(path.lastIndexOf("/") + 1); // guide-sales-list.do
+        <jsp:include page="../common/footer.jsp" />
+        <script>
+            const app = Vue.createApp({
+                data() {
+                    return {
+                        keyword: '',
+                        transactions: [],
+                        page: 1,
+                        size: 10,
+                        totalPages: 1,
+                        sessionId: "${sessionId}",
+                        currentPage: ''
+                    };
                 },
-                loadFilteredData() {
-                    this.page = 1;
-                    this.fnGetTransactions();
-                },
-                fnGetTransactions() {
-                    let self = this;
-                    $.ajax({
-                        url: '/admin/getTransactionList.dox',
-                        method: 'POST',
-                        data: {
+                methods: {
+                    setCurrentPage() {
+                        const path = window.location.pathname; // 예: /mypage/guide-sales-list.do
+                        this.currentPage = path.substring(path.lastIndexOf("/") + 1); // guide-sales-list.do
+                    },
+                    loadFilteredData() {
+                        this.page = 1;
+                        this.fnGetTransactions();
+                    },
+                    fnGetTransactions() {
+                        let self = this;
+                        let nparam = {
                             keyword: self.keyword,
                             page: self.page,
                             size: self.size,
                             sessionId: self.sessionId
-                        },
-                        dataType: 'json',
-                        success(res) {
-                            self.transactions = res.list;
-                            self.totalPages = Math.ceil(res.totalCount / self.size);
                         }
-                    });
+                        $.ajax({
+                            url: '/mypage/getTransactionList.dox',
+                            method: 'POST',
+                            data: nparam,
+                            dataType: 'json',
+                            success(res) {
+                                self.transactions = res.list;
+                                self.totalPages = Math.ceil(res.totalCount / self.size);
+                                console.log("가이드 판매 리스트 >>>>", res);
+                            }
+                        });
+                    },
+                    goPage(p) {
+                        if (p < 1 || p > this.totalPages) return;
+                        this.page = p;
+                        this.fnGetTransactions();
+                    },
+                    formatCurrency(val) {
+                        return '₩ ' + Number(val).toLocaleString();
+                    }
                 },
-                goPage(p) {
-                    if (p < 1 || p > this.totalPages) return;
-                    this.page = p;
-                    this.fnGetTransactions();
-                },
-                formatCurrency(val) {
-                    return '₩ ' + Number(val).toLocaleString();
+                mounted() {
+                    let self = this;
+                    self.setCurrentPage();
+                    self.fnGetTransactions();
                 }
-            },
-            mounted() {
-                let self = this;
-                self.setCurrentPage();
-                self.fnGetTransactions();
-            }
-        });
-        app.mount('#app');
-    </script>
-     </body>
-     </html>
+            });
+            app.mount('#app');
+        </script>
+    </body>
+
+    </html>

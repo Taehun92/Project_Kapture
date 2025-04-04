@@ -227,12 +227,6 @@
                         </a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'user-reviews.do' }"
-                            href="http://localhost:8080/mypage/user-reviews.do">
-                            이용후기 관리
-                        </a>
-                    </li>
-                    <li>
                         <a href="http://localhost:8080/cs/qna.do">
                             문의하기
                         </a>
