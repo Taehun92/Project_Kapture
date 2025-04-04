@@ -46,6 +46,7 @@ public class RequestService {
 			int num = requestMapper.insertRequest(map);
 			resultMap.put("result", "success");
 			resultMap.put("num", num);
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
@@ -76,7 +77,12 @@ public class RequestService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			int num = requestMapper.insertRequestComment(map);
+			int commentNo = (int) map.get("commentNo");
+			System.out.println(">>>>>>" + commentNo);
+			HashMap<String, Object> comment = requestMapper.selectCommentDetail(commentNo);
+			System.out.println(comment);
 			requestMapper.updateRequestStatus(map);
+			resultMap.put("comment", comment);
 			resultMap.put("result", "success");
 			resultMap.put("num", num);
 		} catch (Exception e) {

@@ -30,7 +30,7 @@
 		WHERE R.REQUEST_NO = #{requestNo}
 	</select>
 	<select id="selectRequestCommentList" parameterType="hashmap" resultType="com.example.kapture.board.model.Comment">
-		SELECT *
+		SELECT C1.COMMENT_NO, C1.REQUEST_NO, C1.USER_NO, C1.MESSAGE, NVL(TO_CHAR(C1.PARENT_COMMENT_NO), '0') AS PARENT_COMMENT_NO, C1.DELETEYN,  U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
 		FROM REQUEST_COMMENTS C1
 		LEFT JOIN REQUEST_COMMENTS C2 ON C1.COMMENT_NO = C2.PARENT_COMMENT_NO
 		INNER JOIN REQUESTS R ON R.REQUEST_NO = C1.REQUEST_NO
@@ -42,9 +42,18 @@
 		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{region}, #{budget}, '0', SYSDATE, SYSDATE, #{contents},#{currency})
 	</insert>
 	<insert id="insertRequestComment" parameterType="hashmap">
+		<selectKey keyProperty="commentNo" resultType="int" order="BEFORE">
+	        SELECT COMMENT_NO_SEQ.NEXTVAL FROM DUAL
+	    </selectKey>
 		INSERT INTO REQUEST_COMMENTS
-		VALUES(COMMENT_NO_SEQ.NEXTVAL, #{userId}, #{requestNo}, #{comments}, SYSDATE, SYSDATE, #{commentNo})
+		VALUES(#{commentNo}, #{userNo}, #{requestNo}, #{comments}, SYSDATE, SYSDATE, #{parentCommentNo},'N')
 	</insert>
+	<select id="selectCommentDetail" parameterType="int" resultType="hashmap">
+	    SELECT C.COMMENT_NO, C.USER_NO, C.MESSAGE, C.PARENT_COMMENT_NO, C.DELETEYN, U.USER_FIRSTNAME AS userFirstName, U.USER_LASTNAME AS userLastName
+	    FROM REQUEST_COMMENTS C
+	    INNER JOIN USERS U ON C.USER_NO = U.USER_NO
+	    WHERE C.COMMENT_NO = #{commentNo}
+	</select>
 	<update id="updateRequestStatus" parameterType="hashmap">
 		UPDATE REQUESTS
 		SET STATUS = '1'
@@ -57,15 +66,16 @@
 	</update>
 	<update id="updateRequestComment" parameterType="hashmap">
 		UPDATE REQUEST_COMMENTS
-		SET MESSAGE = #{comments}, RQC_UPDATE_AT = SYSDATE
+		SET MESSAGE = #{comments}, RQC_UPDATED_AT = SYSDATE
 		WHERE COMMENT_NO = #{commentNo}
 	</update>
 	<delete id="deleteRequest" parameterType="hashmap">
 		DELETE FROM REQUESTS
 		WHERE REQUEST_NO = #{requestNo}
 	</delete>
-	<delete id="deleteRequestComment" parameterType="hashmap">
-		DELETE FROM REQUEST_COMMENTS
-		WHERE COMMENT_NO = #{commentNo}
-	</delete>
+	<update id="deleteRequestComment" parameterType="hashmap">
+		UPDATE REQUEST_COMMENTS
+    	SET DELETEYN = 'Y', RQC_UPDATED_AT = SYSDATE
+    	WHERE COMMENT_NO = #{commentNo}
+	</update>
 </mapper>
