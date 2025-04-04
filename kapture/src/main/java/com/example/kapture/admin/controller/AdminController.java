@@ -74,11 +74,20 @@ public class AdminController {
 	public String setting(Model model) throws Exception{
 		return "/admin/admin-setting";
 	}
+
 	// 고객 문의 관리
 	@RequestMapping("/admin/customer-inquiry.do")
 	public String customerInquiry(Model model) throws Exception{
 		return "/admin/customer-inquiry";
 	}
+
+	// 리뷰 및 평점관리 
+	@RequestMapping("/admin/review.do")
+	public String review(Model model) throws Exception{
+		return "/admin/admin-review";
+	}
+	
+
 	
 	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -174,6 +183,7 @@ public class AdminController {
 		System.out.println("=======================");
 		return new Gson().toJson(resultMap);
 	}
+
 	// 회원 리스트 조회
 	@RequestMapping(value = "/admin/users-list.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -205,5 +215,14 @@ public class AdminController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
 		resultMap = adminService.userInquiriesList(map);
 	    return new Gson().toJson(resultMap);
+
+	//리뷰 관리 리스트 	
+	@RequestMapping(value = "/admin-review.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getReviewList(@RequestParam HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = adminService.getAllReviewList(map); // 서비스에서 처리
+	    return new Gson().toJson(resultMap); // JSON 문자열로 반환
+
 	}
 }

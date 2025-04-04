@@ -241,6 +241,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+
 	// 회원 탈퇴 처리(삭제)
 	public HashMap<String, Object> userUnregister(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -319,7 +320,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-
+  // 고객 문의 리스트 
 	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -333,5 +334,14 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-	
+
+
+
+	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    List<HashMap<String, Object>> list = adminMapper.selectAllReviews();
+	    resultMap.put("list", list);
+	    return resultMap;
+	}
+
 }

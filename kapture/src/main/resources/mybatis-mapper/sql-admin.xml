@@ -207,6 +207,7 @@
 		INSERT INTO GUIDE_IMG
 		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
+
 	<!-- 회원관리 유저정보 조회 -->
 	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
 		SELECT *
@@ -253,4 +254,24 @@
 		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
 		ORDER BY INQ_CREATED_AT DESC
 	</select>
+
+  <select id="selectAllReviews" resultType="hashmap">
+	    SELECT 
+	        R.REVIEW_NO           AS reviewNo,
+	        EMAIL				AS email,
+	        T.TOUR_NO             AS tourNo,
+	        T.TITLE               AS title,
+	        U.USER_FIRSTNAME      AS userFirstName,
+	        U.USER_LASTNAME      AS userLastName,
+	        R."COMMENT"             AS content,
+	        R.RATING              AS rating,
+	        TO_CHAR(R.R_CREATED_AT, 'YYYY-MM-DD') AS createdAt
+	    FROM REVIEWS R
+	    INNER JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+	    INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+	    INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+	    WHERE T.DELETEYN = 'N'
+	ORDER BY R.R_CREATED_AT DESC
+</select>
+
 </mapper>
