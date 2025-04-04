@@ -186,6 +186,19 @@
 		WHERE TOUR_NO = #{tourNo}
 	</update>
 	
+	<delete id="deleteTour" parameterType="hashmap">
+		DELETE FROM TOURS
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
 	
+	<delete id="deleteTourImg" parameterType="hashmap">
+		DELETE FROM IMG
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	<update id="updateThumbnail" parameterType="hashmap">
+	 	UPDATE IMG SET THUMBNAIL = 'N'
+	 	WHERE TOUR_NO = #{tourNo}
+	</update>
 </mapper>
 

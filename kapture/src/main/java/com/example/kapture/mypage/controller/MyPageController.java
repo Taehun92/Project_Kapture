@@ -297,5 +297,15 @@ public class MyPageController {
 			resultMap = myPageService.editTour(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		// 가이드 글 삭제
+		@RequestMapping(value = "/mypage/guide-delete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String deleteTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.deleteTour(map);
+			return new Gson().toJson(resultMap);
+		}
 }
 
