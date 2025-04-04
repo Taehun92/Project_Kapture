@@ -253,6 +253,12 @@
                             여행상품 등록
                         </a>
                     </li>
+                    <li>
+                        <a :class="{ active: currentPage === 'guide-sales-list.do' }"
+                            href="http://localhost:8080/mypage/guide-sales-list.do">
+                            판매내역
+                        </a>
+                    </li>
                 </ul>
             </div>
 

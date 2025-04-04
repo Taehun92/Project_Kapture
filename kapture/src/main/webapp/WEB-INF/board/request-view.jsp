@@ -22,12 +22,23 @@
                     <th>지역</th>
                     <td>{{ info.region }}</td>
                     <th>예산</th>
-                    <td>{{ info.budget }}</td>
+                    <td class="budget-cell">
+                        <span v-if="info.budget">
+                            {{ Number(info.budget).toLocaleString() }} {{ getCurrencyLabel(info.currency) }}
+                        </span>
+                        <span v-else>
+                            {{ getCurrencyLabel(info.currency) }}
+                        </span>
+                        <br>
+                        <span v-if="info.currency != 'KRW'">
+                            원화(\) 기준: {{ getConvertedBudgetToKRW().toLocaleString() }} 원
+                        </span>
+                    </td>
                 </tr>
                 <tr>
                     <th>내용</th>
                     <td colspan="3">
-                        <div v-html="info.description"></div>
+                        <div v-html="info.description" class="description"></div>
                     </td>
                 </tr>
                 <tr>
@@ -41,45 +52,36 @@
                     </td>
                 </tr>
             </table>
-            <div v-if="canEditRequest">
-                <button class="request-btn" @click="fnEdit">수정</button>
-                <button class="request-btn" @click="fnRemove">삭제</button>
-            </div>
         </section>
-
-        <hr>
 
         <!-- 댓글 및 대댓글 영역 -->
         <section>
             <div v-for="comment in getNestedComments(null)" :key="comment.commentNo" class="comment-box">
                 <strong>{{ comment.userFirstName }} {{ comment.userLastName }}</strong> : {{ comment.message }}
-                <div class="comment-buttons">
-                    <span v-if="canEditComment(comment)">
-                        <button @click="fnEditComment(comment)">수정</button>
-                        <button @click="fnRemoveComment(comment.commentNo)">삭제</button>
-                    </span>
+                <span class="comment-buttons">
+                    <button v-if="info.status == '1'" @click="fnReply(comment.commentNo)">대댓글</button>
                     <span v-if="canAccept">
                         <button @click="fnAccept">채택</button>
                     </span>
-                    <button v-if="comment.status == '1'" @click="fnReply(comment.commentNo)">대댓글</button>
+                </span>
+                <div class="comment-buttons" v-if="canEditComment(comment)">
+                    <button @click="fnEditComment(comment)">수정</button>
+                    <button @click="fnRemoveComment(comment.commentNo)">삭제</button>
                 </div>
 
                 <div v-for="reply in getNestedComments(comment.commentNo)" :key="reply.commentNo" class="reply-box">
                     <strong>{{ reply.userFirstName }} {{ reply.userLastName }}</strong> : {{ reply.message }}
-                    <div class="comment-buttons">
-                        <span v-if="canEditComment(reply)">
-                            <button @click="fnEditComment(reply)">수정</button>
-                            <button @click="fnRemoveComment(reply.commentNo)">삭제</button>
-                        </span>
+                    <template class="comment-buttons">
+                        <button @click="fnReply(reply.commentNo)">대댓글</button>
                         <span v-if="canAccept">
                             <button @click="fnAccept">채택</button>
                         </span>
-                        <button @click="fnReply(reply.commentNo)">대댓글</button>
-                    </div>
+                    </template>
                 </div>
+                
             </div>
             <div v-if="replyFlg" class="comment-box">
-                <input v-model="reply" placeholder="댓글 입력" style="width: 70%">
+                <input v-model="reply" placeholder="댓글 입력">
                 <button @click="fnAddReply">저장</button>
                 <button @click="fnBack">취소</button>
             </div>
@@ -99,6 +101,11 @@
                 <button @click="fnBack">취소</button>
             </div>
         </section>
+
+        <div v-if="canEditRequest" class="btn-group">
+            <button class="action-btn edit-btn" @click="fnEdit">수정</button>
+            <button class="action-btn delete-btn" @click="fnRemove">삭제</button>
+        </div>
 	</div>
     <jsp:include page="../common/footer.jsp" />
 </body>
@@ -120,7 +127,12 @@ const app = Vue.createApp({
             answerComment : "",
             editComment : "",
             commentNo : "",
-            reply : ""
+            reply : "",
+            exchangeRateMap : {
+                USD: 0,
+                JPY: 0,
+                CNY: 0
+            }
         };
     },
     computed: {
@@ -135,6 +147,26 @@ const app = Vue.createApp({
         }
     },
     methods: {
+        getConvertedKRW(amount, code) {
+            const rates = {
+                USD: 1350,
+                JPY: 9.1,
+                CNY: 185
+            };
+            if (code == "KRW") return Number(amount);
+            const rate = rates[code];
+            if (!rate || isNaN(amount)) return 0;
+            return Math.round(Number(amount) * rate);
+        },
+        getCurrencyLabel(code) {
+            const labels = {
+                KRW: "원(₩)",
+                USD: "달러($)",
+                JPY: "엔(¥)",
+                CNY: "위안(元)"
+            };
+            return labels[code] || "원(₩)";
+        },
         getNestedComments(parentNo) {
             if (!Array.isArray(this.commentList)) return [];
             return this.commentList.filter(item => item.parentCommentNo == parentNo);
@@ -152,6 +184,7 @@ const app = Vue.createApp({
                 success: function(data) {
                     self.info = data.info;
                     self.commentList = data.commentList;
+                    console.log(self.commentList);
                 }
             });
         },
@@ -288,13 +321,53 @@ const app = Vue.createApp({
                     }
                 }
             });
+        },
+
+        getExchangeRates() {
+            const self = this;
+            $.ajax({
+                url: "/exchangeRate/all",
+                type: "GET",
+                dataType: "json",
+                success(data) {
+                    console.log(data);
+                    self.exchangeRateMap.USD = data.USD;
+                    self.exchangeRateMap.JPY = data.JPY;
+                    self.exchangeRateMap.CNY = data.CNY;
+                },
+                error() {
+                    alert("환율 정보를 불러오는 데 실패했습니다.");
+                }
+            });
+        },
+
+        getConvertedBudgetToKRW() {
+            const self = this;
+
+            const rawBudget = self.info.budget;
+            if (!rawBudget) return 0;
+
+            const budgetNumber = parseFloat(String(rawBudget).replace(/,/g, ''));
+            if (isNaN(budgetNumber)) return 0;
+
+            console.log("budget:", rawBudget);
+            console.log("parsed:", budgetNumber);
+            console.log("rate:", self.exchangeRateMap[self.info.currency]);
+
+            if (self.info.currency === 'KRW') {
+                return budgetNumber;
+            } else if (self.exchangeRateMap[self.info.currency]) {
+                return Math.round(budgetNumber * self.exchangeRateMap[self.info.currency]);
+            } else {
+                return 0;
+            }
         }
     },
     mounted() {
         const params = new URLSearchParams(window.location.search);
         this.requestNo = params.get("requestNo") || "";
         this.fnview();
-        
+        this.getExchangeRates();
     }
 });
 

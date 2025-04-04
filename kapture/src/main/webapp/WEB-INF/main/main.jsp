@@ -59,7 +59,7 @@
                                 <div class="hashtags">
                                     <span class="theme-hashtag"># {{ tour.themeName }}</span>
                                 </div>
-                                <div class="favorite" :class="{ active: tour.isFavorite }" @click="toggleFavorite(tour)"></div>
+                                <div class="favorite" :class="{ active: tour.isFavorite === 'Y' }" @click="toggleFavorite(tour)"></div>
                             </div>
                             <div class="card-title">{{ tour.title }}</div>
                             <div class="card-desc">{{ truncateText(tour.description) }}</div>
@@ -110,7 +110,8 @@
             data() {
                 return {
                     swiper: null,
-                    toursList: []
+                    toursList: [],
+                    sessionId: "${sessionId}"
                 };
             },
 
@@ -119,7 +120,6 @@
                     return this.toursList.slice(0, 12); // 최대 9개만 반환
                 }
             },
-
             methods: {
                 formatDate(input) {
                     if (!input) return '';
@@ -133,7 +133,7 @@
                     const year = input.getFullYear();
                     const month = (input.getMonth() + 1).toString().padStart(2, '0');
                     const day = input.getDate().toString().padStart(2, '0');
-                    return `${year}-${month}-${day}`;
+                    return year + '-' + month + '-' + day;
                 },
 
                 truncateText(text, maxLength = 30) {
@@ -157,10 +157,64 @@
                     });
                 },
 
-                toggleFavorite(tour) {
-                    tour.isFavorite = !tour.isFavorite;
+                fnGetWishList() {
+                    let self = this;
+                    let nparmap = {
+                        userNo: parseInt(self.sessionId)
+                    };
+
+                    $.ajax({
+                        url: "/wishList/getWishList.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: nparmap,
+                        success: function(data) {
+                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+                            console.log("찜목록 tourNo 목록: ", wishTourNos);
+
+                            self.toursList = self.toursList.map(function(tour) {
+                                const tourNo = Number(tour.tourNo);
+                                return {
+                                    ...tour,
+                                    isFavorite: wishTourNos.includes(tourNo) ? "Y" : "N"
+                                };
+                            });
+
+                            console.log("최종 toursList: ", self.toursList);
+                        }
+                    });
                 },
 
+                toggleFavorite(tour) {
+                    let self = this;
+                    tour.isFavorite = tour.isFavorite === "Y" ? "N" : "Y";
+                    if (tour.isFavorite === "Y") {
+                        $.ajax({
+                            url: "/wishList/addWishList.dox",
+                            type: "POST",
+                            data: { 
+                                userNo: self.sessionId, 
+                                guideNo : tour.guideNo,
+                                tourNo: tour.tourNo 
+                            },
+                            success: function(res) {
+                                console.log("찜 추가됨", res);
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: "/wishList/removeWishList.dox",
+                            type: "POST",
+                            data: { 
+                                userNo: self.sessionId, 
+                                tourNo: tour.tourNo 
+                            },
+                            success: function(res) {
+                                console.log("찜 제거됨", res);
+                            }
+                        });
+                    }
+                },
 
                 goToTourInfo(tourNo) {
                     location.href="/tours/tour-info.do?tourNo=" + tourNo;
@@ -185,7 +239,17 @@
                         prevEl: '.swiper-button-prev',
                     },
                 });
+
                 self.fnToursList();
+
+                setTimeout(() => {
+                    if (self.sessionId === "${sessionId}") {
+                        self.fnGetWishList();
+                    } else {
+                        console.log("세션 로딩이 아직 안됨");
+                    }
+                }, 300);
+
             }
         });
         app.mount('#app');

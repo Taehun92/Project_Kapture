@@ -166,6 +166,13 @@ public class MyPageController {
 			request.setAttribute("map", map);
 			return "/mypage/guide-schedule";
 		}		
+		//가이드 판매내역
+		@RequestMapping("/mypage/guide-sales-list.do")
+		public String guideSalesList(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-sales-list";
+		}		
+		
 		
 		// 가이드 글쓰기
 		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -273,6 +280,12 @@ public class MyPageController {
 			
 			resultMap = myPageService.updateImg(map);
 			return new Gson().toJson(resultMap);
+		}
+		//가이드 판매내역
+		@PostMapping("/getTransactionList.dox")
+		@ResponseBody
+		public Map<String, Object> getTransactionList(@RequestParam Map<String, Object> param) {
+		    return myPageService.getTransactionListWithPaging(param);
 		}
 		
 		// 가이드 글 수정
