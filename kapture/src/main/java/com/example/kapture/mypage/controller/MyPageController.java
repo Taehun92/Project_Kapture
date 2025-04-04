@@ -307,5 +307,24 @@ public class MyPageController {
 			resultMap = myPageService.deleteTour(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		// 이미지 추가 없을 때 썸네일 첫번째 이미지로 바꾸기
+		@RequestMapping(value = "/mypage/setThumbnail.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String setThumbnail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.setThumbnail(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 본문에 이미지 없을 때 썸네일 초기화
+		@RequestMapping(value = "/mypage/resetThumbnail.dox.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String resetThumbnail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.resetThumbnail(map);
+			return new Gson().toJson(resultMap);
+		}
 }
 

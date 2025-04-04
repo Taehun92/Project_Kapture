@@ -57,5 +57,8 @@ public interface MyPageMapper {
 
 	void deleteTourImg(HashMap<String, Object> map);
 
-	void updateThumbnail(HashMap<String, Object> map);
+	
+	void resetThumbnail(HashMap<String, Object> map);
+
+	void setThumbnail(HashMap<String, Object> map);
 }
