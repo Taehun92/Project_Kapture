@@ -690,8 +690,11 @@
                             }
                         });
                     }
-                }
-
+                },
+				fnEdit() {
+					pageChange("/mypage/guide-edit.do", {tourNo : this.tourNo});
+				
+				}
 
 
 			},

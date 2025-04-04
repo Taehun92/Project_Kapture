@@ -471,6 +471,7 @@
 
 			},
 			fnQuill() {
+				let self = this;
 				let quill = new Quill('#editor', {
 					theme: 'snow',
 					modules: {
