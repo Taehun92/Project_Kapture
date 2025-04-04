@@ -28,6 +28,7 @@ public class MyPageService {
 	
 	@Autowired
     HttpSession session;
+	
 	// 회원정보 리스트
 	public HashMap<String, Object> getUserInfo(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -222,7 +223,8 @@ public class MyPageService {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
 
-		myPageMapper.updateTour(map);		
+		myPageMapper.updateTour(map);
+		resultMap.put("result", "success");
 		return resultMap;
 	}
 	
@@ -245,47 +247,74 @@ public class MyPageService {
 	}
 	public HashMap<String, Object> updateImg(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.resetThumbnail(map);
 		myPageMapper.updateToursFile(map);
 		resultMap.put("result", "success");
 		return resultMap;
 	}
 	
-	public Map<String, Object> getTransactionListWithPaging(Map<String, Object> param) {
-        Map<String, Object> result = new HashMap<>();
+	public HashMap<String, Object> getTransactionListWithPaging(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
 
-        // 🔸 세션ID로 유저번호 매핑
-        String sessionId = (String) param.get("sessionId");
+	    // 🔸 페이징 처리
+	    int page = Integer.parseInt(map.getOrDefault("page", "1").toString());
+	    int size = Integer.parseInt(map.getOrDefault("size", "10").toString());
 
-        // 예: sessionId가 userNo를 직접 의미한다고 가정 (실제 구현에 맞게 바꿔도 됨)
-        int userNo = 0;
-        try {
-            userNo = Integer.parseInt(sessionId);
-        } catch (Exception e) {
-            result.put("error", "세션 ID가 유효하지 않습니다.");
-            return result;
-        }
-        param.put("userNo", userNo);
+	    // OFFSET 계산
+	    int offset = (page - 1) * size;
+	    map.put("page", page); // 여전히 page 넘겨야 XML에서 계산할 수 있음
+	    map.put("size", size);
+	    map.put("offset", offset); // 필요 시 XML 쿼리에서 #{offset} 사용 가능
+	    
+	    // 🔸 DB 조회
+	    List<Guide> list  = myPageMapper.selectTransactionList(map);
+	    int totalCount = myPageMapper.selectTransactionTotalCount(map);
+	
 
-        // 🔸 페이징 처리
-        int page = Integer.parseInt(param.getOrDefault("page", "1").toString());
-        int size = Integer.parseInt(param.getOrDefault("size", "10").toString());
-        param.put("start", (page - 1) * size + 1);
-        param.put("end", page * size);
 
-        // 🔸 DB 조회
-        List<Map<String, Object>> list = myPageMapper.selectTransactionList(param);
-        int totalCount = myPageMapper.selectTransactionTotalCount(param);
+	    resultMap.put("list", list);
+	    
+	    resultMap.put("totalCount", totalCount);
+	    
+	    return resultMap;
 
         result.put("list", list);
         result.put("totalCount", totalCount);
         return result;
     }
+	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.deleteTour(map);
+		myPageMapper.deleteTourImg(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+		
+
+	}
 	
 	
+	public HashMap<String, Object> setThumbnail(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.resetThumbnail(map);
+		myPageMapper.setThumbnail(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
 	
-	
-	
-	
+	public HashMap<String, Object> resetThumbnail(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.resetThumbnail(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;		
+	}
 	
 	
 }
