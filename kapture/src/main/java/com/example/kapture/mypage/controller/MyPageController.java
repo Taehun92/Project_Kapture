@@ -288,6 +288,14 @@ public class MyPageController {
 		    return myPageService.getTransactionListWithPaging(param);
 		}
 		
-		
+		// 가이드 글 수정
+		@RequestMapping(value = "/mypage/guide-update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String updateTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.editTour(map);
+			return new Gson().toJson(resultMap);
+		}
 }
 

@@ -173,7 +173,18 @@
 </select>
 
 	
-	
+	<update id="updateTour" parameterType="hashmap">
+		UPDATE TOURS SET 
+			TITLE = #{title}, 
+			DURATION = #{duration},
+			PRICE = #{price},
+			TOUR_DATE = #{tourDate},
+			SI_NO = (SELECT DISTINCT SI_NO FROM REGION WHERE SI_NAME=#{siName}),
+			GU_NO = (SELECT DISTINCT GU_NO FROM REGION WHERE SI_NAME=#{siName} AND GU_NAME=#{guName}),
+			THEME_NO = (SELECT THEME_NO FROM THEME WHERE THEME_NAME =#{themeName}), 
+			DESCRIPTION = #{description}
+		WHERE TOUR_NO = #{tourNo}
+	</update>
 	
 	
 </mapper>
