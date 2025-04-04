@@ -23,18 +23,33 @@
         WHERE TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
     </select>
 
-    <!-- 📊 카테고리 + 시간대별 매출 -->
-    <select id="getCategoryByDurationChart" parameterType="string" resultType="hashmap">
-        SELECT 
-            TITLE AS CATEGORY,
-            DURATION AS DURATION,
-            SUM(P.AMOUNT) AS TOTAL
-        FROM TOURS T
-        INNER JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
-        WHERE TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
-        GROUP BY TITLE, DURATION
-        ORDER BY TITLE, DURATION
-    </select>
+    <!--  지역 + 테마별  -->
+    <select id="getThemeSalesByRegion" resultType="hashmap">
+    SELECT 
+        SI_NAME AS REGION,           <!-- ✅ 이 라인 추가! -->
+        THEME_NAME AS THEME, 
+        COUNT(*) AS TOTAL
+    FROM PAYMENTS p
+    JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+    JOIN THEME th ON t.THEME_NO = th.THEME_NO
+    JOIN REGION r ON t.SI_NO = r.SI_NO
+    WHERE 1=1
+        <if test="year != null and year != ''">
+            AND TO_CHAR(PAYMENT_DATE, 'YYYY') = #{year}
+        </if>
+        <if test="region != null and region != ''">
+            AND SI_NAME = #{region}
+        </if>
+    GROUP BY SI_NAME, THEME_NAME   <!-- ✅ 그룹핑도 SI_NAME 포함 -->
+    ORDER BY TOTAL DESC
+</select>
+	
+	<select id="getRegionList" resultType="string">
+	    SELECT DISTINCT SI_NAME
+	    FROM REGION
+	    WHERE SI_NAME IS NOT NULL
+	    ORDER BY SI_NAME
+	</select>
     
     <select id="getDayChartByYearMonth" parameterType="map" resultType="map">
     SELECT TO_CHAR(PAYMENT_DATE, 'DD') || '일' AS DAY,
@@ -46,51 +61,123 @@
     ORDER BY DAY
 	</select>
 	
-	<!-- 총 거래 금액 -->
-    <select id="selectTotalAmount" resultType="int">
-        SELECT NVL(SUM(p.AMOUNT), 0)
-        FROM PAYMENTS p
-        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-        WHERE p.PAYMENT_STATUS = '승인'
-    </select>
+		<!-- 총 거래 금액 -->
+	<select id="selectTotalAmount" resultType="int">
+	    SELECT NVL(SUM(p.AMOUNT), 0)
+	    FROM PAYMENTS p
+	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.PAYMENT_STATUS = 'PAID'
+	</select>
+	
+	<!-- 어제 거래 금액 -->
+	<select id="selectYesterdayAmount" resultType="int">
+	    SELECT NVL(SUM(p.AMOUNT), 0)
+	    FROM PAYMENTS p
+	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    AND TRUNC(p.PAYMENT_DATE) = TRUNC(SYSDATE - 1)
+	</select>
+	
+	<!-- 총 이용 인원 -->
+	<select id="selectTotalUsers" resultType="int">
+	    SELECT NVL(SUM(p.NUM_PEOPLE), 0)
+	    FROM PAYMENTS p
+	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.PAYMENT_STATUS = 'PAID'
+	</select>
+	
+	<!-- 승인된 건수 -->
+	<select id="selectApprovedCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM PAYMENTS p
+	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.PAYMENT_STATUS = 'PAID'
+	</select>
+	
+	<!-- 취소된 건수 -->
+	<select id="selectRejectedCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM PAYMENTS p
+	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.PAYMENT_STATUS = 'REFUNDED'
+	</select>
+	
+	<select id="selectTransactionList" resultType="hashmap">
+  SELECT * FROM (
+    SELECT ROWNUM AS RNUM, DATA.* FROM (
+      SELECT
+          PAYMENT_DATE,
+          USER_FIRSTNAME,
+          TITLE,
+          AMOUNT,
+          PAYMENT_STATUS,
+          NUM_PEOPLE
+      FROM PAYMENTS p
+      JOIN USERS u ON p.USER_NO = u.USER_NO
+      JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+      WHERE 1 = 1
+      <if test="startDate != null and startDate != ''">
+          AND PAYMENT_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+          AND PAYMENT_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="status != null and status != ''">
+          AND PAYMENT_STATUS = #{status}
+      </if>
+      <if test="keyword != null and keyword != ''">
+          AND (
+              USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+              OR TITLE LIKE '%' || #{keyword} || '%'
+          )
+      </if>
+      ORDER BY PAYMENT_DATE DESC
+	    ) DATA
+	    WHERE ROWNUM &lt;= #{page} * #{size}
+	  )
+	  WHERE RNUM &gt; (#{page} - 1) * #{size}
+	</select>
+	
+	<!--페이징 처리 -->
+	<select id="selectTransactionTotalCount" resultType="int">
+	  SELECT COUNT(*)
+	  FROM PAYMENTS p
+	  JOIN USERS u ON p.USER_NO = u.USER_NO
+	  JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	  WHERE 1 = 1
+	  <if test="startDate != null and startDate != ''">
+	    AND PAYMENT_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  </if>
+	  <if test="endDate != null and endDate != ''">
+	    AND PAYMENT_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  </if>
+	  <if test="status != null and status != ''">
+	    AND PAYMENT_STATUS = #{status}
+	  </if>
+	  <if test="keyword != null and keyword != ''">
+	    AND (
+	      USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+	      OR TITLE LIKE '%' || #{keyword} || '%'
+	    )
+	  </if>
+	</select>
 
-    <!-- 어제 거래 금액 -->
-    <select id="selectYesterdayAmount" resultType="int">
-        SELECT NVL(SUM(p.AMOUNT), 0)
-        FROM PAYMENTS p
-        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-        WHERE p.PAYMENT_STATUS = '승인'
-        AND TO_CHAR(p.PAYMENT_DATE, 'YYYYMMDD') = TO_CHAR(SYSDATE - 1, 'YYYYMMDD')
-    </select>
-
-    <!-- 총 이용 인원 -->
-    <select id="selectTotalUsers" resultType="int">
-        SELECT NVL(SUM(p.NUM_PEOPLE), 0)
-        FROM PAYMENTS p
-        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-        WHERE p.PAYMENT_STATUS = '승인'
-    </select>
-
-    <!-- 승인된 건수 -->
-    <select id="selectApprovedCount" resultType="int">
-        SELECT COUNT(*)
-        FROM PAYMENTS p
-        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-        WHERE p.PAYMENT_STATUS = '승인'
-    </select>
-
-    <!-- 취소된 건수 -->
-    <select id="selectRejectedCount" resultType="int">
-        SELECT COUNT(*)
-        FROM PAYMENTS p
-        INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-        WHERE p.PAYMENT_STATUS = '취소'
-    </select>
+	
     <!-- 가이드 정보조회 -->
     <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
         SELECT *
         FROM USERS U
         INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+        LEFT JOIN(
+    		SELECT GI.*
+    		FROM GUIDE_IMG GI
+    		INNER JOIN (
+        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+        		FROM GUIDE_IMG
+       			GROUP BY P_GUIDE_NO
+    	) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
+            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+		) I ON G.GUIDE_NO = I.P_GUIDE_NO
     </select>
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
@@ -130,5 +217,9 @@
 		WHERE USER_NO = #{userNo}
 	</update>
 
+	<insert id="insertGuideProfile" parameterType="hashmap">
+		INSERT INTO GUIDE_IMG
+		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
+	</insert>
 		
 </mapper>

@@ -1,9 +1,8 @@
 package com.example.kapture.admin.controller;
 
+import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,9 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.admin.dao.AdminService;
+import com.example.kapture.common.FileManager;
 import com.google.gson.Gson;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class AdminController {
@@ -77,12 +81,19 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getChartByTypeAndYear(map);
 	    return new Gson().toJson(resultMap);
 	}
+	//지역 리스트 
+	@RequestMapping("/admin/getRegionList.dox")
+	@ResponseBody
+	public String getRegionList() {
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("list", adminService.getAllRegionNames());
+	    return new Gson().toJson(result);
+	}
 
 	@RequestMapping(value = "/admin/getSummary.dox", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSummary(@RequestParam HashMap<String, Object> map) {
-	    System.out.println("📦 getSummary 요청 파라미터: " + map);
-	    
+		
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    resultMap.put("summary", adminService.getSummary(map));
 	    
@@ -105,5 +116,56 @@ public class AdminController {
 		
 		resultMap = adminService.editGuide(map);
 	    return new Gson().toJson(resultMap);
+	}
+	//최근거래 테이블 , 검색 
+	@RequestMapping(value = "/admin/getTransactionList.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getTransactionList(@RequestParam HashMap<String, Object> map) {
+	    return new Gson().toJson(adminService.getTransactionList(map));
+	}
+	// 프로필 이미지 저장
+	@RequestMapping("/admin/guide-profile.dox")
+	@ResponseBody
+	public String result(@RequestParam("profile") List<MultipartFile> profile, @RequestParam("guideNo") int guideNo, HttpServletRequest request,HttpServletResponse response, Model model)
+	{
+		HashMap<String, Object> resultMap = new HashMap<>();
+		try {
+			System.out.println("=======================");
+			for(MultipartFile file : profile) {			
+				String originFilename = file.getOriginalFilename();
+				String extName = originFilename.substring(originFilename.lastIndexOf("."),originFilename.length());
+				String saveFileName = FileManager.genSaveFileName(extName);
+				long size = file.getSize();
+				String fileType = file.getContentType();
+				
+				String path2 = System.getProperty("user.dir");
+				if(!profile.isEmpty())
+				{	
+					
+					File imgfile = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
+					file.transferTo(imgfile);
+					
+					
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					map.put("guideNo", guideNo);
+					map.put("pFilePath", "../img/" + saveFileName);
+					map.put("pFileName", saveFileName);
+					map.put("pFileOrgName", originFilename);
+					map.put("pFileType", fileType);
+					map.put("pFileSize", size);
+					map.put("pFileExtension", extName);
+					
+					// insert 쿼리 실행
+					resultMap = adminService.addGuideProfile(map);
+					resultMap.put("newFilePath", "../img/" + saveFileName);	
+				}	
+				
+			}
+		}catch(Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+		System.out.println("=======================");
+		return new Gson().toJson(resultMap);
 	}
 }

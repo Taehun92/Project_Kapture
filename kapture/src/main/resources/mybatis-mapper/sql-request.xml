@@ -39,7 +39,7 @@
 	</select>
 	<insert id="insertRequest" parameterType="hashmap">
 		INSERT INTO REQUESTS
-		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{region}, #{budget}, '0', SYSDATE, SYSDATE, #{contents})
+		VALUES(REQUEST_SEQ.NEXTVAL, #{userNo}, #{title}, #{region}, #{budget}, '0', SYSDATE, SYSDATE, #{contents},#{currency})
 	</insert>
 	<insert id="insertRequestComment" parameterType="hashmap">
 		INSERT INTO REQUEST_COMMENTS
@@ -66,6 +66,6 @@
 	</delete>
 	<delete id="deleteRequestComment" parameterType="hashmap">
 		DELETE FROM REQUEST_COMMENTS
-		WHERE REQUEST_NO = #{requestNo}
+		WHERE COMMENT_NO = #{commentNo}
 	</delete>
 </mapper>
