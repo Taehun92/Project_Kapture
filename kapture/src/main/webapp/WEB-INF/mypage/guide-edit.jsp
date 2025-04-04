@@ -290,7 +290,9 @@
 							alert("수정되었습니다.");
 
 							if (self.imgList.length > 0) {
-								self.fnUpdateImgList(data.tourNo);
+								self.fnUpdateImgList(self.tourNo);
+							} else {
+								location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
 							}
 						}
 					}
@@ -389,6 +391,7 @@
 						if (data.result == 'success') {
 							console.log('data : ', data);
 							alert("이미지 등록되었습니다.");
+							location.href = "/tours/list.do";
 						}
 					}
 				})

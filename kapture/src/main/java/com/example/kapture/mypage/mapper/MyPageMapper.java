@@ -53,6 +53,9 @@ public interface MyPageMapper {
 
 	int selectTransactionTotalCount(Map<String, Object> param);
 
+	void deleteTour(HashMap<String, Object> map);
 
-  
+	void deleteTourImg(HashMap<String, Object> map);
+
+	void updateThumbnail(HashMap<String, Object> map);
 }
