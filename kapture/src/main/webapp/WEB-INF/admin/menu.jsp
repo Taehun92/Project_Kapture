@@ -50,6 +50,17 @@
     margin-left: 220px;
     padding: 20px;
 }
+
+.toggle-submenu {
+    display: flex !important;
+    justify-content: space-between; /* 텍스트와 화살표를 양쪽 끝에 배치 */
+    align-items: center;
+	width: 95%;
+}
+.submenu-items {
+    /* 전체 하위메뉴를 들여쓰기 하고 싶다면 */
+    padding-left: 20px !important;
+}
 </style>
 <body>
 <div class="sidebar">
@@ -60,10 +71,38 @@
         <li><a href="/admin/order.do">주문 및 예약 관리</a></li>
         <li><a href="/admin/review.do">리뷰 및 평점 관리</a></li>
         <li><a href="/admin/pay.do">결제 및 수익 관리</a></li>
-        <li><a href="/admin/customer.do">고객 관리</a></li>
+		<li class="submenu">
+			<!-- 클릭 시 하위 메뉴 열고 닫힘 -->
+			<a href="javascript:void(0)" class="toggle-submenu">
+		    	고객 관리 <span class="arrow">∨</span>
+		    </a>
+		    <!-- 펼쳐질 하위 메뉴 (기본 숨김) -->
+		    <ul class="submenu-items" style="display: none;">
+		    	<li><a href="/admin/customer.do">고객 정보 관리</a></li>
+		        <li><a href="/admin/customer-inquiry.do">고객 문의 관리</a></li>
+		    </ul>
+		</li>
         <li><a href="/admin/promotion.do">마케팅 및 프로모션 관리</a></li>
         <li><a href="/admin/setting.do">운영 및 설정 관리</a></li>
     </ul>
 </div>
 </body>
 </html>
+<script>
+  $(document).ready(function() {
+    $('.toggle-submenu').click(function(e) {
+      e.preventDefault(); // a 태그 기본 이동 막기
+
+      // 1) 화살표 모양 변경
+      let $arrow = $(this).find('.arrow');
+      if ($arrow.text() === '∨') {
+        $arrow.text('∧');
+      } else {
+        $arrow.text('∨');
+      }
+
+      // 2) 하위 메뉴 열고 닫기
+      $(this).next('.submenu-items').slideToggle();
+    });
+  });
+</script>
