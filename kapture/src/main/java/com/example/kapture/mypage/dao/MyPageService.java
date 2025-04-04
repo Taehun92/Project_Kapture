@@ -222,7 +222,8 @@ public class MyPageService {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
 
-		myPageMapper.updateTour(map);		
+		myPageMapper.updateTour(map);
+		resultMap.put("result", "success");
 		return resultMap;
 	}
 	

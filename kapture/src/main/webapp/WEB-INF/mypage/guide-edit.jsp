@@ -152,7 +152,7 @@
 			   imgList: [],
 			   themeNo : "",
 			   themeParentNo : "",
-			   quill : null,
+			   
 			  
             };
         },
@@ -184,14 +184,16 @@
 						self.themeNo = data.tourInfo.themeNo;
 						self.themeParentNo = data.tourInfo.themeParentNo;
 						self.description = data.tourInfo.description;
+						
 
 						self.fnGetSi();
 						// self.fnGetGu();
 						self.fnGetThemeParent();
 						self.fnGetThemeName();
-						self.fnQuill();
-						
 						self.tourDate = self.tourDate.split(" ")[0];
+						console.log('투어 내용 : ',self.description);
+						self.fnQuill();
+						console.log('투어 내용 : ',self.description);
 					}
 				});
 			},
@@ -207,7 +209,8 @@
 					siName: self.siName,
 					guName: self.guName,
 					sessionId : self.sessionId,
-					themeName : self.themeName
+					themeName : self.themeName,
+					tourNo : self.tourNo,
 				};
 
 				if(self.sessionId == ""){
@@ -272,7 +275,7 @@
 				}
 				
 				$.ajax({
-					url:"/mypage/guide-add.dox",
+					url:"/mypage/guide-update.dox",
 					dataType:"json",
 					type : "POST",
 					data : nparmap,
@@ -282,8 +285,13 @@
 							console.log(self.sessionId);
 							console.log(self.siName);
 							console.log(self.guName);
-							alert("등록되었습니다.");
-							self.fnUpdateImgList(data.tourNo);
+							console.log(self.imgList);
+							console.log(self.description);
+							alert("수정되었습니다.");
+
+							if (self.imgList.length > 0) {
+								self.fnUpdateImgList(data.tourNo);
+							}
 						}
 					}
 				});
@@ -515,7 +523,6 @@
 											}
 										} catch (error) {
 											console.error("이미지 업로드 중 오류 발생:", error);
-											alert("이미지 크기가 너무 큽니다.");
 										}
 									};
 								}
@@ -524,7 +531,7 @@
 					}
 				});
 	
-				quill.root.innerHTML = this.description;
+				quill.root.innerHTML = self.description;
 	
 				quill.on('text-change', function () {
 					self.description = quill.root.innerHTML;
@@ -550,6 +557,8 @@
 			self.fnGetThemeParentList();
 
 			self.fnTourInfo();
+
+			
         }
     });
     app.mount('#app');
