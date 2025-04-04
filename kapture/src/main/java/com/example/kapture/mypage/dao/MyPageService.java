@@ -246,7 +246,7 @@ public class MyPageService {
 	}
 	public HashMap<String, Object> updateImg(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
-		myPageMapper.updateThumbnail(map);
+		myPageMapper.resetThumbnail(map);
 		myPageMapper.updateToursFile(map);
 		resultMap.put("result", "success");
 		return resultMap;
@@ -292,6 +292,27 @@ public class MyPageService {
 		
 		return resultMap;
 		
+	}
+	
+	
+	public HashMap<String, Object> setThumbnail(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.resetThumbnail(map);
+		myPageMapper.setThumbnail(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> resetThumbnail(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.resetThumbnail(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;		
 	}
 	
 	
