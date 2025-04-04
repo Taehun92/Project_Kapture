@@ -72,7 +72,7 @@
 				</tr>
 				<tr>
                 	<th>날짜 :</th>
-                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10"/></td>
+                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10" :min="minDate"/></td>
                 	<th>시 :</th>
                 	<td>
 						<select @change="fnSelectGu()" v-model="siName">
@@ -146,7 +146,7 @@
 				themeNameList : [],
 				currentPage: "",
 				imgList: [],
-
+				minDate: new Date().toISOString().split("T")[0]
             };
         },
         methods: {
