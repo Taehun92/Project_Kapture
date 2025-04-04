@@ -160,9 +160,7 @@
 	      OR TITLE LIKE '%' || #{keyword} || '%'
 	    )
 	  </if>
-	</select>
-
-	
+	</select>	
     <!-- 가이드 정보조회 -->
     <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
         SELECT *
@@ -179,40 +177,28 @@
             AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
 		) I ON G.GUIDE_NO = I.P_GUIDE_NO
     </select>
+    <!-- 가이드관리 가이드정보 수정 -->
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
 		SET 
-		<if test="profileImage != null">
-			PROFILE_IMAGE = #{profileImage},
-		</if>
-		<if test="language != null">
-			LANGUAGE = #{language},
-		</if>
-		<if test="experience != null">
-			EXPERIENCE = #{experience},
-		</if>
+		<if test="profileImage != null">PROFILE_IMAGE = #{profileImage},</if>
+		<if test="language != null">LANGUAGE = #{language},</if>
+		<if test="experience != null">EXPERIENCE = #{experience},</if>
 			G_UPDATED_AT = SYSDATE
 		WHERE GUIDE_NO = #{guideNo}
 	</update>
+	<!-- 가이드관리 유저정보 수정 -->
 	<update id="updateUserInfo" parameterType="hashmap">
 		UPDATE USERS
 		SET USER_FIRSTNAME = #{userFirstName},
 			EMAIL = #{email},
-		<if test="gender != null">
-			GENDER = #{gender},
-		</if>
-		<if test="password != null and password !=''">
+			<if test="gender != null">GENDER = #{gender},</if>
+			<if test="password != null and password !=''">
 			PASSWORD = #{password},
-		</if>
-		<if test="address != null">
-			ADDRESS = #{address},
-		</if>
-		<if test="phone != null">
-			PHONE = #{phone},
-		</if>
-		<if test="birthday != null">
-			BIRTHDAY = #{birthday},
-		</if>
+			</if>
+			<if test="address != null">ADDRESS = #{address},</if>
+			<if test="phone != null">PHONE = #{phone},</if>
+			<if test="birthday != null">BIRTHDAY = #{birthday},</if>
 			U_UPDATED_AT = SYSDATE
 		WHERE USER_NO = #{userNo}
 	</update>
@@ -221,5 +207,50 @@
 		INSERT INTO GUIDE_IMG
 		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
-		
+	<!-- 회원관리 유저정보 조회 -->
+	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
+		SELECT *
+		FROM USERS
+	</select>
+	<!-- 회원관리 유저정보 수정 -->
+	<update id="updateUser" parameterType="map">
+		UPDATE USERS
+		SET EMAIL = #{email},
+			USER_FIRSTNAME = #{userFirstName},
+			<if test="userLastName != null">USER_LASTNAME = #{userLastName},</if>
+			<if test="password != null and password !=''">PASSWORD = #{password},</if>
+			<if test="gender != null">GENDER = #{gender},</if>
+			<if test="phone != null">PHONE = #{phone},</if>
+			<if test="birthday != null">BIRTHDAY = #{birthday},</if>
+			<if test="address != null">ADDRESS = #{address},</if>
+			<if test="socialType != null">SOCIAL_TYPE = #{socialType},</if>
+			ISFOREIGNER = #{isForeigner},
+			ROLE = #{role},
+			PUSHYN = #{pushYN},
+			UNREGISTERYN = #{unregisterYN},
+			U_UPDATED_AT = SYSDATE
+		WHERE USER_NO = #{userNo}
+	</update>
+	<!-- 회원관리 회원 탈퇴 처리(삭제) -->
+	<delete id="deleteUser" parameterType="hashmap">
+		DELETE FROM USERS
+		WHERE USER_NO = #{userNo}
+	</delete>
+	<!-- 역할 수정시 가이드 생성 -->
+	<update id="insertGuide" parameterType="hashmap">
+		INSERT INTO GUIDES (GUIDE_NO, USER_NO)
+		VALUES (GUIDES_SEQ.NEXTVAL, #{userNo})
+	</update>
+	<!-- 가이드관리 삭제,역할 수정시 가이드 삭제 -->
+	<delete id="deleteGuide" parameterType="hashmap">
+		DELETE FROM GUIDES
+		WHERE USER_NO = #{userNo}
+	</delete>
+	<!-- 고객 문의 리스트 조회 -->
+	<select id="selectInquiriesList" parameterType="map" resultType="com.example.kapture.cs.model.Cs">
+		SELECT *
+		FROM INQUIRIES I
+		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
+		ORDER BY INQ_CREATED_AT DESC
+	</select>
 </mapper>

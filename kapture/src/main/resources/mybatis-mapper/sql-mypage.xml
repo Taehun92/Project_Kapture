@@ -65,7 +65,7 @@
 	<update id="unregisterUser" parameterType="hashmap">
 		UPDATE USERS
 		SET UNREGISTERYN = 'Y'
-		WHERE USER_NO = #{sessionId}
+		WHERE USER_NO = #{userNo}
 	</update>
 
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
