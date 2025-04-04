@@ -178,14 +178,16 @@
 						self.themeNo = data.tourInfo.themeNo;
 						self.themeParentNo = data.tourInfo.themeParentNo;
 						self.description = data.tourInfo.description;
+						
 
 						self.fnGetSi();
 						// self.fnGetGu();
 						self.fnGetThemeParent();
 						self.fnGetThemeName();
 						self.tourDate = self.tourDate.split(" ")[0];
+						console.log('투어 내용 : ',self.description);
 						self.fnQuill();
-						
+						console.log('투어 내용 : ',self.description);
 					}
 				});
 			},
@@ -523,7 +525,7 @@
 					}
 				});
 	
-				quill.root.innerHTML = this.description;
+				quill.root.innerHTML = self.description;
 	
 				quill.on('text-change', function () {
 					self.description = quill.root.innerHTML;
@@ -550,7 +552,7 @@
 
 			self.fnTourInfo();
 
-			console.log('this.descripto',this.description);
+			
         }
     });
     app.mount('#app');
