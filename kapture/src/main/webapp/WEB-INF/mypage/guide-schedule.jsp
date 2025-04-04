@@ -235,12 +235,7 @@
                             문의하기
                         </a>
                     </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-unregister.do' }"
-                            href="http://localhost:8080/mypage/user-unregister.do">
-                            회원 탈퇴
-                        </a>
-                    </li>
+                    
                     <li>
                         <a :class="{ active: currentPage === 'guide-add.do' }"
                             href="http://localhost:8080/mypage/guide-add.do">

@@ -43,7 +43,7 @@ public class ToursController {
 
 		request.setAttribute("map", map);
       
-		return "/tours/test-info";
+		return "/tours/tour-info";
     }
 	// 데이트피커 테스트 주소(추후 삭제예정)
 	@RequestMapping("/tours/date-picker-test.do")
