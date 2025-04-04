@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
+import com.example.kapture.cs.model.Cs;
+import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
 
 @Service
@@ -165,7 +167,7 @@ public class AdminService {
     public List<String> getAllRegionNames() {
         return adminMapper.getRegionList();
     }
-
+    // 가이드관리 가이드정보 조회
 	public HashMap<String, Object> getGuidesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -180,7 +182,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-
+	// 가이드관리 정보 수정
 	public HashMap<String, Object> editGuide(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -224,7 +226,7 @@ public class AdminService {
 	    
 	    return resultMap;
 	}
-
+	// 가이드관리 프로필 이미지 저장
 	public HashMap<String, Object> addGuideProfile(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -240,6 +242,100 @@ public class AdminService {
 		return resultMap;
 	}
 
+	// 회원 탈퇴 처리(삭제)
+	public HashMap<String, Object> userUnregister(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.deleteUser(map);  // 유저 삭제는 항상 수행
+			
+			String role = (String) map.get("role");
+			Object guideNoObj = map.get("guideNo");
+			Integer guideNo = null;
+			if (guideNoObj != null) {
+			    if (guideNoObj instanceof String) {
+			        guideNo = Integer.parseInt((String) guideNoObj);
+			    } else if (guideNoObj instanceof Integer) {
+			        guideNo = (Integer) guideNoObj;
+			    }
+			}
+	        // 가이드 번호가 있을 경우 가이드 삭제도 수행
+	        if (((guideNo != null && guideNo > 0) || "GUIDE".equals(role)) && result > 0) {
+	            int guideResult = adminMapper.deleteGuide(map);
+	            	resultMap.put("guideResult", "success");
+	            if (guideResult <= 0) {
+	                resultMap.put("guideResult", "fail");
+	            }
+	        }
+	        resultMap.put("result", result > 0 ? "success" : "fail");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 회원관리 유저정보 수정
+	public HashMap<String, Object> editUser(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateUser(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");
+			String beforeRole = (String)map.get("beforeRole");
+			String role = (String)map.get("role");
+			System.out.println("role:"+(String)map.get("role"));
+			System.out.println("beforeRole:"+(String)map.get("beforeRole"));
+			if("GUIDE".equals(role) && "TOURIST".equals(beforeRole)) {
+				int guideResult = adminMapper.insertGuide(map);
+				resultMap.put("guideInsertResult", "success");
+				if(guideResult <= 0) {
+					resultMap.put("guideInsertResult", "fail");
+				}
+			}
+			if("TOURIST".equals(role) && "GUIDE".equals(beforeRole)) {
+				int guideResult = adminMapper.deleteGuide(map);
+				resultMap.put("guideDeleteResult", "success");
+				if(guideResult <= 0) {
+					resultMap.put("guideDeleteResult", "fail");
+				}
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 회원관리 정보 조회
+	public HashMap<String, Object> getUsersList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Login> usersList= adminMapper.selectUsersList(map);
+			resultMap.put("usersList", usersList);
+			resultMap.put("result", "success");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+  // 고객 문의 리스트 
+	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			List<Cs> inquiriesList= adminMapper.selectInquiriesList(map);
+			resultMap.put("inquiriesList", inquiriesList);
+			resultMap.put("result", "success");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+
+
 
 	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
@@ -247,4 +343,5 @@ public class AdminService {
 	    resultMap.put("list", list);
 	    return resultMap;
 	}
+
 }
