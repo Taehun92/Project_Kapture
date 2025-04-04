@@ -246,6 +246,7 @@ public class MyPageService {
 	}
 	public HashMap<String, Object> updateImg(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
+		myPageMapper.updateThumbnail(map);
 		myPageMapper.updateToursFile(map);
 		resultMap.put("result", "success");
 		return resultMap;
@@ -281,12 +282,17 @@ public class MyPageService {
         result.put("totalCount", totalCount);
         return result;
     }
-	
-	
-	
-	
-	
-	
+	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		myPageMapper.deleteTour(map);
+		myPageMapper.deleteTourImg(map);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+		
+	}
 	
 	
 }

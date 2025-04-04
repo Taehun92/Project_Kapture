@@ -240,6 +240,8 @@
 
 							if (self.imgList.length > 0) {
 								self.fnUpdateImgList(data.tourNo);
+							} else {
+								location.href = "/tours/list.do";
 							}
 						}
 					}
@@ -338,6 +340,7 @@
 							console.log('data : ', data);
 							alert("이미지 등록되었습니다.");
 						}
+						location.href = "/tours/list.do";
 					}
 				})
 			},
