@@ -65,6 +65,9 @@ public interface AdminMapper {
 
 
 
+		List<HashMap<String, Object>> selectAllReviews();
+
+
 		
 
 
