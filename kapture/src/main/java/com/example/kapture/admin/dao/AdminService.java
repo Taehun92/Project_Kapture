@@ -319,7 +319,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-
+	// 고객 문의 리스트 조회
 	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -327,6 +327,45 @@ public class AdminService {
 			List<Cs> inquiriesList= adminMapper.selectInquiriesList(map);
 			resultMap.put("inquiriesList", inquiriesList);
 			resultMap.put("result", "success");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 고객 문의 답변 저장
+	public HashMap<String, Object> inquiryAnswerSave(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateInquiryAnswer(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 고객 문의 삭제
+	public HashMap<String, Object> removeInquiry(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.deleteInquiry(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 환불 처리
+	public HashMap<String, Object> payRefunded(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateRefunded(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", e.getMessage());

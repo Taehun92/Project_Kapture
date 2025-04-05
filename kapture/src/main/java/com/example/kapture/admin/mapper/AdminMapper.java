@@ -53,8 +53,14 @@ public interface AdminMapper {
 		int insertGuide(HashMap<String, Object> map);
 		// 가이드관리 삭제,역할 수정시 가이드 삭제
 		int deleteGuide(HashMap<String, Object> map);
-
+		// 고객 문의 리스트 조회
 		List<Cs> selectInquiriesList(HashMap<String, Object> map);
+		// 고객 문의 답변 저장
+		int updateInquiryAnswer(HashMap<String, Object> map);
+		// 고객 문의 삭제
+		int deleteInquiry(HashMap<String, Object> map);
+		// 환불 처리
+		int updateRefunded(HashMap<String, Object> map);
 
 
 

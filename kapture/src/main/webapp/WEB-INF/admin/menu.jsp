@@ -68,7 +68,7 @@
     <ul>
         <li><a href="/admin/tours.do">상품 관리</a></li>
         <li><a href="/admin/guide.do">가이드 관리</a></li>
-        <li><a href="/admin/order.do">주문 및 예약 관리</a></li>
+        <li><a href="/admin/order.do">주문내역 관리</a></li>
         <li><a href="/admin/pay.do">결제 및 수익 관리</a></li>
 		<li class="submenu">
 			<!-- 클릭 시 하위 메뉴 열고 닫힘 -->
@@ -89,6 +89,15 @@
 </html>
 <script>
   $(document).ready(function() {
+	// 현재 페이지 이름 추출
+	let currentPage = window.location.pathname.split('/').pop();
+	console.log("Current page:", currentPage);
+	if(currentPage === "customer-inquiry.do" || currentPage === "customer.do") {
+	      // 화살표를 '∧'로 변경
+	      $('.toggle-submenu .arrow').text('∧');
+	      // 하위 메뉴 보이기
+	      $('.submenu-items').show();
+	}
     $('.toggle-submenu').click(function(e) {
       e.preventDefault(); // a 태그 기본 이동 막기
 
