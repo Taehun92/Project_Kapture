@@ -163,8 +163,64 @@
 			<div v-if="showAnswerModal" class="modal-overlay" @click.self="fnCloseAnswerModal">
 				<div class="modal-content">
 					<h2>1:1 문의 답변</h2>
-					<!-- 답변 입력 textarea -->
-					<textarea class="answer-textarea" v-model="answerText" placeholder="답변 내용을 입력해주세요"></textarea>
+					 <!-- 테이블 시작 -->
+					 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+						<tbody>
+							<!-- 문의유형 -->
+							<tr>
+								<!-- 왼쪽 셀: 라벨 -->
+								<td style="width: 120px; background-color: #f4f4f4; text-align: center; 
+										   border: 1px solid #ccc; padding: 10px;">
+									문의유형
+								</td>
+								<!-- 오른쪽 셀: 인풋박스 -->
+								<td style="border: 1px solid #ccc; padding: 10px;">
+									<input type="text" v-model="selectedInquiry.category" 
+										   readonly
+										   style="width: 97%; padding: 5px;" />
+								</td>
+							</tr>
+							
+							<!-- 제목 -->
+							<tr>
+								<td style="background-color: #f4f4f4; text-align: center; 
+										   border: 1px solid #ccc; padding: 10px;">
+									제목
+								</td>
+								<td style="border: 1px solid #ccc; padding: 10px;">
+									<input type="text" v-model="selectedInquiry.qnaTitle" 
+										   readonly
+										   style="width: 97%; padding: 5px;" />
+								</td>
+							</tr>
+							
+							<!-- 문의내용 -->
+							<tr>
+								<td style="background-color: #f4f4f4; text-align: center; 
+										   border: 1px solid #ccc; padding: 10px;">
+									문의내용
+								</td>
+								<td style="border: 1px solid #ccc; padding: 10px;">
+									<textarea v-model="selectedInquiry.question"
+											  readonly
+											  style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
+								</td>
+							</tr>
+							
+							<!-- 답변 -->
+							<tr>
+								<td style="background-color: #f4f4f4; text-align: center; 
+										   border: 1px solid #ccc; padding: 10px;">
+									답변
+								</td>
+								<td style="border: 1px solid #ccc; padding: 10px;">
+									<textarea v-model="answerText"
+											  placeholder="답변 내용을 입력해주세요"
+											  style="width: 97%; height: 150px; padding: 5px; resize: none;"></textarea>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 					<div style="margin-top: 20px;">
 						<button class="btn-manage" @click="fnSaveAnswer">저장</button>
 					</div>
@@ -182,16 +238,13 @@
 					inquiriesList: [],
 					showAnswerModal: false,// 답변 모달 표시 여부
 					selectedInquiry: null, // 현재 선택된 문의 정보
-					answerText: "",        // 답변 텍스트
 				};
 			},
 			methods: {
 				// 문의 목록 불러오기
 				fnGetInquiryiesList() {
 					let self = this;
-					let nparmap = {
-
-					};
+					let nparmap = {};
 					$.ajax({
 						url: "/admin/users-inquiries.dox",
 						dataType: "json",
@@ -212,7 +265,7 @@
 				// '답변' 버튼 클릭 시 모달 열기
 				fnInquiryAnswer(inquiry) {
 					this.selectedInquiry = inquiry;
-					this.answerText = ""; // 이전에 입력된 내용 초기화
+					this.answerText = inquiry.answer; // 원본 답변 복사
 					this.showAnswerModal = true;
 				},
 
@@ -230,9 +283,10 @@
 						alert("문의 정보를 찾을 수 없습니다.");
 						return;
 					}
-
+					// 서버 전송 전에 원본 객체에도 answerText 반영 (선택사항)
+    				this.selectedInquiry.answer = this.answerText;
 					let nparmap = {
-						inquiryNo: this.selectedInquiry.inquiryNo,
+						inquiryNo: self.selectedInquiry.inquiryNo,
 						answer: this.answerText
 					};
 
@@ -245,7 +299,9 @@
 							console.log(data);
 							if (data.result === "success") {
 								alert("답변이 저장되었습니다.");
-								self.fnCloseAnswerModal(); // 모달 닫고 초기화
+								self.showAnswerModal = false;
+								self.selectedInquiry = null;
+								self.answerText = "";
 								self.fnGetInquiryiesList(); // 목록 갱신
 							} else {
 								alert("답변 저장 실패");

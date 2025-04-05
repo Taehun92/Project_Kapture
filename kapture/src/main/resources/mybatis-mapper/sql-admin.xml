@@ -103,15 +103,13 @@
 	</select>
 	
 	<select id="selectTransactionList" resultType="hashmap">
-  SELECT * FROM (
-    SELECT ROWNUM AS RNUM, DATA.* FROM (
-      SELECT
-          PAYMENT_DATE,
-          USER_FIRSTNAME,
-          TITLE,
-          AMOUNT,
-          PAYMENT_STATUS,
-          NUM_PEOPLE
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT
+					PAYMENT_NO,
+        			PAYMENT_DATE, USER_FIRSTNAME, USER_LASTNAME, 
+        			TITLE, AMOUNT,PAYMENT_STATUS, NUM_PEOPLE,
+        			TOUR_DATE, DURATION, T.TOUR_NO
       FROM PAYMENTS p
       JOIN USERS u ON p.USER_NO = u.USER_NO
       JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
@@ -237,10 +235,10 @@
 		WHERE USER_NO = #{userNo}
 	</delete>
 	<!-- 역할 수정시 가이드 생성 -->
-	<update id="insertGuide" parameterType="hashmap">
+	<insert id="insertGuide" parameterType="hashmap">
 		INSERT INTO GUIDES (GUIDE_NO, USER_NO)
 		VALUES (GUIDES_SEQ.NEXTVAL, #{userNo})
-	</update>
+	</insert>
 	<!-- 가이드관리 삭제,역할 수정시 가이드 삭제 -->
 	<delete id="deleteGuide" parameterType="hashmap">
 		DELETE FROM GUIDES
@@ -253,4 +251,22 @@
 		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
 		ORDER BY INQ_CREATED_AT DESC
 	</select>
+	<!-- 고객 문의 답변 저장 -->
+	<update id="updateInquiryAnswer" parameterType="map">
+		UPDATE INQUIRIES
+		SET ANSWER = #{answer},
+			QNA_STATUS = '답변완료'
+		WHERE INQUIRY_NO = #{inquiryNo}
+	</update>
+	<!-- 고객 문의 삭제 -->
+	<delete id="deleteInquiry" parameterType="hashmap">
+		DELETE FROM INQUIRIES
+		WHERE INQUIRY_NO = #{inquiryNo}
+	</delete>
+	<!-- 환불 처리 -->
+	<update id="updateRefunded" parameterType="hashmap">
+		UPDATE PAYMENTS
+		SET PAYMENT_STATUS = '환불완료'
+		WHERE PAYMENT_NO = #{paymentNo}
+	</update>
 </mapper>

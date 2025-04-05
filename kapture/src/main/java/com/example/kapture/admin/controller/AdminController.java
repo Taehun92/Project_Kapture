@@ -206,4 +206,28 @@ public class AdminController {
 		resultMap = adminService.userInquiriesList(map);
 	    return new Gson().toJson(resultMap);
 	}
+	// 회원 문의 답변 저장
+	@RequestMapping(value = "/admin/inquiry-answer-save.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String inquiryAnswerSave(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.inquiryAnswerSave(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 회원 문의 삭제
+	@RequestMapping(value = "/admin/inquiry-delete.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeInquiry(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeInquiry(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 환불 처리
+	@RequestMapping(value = "/admin/refunded.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String payRefunded(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.payRefunded(map);
+	    return new Gson().toJson(resultMap);
+	}
 }
