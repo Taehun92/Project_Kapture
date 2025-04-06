@@ -1,149 +1,199 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    <title>첫번째 페이지</title>
+	<meta charset="UTF-8">
+	<title>Kapture - Login</title>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f9f9f9;
+		}
+		#app {
+			max-width: 420px;
+			margin: 80px auto;
+			background: #fff;
+			padding: 40px;
+			border-radius: 8px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		}
+		.logo {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+		.logo img {
+			height: 60px;
+		}
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #333;
+		}
+		.login-input {
+			width: 100%;
+			padding: 12px;
+			margin: 10px 0;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+		}
+		.login-btn {
+			width: 100%;
+			background-color: #2b74e4;
+			color: white;
+			padding: 19px;
+			border: none;
+			border-radius: 2px;
+			font-size: 16px;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+		.signup-link {
+			margin-top: 20px;
+			text-align: center;
+			font-size: 15px;
+		}
+		.signup-link a {
+			color: #2b74e4;
+			text-decoration: none;
+		}
+		.error-msg {
+			color: red;
+			font-size: 13px;
+			margin-top: 5px;
+			text-align: center;
+		}
+	</style>
 </head>
 
 <body>
-    <div id="app">
-        <div>
-            <input v-model="email" type="text" placeholder="Email or Id">
-        </div>
+<jsp:include page="../common/header.jsp" />
 
-        <div>
-            <input v-model="password" type="password" @keyup.enter="fnLogin" placeholder="password">
-        </div>
+<div id="app">
+	<div class="logo">
+		<img src="../../img/kapture_Logo(2).png" alt="Kapture Logo" />
+	</div>
 
-        <div>
-            <button @click="fnLogin">Login</button>
-        </div>
+	<h2>Login to Kapture</h2>
+	<input class="login-input" type="text" v-model="email" placeholder="Email or ID">
+	<input class="login-input" type="password" v-model="password" placeholder="Password" @keyUp.enter="login">
 
-        <div>
-            <a style="text-decoration: none; color: black;" @click="fnSearch" href="javascript:;">아이디 / 비밀번호 찾기</a>
-            <a style="text-decoration: none; color: black;" @click="fnJoin" href="javascript:;">  회원가입 </a>
-        </div>
+	<div class="error-msg" v-if="errorMessage">{{ errorMessage }}</div>
 
-        <div>
-            <a :href="location">
-                <img src="../../img/kakaoLogin.png"> 
-            </a>
-            <a id="logBtn" href="#">
-                <img src="../../img/facebooklg.jpg" style="width: 30px;">
-            </a>
-        </div>
+	<button class="login-btn" @click="login">Login</button>
 
-        <div>
-            <!-- Facebook 로그인 버튼 -->
-            
-        </div>
-    </div>
+	<!-- 소셜 로그인 버튼 -->
+	<div style="margin-top: 30px; text-align: center; display: flex; justify-content: center; gap: 16px;">
+		<!-- Google -->
+		<a :href="googleLoginUrl"
+		   style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background-color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+			<img src="../../img/google.png" alt="Google 로그인" style="width: 50px;" />
+		</a>
 
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    email: "",
-                    password: "",
-                    location: "${location}",
-                    isFbLoggedIn: false
-                };
-            },
-            methods: {
-                fnLogin() {
-                    var self = this;
-                    var nparmap = {
-                        email: self.email,
-                        password: self.password,
-                    };
-                    $.ajax({
-                        url: "/login.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: nparmap,
-                        success: function (data) {
-                            console.log(data);
-                            if (data.result == "success") {
-                                alert(data.login.user + "님 환영합니다!");
-                                location.href = "/main.do";
-                            } else {
-                                alert("아이디/패스워드 확인하세요.");
-                            }
-                        }
-                    });
-                },
-                fnSearch() {
-                    location.href = "/login/search.do"
-                },
-                fnJoin() {
-                    location.href = "/join.do"
-                },
+		<!-- Twitter (X) -->
+		<button @click="getTwitAuthCodeUrl"
+				style="width: 50px; height: 50px; border: none; border-radius: 50%; background-color: black; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
+			<img src="../../img/x.jpg" alt="X 로그인" style="width: 40px;" />
+		</button>
 
-                // 페이스북 로그인 및 로그아웃
-                facebookLogin() {
-                    FB.login((res) => {
-                        FB.api(
-                            `/${res.authResponse.userID}/`,
-                            'GET',
-                            { "fields": "id,name,email" },
-                            (res2) => {
-                                console.log(res, res2);
-                                this.isFbLoggedIn = true;
-                                document.querySelector('#logBtn').value = "로그아웃";
-                            });
-                    });
-                },
+		<!-- Facebook -->
+		<button @click="getFacebookAuthUrl"
+				style="width: 50px; height: 50px; border: none; border-radius: 50%;background-color: #fff; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
+			<img src="../../img/facebook.png" alt="Facebook 로그인" 
+			style="width: 28px;"  />
+		</button>
+	</div>
 
-                facebookLogout() {
-                    FB.logout(() => {
-                        this.isFbLoggedIn = false;
-                        document.querySelector('#logBtn').value = "로그인";
-                    });
-                }
-            },
-            mounted() {
-                var self = this;
+	<!-- 회원가입/비번찾기 링크 -->
+	<div class="signup-link">
+		Don't have an account? <a href="/join.do">Sign up here</a><br />
+		Forgot your password? <a href="/find-id.do">Find it here</a>
+	</div>
+</div>
 
-                // 페이스북 SDK 초기화
-                window.fbAsyncInit = function () {
-                    FB.init({
-                        appId: '1496426481743942', // Facebook 앱 ID를 사용하세요
-                        cookie: true,
-                        xfbml: true,
-                        version: 'v10.0'
-                    });
+<jsp:include page="../common/footer.jsp" />
 
-                    // 로그인 상태 확인
-                    FB.getLoginStatus(function (response) {
-                        if (response.status === 'connected') {
-                            self.isFbLoggedIn = true;
-                            document.querySelector('#logBtn').value = "로그아웃";
-                        }
-                    });
-                };
+<script>
+	const app = Vue.createApp({
+		data() {
+			return {
+				email: "",
+				password: "",
+				errorMessage: "",
+				googleLoginUrl: "/google/login?returnUrl=/main.do"
+			};
+		},
+		methods: {
+			login() {
+				const self = this;
 
-                // 로그인 버튼 클릭 이벤트 리스너 추가
-                document.querySelector('#logBtn').addEventListener('click', e => {
-                    if (self.isFbLoggedIn) {
-                        self.facebookLogout();
-                    } else {
-                        self.facebookLogin();
-                    }
-                });
-            }
-        });
+				if (!self.email || !self.password) {
+					self.errorMessage = "Please enter both email and password.";
+					return;
+				}
 
-        app.mount('#app');
-    </script>
-
+				$.ajax({
+					url: "/login.dox",
+					type: "POST",
+					dataType: "json",
+					data: {
+						email: self.email,
+						password: self.password
+					},
+					success(data) {
+						if (data.result === "success") {
+							alert(data.login.userFirstName + "님 환영합니다!");
+							location.href = "/main.do";
+						} else {
+							self.errorMessage = data.message || "Login failed. Please try again.";
+						}
+					},
+					error() {
+						self.errorMessage = "Server error. Please try again later.";
+					}
+				});
+			},
+			getTwitAuthCodeUrl() {
+				$.ajax({
+					type: "POST",
+					url: "/twitter/auth-code-url.dox",
+					dataType: "json",
+					data: { returnUrl: "/main.do" },
+					success: function (res) {
+						if (res.result === "success") {
+							window.location.href = res.url;
+						} else {
+							alert("트위터 로그인 URL 생성 실패");
+						}
+					},
+					error: function (xhr, status, error) {
+						alert("트위터 로그인에 실패했습니다.");
+					}
+				});
+			},
+			getFacebookAuthUrl() {
+				$.ajax({
+					type: "POST",
+					url: "/facebook/login-url.dox",
+					dataType: "json",
+					data: { returnUrl: "/main.do" },
+					success: function (res) {
+						if (res.result === "success") {
+							window.location.href = res.url;
+						} else {
+							alert("페이스북 로그인 URL 생성 실패");
+						}
+					},
+					error: function (xhr, status, error) {
+						alert("페이스북 로그인에 실패했습니다.");
+					}
+				});
+			}
+		}
+	});
+	app.mount('#app');
+</script>
 </body>
-
 </html>

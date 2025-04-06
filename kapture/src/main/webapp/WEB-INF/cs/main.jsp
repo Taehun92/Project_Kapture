@@ -1,256 +1,219 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <!DOCTYPE html>
-    <html>
+    <html lang="ko">
 
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
+        <title>고객센터 메인</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <title>자주 묻는 질문</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <style>
             * {
                 box-sizing: border-box;
+                margin: 0;
+                padding: 0;
             }
 
             body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f8f8f8;
+                font-family: 'Arial', sans-serif;
+                background: #f9f9fb;
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
             }
 
-            header {
-                background-color: #003366;
-                color: white;
-                padding: 20px;
+            #app {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .hero-section {
                 text-align: center;
-                font-size: 24px;
+                padding: 60px 20px 30px;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+                margin-bottom: 30px;
                 font-weight: bold;
+            }
+
+            .search-box input {
+                width: 600px;
+                padding: 20px 25px;
+                border-radius: 35px;
+                border: 1px solid #ccc;
+                font-size: 18px;
+            }
+
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 40px;
+                max-width: 1400px;
+                margin: 40px auto;
+                padding: 0 40px;
+            }
+
+            .card-button {
+                background: white;
+                border-radius: 20px;
+                padding: 50px 30px;
+                text-align: center;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+                transition: 0.3s ease;
+            }
+
+            .card-button:hover {
+                background-color: #f1f5ff;
+                transform: translateY(-8px);
+            }
+
+            .card-button img {
+                width: 72px;
+                margin-bottom: 20px;
+            }
+
+            .card-button .title {
+                font-size: 22px;
+                font-weight: bold;
+                color: #222;
+            }
+
+            .card-button .subtitle {
+                margin-top: 10px;
+                font-size: 18px;
+                color: #666;
+            }
+
+            .latest-faq {
+                max-width: 1400px;
+                margin: 60px auto 100px;
+                padding: 0 40px;
+            }
+
+            .latest-faq h2 {
+                font-size: 22px;
+                font-weight: bold;
+                margin-bottom: 25px;
+            }
+
+            .faq-preview-item {
+                background: white;
+                border-radius: 12px;
+                padding: 18px 24px;
+                margin-bottom: 12px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                transition: 0.2s ease;
+                font-size: 16px;
+            }
+
+            .faq-preview-item:hover {
+                background-color: #f1f1f1;
             }
 
             footer {
                 background-color: #003366;
                 color: white;
                 text-align: center;
-                padding: 15px;
+                padding: 25px;
                 margin-top: auto;
-            }
-
-            .main-layout {
-                display: flex;
-                flex: 1;
-            }
-
-            .sidebar {
-                width: 250px;
-                background-color: #fff;
-                padding: 20px;
-                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            }
-
-            .sidebar ul {
-                list-style: none;
-                padding: 0;
-            }
-
-            .sidebar ul li {
-                padding: 15px;
-                cursor: pointer;
-                font-weight: bold;
-                border-radius: 5px;
-            }
-
-            .sidebar ul li:hover {
-                background-color: #e0f7fa;
-            }
-
-            .sidebar .active {
-                color: red;
-                font-weight: bold;
-            }
-
-            .content {
-                flex: 1;
-                padding: 20px;
-            }
-
-            select,
-            input,
-            button {
-                padding: 10px;
-                margin: 5px;
-            }
-
-            .category-container {
-                cursor: pointer;
-                font-weight: bold;
-                background-color: #e0f7fa;
-                padding: 12px;
-                margin-bottom: 10px;
-                border-radius: 8px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .plus-btn {
-                font-size: 20px;
-                transition: color 0.3s ease;
-            }
-
-            .category-content {
-                background-color: #fff;
-                padding: 10px;
-                border-radius: 5px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                margin-bottom: 10px;
-            }
-
-            .pagination {
-                text-align: center;
-                margin-top: 20px;
-            }
-
-            .pagination a {
-                margin: 0 8px;
-                cursor: pointer;
-                padding: 8px 15px;
-                border-radius: 5px;
-                text-decoration: none;
-            }
-
-            .pagination .bgcolor-gray {
-                background-color: #003366;
-                color: white;
             }
         </style>
     </head>
 
     <body>
-        <!-- 헤더 -->
-        <header>
-            고객센터
-        </header>
-
-        <!-- Vue app 시작 -->
-        <div id="app" class="main-layout">
-            <!-- 사이드바 -->
-            <div class="sidebar">
-                <ul>
-                    <li :class="{ active: activeMenu === 'notice' }" @click="goTo('notice')">공지사항</li>
-                    <li :class="{ active: activeMenu === 'faq' }" @click="setActive('faq')">FAQ</li>
-                    <li :class="{ active: activeMenu === 'inquiry' }" @click="goTo('inquiry')">QNA</li>
-                </ul>
+        <jsp:include page="../common/header.jsp" />
+          
+        <div id="app">
+            <!-- Hero 검색 -->
+            <div class="hero-section">
+                <h1>무엇을 도와드릴까요?</h1>
+                <div class="search-box">
+                    <input v-model="searchKeyword" @keyup.enter="search" placeholder="궁금한 내용을 검색해보세요" />
+                </div>
             </div>
 
-            <!-- 메인 컨텐츠 -->
-            <div class="content">
-                <div>
-                    <select v-model="searchOption">
-                        <option value="all">:: 전체 ::</option>
-                        <option value="category">카테고리</option>
-                        <option value="question">질문</option>
-                    </select>
-                    <input v-model="keyword" @keyup.enter="fnMain" placeholder="검색어">
-                    <button @click="fnMain">검색</button>
+            <!-- 카드형 버튼 -->
+            <div class="card-grid">
+                <div class="card-button" @click="goTo('faq')">
+                    <img src="../../img/faq.png" alt="FAQ" />
+                    <div class="title">FAQ</div>
+                    <div class="subtitle">자주 묻는 질문</div>
                 </div>
-
-                <!-- 질문 리스트 -->
-                <div v-for="item in list" :key="item.category">
-                    <div class="category-container" @click="toggleAnswer(item)">
-                        <span>{{ item.category }} - {{ item.question }}</span>
-                        <span class="plus-btn">
-                            {{ item.isOpen ? '-' : '+' }}
-                        </span>
-                    </div>
-                    <div v-if="item.isOpen" class="category-content">
-                        <div>
-                            답변: {{ item.answer }}
-                        </div>
-                    </div>
+                <div class="card-button" @click="goTo('notice')">
+                    <img src="../../img/notice.png" alt="공지사항" />
+                    <div class="title">공지사항</div>
+                    <div class="subtitle">이벤트 및 안내</div>
                 </div>
+                <div class="card-button" @click="goToQna">
+                    <img src="../../img/qna.png" alt="Q&A" />
+                    <div class="title">Q&A</div>
+                    <div class="subtitle">문의 답변 확인</div>
+                </div>
+            </div>
 
-                <!-- 페이지네이션 -->
-                <div class="pagination">
-                    <a v-for="num in index" @click="fnPage(num)">
-                        <span v-if="page == num" class="bgcolor-gray">{{ num }}</span>
-                        <span v-else>{{ num }}</span>
-                    </a>
+            <!-- 최신 FAQ 3개 미리보기 -->
+            <div class="latest-faq" v-if="faqList.length > 0">
+                <h2>최신 자주 묻는 질문</h2>
+                <div class="faq-preview-item" v-for="item in faqList" :key="item.faq_no" @click="goToFaqDetail(item)">
+                    {{ item.question }}
                 </div>
             </div>
         </div>
+        <jsp:include page="../common/footer.jsp" />
 
-        <!-- 풋터 -->
-        <footer>
-            ⓒ 2025 고객센터. All rights reserved.
-        </footer>
-
-        <!-- Vue 앱 스크립트 -->
         <script>
             const app = Vue.createApp({
                 data() {
                     return {
-                        list: [],
-                        searchOption: "all",
-                        keyword: "",
-                        pageSize: 10,
-                        index: 0,
-                        page: 1,
-                        activeMenu: 'faq'
+                        searchKeyword: "",
+                        faqList: [],
+                        sessionId: "${sessionId}"
                     };
                 },
                 methods: {
-                    fnMain() {
+                    search() {
+                        if (this.searchKeyword.trim() !== "") {
+                            // const query = encodeURIComponent(this.searchKeyword);
+                            window.location.href = "/cs/search.do?searchKeyword="+this.searchKeyword;
+                        }
+                    },
+                    goTo(menu) {
+                        const base = "/cs/";
+                        if (menu === 'faq') window.location.href = base + "faq.do";
+                        if (menu === 'notice') window.location.href = base + "notice.do";
+                    },
+                    goToQna() {
                         let self = this;
                         let nparmap = {
-                            keyword: self.keyword,
-                            searchOption: self.searchOption,
-                            pageSize: self.pageSize,
-                            page: (self.page - 1) * self.pageSize
+                            sessionId :self.sessionId
                         };
-                        $.ajax({
-                            url: "/cs/main.dox",
-                            dataType: "json",
-                            type: "POST",
-                            data: nparmap,
-                            success: function (data) {
-                                self.list = data.list.map(item => ({
-                                    ...item,
-                                    isOpen: false
-                                }));
-                                self.index = Math.ceil(data.count / self.pageSize);
-                            }
-                        });
-                    },
-                    fnPage(num) {
-                        this.page = num;
-                        this.fnMain();
-                    },
-                    toggleAnswer(item) {
-                        item.isOpen = !item.isOpen;
-                    },
-                    setActive(menu) {
-                        this.activeMenu = menu;
-                    },
 
-                    goTo(menu) {
-                        if (menu === 'notice') {
-                            window.location.href = '/cs/notice.do';
-                        } else if (menu === 'inquiry') {
-                            window.location.href = '/cs/qna.do';
+                        if(!self.sessionId) {
+                            alert("로그인필요");
+                            window.location.href = "/login.do"
+                            return;
                         }
-                    
-                }
-            },
-                mounted() {
-                this.fnMain();
-            }
-        });
+                        
+                                location.href="/cs/qna.do"
+                                
 
-            app.mount('#app');
+                    },
+                   
+                    goToFaqDetail(item) {
+                        const query = encodeURIComponent(item.question);
+                        window.location.href = `/cs/search.do?keyword=${query}`;
+                    }
+                },
+                mounted() {
+                  
+                }
+            });
+            app.mount("#app");
         </script>
     </body>
 

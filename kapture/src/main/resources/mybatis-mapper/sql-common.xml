@@ -40,6 +40,60 @@
 		FROM THEME
 	</select>
 	
+	<select id="selectReviewsList" parameterType="hashmap" resultType="com.example.kapture.common.model.Reviews">
+		SELECT R.*, U.USER_FIRSTNAME, U.USER_LASTNAME
+		FROM REVIEWS R
+		INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		WHERE TOUR_NO = #{tourNo}
+	</select>
+	
+	<select id="selectSiNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NAME FROM REGION
+	</select>
+	
+	<select id="selectGuNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT GU_NAME FROM REGION
+		WHERE SI_NAME = #{siName} AND GU_NAME IS NOT NULL
+	</select>
+	
+	<select id="selectThemeParentList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME
+		WHERE THEME_NO IN (100, 200, 300, 400, 500)
+	</select>
+	
+	<select id="selectThemeNameList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT T2.THEME_NAME FROM THEME T1
+		INNER JOIN THEME T2 ON T1.THEME_NO = T2.THEME_PARENT_NO
+		WHERE T2.THEME_PARENT_NO = (
+    		SELECT THEME_NO 
+    		FROM THEME 
+    		WHERE THEME_NAME = #{themeParent}
+		)
+	</select>
+	
+	<select id="selectSiName" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NAME FROM REGION
+		WHERE SI_NO = #{siNo}
+	</select>
+	
+	<select id="selectGuName" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT GU_NAME FROM REGION
+		WHERE SI_NO = #{siNo} AND GU_NO = #{guNo}
+	</select>
+	
+	<select id="selectThemeParent" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		WHERE THEME_NO = #{themeParentNo}
+	</select>
+	
+	<select id="selectThemeName" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		WHERE THEME_NO = #{themeNo}
+	</select>
+	
+	
+	
+	
 </mapper>
 
 
