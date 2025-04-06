@@ -40,6 +40,9 @@
 				<button @click="fnEdit">
 					수정
 				</button>
+				<button @click="fnDelete">
+					삭제
+				</button>
 			</div>
 
 			<div class="reviews">
@@ -690,8 +693,35 @@
                             }
                         });
                     }
-                }
+                },
+				fnEdit() {
+					pageChange("/mypage/guide-edit.do", {tourNo : this.tourNo});
+				
+				},
 
+				fnDelete() {
+					let self = this;
+					let nparmap = {
+						tourNo: self.tourNo,
+					};
+
+					if (confirm("정말 삭제하시겠습니까?")) {
+						$.ajax({
+							url: "/mypage/guide-delete.dox",
+							dataType: "json",
+							type: "POST",
+							data: nparmap,
+							success: function (data) {
+								if (data.result == "success") {
+									alert("삭제되었습니다.");
+									location.href = "/tours/list.do"
+								} else {
+									alert("삭제에 실패했습니다.");
+								}
+							}
+						});
+					}
+				}
 
 
 			},

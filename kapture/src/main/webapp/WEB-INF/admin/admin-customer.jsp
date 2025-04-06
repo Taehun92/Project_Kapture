@@ -4,13 +4,6 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<!-- FullCalendar 및 Bootstrap CSS/JS 추가 -->
-		<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
-		<link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
-
-
 
 		<title>관리자 페이지</title>
 		<style>
@@ -198,6 +191,30 @@
 				gap: 10px;
 				/* 요소 사이 간격 */
 			}
+
+			/* 라디오 버튼 전용 컨테이너 */
+			.radio-container {
+				/* 다른 input과 동일한 폭을 맞추고 싶다면 */
+				display: inline-block;
+				/* 또는 flex */
+				width: 300px;
+				/* 필요하다면 수평 정렬 방식도 조정 가능 */
+				/* justify-content: space-between; (flex 사용 시) */
+				text-align: left;
+			}
+
+			/* 라디오 버튼 자체는 너무 넓게 잡지 않도록 */
+			.radio-container input[type="radio"] {
+				width: auto;
+				/* 기본으로 두거나 */
+				margin-right: 5px;
+			}
+
+			/* 라디오 버튼에 붙은 라벨 사이 간격 조정 */
+			.radio-container label {
+				margin-right: 15px;
+				/* 버튼들 간격 */
+			}
 		</style>
 	</head>
 
@@ -205,7 +222,7 @@
 		<jsp:include page="menu.jsp"></jsp:include>
 		<div id="app">
 			<!-- 제목 추가 -->
-			<div class="page-title">가이드 정보관리</div>
+			<div class="page-title">고객 정보 관리</div>
 
 			<hr>
 			<div class="content">
@@ -217,57 +234,66 @@
 									:checked="isAllChecked" />
 							</th>
 							<th>회원번호</th>
-							<th>가이드번호</th>
+							<th>이메일</th>
 							<th>이름</th>
 							<th>성별</th>
 							<th>연락처</th>
-							<th>사진</th>
-							<th>가입일</th>
 							<th>생년월일</th>
+							<th>주소</th>
+							<th>역할</th>
+							<th>국적</th>	
+							<th>소셜타입</th>
+							<th>알림 동의</th>
 							<th>최근접속</th>
+							<th>상태</th>
 							<th>관리</th>
 						</tr>
 					</thead>
 					<tbody>
 						<!-- 가이드 리스트 반복 출력 -->
-						<tr v-for="guide in guidesList" :key="guide.id">
+						<tr v-for="user in usersList">
 							<!-- 선택 체크박스 -->
 							<td>
-								<input type="checkbox" :value="guide.userNo" v-model="selectedGuides">
+								<input type="checkbox" :value="user.userNo" v-model="selectedUsers">
 							</td>
 							<!-- 회원번호 -->
-							<td>{{ guide.userNo }}</td>
-							<!-- 가이드번호-->
-							<td>{{ guide.guideNo }}</td>
-							<!-- 닉네임 -->
-							<td>{{ guide.userLastName }}{{ guide.userFirstName }}</td>
-							<!-- 성별 -->
-							<td>{{ guide.gender }}</td>
-							<!-- 연락처 -->
-							<td>{{ guide.phone }}</td>
-							<!-- 사진: 있으면 <img>, 없으면 "No Image" 표시 -->
-							<td>
-								<div v-if="guide.pFilePath && guide.pFilePath !== ''">
-									<img :src="guide.pFilePath" alt="가이드사진" class="guide-img" />
-								</div>
-								<div v-else class="no-image">NO Image</div>
+							<td>{{ user.userNo }}</td>
+							<!-- 이메일-->
+							<td>{{ user.email }}</td>
+							<!-- 이름 -->
+							<td>{{ user.userFirstName }}
+								<template v-if="user.userLastName != 'N/A'">{{ user.userLastName }}</template>
 							</td>
-							<!-- 수정일 -->
-							<td>{{ guide.uUpdatedAt }}</td>
+							<!-- 성별 -->
+							<td>{{ user.gender }}</td>
+							<!-- 연락처 -->
+							<td>{{ user.phone }}</td>
 							<!-- 생년월일 -->
-							<td>{{ guide.birthday }}</td>
+							<td>{{user.birthday}}</td>
+							<!-- 주소 -->
+							<td>{{ user.address }}</td>
+							<!-- 역할 -->
+							<td v-if="user.role === 'TOURIST'">일반회원</td>
+							<td v-if="user.role === 'GUIDE'">가이드</td>
+							<td v-if="user.role === 'ADMIN'">관리자</td>
+							<!-- 국적 -->
+							<td v-if="user.isForeigner === 'Y'">외국인</td>
+							<td v-else>내국인</td>
+							<!-- 소셜타입 -->
+							<td>{{ user.socialType }}</td>
+							<!-- 알림 동의 -->
+							<td>{{user.pushYN}}</td>
 							<!-- 최근접속 -->
-							<td>{{ guide.lastLogin }}</td>
-
+							<td>{{user.lastLogin}}</td>
+							<!-- 상태 -->
+							<td v-if="user.unregisterYN === 'N'">회원</td>
+							<td v-else>탈퇴</td>
 							<!-- 관리 ( 수정, 삭제 ) -->
 							<td>
-								<button class="btn-manage" @click="fnGuideEdit(guide)">
+								<button class="btn-manage" @click="fnUserEdit(user)">
 									수정
 								</button>
-								<button class="btn-manage" @click="fnGuideSchedule(guide.userNo)">
-									일정
-								</button>
-								<button class="btn-manage" @click="fnUnregister(guide.userNo)">
+								<button class="btn-manage" @click="fnUnregister(user.userNo, user.role)">
 									삭제
 								</button>
 							</td>
@@ -275,22 +301,23 @@
 					</tbody>
 				</table>
 			</div>
-			<div v-if="showEditModal" class="modal-overlay" @click.self="fnGuideEditClose()">
+			<div v-if="showEditModal" class="modal-overlay" @click.self="fnUserEditClose()">
 				<div class="modal-content">
-					<h2>가이드 정보 수정</h2>
+					<h2>회원 정보 수정</h2>
 					<div class="modal-form">
-						<!-- 프로필이미지 -->
-						<span class="form-group profile-upload-container">
-							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
-								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
-							</span>
-							<span v-else class="no-image">NO Image</span>
-							<input type="file" @change="handleProfileUpload" />
-						</span>
+						<!-- 이메일 -->
+						<div class="form-group">
+							<label>이메일</label>
+							<input type="text" v-model="editUser.email" placeholder="이메일" />
+						</div>
 						<!-- 이름 -->
 						<div class="form-group">
-							<label>이름</label>
-							<input type="text" v-model="editGuide.userFirstName" />
+							<label>First Name</label>
+							<input type="text" v-model="editUser.userFirstName" />
+						</div>
+						<div class="form-group">
+							<label>Last Name</label>
+							<input type="text" v-model="editUser.userLastName" placeholder="Last Name" />
 						</div>
 						<!-- 비밀번호 -->
 						<div class="form-group">
@@ -322,81 +349,67 @@
 								{{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
 							</div>
 						</div>
-						<!-- 이메일 -->
-						<div class="form-group">
-							<label>이메일</label>
-							<input type="text" v-model="editGuide.email" placeholder="이메일" />
-						</div>
 						<!-- 성별 -->
 						<div class="form-group">
-							<span><label>성별</label></span>
-							<span>남성<input type="radio" value="M" v-model="editGuide.gender" /></span>
-							<span>여성<input type="radio" value="F" v-model="editGuide.gender" /></span>
+							<label>성별</label>
+							<div class="radio-container">
+								<label><input type="radio" value="M" v-model="editUser.gender" />남성</label>
+								<label><input type="radio" value="F" v-model="editUser.gender" />여성</label>
+							</div>
 						</div>
 						<!-- 연락처 -->
 						<div class="form-group">
 							<label>연락처</label>
-							<input type="text" v-model="editGuide.phone" />
+							<input type="text" v-model="editUser.phone" />
 						</div>
 						<!-- 생년월일 -->
 						<div class="form-group">
 							<label>생년월일</label>
-							<input type="date" v-model="editGuide.birthday" />
+							<input type="date" v-model="editUser.birthday" />
 						</div>
 						<!-- 주소 -->
 						<div class="form-group">
 							<label>주소</label>
-							<input type="text" v-model="editGuide.address">
+							<input type="text" v-model="editUser.address" />
 						</div>
-						<!-- 사용가능 언어 -->
+						<!-- 역할 -->
 						<div class="form-group">
-							<label>사용가능 언어</label>
-							<input type="text" v-model="editGuide.language">
+							<label>역할</label>
+							<input type="text" v-model="editUser.role" />
 						</div>
-						<!-- 자기소개 등 (예시) -->
+						<!-- 국적 -->
 						<div class="form-group">
-							<label>자기소개 OR 경력</label>
-							<textarea v-model="editGuide.experience" rows="4"></textarea>
+							<label>국적</label>
+							<input type="text" v-model="editUser.isForeigner" />
 						</div>
-
+						<!-- 소셜타입 -->
+						<div class="form-group">
+							<label>소셜타입</label>
+							<input type="text" v-model="editUser.socialType" />
+						</div>
+						<!-- 알림동의 -->
+						<div class="form-group">
+							<label>알림동의</label>
+							<div class="radio-container">
+								<label><input type="radio" value="Y" v-model="editUser.pushYN" />예</label>
+								<label><input type="radio" value="N" v-model="editUser.pushYN" />아니요</label>
+							</div>
+						</div>
+						<!-- 상태 -->
+						<div class="form-group">
+							<label>상태</label>
+							<input type="text" v-model="editUser.unregisterYN" />
+						</div>
 						<!-- 저장 / 취소 -->
 						<div>
-							<button @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
-							<button @click="fnGuideEditClose">취소</button>
+							<button @click="fnSaveUser(editUser.userNo)">저장하기</button>
+							<button @click="fnUserEditClose">취소</button>
 						</div>
 					</div>
 
 				</div>
 			</div>
 			<!-- [모달 끝] -->
-			<!-- 일정 모달 추가 -->
-			<div v-if="showScheduleModal" class="modal-overlay" @click.self="fnCloseScheduleModal">
-				<div class="modal-content">
-					<h2>가이드 일정</h2>
-					<div class="content-area">
-						<ol class="custom-buttons">
-							<li class="custom-button">
-								<span class="dot" style="color: #3788d8;">●</span>
-								<span class="label">종일</span>
-							</li>
-							<li class="custom-button">
-								<span class="dot" style="color: red;">●</span>
-								<span class="label">오전</span>
-							</li>
-							<li class="custom-button">
-								<span class="dot" style="color: green;">●</span>
-								<span class="label">오후</span>
-							</li>
-							<li class="custom-button">
-								<span class="dot" style="color: gold;">●</span>
-								<span class="label">판매대기</span>
-							</li>
-						</ol>
-						<div ref="calendar"></div>
-					</div>
-					<button class="btn-manage" @click="fnCloseScheduleModal">닫기</button>
-				</div>
-			</div>
 		</div>
 	</body>
 
@@ -405,62 +418,57 @@
 		const app = Vue.createApp({
 			data() {
 				return {
-					guidesList: [],
-					selectedGuides: [], // 체크된 id들의 배열
+					usersList: [],
+					selectedUsers: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
-					showScheduleModal: false,  // 일정 모달 표시 여부
-					editGuide: {
-						pFilePath: "",
-					},          // 수정할 가이드 정보
-					schedule: [],
+					editUSer: {},          // 수정할 유저 정보
 					password: "",
 					confirmPassword: "",
 					passwordRules: { length: false, upper: false, lower: false, special: false, number: false },
 					passwordValid: false,
-					passwordsMatch: false
+					passwordsMatch: false,
+					beforeRole: "",
 				};
 			},
 			computed: {
 				// 모든 행이 체크되어 있는지 여부
 				isAllChecked() {
-					return this.guidesList.length > 0
-						&& this.selectedGuides.length === this.guidesList.length;
+					// return this.usersList.length > 0 && this.selectedUsers.length === this.sList.length;
 				}
 			},
 			methods: {
 				// 예: 전체선택/해제
 				toggleAll(event) {
 					if (event.target.checked) {
-						// 모든 id를 selectedGuides에 넣음
-						this.selectedGuides = this.guidesList.map(g => g.id);
+						this.selectedUsers = this.usersList.map(u => u.userNo);
 					} else {
 						// 모두 해제
-						this.selectedGuides = [];
+						this.selectedUsers = [];
 					}
 				},
 
-				// 가이드 목록 불러오기
-				fnGetGuidesList() {
+				// 유저 목록 불러오기
+				fnGetUsersList() {
 					let self = this;
 					let nparmap = {
 
 					};
 					$.ajax({
-						url: "/admin/guides-list.dox",
+						url: "/admin/users-list.dox",
 						dataType: "json",
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							for (let i = 0; i < data.guidesList.length; i++) {
-								if (data.guidesList[i].birthday && typeof data.guidesList[i].birthday === 'string') {
-									data.guidesList[i].birthday = data.guidesList[i].birthday.substring(0, 10);
+							for (let i = 0; i < data.usersList.length; i++) {
+								if (data.usersList[i].birthday && typeof data.usersList[i].birthday === 'string') {
+									data.usersList[i].birthday = data.usersList[i].birthday.substring(0, 10);
 								} else {
-									data.guidesList[i].birthday = ""; // 또는 기본값 설정
+									data.usersList[i].birthday = ""; // 또는 기본값 설정
 								}
 							}
-							self.guidesList = data.guidesList;
-							console.log(self.guidesList);
+							self.usersList = data.usersList;
+							
 						},
 						error: function (err) {
 							console.error(err);
@@ -468,14 +476,15 @@
 					});
 				},
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
-				fnGuideEdit(guide) {
+				fnUserEdit(user) {
 					let self = this;
-					self.editGuide = guide;
-					console.log(guide);
+					self.editUser = user;
+					self.beforeRole = user.role;
+					console.log(user);
 					// 모달 열기
 					self.showEditModal = true;
 				},
-				fnGuideEditClose() {
+				fnUserEditClose() {
 					let self = this;
 					self.showEditModal = false;
 					self.password = "";
@@ -485,30 +494,34 @@
 					self.passwordsMatch = false;
 				},
 				// 모달에서 '저장하기' 클릭 시: 수정 API 호출
-				fnSaveGuide(userNo, guideNo) {
+				fnSaveUser(userNo) {
 					let self = this;
 					// 수정된 정보 전송
 					let nparmap = {
 						userNo: userNo,
-						userFirstName: self.editGuide.userFirstName,
+						userFirstName: self.editUser.userFirstName,
+						userLastName: self.editUser.userLastName,
 						password: self.password,
-						email: self.editGuide.email,
-						address: self.editGuide.address,
-						gender: self.editGuide.gender,
-						phone: self.editGuide.phone,
-						birthday: self.editGuide.birthday,
-
-						guideNo: guideNo,
-						profileImage: self.editGuide.profileImage,
-						language: self.editGuide.language,
-						experience: self.editGuide.experience,
+						email: self.editUser.email,
+						address: self.editUser.address,
+						gender: self.editUser.gender,
+						phone: self.editUser.phone,
+						birthday: self.editUser.birthday,
+						isForeigner: self.editUser.isForeigner,
+						socialType: self.editUser.socialType,
+						pushYN: self.editUser.pushYN,
+						lastLogin: self.editUser.lastLogin,
+						unregisterYN: self.editUser.unregisterYN,
+						role: self.editUser.role,
+						beforeRole: self.beforeRole,
 					};
 					$.ajax({
-						url: "/admin/guide-update.dox", // 실제 업데이트 API
+						url: "/admin/user-update.dox",
 						dataType: "json",
 						type: "POST",
-						data: nparmap, // editGuide 객체 전체를 전송 (필요 시 파라미터 조정)
+						data: nparmap,
 						success: function (data) {
+							console.log(data);
 							if (data.result === "success") {
 								alert("수정이 완료되었습니다.");
 								// 모달 닫기
@@ -519,7 +532,7 @@
 								self.passwordValid = false;
 								self.passwordsMatch = false;
 								// 목록 재조회 (갱신)
-								self.fnGetGuidesList();
+								self.fnGetUsersList();
 							} else {
 								alert("수정에 실패했습니다.");
 							}
@@ -531,18 +544,21 @@
 					});
 				},
 				// 삭제 버튼 클릭 시
-				fnUnregister(userNo) {
+				fnUnregister(userNo, role) {
 					if (!confirm("정말 삭제하시겠습니까?")) {
 						return;
 					}
-					// 삭제 로직 or API
-					// 아래는 예시
+					let nparmap = {
+						userNo: userNo,
+						role: role,
+					};
 					$.ajax({
-						url: "/admin/guide-delete.dox",
+						url: "/admin/unregister.dox",
 						dataType: "json",
 						type: "POST",
-						data: { userNo: userNo },
+						data: nparmap,
 						success: function (data) {
+							console.log(data);
 							if (data.result === "success") {
 								alert("삭제되었습니다.");
 								// 목록 새로고침
@@ -568,98 +584,6 @@
 					this.passwordValid = this.passwordRules.length && this.passwordRules.upper &&
 						this.passwordRules.lower && this.passwordRules.special && this.passwordRules.number;
 					this.passwordsMatch = pw && pw2 && (pw === pw2);
-				},
-				fnGuideSchedule(userNo) {
-					let self = this;
-					$.ajax({
-						url: "/mypage/guide-schedule.dox",
-						dataType: "json",
-						type: "POST",
-						data: { userNo: userNo },
-						success: function (data) {
-							if (data.result === "success") {
-								console.log(data);
-								self.schedule = data.schedule;
-							} else {
-								console.error("스케줄 데이터 로드 실패");
-							}
-							// 모달 열기 및 FullCalendar 초기화
-							self.showScheduleModal = true;
-							self.$nextTick(() => {
-								const eventsArray = [];
-								for (let i = 0; i < self.schedule.length; i++) {
-									const item = self.schedule[i];
-									const colorMapping = {
-										"오전": "red",
-										"오후": "green",
-										"종일": "#3788d8"
-									};
-									eventsArray.push({
-										id: item.tourNo,
-										title: item.title || '투어',
-										start: item.tourDate,
-										allDay: true,
-										backgroundColor: item.deleteYN === 'N' ? "gold" : colorMapping[item.duration],
-										borderColor: item.deleteYN === 'N' ? "gold" : colorMapping[item.duration]
-									});
-								}
-								const calendarEl = self.$refs.calendar;
-								// 이전에 렌더링된 캘린더 초기화
-								calendarEl.innerHTML = "";
-								const calendar = new FullCalendar.Calendar(calendarEl, {
-									height: 'auto',            // 캘린더 전체 높이를 600px로 설정
-									contentHeight: 'auto',  // 콘텐츠 영역 높이를 자동으로 조절
-									themeSystem: 'bootstrap5',
-									initialView: 'dayGridMonth',
-									validRange: function (now) {
-										return { start: now };
-									},
-									events: eventsArray,
-									eventClick: function (info) {
-										info.jsEvent.preventDefault();
-										location.href = "/tours/tour-info.do?tourNo=" + info.event.id;
-									}
-								});
-								calendar.render();
-							});
-						},
-						error: function (err) {
-							console.error(err);
-						}
-					});
-				},
-				fnCloseScheduleModal() {
-					this.showScheduleModal = false;
-				},
-				handleProfileUpload(event) {
-					let self = this;
-					const profile = event.target.files[0];
-					if (!profile) return;
-					const formData = new FormData();
-					formData.append('profile', profile);
-					// 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
-					formData.append('guideNo', self.editGuide.guideNo);
-
-					$.ajax({
-						url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
-						type: 'POST',
-						data: formData,
-						processData: false,   // 파일 업로드 시 필수: 데이터를 문자열로 처리하지 않음
-						contentType: false,   // 필수: multipart/form-data로 전송
-						dataType: 'json',
-						success: function (data) {
-							if (data.result === 'success') {
-								// 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
-								self.editGuide.pFilePath = data.newFilePath;
-							} else {
-								alert('이미지 업로드에 실패했습니다.');
-							}
-						},
-						error: function (err) {
-							console.error('이미지 업로드 중 오류 발생:', err);
-							alert('이미지 업로드 중 오류가 발생했습니다.');
-						}
-					});
 				},
 			},
 			mounted() {
