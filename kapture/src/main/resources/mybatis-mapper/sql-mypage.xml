@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.kapture.mypage.mapper.MyPageMapper">
+	<select id="selectUser" parameterType="hashmap" resultType="com.example.kapture.login.model.Login">
+		SELECT USER_NO, PASSWORD, EMAIL, PHONE, ROLE, TO_CHAR(BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, ADDRESS, GENDER, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME, SOCIAL_TYPE, ISFOREIGNER, PUSHYN
+		FROM USERS
+		WHERE USER_NO = #{sessionId}
+	</select>
+	
+	<update id="userInfoUpdate" parameterType="hashmap">
+		UPDATE USERS
+	    SET PHONE = #{phone},
+	    	PUSHYN = #{pushYN},
+	    	GENDER = #{gender},
+	    	<if test="address != null">
+	    		ADDRESS = #{address},
+	    	</if>
+	    	U_UPDATED_AT = SYSDATE,
+	    	<if test="birthday != null">
+	    		BIRTHDAY = #{birthday},
+	    	</if>
+	    	<if test="userLastName != null">
+	    		USER_LASTNAME = #{userLastName}
+	    	</if>
+	    WHERE USER_NO = #{sessionId}
+	</update>
+	
+	<select id="selectPayList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
+		SELECT P.*, TITLE, DURATION, TOUR_DATE
+		FROM PAYMENTS P
+		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+		WHERE USER_NO = #{userNo}
+	</select>	
+	
+	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
+		SELECT P.*, TITLE, DURATION, TOUR_DATE, U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
+		FROM PAYMENTS P
+		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+		INNER JOIN USERS U ON P.USER_NO = U.USER_NO
+        LEFT JOIN REVIEWS R ON R.TOUR_NO = T.TOUR_NO AND R.USER_NO = P.USER_NO
+		WHERE P.USER_NO = #{sessionId}
+        ORDER BY PAYMENT_NO
+	</select>
+	
+	<insert id="insertUserReview" parameterType="hashmap">
+		INSERT INTO REVIEWS (REVIEW_NO, TOUR_NO, USER_NO, RATING, "COMMENT", R_UPDATED_AT)
+		VALUES (REVIEWS_SEQ.NEXTVAL, #{tourNo}, #{userNo}, #{rating}, #{comment}, SYSDATE)
+	</insert>
+	
+	<update id="updateUserReview" parameterType="hashmap">
+		UPDATE REVIEWS
+	    SET "COMMENT" = #{comment},
+	    	RATING = #{rating},
+	    	R_UPDATED_AT = SYSDATE
+	    WHERE REVIEW_NO = #{reviewNo}
+	</update>
+	
+	<delete id="deleteUserReview" parameterType="hashmap">
+		DELETE FROM REVIEWS
+		WHERE REVIEW_NO = #{reviewNo}
+	</delete>
+	
+	<update id="unregisterUser" parameterType="hashmap">
+		UPDATE USERS
+		SET UNREGISTERYN = 'Y'
+		WHERE USER_NO = #{userNo}
+	</update>
+
+	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
+	SELECT TITLE,DURATION,DELETEYN,TOUR_DATE,TOUR_NO
+		FROM 
+		    USERS U
+		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
+		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
+                WHERE G.USER_NO = #{userNo}
+	</select>
+	
+	<update id="updatePassword" parameterType="hashmap">
+		UPDATE USERS
+		SET PASSWORD = #{password}
+		WHERE USER_NO = #{sessionId}
+	</update>
+	
+	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo" keyColumn="TOUR_NO">
+
+	  <selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
+        SELECT TOUR_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
+    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
+    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+    	FROM GUIDES G
+    	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
+    	JOIN THEME T ON T.THEME_NAME = #{themeName}
+    	WHERE G.USER_NO = #{sessionId}
+    	
+	</insert>
+
+	<insert id="insertToursFile" parameterType="hashmap">
+    	INSERT INTO IMG (FILE_NO, FILE_PATH, FILE_NAME, FILE_ORG_NAME)
+    	VALUES (FILE_SEQ.NEXTVAL,  #{path}, #{filename}, #{originFilename})
+	</insert>
+	
+	<update id="updateToursFile" parameterType="hashmap">
+    	UPDATE IMG
+    	SET TOUR_NO = #{tourNo},
+        THUMBNAIL = CASE 
+            <foreach collection="thumbnailList" item="img" index="index">
+                WHEN FILE_PATH = #{img.url} THEN #{img.thumbnail}
+            </foreach>
+        	END
+    	WHERE FILE_PATH IN
+    	<foreach collection="list" item="imageUrl" open="(" separator="," close=")">
+        	#{imageUrl}
+    	</foreach>
+	</update>
+<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
+		SELECT 
+		    GUIDE_USER.USER_FIRSTNAME AS guide_name,
+		    MEMBER_USER.USER_FIRSTNAME AS member_name,
+		    T.TITLE,
+		    P.PAYMENT_DATE,
+		    ETC,
+		    NUM_PEOPLE,
+		    AMOUNT,
+		    PAYMENT_STATUS
+		    
+		FROM GUIDES G
+		INNER JOIN USERS GUIDE_USER ON G.USER_NO = GUIDE_USER.USER_NO
+		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
+		LEFT JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
+		LEFT JOIN USERS MEMBER_USER ON P.USER_NO = MEMBER_USER.USER_NO
+		WHERE G.USER_NO = #{sessionId}
+		<if test="keyword != null and keyword != ''">
+		    AND (
+		        MEMBER_USER.USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR 
+		        T.TITLE LIKE '%' || #{keyword} || '%'
+		    )
+		</if>
+		ORDER BY P.PAYMENT_DATE DESC
+		OFFSET ((#{page} - 1) * #{size}) ROWS FETCH NEXT #{size} ROWS ONLY
+</select>
+	<!--가이드 판매내역 페이징처리-->
+<select id="selectTransactionTotalCount" parameterType="hashmap" resultType="int">
+	    SELECT COUNT(*)
+	    FROM PAYMENTS P
+	    JOIN USERS U ON P.USER_NO = U.USER_NO
+	    JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+	    WHERE U.USER_NO = #{sessionId, jdbcType=INTEGER}
+	    	<if test="keyword != null and keyword != ''">
+	        	AND (
+	            	USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+	                OR TITLE LIKE '%' || #{keyword} || '%'
+	            )
+	        </if>
+</select> 
+
+	
+	<update id="updateTour" parameterType="hashmap">
+		UPDATE TOURS SET 
+			TITLE = #{title}, 
+			DURATION = #{duration},
+			PRICE = #{price},
+			TOUR_DATE = #{tourDate},
+			SI_NO = (SELECT DISTINCT SI_NO FROM REGION WHERE SI_NAME=#{siName}),
+			GU_NO = (SELECT DISTINCT GU_NO FROM REGION WHERE SI_NAME=#{siName} AND GU_NAME=#{guName}),
+			THEME_NO = (SELECT THEME_NO FROM THEME WHERE THEME_NAME =#{themeName}), 
+			DESCRIPTION = #{description}
+		WHERE TOUR_NO = #{tourNo}
+	</update>
+	
+	<delete id="deleteTour" parameterType="hashmap">
+		DELETE FROM TOURS
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	<delete id="deleteTourImg" parameterType="hashmap">
+		DELETE FROM IMG
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	
+	<update id="resetThumbnail" parameterType="hashmap">
+	 	UPDATE IMG SET THUMBNAIL = 'N'
+	 	WHERE TOUR_NO = #{tourNo}
+	</update>
+	
+
+	<update id="setThumbnail" parameterType="hashmap">
+		UPDATE IMG SET THUMBNAIL = 'Y'
+		WHERE FILE_PATH = #{thumbnail}
+	</update>
+	
+</mapper>
+
