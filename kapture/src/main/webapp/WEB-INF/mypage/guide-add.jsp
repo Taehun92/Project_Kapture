@@ -72,7 +72,7 @@
 				</tr>
 				<tr>
                 	<th>날짜 :</th>
-                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10"/></td>
+                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10" :min="minDate"/></td>
                 	<th>시 :</th>
                 	<td>
 						<select @change="fnSelectGu()" v-model="siName">
@@ -146,7 +146,7 @@
 				themeNameList : [],
 				currentPage: "",
 				imgList: [],
-
+				minDate: new Date().toISOString().split("T")[0]
             };
         },
         methods: {
@@ -240,6 +240,8 @@
 
 							if (self.imgList.length > 0) {
 								self.fnUpdateImgList(data.tourNo);
+							} else {
+								location.href = "/tours/list.do";
 							}
 						}
 					}
@@ -337,6 +339,7 @@
 						if (data.result == 'success') {
 							console.log('data : ', data);
 							alert("이미지 등록되었습니다.");
+							location.href = "/tours/list.do";
 						}
 					}
 				})

@@ -65,7 +65,7 @@
 	<update id="unregisterUser" parameterType="hashmap">
 		UPDATE USERS
 		SET UNREGISTERYN = 'Y'
-		WHERE USER_NO = #{sessionId}
+		WHERE USER_NO = #{userNo}
 	</update>
 
 	<select id="selectGuideSchedule" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">
@@ -115,62 +115,46 @@
         	#{imageUrl}
     	</foreach>
 	</update>
-<select id="selectTransactionList" resultType="hashmap">	
-		SELECT * FROM (
-    	SELECT ROWNUM AS RNUM, A.* FROM (
-        SELECT 
-            TO_CHAR(P.PAYMENT_DATE, 'YYYY"년"') ||
-            CASE TO_CHAR(PAYMENT_DATE, 'MM')
-                WHEN '01' THEN ' 1월 '
-                WHEN '02' THEN ' 2월 '
-                WHEN '03' THEN ' 3월 '
-                WHEN '04' THEN ' 4월 '
-                WHEN '05' THEN ' 5월 '
-                WHEN '06' THEN ' 6월 '
-                WHEN '07' THEN ' 7월 '
-                WHEN '08' THEN ' 8월 '
-                WHEN '09' THEN ' 9월 '
-                WHEN '10' THEN '10월 '
-                WHEN '11' THEN '11월 '
-                WHEN '12' THEN '12월 '
-            END ||
-            TO_CHAR(P.PAYMENT_DATE, 'DD"일"') AS PAYMENT_DATE,
-            USER_FIRSTNAME,
-            TITLE,
-            AMOUNT,
-            PAYMENT_STATUS,
-            NUM_PEOPLE
-        FROM PAYMENTS P
-        JOIN USERS U ON P.USER_NO = U.USER_NO
-        JOIN TOUR T ON P.TOUR_NO = T.TOUR_NO
-        WHERE T.GUIDE_NO = #{sessionId}
-        AND (
-            USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR 
-            TITLE LIKE '%' || #{keyword} || '%'
-        )
-        ORDER BY PAYMENT_DATE DESC
-    ) A
-	)
-	WHERE RNUM BETWEEN ((#{page} - 1) * #{size} + 1) AND (#{page} * #{size})>
-	</select>
+<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
+		SELECT 
+		    GUIDE_USER.USER_FIRSTNAME AS guide_name,
+		    MEMBER_USER.USER_FIRSTNAME AS member_name,
+		    T.TITLE,
+		    P.PAYMENT_DATE,
+		    ETC,
+		    NUM_PEOPLE,
+		    AMOUNT,
+		    PAYMENT_STATUS
+		    
+		FROM GUIDES G
+		INNER JOIN USERS GUIDE_USER ON G.USER_NO = GUIDE_USER.USER_NO
+		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
+		LEFT JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
+		LEFT JOIN USERS MEMBER_USER ON P.USER_NO = MEMBER_USER.USER_NO
+		WHERE G.USER_NO = #{sessionId}
+		<if test="keyword != null and keyword != ''">
+		    AND (
+		        MEMBER_USER.USER_FIRSTNAME LIKE '%' || #{keyword} || '%' OR 
+		        T.TITLE LIKE '%' || #{keyword} || '%'
+		    )
+		</if>
+		ORDER BY P.PAYMENT_DATE DESC
+		OFFSET ((#{page} - 1) * #{size}) ROWS FETCH NEXT #{size} ROWS ONLY
+</select>
 	<!--가이드 판매내역 페이징처리-->
-	<select id="selectTransactionTotalCount" resultType="int">
+<select id="selectTransactionTotalCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*)
 	    FROM PAYMENTS P
 	    JOIN USERS U ON P.USER_NO = U.USER_NO
 	    JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-	    <where>
-	        <if test="guideNo != null">
-	            GUIDE_NO = #{sessionId}
-	        </if>
-	        <if test="keyword != null and keyword != ''">
-	            AND (
-	                USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+	    WHERE U.USER_NO = #{sessionId, jdbcType=INTEGER}
+	    	<if test="keyword != null and keyword != ''">
+	        	AND (
+	            	USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
 	                OR TITLE LIKE '%' || #{keyword} || '%'
 	            )
 	        </if>
-	    </where>
-</select>
+</select> 
 
 	
 	<update id="updateTour" parameterType="hashmap">
@@ -186,6 +170,27 @@
 		WHERE TOUR_NO = #{tourNo}
 	</update>
 	
+	<delete id="deleteTour" parameterType="hashmap">
+		DELETE FROM TOURS
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	<delete id="deleteTourImg" parameterType="hashmap">
+		DELETE FROM IMG
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	
+	<update id="resetThumbnail" parameterType="hashmap">
+	 	UPDATE IMG SET THUMBNAIL = 'N'
+	 	WHERE TOUR_NO = #{tourNo}
+	</update>
+	
+
+	<update id="setThumbnail" parameterType="hashmap">
+		UPDATE IMG SET THUMBNAIL = 'Y'
+		WHERE FILE_PATH = #{thumbnail}
+	</update>
 	
 </mapper>
 

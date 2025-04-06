@@ -71,7 +71,7 @@
 				</tr>
 				<tr>
                 	<th>날짜 :</th>
-                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10"/></td>
+                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10" :min="minDate"/></td>
                 	<th>시 :</th>
                 	<td>
 						<select @change="fnSelectGu()" v-model="siName">
@@ -152,8 +152,9 @@
 			   imgList: [],
 			   themeNo : "",
 			   themeParentNo : "",
-			   
-			  
+			   minDate : new Date().toISOString().split("T")[0],
+			   // 썸네일 이미지
+			   thumbnail : ""
             };
         },
         methods: {
@@ -211,6 +212,9 @@
 					sessionId : self.sessionId,
 					themeName : self.themeName,
 					tourNo : self.tourNo,
+
+					// 썸네일 이미지로 설정할 이미지 URL
+					thumbnail : self.thumbnail
 				};
 
 				if(self.sessionId == ""){
@@ -290,7 +294,18 @@
 							alert("수정되었습니다.");
 
 							if (self.imgList.length > 0) {
-								self.fnUpdateImgList(data.tourNo);
+								self.fnUpdateImgList(self.tourNo);
+							} else {
+								// 이미지 추가 없을 경우
+								if(self.thumbnail != "") {
+									// 본문에 이미지 존재 
+									console.log('본문에 이미지 존재');
+									self.fnSetThumbnail();
+								} else {
+									// 썸네일 초기화
+									console.log('본문에 이미지 없음');
+									self.fnResetThumbnail();
+								}
 							}
 						}
 					}
@@ -388,7 +403,8 @@
 					success: function (data) {
 						if (data.result == 'success') {
 							console.log('data : ', data);
-							alert("이미지 등록되었습니다.");
+							alert("이미지 추가되었습니다.");
+							location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
 						}
 					}
 				})
@@ -471,6 +487,7 @@
 
 			},
 			fnQuill() {
+				let self = this;
 				let quill = new Quill('#editor', {
 					theme: 'snow',
 					modules: {
@@ -535,8 +552,62 @@
 	
 				quill.on('text-change', function () {
 					self.description = quill.root.innerHTML;
+					
+					// 본문에 있는 이미지 URL을 추출하여 썸네일 설정
+					if(self.getImageUrlsFromHtml(self.description).length > 0) {
+						self.thumbnail = self.getImageUrlsFromHtml(self.description)[0];
+					} else {
+						self.thumbnail = ""; // 이미지가 없을 경우 썸네일 초기화
+					}
+					console.log('썸네일 : ', self.thumbnail);
+				});
+			},
+
+			// 본문에 있는 이미지 URL을 추출하는 함수
+			getImageUrlsFromHtml(html) {
+				let div = document.createElement("div");
+				div.innerHTML = html;
+				let imgs = div.querySelectorAll("img");
+				return Array.from(imgs).map(img => img.getAttribute("src"));
+			},
+
+			// 썸네일 초기화
+			fnResetThumbnail() {
+				let self = this;
+				let nparmap = {
+					tourNo: self.tourNo
+				}
+				$.ajax({
+					url: "/mypage/resetThumbnail.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+					}
+				});
+			},
+
+			// 썸네일 설정
+			fnSetThumbnail() {
+				let self = this;
+				let nparmap = {
+					tourNo: self.tourNo,
+					thumbnail: self.thumbnail
+				}
+				$.ajax({
+					url: "/mypage/setThumbnail.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+					}
 				});
 			}
+			
+
+
 
 
 
