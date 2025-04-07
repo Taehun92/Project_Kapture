@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
+import com.example.kapture.admin.model.OrderInfo;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
@@ -320,7 +321,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-  // 고객 문의 리스트 
+    // 고객 문의 리스트 조회 
 	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -334,14 +335,142 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-
-
+	// 고객 문의 답변 저장
+	public HashMap<String, Object> inquiryAnswerSave(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateInquiryAnswer(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 고객 문의 삭제
+	public HashMap<String, Object> removeInquiry(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.deleteInquiry(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 환불 처리
+	public HashMap<String, Object> payRefunded(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateRefunded(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
 
 	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
-	    List<HashMap<String, Object>> list = adminMapper.selectAllReviews();
+	    
+	    // 페이징 파라미터 추출
+	    int page = Integer.parseInt((String) map.getOrDefault("page", "1"));
+	    int pageSize = Integer.parseInt((String) map.getOrDefault("pageSize", "10"));
+	    int offset = (page - 1) * pageSize;
+	    
+	    map.put("offset", offset);
+	    map.put("pageSize", pageSize);
+
+	    // 리뷰 리스트 가져오기
+	    List<HashMap<String, Object>> list = adminMapper.selectReviewList(map);
+	    map.get("keyword");
+	    map.get("sort");
+	    
+	    // 전체 리뷰 수
+	    int totalCount = adminMapper.selectReviewCount(map);
+	    System.out.println("전체 리뷰 수: " + totalCount);
+
+	    // 결과 저장
 	    resultMap.put("list", list);
+	    resultMap.put("totalCount", totalCount);
+
 	    return resultMap;
 	}
+	//리뷰 삭제 
+	 public HashMap<String, Object> deleteReview(HashMap<String, Object> map) throws Exception {
+	        HashMap<String, Object> resultMap = new HashMap<>();
 
+	        int result = adminMapper.deleteReview(map);
+	        System.out.println(map);
+
+	        if (result > 0) {
+	            resultMap.put("status", "success");
+	            resultMap.put("message", "리뷰가 삭제되었습니다.");
+	        } else {
+	            resultMap.put("status", "fail");
+	            resultMap.put("message", "삭제할 리뷰가 없습니다.");
+	        }
+
+	        return resultMap;
+}
+	 
+	 public HashMap<String, Object> getReviewSummary() {
+		    return adminMapper.getReviewSummary();
+		}
+
+	 // 주문상세내역 수정
+	 public HashMap<String, Object> saveOrderInfo(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.updateOrderInfo(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	 }
+	 //주문내역 삭제
+	 public HashMap<String, Object> removeOrder(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.deleteOrder(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 
+	 public HashMap<String, Object> getSalesSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> salesList = adminMapper.selectSalesByYear();
+		    resultMap.put("salesList", salesList);
+		    return resultMap;
+		}
+	 
+	 public HashMap<String, Object> getThemeSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> themeList = adminMapper.selectThemeSummary();
+		    int totalCount = adminMapper.selectThemeTotalCount();
+		    resultMap.put("themeList", themeList);
+		    resultMap.put("totalCount", totalCount);
+		    return resultMap;
+		}
+	 
+	 
+	 public HashMap<String, Object> getLatestReviews() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> reviewList = adminMapper.selectLatestReviews();
+		    resultMap.put("reviews", reviewList);
+		    return resultMap;
+		}
 }

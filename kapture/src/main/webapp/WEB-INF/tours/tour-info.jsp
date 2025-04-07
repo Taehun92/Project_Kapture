@@ -40,9 +40,6 @@
 				<button @click="fnEdit">
 					수정
 				</button>
-				<button @click="fnDelete">
-					삭제
-				</button>
 			</div>
 
 			<div class="reviews">
