@@ -44,15 +44,20 @@ public interface MyPageMapper {
 
 	void insertToursFile(HashMap<String, Object> map);
 
-
 	void updateToursFile(HashMap<String, Object> map);
 
 	Tours insertTourParameters(HashMap<String, Object> map);
 
-	List<Map<String, Object>> selectTransactionList(Map<String, Object> param);
+	List<Guide> selectTransactionList(Map<String, Object> map);
 
-	int selectTransactionTotalCount(Map<String, Object> param);
+	int selectTransactionTotalCount(Map<String, Object> map);
 
+	void deleteTour(HashMap<String, Object> map);
 
-  
+	void deleteTourImg(HashMap<String, Object> map);
+
+	
+	void resetThumbnail(HashMap<String, Object> map);
+
+	void setThumbnail(HashMap<String, Object> map);
 }

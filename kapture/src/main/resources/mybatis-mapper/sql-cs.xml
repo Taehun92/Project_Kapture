@@ -72,8 +72,8 @@
 	</select>
 	
 	<insert id="insertQna" parameterType="hashmap">
-  		INSERT INTO INQUIRIES (INQUIRY_NO, USER_NO, CATEGORY, QUESTION, INQ_CREATED_AT, INQ_UPDATED_AT, TITLE)
-  		VALUES(INQUIRIES_SEQ.NEXTVAL, #{userNo}, #{category}, #{question}, SYSDATE, SYSDATE, #{title})
+  		INSERT INTO INQUIRIES (INQUIRY_NO, USER_NO, CATEGORY, QUESTION, INQ_CREATED_AT, INQ_UPDATED_AT, QNA_TITLE)
+  		VALUES(INQUIRIES_SEQ.NEXTVAL, #{userNo}, #{category}, #{question}, SYSDATE, SYSDATE, #{qnaTitle})
 	</insert>
 	
 	<select id="searchFaq" parameterType="hashmap" resultType="hashmap">

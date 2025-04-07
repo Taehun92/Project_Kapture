@@ -203,7 +203,7 @@
                     fnUserUnregister() {
                         let self = this;
                         let nparmap = {
-                            sessionId: self.sessionId,
+                            userNo: self.sessionId,
                             confirmPassword: self.confirmPassword
                         };
                         $.ajax({

@@ -128,7 +128,7 @@ public class MyPageController {
 			resultMap = myPageService.userUnregister(map);
 			return new Gson().toJson(resultMap);
 		}
-		//
+		// 비밀번호 변경
 		@RequestMapping(value = "/mypage/changePassword.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String changePassword(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -172,7 +172,11 @@ public class MyPageController {
 			request.setAttribute("map", map);
 			return "/mypage/guide-sales-list";
 		}		
-		
+		@RequestMapping("/mypage/guide-reviews.do")
+		public String guideReviews(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			request.setAttribute("map", map);
+			return "/mypage/guide-reviews";
+		}		
 		
 		// 가이드 글쓰기
 		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -281,12 +285,20 @@ public class MyPageController {
 			resultMap = myPageService.updateImg(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		
 		//가이드 판매내역
-		@PostMapping("/getTransactionList.dox")
+		@RequestMapping(value = "/mypage/getTransactionList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
-		public Map<String, Object> getTransactionList(@RequestParam Map<String, Object> param) {
-		    return myPageService.getTransactionListWithPaging(param);
+		public String getTransactionList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+					
+			resultMap = myPageService.getTransactionListWithPaging(map);
+			
+		    return new Gson().toJson(resultMap);
 		}
+
+		
 		
 		// 가이드 글 수정
 		@RequestMapping(value = "/mypage/guide-update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -295,6 +307,35 @@ public class MyPageController {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap = myPageService.editTour(map);
+			return new Gson().toJson(resultMap);
+		}
+		
+		// 가이드 글 삭제
+		@RequestMapping(value = "/mypage/guide-delete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String deleteTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.deleteTour(map);
+			return new Gson().toJson(resultMap);
+		}
+		
+		// 이미지 추가 없을 때 썸네일 첫번째 이미지로 바꾸기
+		@RequestMapping(value = "/mypage/setThumbnail.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String setThumbnail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.setThumbnail(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 본문에 이미지 없을 때 썸네일 초기화
+		@RequestMapping(value = "/mypage/resetThumbnail.dox.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String resetThumbnail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.resetThumbnail(map);
 			return new Gson().toJson(resultMap);
 		}
 }

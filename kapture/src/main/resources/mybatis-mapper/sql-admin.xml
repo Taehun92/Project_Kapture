@@ -66,7 +66,7 @@
 	    SELECT NVL(SUM(p.AMOUNT), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	</select>
 	
 	<!-- 어제 거래 금액 -->
@@ -74,7 +74,7 @@
 	    SELECT NVL(SUM(p.AMOUNT), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	    AND TRUNC(p.PAYMENT_DATE) = TRUNC(SYSDATE - 1)
 	</select>
 	
@@ -83,7 +83,7 @@
 	    SELECT NVL(SUM(p.NUM_PEOPLE), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료', '환불요청', '환불완료')
 	</select>
 	
 	<!-- 승인된 건수 -->
@@ -91,7 +91,7 @@
 	    SELECT COUNT(*)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	</select>
 	
 	<!-- 취소된 건수 -->
@@ -99,19 +99,18 @@
 	    SELECT COUNT(*)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'REFUNDED'
+	    WHERE p.PAYMENT_STATUS IN ('환불요청', '환불완료')
 	</select>
 	
 	<select id="selectTransactionList" resultType="hashmap">
-  SELECT * FROM (
-    SELECT ROWNUM AS RNUM, DATA.* FROM (
-      SELECT
-          PAYMENT_DATE,
-          USER_FIRSTNAME,
-          TITLE,
-          AMOUNT,
-          PAYMENT_STATUS,
-          NUM_PEOPLE
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT
+					PAYMENT_NO,PAYMENT_DATE, AMOUNT,PAYMENT_STATUS, NUM_PEOPLE, ETC, 
+        			p.USER_NO, USER_FIRSTNAME, USER_LASTNAME,
+        			PHONE, EMAIL, ISFOREIGNER,
+        			T.TOUR_NO, TOUR_DATE, DURATION, TITLE 
+        			
       FROM PAYMENTS p
       JOIN USERS u ON p.USER_NO = u.USER_NO
       JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
@@ -160,9 +159,7 @@
 	      OR TITLE LIKE '%' || #{keyword} || '%'
 	    )
 	  </if>
-	</select>
-
-	
+	</select>	
     <!-- 가이드 정보조회 -->
     <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
         SELECT *
@@ -179,40 +176,28 @@
             AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
 		) I ON G.GUIDE_NO = I.P_GUIDE_NO
     </select>
+    <!-- 가이드관리 가이드정보 수정 -->
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
 		SET 
-		<if test="profileImage != null">
-			PROFILE_IMAGE = #{profileImage},
-		</if>
-		<if test="language != null">
-			LANGUAGE = #{language},
-		</if>
-		<if test="experience != null">
-			EXPERIENCE = #{experience},
-		</if>
+		<if test="profileImage != null">PROFILE_IMAGE = #{profileImage},</if>
+		<if test="language != null">LANGUAGE = #{language},</if>
+		<if test="experience != null">EXPERIENCE = #{experience},</if>
 			G_UPDATED_AT = SYSDATE
 		WHERE GUIDE_NO = #{guideNo}
 	</update>
+	<!-- 가이드관리 유저정보 수정 -->
 	<update id="updateUserInfo" parameterType="hashmap">
 		UPDATE USERS
 		SET USER_FIRSTNAME = #{userFirstName},
 			EMAIL = #{email},
-		<if test="gender != null">
-			GENDER = #{gender},
-		</if>
-		<if test="password != null and password !=''">
+			<if test="gender != null">GENDER = #{gender},</if>
+			<if test="password != null and password !=''">
 			PASSWORD = #{password},
-		</if>
-		<if test="address != null">
-			ADDRESS = #{address},
-		</if>
-		<if test="phone != null">
-			PHONE = #{phone},
-		</if>
-		<if test="birthday != null">
-			BIRTHDAY = #{birthday},
-		</if>
+			</if>
+			<if test="address != null">ADDRESS = #{address},</if>
+			<if test="phone != null">PHONE = #{phone},</if>
+			<if test="birthday != null">BIRTHDAY = #{birthday},</if>
 			U_UPDATED_AT = SYSDATE
 		WHERE USER_NO = #{userNo}
 	</update>
@@ -221,5 +206,184 @@
 		INSERT INTO GUIDE_IMG
 		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
-		
+
+	<!-- 회원관리 유저정보 조회 -->
+	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
+		SELECT *
+		FROM USERS
+	</select>
+	<!-- 회원관리 유저정보 수정 -->
+	<update id="updateUser" parameterType="map">
+		UPDATE USERS
+		SET EMAIL = #{email},
+			USER_FIRSTNAME = #{userFirstName},
+			<if test="userLastName != null">USER_LASTNAME = #{userLastName},</if>
+			<if test="password != null and password !=''">PASSWORD = #{password},</if>
+			<if test="gender != null">GENDER = #{gender},</if>
+			<if test="phone != null">PHONE = #{phone},</if>
+			<if test="birthday != null">BIRTHDAY = #{birthday},</if>
+			<if test="address != null">ADDRESS = #{address},</if>
+			<if test="socialType != null">SOCIAL_TYPE = #{socialType},</if>
+			ISFOREIGNER = #{isForeigner},
+			ROLE = #{role},
+			PUSHYN = #{pushYN},
+			UNREGISTERYN = #{unregisterYN},
+			U_UPDATED_AT = SYSDATE
+		WHERE USER_NO = #{userNo}
+	</update>
+	<!-- 회원관리 회원 탈퇴 처리(삭제) -->
+	<delete id="deleteUser" parameterType="hashmap">
+		DELETE FROM USERS
+		WHERE USER_NO = #{userNo}
+	</delete>
+	<!-- 역할 수정시 가이드 생성 -->
+	<insert id="insertGuide" parameterType="hashmap">
+		INSERT INTO GUIDES (GUIDE_NO, USER_NO)
+		VALUES (GUIDES_SEQ.NEXTVAL, #{userNo})
+	</insert>
+	<!-- 가이드관리 삭제,역할 수정시 가이드 삭제 -->
+	<delete id="deleteGuide" parameterType="hashmap">
+		DELETE FROM GUIDES
+		WHERE USER_NO = #{userNo}
+	</delete>
+	<!-- 고객 문의 리스트 조회 -->
+	<select id="selectInquiriesList" parameterType="map" resultType="com.example.kapture.cs.model.Cs">
+		SELECT *
+		FROM INQUIRIES I
+		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
+		ORDER BY INQ_CREATED_AT DESC
+	</select>
+	<!-- 고객 문의 답변 저장 -->
+	<update id="updateInquiryAnswer" parameterType="map">
+		UPDATE INQUIRIES
+		SET ANSWER = #{answer},
+			QNA_STATUS = '답변완료'
+		WHERE INQUIRY_NO = #{inquiryNo}
+	</update>
+	<!-- 고객 문의 삭제 -->
+	<delete id="deleteInquiry" parameterType="hashmap">
+		DELETE FROM INQUIRIES
+		WHERE INQUIRY_NO = #{inquiryNo}
+	</delete>
+	<!-- 환불 처리 -->
+	<update id="updateRefunded" parameterType="hashmap">
+		UPDATE PAYMENTS
+		SET PAYMENT_STATUS = '환불완료'
+		WHERE PAYMENT_NO = #{paymentNo}
+	</update>
+	<!-- 리뷰 리스트 -->
+  	<select id="selectReviewList" resultType="hashmap">
+	    SELECT 
+	        R.REVIEW_NO           AS reviewNo,
+	        EMAIL                 AS email,
+	        T.TOUR_NO             AS tourNo,
+	        T.TITLE               AS title,
+	        T.DURATION            AS duration,
+	        U.USER_FIRSTNAME      AS userFirstName,
+	        U.USER_LASTNAME       AS userLastName,
+	        R."COMMENT"           AS content,
+	        R.RATING              AS rating,
+	        TO_CHAR(R.R_CREATED_AT, 'YYYY-MM-DD') AS createdAt
+	    FROM REVIEWS R
+	    LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+	    LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+	    LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
+	    WHERE
+	    	T.TITLE LIKE '%' || #{keyword} || '%' OR
+        	R."COMMENT" LIKE '%' || #{keyword} || '%' OR
+        	EMAIL LIKE '%' || #{keyword} || '%'
+	    ORDER BY 
+	    	<choose>
+	    	 <when test="sort == 'rating_desc'">R.RATING DESC</when>
+            <when test="sort == 'rating_asc'">R.RATING ASC</when>
+            <otherwise>R.R_CREATED_AT DESC</otherwise>
+	    	</choose>
+	    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	<!-- 리뷰 전체 수 -->
+	<select id="selectReviewCount" resultType="int">
+    	SELECT COUNT(*)
+    	FROM REVIEWS R
+    	LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+    	LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+    	LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
+    	WHERE 
+        T.TITLE LIKE '%' || #{keyword} || '%'
+        OR R."COMMENT" LIKE '%' || #{keyword} || '%'
+        OR EMAIL LIKE '%' || #{keyword} || '%'
+	</select>
+
+	<delete id="deleteReview">
+	    DELETE FROM REVIEWS WHERE REVIEW_NO = #{REVIEWNO}
+	</delete>
+	
+	<select id="getReviewSummary" resultType="hashmap">
+	    SELECT 
+	        COUNT(*) AS totalCount,
+	        ROUND(AVG(RATING), 1) AS avgRating
+	    FROM REVIEWS
+	</select>
+
+	<!-- 주문상세내역 조회 -->
+	<update id="updateOrderInfo" parameterType="hashmap">
+		UPDATE PAYMENTS
+		SET PAYMENT_STATUS = #{paymentStatus}
+	    WHERE PAYMENT_NO = #{paymentNo}
+	</update>
+	<!-- 주문내역 삭제 -->
+	<delete id="deleteOrder">
+	    DELETE FROM PAYMENTS
+	    WHERE PAYMENT_NO = #{paymentNo}
+	</delete>
+	
+	<select id="selectSalesByYear" resultType="hashmap">
+	    SELECT TO_CHAR(PAYMENT_DATE, 'YYYY') AS year,
+	           SUM(AMOUNT) AS totalSales
+	    FROM PAYMENTS
+	    GROUP BY TO_CHAR(PAYMENT_DATE, 'YYYY')
+	    ORDER BY year
+	</select>
+
+	<select id="selectThemeSummary" resultType="hashmap">
+		  SELECT theme_name AS THEME, cnt AS COUNT
+		  FROM (
+		    SELECT 
+		      H.THEME_NAME AS theme_name,
+		      COUNT(*) AS cnt,
+		      ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS rn
+		    FROM TOURS T
+		    INNER JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
+		    INNER JOIN THEME H ON T.THEME_NO = H.THEME_NO
+		    GROUP BY H.THEME_NAME
+		  )
+		  WHERE rn &lt;= 5
+		  ORDER BY COUNT DESC
+	</select>
+
+	<select id="selectThemeTotalCount" resultType="int">
+	  SELECT COUNT(*) 
+	  FROM PAYMENTS
+	</select>
+
+		<select id="selectLatestReviews" resultType="hashmap">
+		  SELECT *
+		  FROM (
+		    SELECT 
+		      T.TITLE, 
+		      T.DURATION, 
+		      T.PRICE, 
+		      T.MAX_PEOPLE, 
+		      T.TOUR_DATE,
+		      R."COMMENT", 
+		      R.RATING,
+		      R_CREATED_AT,
+		      USER_FIRSTNAME AS USERFIRSTNAME,
+		      USER_LASTNAME AS USERLASTNAME
+		    FROM TOURS T
+		    INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
+		    INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		    ORDER BY R_CREATED_AT DESC
+		  )
+		  WHERE ROWNUM &lt;= 5
+		</select>
 </mapper>
