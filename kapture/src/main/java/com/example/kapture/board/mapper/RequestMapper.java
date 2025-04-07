@@ -33,6 +33,8 @@ public interface RequestMapper {
 
 	int acceptRequestStatus(HashMap<String, Object> map);
 
+	HashMap<String, Object> selectCommentDetail(Integer commentNo);
+
 	
 
 }
