@@ -45,5 +45,18 @@ public class Guide {
 	private String pFileExtension;
 	private String pUploadDate;
 	
+	private int paymentNo;
+	private int amount;
+	private String paymentDate;
+	private String paymentStatus;
+	private String method;
+	private String merchantId;
+	private int numPeople;
+	private int basketNo;
+	private String etc;
+	private String guideName;
+    private String memberName;
+	
+	
 	
 }

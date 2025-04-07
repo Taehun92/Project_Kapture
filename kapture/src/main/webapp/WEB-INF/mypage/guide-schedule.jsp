@@ -230,7 +230,6 @@
                             나의 스케줄
                         </a>
                     </li>
-                    
                     <li>
                         <a href="http://localhost:8080/cs/qna.do">
                             문의하기
