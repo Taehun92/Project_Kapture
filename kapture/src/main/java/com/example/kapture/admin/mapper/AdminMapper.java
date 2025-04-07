@@ -80,6 +80,13 @@ public interface AdminMapper {
 		// 주문내역 삭제
 		int deleteOrder(HashMap<String, Object> map);
 
+		List<Map<String, Object>> selectSalesByYear();
+
+		List<Map<String, Object>> selectThemeSummary();
+		int selectThemeTotalCount();
+
+		List<Map<String, Object>> selectLatestReviews();
+
 
 		
 

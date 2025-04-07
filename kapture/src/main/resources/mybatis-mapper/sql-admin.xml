@@ -313,7 +313,6 @@
         OR EMAIL LIKE '%' || #{keyword} || '%'
 	</select>
 
-
 	<delete id="deleteReview">
 	    DELETE FROM REVIEWS WHERE REVIEW_NO = #{REVIEWNO}
 	</delete>
@@ -324,6 +323,7 @@
 	        ROUND(AVG(RATING), 1) AS avgRating
 	    FROM REVIEWS
 	</select>
+
 	<!-- 주문상세내역 조회 -->
 	<update id="updateOrderInfo" parameterType="hashmap">
 		UPDATE PAYMENTS
@@ -335,4 +335,55 @@
 	    DELETE FROM PAYMENTS
 	    WHERE PAYMENT_NO = #{paymentNo}
 	</delete>
+	
+	<select id="selectSalesByYear" resultType="hashmap">
+	    SELECT TO_CHAR(PAYMENT_DATE, 'YYYY') AS year,
+	           SUM(AMOUNT) AS totalSales
+	    FROM PAYMENTS
+	    GROUP BY TO_CHAR(PAYMENT_DATE, 'YYYY')
+	    ORDER BY year
+	</select>
+
+	<select id="selectThemeSummary" resultType="hashmap">
+		  SELECT theme_name AS THEME, cnt AS COUNT
+		  FROM (
+		    SELECT 
+		      H.THEME_NAME AS theme_name,
+		      COUNT(*) AS cnt,
+		      ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS rn
+		    FROM TOURS T
+		    INNER JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
+		    INNER JOIN THEME H ON T.THEME_NO = H.THEME_NO
+		    GROUP BY H.THEME_NAME
+		  )
+		  WHERE rn &lt;= 5
+		  ORDER BY COUNT DESC
+	</select>
+
+	<select id="selectThemeTotalCount" resultType="int">
+	  SELECT COUNT(*) 
+	  FROM PAYMENTS
+	</select>
+
+		<select id="selectLatestReviews" resultType="hashmap">
+		  SELECT *
+		  FROM (
+		    SELECT 
+		      T.TITLE, 
+		      T.DURATION, 
+		      T.PRICE, 
+		      T.MAX_PEOPLE, 
+		      T.TOUR_DATE,
+		      R."COMMENT", 
+		      R.RATING,
+		      R_CREATED_AT,
+		      USER_FIRSTNAME AS USERFIRSTNAME,
+		      USER_LASTNAME AS USERLASTNAME
+		    FROM TOURS T
+		    INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
+		    INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+		    ORDER BY R_CREATED_AT DESC
+		  )
+		  WHERE ROWNUM &lt;= 5
+		</select>
 </mapper>

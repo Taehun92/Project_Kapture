@@ -32,6 +32,15 @@ public class MainController {
 		resultMap = mainService.getTourandRatingList(map);
 		return new Gson().toJson(resultMap);
 	}
+	
+	// 메인 리뷰 불러오기
+	@RequestMapping(value = "/main/getReviewList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getReviewList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = mainService.getReviewList(map);
+		return new Gson().toJson(resultMap);
+	}
 
 	
 }

@@ -422,6 +422,7 @@ public class AdminService {
 	 public HashMap<String, Object> getReviewSummary() {
 		    return adminMapper.getReviewSummary();
 		}
+
 	 // 주문상세내역 수정
 	 public HashMap<String, Object> saveOrderInfo(HashMap<String, Object> map) {
 		 // TODO Auto-generated method stub
@@ -448,4 +449,28 @@ public class AdminService {
 		 }
 		 return resultMap;
 	}
+	 
+	 public HashMap<String, Object> getSalesSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> salesList = adminMapper.selectSalesByYear();
+		    resultMap.put("salesList", salesList);
+		    return resultMap;
+		}
+	 
+	 public HashMap<String, Object> getThemeSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> themeList = adminMapper.selectThemeSummary();
+		    int totalCount = adminMapper.selectThemeTotalCount();
+		    resultMap.put("themeList", themeList);
+		    resultMap.put("totalCount", totalCount);
+		    return resultMap;
+		}
+	 
+	 
+	 public HashMap<String, Object> getLatestReviews() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> reviewList = adminMapper.selectLatestReviews();
+		    resultMap.put("reviews", reviewList);
+		    return resultMap;
+		}
 }

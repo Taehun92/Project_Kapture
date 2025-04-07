@@ -263,6 +263,7 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getReviewSummary();
 	    return new Gson().toJson(resultMap);
 	}
+
 	// 주문상세내역 수정
 	@RequestMapping(value = "/admin/saveOrderInfo.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -277,6 +278,29 @@ public class AdminController {
 	public String removeOrder(@RequestParam HashMap<String, Object> map) throws Exception {
 	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
 		resultMap = adminService.removeOrder(map);
+	    return new Gson().toJson(resultMap);
+	}
+
+	//대시보드 1번 차트
+	@RequestMapping(value = "/admin/sales/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getSalesSummary() {
+	    HashMap<String, Object> resultMap = adminService.getSalesSummary();
+	    return new Gson().toJson(resultMap);
+	}
+	//대시보드 2번 차트
+	@RequestMapping(value = "/admin/theme/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getThemeSummary() {
+	    HashMap<String, Object> resultMap = adminService.getThemeSummary();
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/admin/review/latest.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getLatestReviews() {
+	    HashMap<String, Object> resultMap = adminService.getLatestReviews();
+	    System.out.println("✅ 리뷰 최신 5건 컨트롤러 도착!");
 	    return new Gson().toJson(resultMap);
 	}
 }
