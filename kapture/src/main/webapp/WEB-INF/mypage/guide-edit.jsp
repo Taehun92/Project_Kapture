@@ -584,6 +584,7 @@
 					data: nparmap,
 					success: function (data) {
 						console.log(data);
+						location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
 					}
 				});
 			},
@@ -602,6 +603,7 @@
 					data: nparmap,
 					success: function (data) {
 						console.log(data);
+						location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
 					}
 				});
 			}
