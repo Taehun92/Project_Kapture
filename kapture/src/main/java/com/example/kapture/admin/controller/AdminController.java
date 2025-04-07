@@ -262,6 +262,21 @@ public class AdminController {
 	public String getReviewSummary() {
 	    HashMap<String, Object> resultMap = adminService.getReviewSummary();
 	    return new Gson().toJson(resultMap);
-	    
+	}
+	// 주문상세내역 수정
+	@RequestMapping(value = "/admin/saveOrderInfo.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveOrderInfo(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.saveOrderInfo(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 주문내역 삭제
+	@RequestMapping(value = "/admin/removeOrder.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeOrder(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeOrder(map);
+	    return new Gson().toJson(resultMap);
 	}
 }

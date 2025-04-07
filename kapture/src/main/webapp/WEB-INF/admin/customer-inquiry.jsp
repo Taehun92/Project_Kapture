@@ -143,6 +143,8 @@
 							<td>{{ inquiry.qnaTitle }}</td>
 							<!-- 문의내용 -->
 							<td>{{ inquiry.question }}</td>
+							<!-- 답변 -->
+							<td>{{inquiry.answer}}</td>
 							<!-- 접수일-->
 							<td>{{ inquiry.inqCreatedAt }}</td>
 							<!-- 처리상태 -->
@@ -279,15 +281,15 @@
 				// '저장' 버튼 클릭 시 답변 저장
 				fnSaveAnswer() {
 					let self = this;
-					if (!this.selectedInquiry) {
+					if (!self.selectedInquiry) {
 						alert("문의 정보를 찾을 수 없습니다.");
 						return;
 					}
 					// 서버 전송 전에 원본 객체에도 answerText 반영 (선택사항)
-    				this.selectedInquiry.answer = this.answerText;
+    				self.selectedInquiry.answer = self.answerText;
 					let nparmap = {
 						inquiryNo: self.selectedInquiry.inquiryNo,
-						answer: this.answerText
+						answer: self.answerText
 					};
 
 					$.ajax({
@@ -325,8 +327,14 @@
 						data: { inquiryNo: inquiryNo },
 						success: function (data) {
 							console.log(data);
-							// 재조회 or 페이지 리로드
-							location.reload();
+							if (data.result === "success") {
+								alert("삭제되었습니다.");
+								// 재조회 or 페이지 리로드
+								location.reload();
+							} else {
+								alert("삭제에 실패하였습니다.");
+							}
+							
 						},
 						error: function (err) {
 							console.error(err);
