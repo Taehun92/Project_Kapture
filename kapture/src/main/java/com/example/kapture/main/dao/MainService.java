@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.main.mapper.MainMapper;
-import com.example.kapture.tours.mapper.ToursMapper;
+import com.example.kapture.main.model.Main;
 import com.example.kapture.tours.model.Tours;
 
 @Service
@@ -29,6 +29,13 @@ public class MainService {
 			System.out.println(e.getMessage());
 			resultMap.put("result", "fail");
 		}
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getReviewList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<Main> reviewList = mainMapper.selectReviewList(map);
+		resultMap.put("reviewList", reviewList);
 		return resultMap;
 	}
 	

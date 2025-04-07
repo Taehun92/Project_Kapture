@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.admin.dao.AdminService;
 import com.example.kapture.common.FileManager;
+import com.example.kapture.mypage.dao.MyPageService;
 import com.google.gson.Gson;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,6 +74,20 @@ public class AdminController {
 	public String setting(Model model) throws Exception{
 		return "/admin/admin-setting";
 	}
+
+	// 고객 문의 관리
+	@RequestMapping("/admin/customer-inquiry.do")
+	public String customerInquiry(Model model) throws Exception{
+		return "/admin/customer-inquiry";
+	}
+
+	// 리뷰 및 평점관리 
+	@RequestMapping("/admin/review.do")
+	public String review(Model model) throws Exception{
+		return "/admin/admin-review";
+	}
+	
+
 	
 	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -134,8 +149,8 @@ public class AdminController {
 			for(MultipartFile file : profile) {			
 				String originFilename = file.getOriginalFilename();
 				String extName = originFilename.substring(originFilename.lastIndexOf("."),originFilename.length());
-				String saveFileName = FileManager.genSaveFileName(extName);
 				long size = file.getSize();
+				String saveFileName = FileManager.genSaveFileName(extName);
 				String fileType = file.getContentType();
 				
 				String path2 = System.getProperty("user.dir");
@@ -167,5 +182,125 @@ public class AdminController {
 		}
 		System.out.println("=======================");
 		return new Gson().toJson(resultMap);
+	}
+
+	// 회원 리스트 조회
+	@RequestMapping(value = "/admin/users-list.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getUsersList(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.getUsersList(map);
+	   return new Gson().toJson(resultMap);
+	}
+	// 회원 정보수정
+	@RequestMapping(value = "/admin/user-update.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String editUser(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.editUser(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 회원 탈퇴 처리
+	@RequestMapping(value = "/admin/unregister.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String userUnregister(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.userUnregister(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 회원 문의 조회
+	@RequestMapping(value = "/admin/users-inquiries.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String userInquiriesList(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.userInquiriesList(map);
+	    return new Gson().toJson(resultMap);
+	}
+	//리뷰 관리 리스트 	
+	@RequestMapping(value = "/admin-review.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getReviewList(@RequestParam HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    resultMap = adminService.getAllReviewList(map); // 서비스에서 처리
+	    return new Gson().toJson(resultMap); // JSON 문자열로 반환
+
+	}
+	// 회원 문의 답변 저장
+	@RequestMapping(value = "/admin/inquiry-answer-save.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String inquiryAnswerSave(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.inquiryAnswerSave(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 회원 문의 삭제
+	@RequestMapping(value = "/admin/inquiry-delete.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeInquiry(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeInquiry(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 환불 처리
+	@RequestMapping(value = "/admin/refunded.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String payRefunded(@RequestParam HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.payRefunded(map);
+	    return new Gson().toJson(resultMap);
+	}
+	//리뷰 삭제
+	@RequestMapping(value = "/admin/review/delete.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteReview(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = adminService.deleteReview(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/admin/review/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getReviewSummary() {
+	    HashMap<String, Object> resultMap = adminService.getReviewSummary();
+	    return new Gson().toJson(resultMap);
+	}
+
+	// 주문상세내역 수정
+	@RequestMapping(value = "/admin/saveOrderInfo.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveOrderInfo(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.saveOrderInfo(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 주문내역 삭제
+	@RequestMapping(value = "/admin/removeOrder.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeOrder(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeOrder(map);
+	    return new Gson().toJson(resultMap);
+	}
+
+	//대시보드 1번 차트
+	@RequestMapping(value = "/admin/sales/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getSalesSummary() {
+	    HashMap<String, Object> resultMap = adminService.getSalesSummary();
+	    return new Gson().toJson(resultMap);
+	}
+	//대시보드 2번 차트
+	@RequestMapping(value = "/admin/theme/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getThemeSummary() {
+	    HashMap<String, Object> resultMap = adminService.getThemeSummary();
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/admin/review/latest.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getLatestReviews() {
+	    HashMap<String, Object> resultMap = adminService.getLatestReviews();
+	    System.out.println("✅ 리뷰 최신 5건 컨트롤러 도착!");
+	    return new Gson().toJson(resultMap);
 	}
 }

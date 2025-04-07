@@ -8,114 +8,91 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 	<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-	<link rel="stylesheet" href="../../css/guideAdd.css">
-	<title>첫번째 페이지</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<title>상품 수정 페이지</title>
 </head>
 <style>
 </style>
-<body>
+<body class="bg-gray-100 text-gray-800">
 	<jsp:include page="../common/header.jsp" />
-	<div id="app" class="container">
-		<!-- 좌측 사이드 메뉴 -->
-		<div class="side-menu">
-			<ul>
-				<li>
-					<a :class="{ active: currentPage === 'guide-mypage.do' }"
-						href="http://localhost:8080/mypage/guide-mypage.do">
-						가이드 정보수정
-					</a>
-				</li>
-				<li>
-					<a :class="{ active: currentPage === 'guide-schedule.do' }"
-						href="http://localhost:8080/mypage/guide-schedule.do">
-						나의 스케줄
-					</a>
-				</li>
-				<li>
-					<a href="http://localhost:8080/cs/qna.do">
-						문의하기
-					</a>
-				</li>
-				<li>
-					<a :class="{ active: currentPage === 'guide-add.do' }"
-						href="http://localhost:8080/mypage/guide-add.do">
-						여행상품 등록
-					</a>
-				</li>
-				<li>
-					<a :class="{ active: currentPage === 'guide-sales-list.do' }"
-						href="http://localhost:8080/mypage/guide-sales-list.do">
-						판매내역
-					</a>
-				</li>
+	<div id="app" class="max-w-7xl mx-auto flex flex-col md:flex-row p-6 gap-6">
+		 <!-- 사이드 메뉴 -->
+		 <div class="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4">
+			<ul class="space-y-2">
+				<li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-mypage.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-mypage.do">가이드 정보수정</a></li>
+				<li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-schedule.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-schedule.do">나의 스케줄</a></li>
+				<li><a class="block p-2 rounded hover:bg-gray-100" href="/cs/qna.do">문의하기</a></li>
+				<li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-add.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-add.do">여행상품 등록</a></li>
+				<li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-sales-list.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-sales-list.do">판매내역</a></li>
 			</ul>
 		</div>
 
-		<div class="content-area">
-			<table>
-            	<tr>
-                	<th>제목 :</th>
-                	<td colspan="3"><input v-model="title" /></td>
+		<div class="w-full md:w-3/4 bg-white rounded-lg shadow-md p-6">
+			<table class="w-full table-auto text-sm">
+            	<tr class="border-b">
+                	<th class="text-left py-2 pr-4 w-24">제목 :</th>
+                	<td colspan="3"><input v-model="title" class="w-full border rounded px-3 py-2"/></td>
 				</tr>
-            	<tr>
-                	<th>소요시간 :</th>
+            	<tr class="border-b">
+                	<th class="text-left py-2 pr-4">소요시간 :</th>
                 	<td>
-						<select v-model="duration">
+						<select v-model="duration" class="border rounded px-2 py-1">
 							<option value="">:: 선택 ::</option>
 							<option value="오전">오전</option>
 							<option value="오후">오후</option>
 							<option value="종일">종일</option>
 					</td>
-                	<th>가격 :</th>
-                	<td><input v-model="price" /></td>
+                	<th class="text-left py-2 pr-4">가격 :</th>
+                	<td><input v-model="price" class="border rounded px-2 py-1 w-full"/></td>
 				</tr>
-				<tr>
-                	<th>날짜 :</th>
-                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10"/></td>
-                	<th>시 :</th>
+				<tr class="border-b">
+                	<th class="text-left py-2 pr-4">날짜 :</th>
+                	<td><input  type=date v-model="tourDate" placeholder="2025-04-10" :min="minDate" class="border rounded px-2 py-1"/></td>
+				</tr>
+				<tr class="border-b">
+                	<th class="text-left py-2 pr-4">시 :</th>
                 	<td>
-						<select @change="fnSelectGu()" v-model="siName">
+						<select @change="fnSelectGu()" v-model="siName" class="border rounded px-2 py-1 w-full">
 							<option value="">:: 선택 ::</option>
 							<template v-for="item in siList">
 								<option :value="item.siName">{{item.siName}}</option>
 							</template>
 						</select>
 					</td>
-				</tr>
-				<tr>
-                	<th>구 :</th>
-                	<td><select v-model="guName">
+
+                	<th class="text-left py-2 pr-4">구 :</th>
+                	<td><select v-model="guName" class="border rounded px-2 py-1 w-full">
 						<option value="">:: 선택 ::</option>
 						<template v-for="item in guList">
 							<option :value="item.guName">{{item.guName}}</option>
 						</template>
 					</select></td>
             	</tr>
-				<tr>
-                	<th>상위테마 :</th>
-                	<td><select @change="fnSelectTheme()" v-model="themeParent">
+				<tr class="border-b">
+                	<th class="text-left py-2 pr-4" >상위테마 :</th>
+                	<td><select @change="fnSelectTheme()" v-model="themeParent" class="border rounded px-2 py-1 w-full">
 						<option value="">:: 선택 ::</option>
 						<template v-for="item in themeParentList">
 							<option :value="item.themeName">{{item.themeName}}</option>
 						</template>
 					</select></td>
-                	<th>테마 :</th>
-                	<td><select v-model="themeName">
+                	<th class="text-left py-2 pr-4">테마 :</th>
+                	<td><select v-model="themeName" class="border rounded px-2 py-1 w-full">
 						<option value="">:: 선택 ::</option>
 						<template v-for="item in themeNameList">
 							<option :value="item.themeName">{{item.themeName}}</option>
 						</template>
 					</select></td>
             	</tr>
-            	<tr>
-                	<th>내용 :</th>
+            	<tr class="border-b">
+                	<th class="text-left py-2 pr-4 align-top">내용 :</th>
                 	<td colspan="3">
-                    	<div id="editor" style="width: 800px; height: 400px;"></div>
+                    	<div id="editor"  class="border rounded w-full" style="width: 800px; height: 400px;"></div>
                 	</td>
             	</tr>
         	</table>
-        	<div style="margin-top: 20px; padding-left: 80px;">
-            	<button @click="fnSave">저장</button>
+        	<div class="mt-6 text-right" style="margin-top: 20px; padding-left: 80px;">
+            	<button @click="fnSave" class="bg-blue-950 text-white px-6 py-2 rounded hover:bg-blue-700 transition">저장</button>
         	</div>
 		</div>
 
@@ -152,8 +129,9 @@
 			   imgList: [],
 			   themeNo : "",
 			   themeParentNo : "",
-			   
-			  
+			   minDate : new Date().toISOString().split("T")[0],
+			   // 썸네일 이미지
+			   thumbnail : ""
             };
         },
         methods: {
@@ -211,6 +189,9 @@
 					sessionId : self.sessionId,
 					themeName : self.themeName,
 					tourNo : self.tourNo,
+
+					// 썸네일 이미지로 설정할 이미지 URL
+					thumbnail : self.thumbnail
 				};
 
 				if(self.sessionId == ""){
@@ -290,7 +271,18 @@
 							alert("수정되었습니다.");
 
 							if (self.imgList.length > 0) {
-								self.fnUpdateImgList(data.tourNo);
+								self.fnUpdateImgList(self.tourNo);
+							} else {
+								// 이미지 추가 없을 경우
+								if(self.thumbnail != "") {
+									// 본문에 이미지 존재 
+									console.log('본문에 이미지 존재');
+									self.fnSetThumbnail();
+								} else {
+									// 썸네일 초기화
+									console.log('본문에 이미지 없음');
+									self.fnResetThumbnail();
+								}
 							}
 						}
 					}
@@ -388,7 +380,8 @@
 					success: function (data) {
 						if (data.result == 'success') {
 							console.log('data : ', data);
-							alert("이미지 등록되었습니다.");
+							alert("이미지 추가되었습니다.");
+							location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
 						}
 					}
 				})
@@ -471,6 +464,7 @@
 
 			},
 			fnQuill() {
+				let self = this;
 				let quill = new Quill('#editor', {
 					theme: 'snow',
 					modules: {
@@ -535,8 +529,65 @@
 	
 				quill.on('text-change', function () {
 					self.description = quill.root.innerHTML;
+					
+					// 본문에 있는 이미지 URL을 추출하여 썸네일 설정
+					if(self.getImageUrlsFromHtml(self.description).length > 0) {
+						self.thumbnail = self.getImageUrlsFromHtml(self.description)[0];
+					} else {
+						self.thumbnail = ""; // 이미지가 없을 경우 썸네일 초기화
+					}
+					console.log('썸네일 : ', self.thumbnail);
 				});
-			}
+			},
+
+			// 본문에 있는 이미지 URL을 추출하는 함수
+			getImageUrlsFromHtml(html) {
+				let div = document.createElement("div");
+				div.innerHTML = html;
+				let imgs = div.querySelectorAll("img");
+				return Array.from(imgs).map(img => img.getAttribute("src"));
+			},
+
+			// 썸네일 초기화
+			fnResetThumbnail() {
+				let self = this;
+				let nparmap = {
+					tourNo: self.tourNo
+				}
+				$.ajax({
+					url: "/mypage/resetThumbnail.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+						location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
+					}
+				});
+			},
+
+			// 썸네일 설정
+			fnSetThumbnail() {
+				let self = this;
+				let nparmap = {
+					tourNo: self.tourNo,
+					thumbnail: self.thumbnail
+				}
+				$.ajax({
+					url: "/mypage/setThumbnail.dox",
+					dataType: "json",
+					type: "POST",
+					data: nparmap,
+					success: function (data) {
+						console.log(data);
+						location.href = "/tours/tour-info.do?tourNo=" + self.tourNo;
+					}
+				});
+			},
+
+			
+
+
 
 
 
