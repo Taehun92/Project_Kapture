@@ -64,13 +64,21 @@
 </style>
 <body>
 <div class="sidebar">
-    <a href="/main.do"><img id="logo" src="../../img/kapture_Logo.png" style="width: 200px;"></a> 
+    <a href="/main.do"><img id="logo" src="../../img/white.png" style="width: 200px;"></a> 
     <ul>
+        <li><a href="/admin.do">대시보드</a></li>
         <li><a href="/admin/tours.do">상품 관리</a></li>
         <li><a href="/admin/guide.do">가이드 관리</a></li>
-        <li><a href="/admin/order.do">주문 및 예약 관리</a></li>
+        <li class="submenu">
+			<a href="javascript:void(0)" class="toggle-submenu">
+				거래 관리 <span class="arrow">∨</span>
+			</a>
+			<ul class="submenu-items" style="display: none;">
+				<li><a href="/admin/order.do">주문내역 관리</a></li>
+				<li><a href="/admin/pay.do">결제 및 수익 관리</a></li>
+			</ul>
+		</li>
         <li><a href="/admin/review.do">리뷰 및 평점 관리</a></li>
-        <li><a href="/admin/pay.do">결제 및 수익 관리</a></li>
 		<li class="submenu">
 			<!-- 클릭 시 하위 메뉴 열고 닫힘 -->
 			<a href="javascript:void(0)" class="toggle-submenu">
@@ -90,6 +98,21 @@
 </html>
 <script>
   $(document).ready(function() {
+	// 현재 페이지 이름 추출
+	let currentPage = window.location.pathname.split('/').pop();
+	console.log("Current page:", currentPage);
+	// 거래 관리 하위메뉴: 주문내역 관리, 결제 및 수익 관리
+	if(currentPage === "order.do" || currentPage === "pay.do") {
+		// 첫 번째 submenu (거래 관리)에 대해서만 작동
+	    $('.submenu').eq(0).find('.toggle-submenu .arrow').text('∧');
+		$('.submenu').eq(0).find('.submenu-items').show();
+	}
+	// 고객 관리 하위메뉴: 고객 정보 관리, 고객 문의 관리
+	else if (currentPage === "customer.do" || currentPage === "customer-inquiry.do") {
+	   // 두 번째 submenu (고객 관리)에 대해서만 작동
+	   $('.submenu').eq(1).find('.toggle-submenu .arrow').text('∧');
+	   $('.submenu').eq(1).find('.submenu-items').show();
+	}
     $('.toggle-submenu').click(function(e) {
       e.preventDefault(); // a 태그 기본 이동 막기
 

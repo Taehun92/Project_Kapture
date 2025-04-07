@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.kapture.admin.model.OrderInfo;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
@@ -53,13 +54,38 @@ public interface AdminMapper {
 		int insertGuide(HashMap<String, Object> map);
 		// 가이드관리 삭제,역할 수정시 가이드 삭제
 		int deleteGuide(HashMap<String, Object> map);
-
+		// 고객 문의 리스트 조회
 		List<Cs> selectInquiriesList(HashMap<String, Object> map);
+		// 고객 문의 답변 저장
+		int updateInquiryAnswer(HashMap<String, Object> map);
+		// 고객 문의 삭제
+		int deleteInquiry(HashMap<String, Object> map);
+		// 환불 처리
+		int updateRefunded(HashMap<String, Object> map);
 
 
 
 
 		List<HashMap<String, Object>> selectAllReviews();
+
+		List<HashMap<String, Object>> selectReviewList(HashMap<String, Object> map);
+
+		int selectReviewCount(HashMap<String, Object> map);
+
+		int deleteReview(HashMap<String, Object> map);
+
+		HashMap<String, Object> getReviewSummary();
+		// 주문상세내역 수정
+		int updateOrderInfo(HashMap<String, Object> map);
+		// 주문내역 삭제
+		int deleteOrder(HashMap<String, Object> map);
+
+		List<Map<String, Object>> selectSalesByYear();
+
+		List<Map<String, Object>> selectThemeSummary();
+		int selectThemeTotalCount();
+
+		List<Map<String, Object>> selectLatestReviews();
 
 
 		

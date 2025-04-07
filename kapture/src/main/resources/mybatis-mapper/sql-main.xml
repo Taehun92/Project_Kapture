@@ -20,7 +20,11 @@
 		ORDER BY NVL(RATING, 0) DESC
 	</select>
 	
-	
+	<select id="selectReviewList" parameterType="hashmap" resultType="com.example.kapture.main.model.Main">
+		SELECT TITLE, "COMMENT", RATING, USER_FIRSTNAME, USER_LASTNAME FROM REVIEWS R
+			INNER JOIN TOURS T ON T.TOUR_NO = R.TOUR_NO
+			INNER JOIN USERS U ON U.USER_NO = R.USER_NO
+	</select>
 </mapper>
 
 
