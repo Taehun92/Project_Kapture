@@ -249,4 +249,19 @@ public class AdminController {
 		resultMap = adminService.payRefunded(map);
 	    return new Gson().toJson(resultMap);
 	}
+	//리뷰 삭제
+	@RequestMapping(value = "/admin/review/delete.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteReview(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = adminService.deleteReview(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/admin/review/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getReviewSummary() {
+	    HashMap<String, Object> resultMap = adminService.getReviewSummary();
+	    return new Gson().toJson(resultMap);
+	    
+	}
 }
