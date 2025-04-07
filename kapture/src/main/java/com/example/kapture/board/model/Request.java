@@ -20,4 +20,5 @@ public class Request {
 	private String message;
 	private String parentCommentNo;
 	private String currency;
+	private String deleteYn;
 }

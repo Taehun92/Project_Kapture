@@ -8,8 +8,7 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
-        <link rel="stylesheet" href="../../css/main.css">
-        <link rel="stylesheet" href="../../css/components/card.css">
+        <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
         <title>메인 페이지</title>
     </head>
@@ -21,86 +20,71 @@
 
     <body>
         <jsp:include page="../common/header.jsp"></jsp:include>
-        <div id="app">
-            <div class="swiper-container" style="position: relative;">
-                <!-- ✅ 고정 문구 텍스트 -->
-                <div class="hero-text">
-                    <h1 class="title">YOUR WORLD OF JOY</h1>
-                    <p class="subtitle">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
+        <div id="app" class="pb-12">
+            <!-- Swiper 배너 -->
+            <div class="relative w-full h-[500px]">
+                <div class="absolute z-10 w-full text-center top-[30%] text-white">
+                    <h1 class="text-5xl font-bold">YOUR WORLD OF JOY</h1>
+                    <p class="text-xl mt-4">캡쳐와 함께 국내의 모든 즐거움을 경험해보세요</p>
                 </div>
-
-                <!-- ✅ Swiper 이미지 슬라이드 -->
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img class="banner" src="../../img/city.jpg">
-                    </div>
-                    <div class="swiper-slide">
-                        <img class="banner" src="../../img/han.jpg">
-                    </div>
-                    <div class="swiper-slide">
-                        <img class="banner" src="../../img/banner3.jpg">
-                    </div>
-                </div>
-            </div>
-            <div class="main-container">
-                <div class="main-title">
-                    <hr>
-                    추 천 상 품
-                </div>
-                <!-- 관광지 리스트 -->
-                <div class="card-list">
-                    <div class="card" v-for="tour in limitedToursList" :key="tour.tourNo">
-                        <div class="card-image">
-                            <img :src="tour.filePath" alt="썸네일" />
+                <div class="swiper-container w-full h-full">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img class="w-full h-full object-cover" src="../../img/city.jpg">
                         </div>
-                        <div class="card-content">
-                            <div class="card-top">
-                                <div class="card-date">{{ formatDate(tour.tourDate) }}</div>
-                                <div class="hashtags">
-                                    <span class="theme-hashtag"># {{ tour.themeName }}</span>
-                                </div>
-                                <div class="favorite" :class="{ active: tour.isFavorite === 'Y' }" @click="toggleFavorite(tour)"></div>
-                            </div>
-                            <div class="card-title">{{ tour.title }}</div>
-                            <div class="card-desc">{{ truncateText(tour.description) }}</div>
-                            <div class="card-info">
-                                <div v-if="tour.rating >= 0" class="rating">⭐ {{ tour.rating }}</div>
-                                <div v-else class="rating"> {{ tour.rating }}</div>
-                                <div class="price">₩ {{ tour.price.toLocaleString() }}</div>
-                            </div>
-                            <button class="card-btn" @click="goToTourInfo(tour.tourNo)">예약하기</button>
+                        <div class="swiper-slide">
+                            <img class="w-full h-full object-cover" src="../../img/han.jpg">
+                        </div>
+                        <div class="swiper-slide">
+                            <img class="w-full h-full object-cover" src="../../img/banner3.jpg">
                         </div>
                     </div>
                 </div>
-
-                <div class="main-title">
-                    <hr>
-                      추 천 리 뷰
-                </div>
-                <div class="review-page">
-                    <div class="review-box">
-                        <div class="review-author">사용자 A</div>
-                        <img class="review-image" src="../../img/1.jpg" alt="리뷰 이미지 1">
-                        <div class="review-content">이 상품 정말 좋아요! 배송도 빠르고 품질도 만족스럽습니다.</div>
-                        <div class="review-rating">★★★★★</div>
-                    </div>
-
-                    <div class="review-box">
-                        <div class="review-author">사용자 B</div>
-                        <img class="review-image" src="../../img/2.jpg" alt="리뷰 이미지 2">
-                        <div class="review-content">가격 대비 성능이 훌륭합니다. 추천합니다!</div>
-                        <div class="review-rating">★★★★☆</div>
-                    </div>
-
-                    <div class="review-box">
-                        <div class="review-author">사용자 C</div>
-                        <img class="review-image" src="../../img/3.jpg" alt="리뷰 이미지 3">
-                        <div class="review-content">잘 받았습니다. 다음에 또 구매할게요.</div>
-                        <div class="review-rating">★★★★</div>
+            </div>
+            <div class="max-w-[1200px] mx-auto mt-12">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 pb-2">추천 상품</h2>
+            
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div 
+                        class="border rounded-xl shadow-md overflow-hidden flex flex-col justify-between"
+                        v-for="tour in limitedToursList" 
+                        :key="tour.tourNo"
+                    >
+                        <img :src="tour.filePath" class="w-full h-48 object-cover" alt="썸네일" />
+                        <div class="p-4">
+                            <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
+                                <span>{{ formatDate(tour.tourDate) }}</span>
+                                <span># {{ tour.themeName }}</span>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">{{ tour.title }}</h3>
+                            <p class="text-gray-600 text-sm mb-3">{{ truncateText(tour.description) }}</p>
+                            <div class="flex justify-between items-center">
+                                <span v-if="tour.rating >= 0" class="text-yellow-500">⭐ {{ tour.rating }}</span>
+                                <span v-else class="text-gray-500">리뷰 없음</span>
+                                <span class="font-bold text-blue-600">₩ {{ tour.price.toLocaleString() }}</span>
+                            </div>
+                            <button 
+                                class="mt-4 w-full bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded"
+                                @click="goToTourInfo(tour.tourNo)"
+                            >예약하기</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="max-w-[1200px] mx-auto mt-16">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 pb-2">추천 리뷰</h2>
+            
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="border rounded-lg p-4 shadow" v-for="(review, index) in reviews" :key="index">
+                        <div class="text-sm font-semibold mb-2">{{ review.author }}</div>
+                        <img :src="review.image" class="w-full h-40 object-cover mb-2 rounded" />
+                        <p class="text-gray-600 text-sm mb-2">{{ review.content }}</p>
+                        <div class="text-yellow-500">{{ review.rating }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>    
         <jsp:include page="../common/footer.jsp"></jsp:include>
     </body>
 
