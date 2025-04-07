@@ -238,7 +238,6 @@ public class MyPageService {
 		return resultMap;
 	}
 	
-	
 	public HashMap<String, Object> addToursImg(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
 		myPageMapper.insertToursFile(map);
@@ -277,10 +276,6 @@ public class MyPageService {
 	    resultMap.put("totalCount", totalCount);
 	    
 	    return resultMap;
-
-        result.put("list", list);
-        result.put("totalCount", totalCount);
-        return result;
     }
 	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
 		
