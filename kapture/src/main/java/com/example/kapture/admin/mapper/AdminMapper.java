@@ -61,6 +61,14 @@ public interface AdminMapper {
 
 		List<HashMap<String, Object>> selectAllReviews();
 
+		List<HashMap<String, Object>> selectReviewList(HashMap<String, Object> map);
+
+		int selectReviewCount(HashMap<String, Object> map);
+
+		int deleteReview(HashMap<String, Object> map);
+
+		HashMap<String, Object> getReviewSummary();
+
 
 		
 

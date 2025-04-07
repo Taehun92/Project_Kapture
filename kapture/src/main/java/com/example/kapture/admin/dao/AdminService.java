@@ -339,9 +339,52 @@ public class AdminService {
 
 	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
-	    List<HashMap<String, Object>> list = adminMapper.selectAllReviews();
+	    
+	    // 페이징 파라미터 추출
+	    int page = Integer.parseInt((String) map.getOrDefault("page", "1"));
+	    int pageSize = Integer.parseInt((String) map.getOrDefault("pageSize", "10"));
+	    int offset = (page - 1) * pageSize;
+	    
+	    map.put("offset", offset);
+	    map.put("pageSize", pageSize);
+
+	    // 리뷰 리스트 가져오기
+	    List<HashMap<String, Object>> list = adminMapper.selectReviewList(map);
+	    map.get("keyword");
+	    map.get("sort");
+	    
+	    // 전체 리뷰 수
+	    int totalCount = adminMapper.selectReviewCount(map);
+	    System.out.println("전체 리뷰 수: " + totalCount);
+
+	    // 결과 저장
 	    resultMap.put("list", list);
+	    resultMap.put("totalCount", totalCount);
+
 	    return resultMap;
 	}
+	//리뷰 삭제 
+	 public HashMap<String, Object> deleteReview(HashMap<String, Object> map) throws Exception {
+	        HashMap<String, Object> resultMap = new HashMap<>();
+
+	        int result = adminMapper.deleteReview(map);
+	        System.out.println(map);
+
+	        if (result > 0) {
+	            resultMap.put("status", "success");
+	            resultMap.put("message", "리뷰가 삭제되었습니다.");
+	        } else {
+	            resultMap.put("status", "fail");
+	            resultMap.put("message", "삭제할 리뷰가 없습니다.");
+	        }
+
+	        return resultMap;
+}
+	 
+	 public HashMap<String, Object> getReviewSummary() {
+		    return adminMapper.getReviewSummary();
+		}
+
+
 
 }

@@ -215,7 +215,8 @@ public class AdminController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
 		resultMap = adminService.userInquiriesList(map);
 	    return new Gson().toJson(resultMap);
-
+	}
+	
 	//리뷰 관리 리스트 	
 	@RequestMapping(value = "/admin-review.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -225,4 +226,20 @@ public class AdminController {
 	    return new Gson().toJson(resultMap); // JSON 문자열로 반환
 
 	}
+	//리뷰 삭제
+	@RequestMapping(value = "/admin/review/delete.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteReview(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = adminService.deleteReview(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/admin/review/summary.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getReviewSummary() {
+	    HashMap<String, Object> resultMap = adminService.getReviewSummary();
+	    return new Gson().toJson(resultMap);
+	    
+	}
+
 }
