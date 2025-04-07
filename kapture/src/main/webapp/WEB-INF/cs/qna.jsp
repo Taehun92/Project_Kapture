@@ -86,7 +86,7 @@
     </select>
 
     <!-- ✅ 제목 (선택사항) -->
-    <input type="text" placeholder="제목을 입력해주세요 (선택사항)" v-model="title" />
+    <input type="text" placeholder="제목을 입력해주세요 (선택사항)" v-model="qnaTitle" />
 
     <!-- ✅ 문의 내용 - 크기 3배 증가 -->
     <textarea rows="18" placeholder="문의하실 내용을 입력해주세요" v-model="question"></textarea>
@@ -109,7 +109,7 @@
     data() {
       return {
         category: "",
-        title: "",
+        qnaTitle: "",
         question: "",
         userNo: "${sessionId}",
         file: null,
@@ -129,7 +129,7 @@
 
         const formData = new FormData();
         formData.append("category", this.category);
-        formData.append("title", this.title);
+        formData.append("qnaTitle", this.qnaTitle);
         formData.append("question", this.question);
         formData.append("userNo", this.userNo);
         if (this.file) formData.append("file", this.file);

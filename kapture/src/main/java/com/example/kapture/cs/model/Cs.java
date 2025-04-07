@@ -12,10 +12,17 @@ public class Cs {
 	private String answer;
 	private String inqCreatedAt;
 	private String inqUpdatedAt;
+	private String qnaTitle;
+	private String qnaStatus;
 	private int noticeNo;
 	private String title;
 	private String content;
 	private String nCreatedAt;
 	private String nUpdatedAt;
 	private int faqNo;
+	
+	private String phone;
+	private String userFirstName;
+	private String userLastName;
+	private String email;
 }

@@ -15,5 +15,17 @@ public class Admin {
 	private String merchantId;
 	private int numPeople;
 	private int basketNo;
+	private int reviewNo;
+	private int rating;
+	private String comment;
+	private String rCreatedAt;
+	private String rUpdateAt;
+	private String reply;
+	private int guideNo;
+	private String title;
+	private int maxPeople;
+	private String email;
+	private String userFirstName;
+	private String userLastName;
 	
 }
