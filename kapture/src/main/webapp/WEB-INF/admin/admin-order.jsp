@@ -108,6 +108,105 @@
             .refunded-button:hover {
                 background-color: #b30000;
             }
+
+            /* 모달 관련 CSS */
+            .order-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+
+            .modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+
+            .modal-content {
+                position: relative;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                width: 800px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                cursor: pointer;
+            }
+
+            .modal-body .info-section {
+                margin-bottom: 20px;
+            }
+
+            .modal-body table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+
+            .modal-body th,
+            .modal-body td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .modal-body th {
+                background-color: #f9f9f9;
+            }
+
+            .modal-footer {
+                text-align: right;
+            }
+
+            .modal-footer button {
+                padding: 6px 12px;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                background-color: #f5f5f5;
+                border-radius: 4px;
+            }
+
+            .modal-footer button:hover {
+                background-color: #eaeaea;
+            }
+
+            .table-button {
+                margin-top: 5px;
+                padding: 2px 5px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .table-button:hover {
+                background-color: #0056b3;
+            }
         </style>
     </head>
 
@@ -148,20 +247,24 @@
                         <td v-html="formatDate(item.PAYMENT_DATE)"></td>
                         <td>
                             {{ item.USER_FIRSTNAME }}
-                            <template v-if="USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
+                            <template v-if="item.USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
                         </td>
                         <td>{{ item.TITLE }}</td>
                         <td v-html="formatDate(item.TOUR_DATE)"></td>
                         <td>{{ item.DURATION }}</td>
                         <td>{{ formatCurrency(item.AMOUNT) }}</td>
-                        <td :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
+                        <td
+                            :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
                             {{ item.PAYMENT_STATUS }}
                             <div v-if="item.PAYMENT_STATUS === '환불요청'">
                                 <button class="refunded-button" @click="fnRefunded(item.PAYMENT_NO)">환불처리</button>
                             </div>
                         </td>
                         <td>{{ item.NUM_PEOPLE }}명</td>
-                        <td><button>보기</button></td>
+                        <td>
+                            <button class="table-button" @click="fnGetOrderInfo(item)">보기</button>
+                            <button class="table-button" @click="fnRemoveOrder(item.PAYMENT_NO)">삭제</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -173,7 +276,82 @@
                 </button>
                 <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
             </div>
-        </div>
+            <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
+            <div v-if="showEditModal" class="order-modal" @click.self="fnEditOrderClose">
+                <div class="modal-overlay" @click="fnEditOrderClose"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>주문 상세 정보</h2>
+                        <span class="close-btn" @click="fnEditOrderClose">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 주문회원정보 -->
+                        <div class="info-section">
+                            <h3>주문회원정보</h3>
+                            <table>
+                                <tr>
+                                    <th>이름</th>
+                                    <td>
+                                        {{ editOrderInfo.USER_FIRSTNAME }}
+                                        <template v-if="editOrderInfo.USER_LASTNAME != 'N/A'">
+                                            {{ editOrderInfo.USER_LASTNAME }}
+                                        </template>
+                                    </td>
+                                    <th>연락처</th>
+                                    <td>{{ editOrderInfo.PHONE }}</td>
+                                </tr>
+                                <tr>
+                                    <th>이메일</th>
+                                    <td>{{ editOrderInfo.EMAIL }}</td>
+                                    <th>국적</th>
+                                    <td v-if="editOrderInfo.ISFOREIGNER === 'Y'">외국인</td>
+                                    <td v-else>내국인</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- 예약 여행 정보 -->
+                        <div class="info-section">
+                            <h3>예약 여행 정보</h3>
+                            <table>
+                                <tr>
+                                    <th>결제번호</th>
+                                    <td>{{ editOrderInfo.PAYMENT_NO }}</td>
+                                    <th>결제일시</th>
+                                    <td v-html="formatDate(editOrderInfo.PAYMENT_DATE)"></td>
+                                </tr>
+                                <tr>
+                                    <th>상품 제목</th>
+                                    <td>{{ editOrderInfo.TITLE }}</td>
+                                    <th>여행 날짜</th>
+                                    <td v-html="formatDate(editOrderInfo.TOUR_DATE)"></td>
+                                </tr>
+                                <tr>
+                                    <th>인원</th>
+                                    <td>{{ editOrderInfo.NUM_PEOPLE }}명</td>
+                                    <th>여행 기간</th>
+                                    <td>{{ editOrderInfo.DURATION }}</td>
+                                </tr>
+                                <tr>
+                                    <th>결제상태</th>
+                                    <td>
+                                        <select v-model="editPaymentStatus" class="search-select">
+                                            <option value="결제완료">결제완료</option>
+                                            <option value="거래완료">거래완료</option>
+                                            <option value="환불요청">환불요청</option>
+                                            <option value="환불완료">환불완료</option>
+                                        </select>
+                                    </td>
+                                    <th>결제금액</th>
+                                    <td>{{ formatCurrency(editOrderInfo.AMOUNT) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="fnSaveOrderInfo">저장</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <script>
             const app = Vue.createApp({
@@ -188,6 +366,9 @@
                         size: 10,
                         totalCount: 0,
                         totalPages: 1,
+                        showEditModal: false,
+                        editOrderInfo: {},
+                        editPaymentStatus: "",
                     };
                 },
                 methods: {
@@ -233,11 +414,11 @@
                         let minutes = ('0' + d.getMinutes()).slice(-2);
                         let seconds = ('0' + d.getSeconds()).slice(-2);
 
-                        return year + "-" + month + "-" + day + "<div>" + hours + ":"+ minutes + ":" + seconds + "</div>";
+                        return year + "-" + month + "-" + day + "<div>" + hours + ":" + minutes + ":" + seconds + "</div>";
                     },
-                    fnRefunded(paymentNo){
+                    fnRefunded(paymentNo) {
                         let self = this;
-                        if(!confirm("해당 주문건을 환불하시겠습니까?")){
+                        if (!confirm("해당 주문건을 환불하시겠습니까?")) {
                             return;
                         }
                         let nparmap = {
@@ -250,17 +431,87 @@
                             data: nparmap,
                             success: function (data) {
                                 console.log(data);
-                                if(data.result === "success"){
+                                if (data.result === "success") {
                                     alert("환불되었습니다.");
                                     self.fnGetTransactions();
-                                }else{
+                                } else {
                                     alert("환불에 실패했습니다.");
                                 }
                             },
-                            error: function (err){
+                            error: function (err) {
                                 console.error(err);
-							    alert("환불처리 중 오류가 발생했습니다.");
-                            } 
+                                alert("환불처리 중 오류가 발생했습니다.");
+                            }
+                        });
+                    },
+                    fnGetOrderInfo(item) {
+                        let self = this;
+                        self.editOrderInfo = item;
+                        self.editPaymentStatus = self.editOrderInfo.PAYMENT_STATUS;
+                        self.showEditModal = true;
+                    },
+                    fnEditOrderClose() {
+                        let self = this;
+                        self.showEditModal = false;
+                        self.editPaymentStatus = "";
+                        self.editOrderInfo = {};
+                    },
+                    formatCurrency(val) { return "₩ " + Number(val).toLocaleString(); },
+                    fnSaveOrderInfo() {
+                        let self = this;
+                        self.editOrderInfo.PAYMENT_STATUS = self.editPaymentStatus;
+                        let nparmap = {
+                            paymentNo: self.editOrderInfo.PAYMENT_NO,
+                            paymentStatus: self.editPaymentStatus,
+                        };
+                        $.ajax({
+                            url: "/admin/saveOrderInfo.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                console.log(data);
+                                if (data.result === "success") {
+                                    alert("수정되었습니다.");
+                                    self.showEditModal = false;
+                                    self.editOrderInfo = {};
+                                    self.fnGetTransactions();
+                                } else {
+                                    alert("수정에 실패했습니다.");
+                                }
+                            },
+                            error: function (err) {
+                                console.error(err);
+                                alert("수정 중 오류가 발생했습니다.");
+                            }
+                        });
+                    },
+                    fnRemoveOrder(paymentNo) {
+                        let self = this;
+                        if (!confirm("정말 삭제하시겠습니까?")) {
+
+                        }
+                        let nparmap = {
+                            paymentNo: paymentNo,
+                        };
+                        $.ajax({
+                            url: "/admin/removeOrder.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: nparmap,
+                            success: function (data) {
+                                console.log(data);
+                                if (data.result === "success") {
+                                    alert("삭제되었습니다.");
+                                    location.reload();
+                                } else {
+                                    alert("삭제에 실패했습니다.");
+                                }
+                            },
+                            error: function (err) {
+                                console.error(err);
+                                alert("삭제 중 오류가 발생했습니다.");
+                            }
                         });
                     }
                 },

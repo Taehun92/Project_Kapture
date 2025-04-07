@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
+import com.example.kapture.admin.model.OrderInfo;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
@@ -421,4 +422,30 @@ public class AdminService {
 	 public HashMap<String, Object> getReviewSummary() {
 		    return adminMapper.getReviewSummary();
 		}
+	 // 주문상세내역 수정
+	 public HashMap<String, Object> saveOrderInfo(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.updateOrderInfo(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	 }
+	 //주문내역 삭제
+	 public HashMap<String, Object> removeOrder(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.deleteOrder(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
 }

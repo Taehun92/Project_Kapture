@@ -66,7 +66,7 @@
 	    SELECT NVL(SUM(p.AMOUNT), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	</select>
 	
 	<!-- 어제 거래 금액 -->
@@ -74,7 +74,7 @@
 	    SELECT NVL(SUM(p.AMOUNT), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	    AND TRUNC(p.PAYMENT_DATE) = TRUNC(SYSDATE - 1)
 	</select>
 	
@@ -83,7 +83,7 @@
 	    SELECT NVL(SUM(p.NUM_PEOPLE), 0)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료', '환불요청', '환불완료')
 	</select>
 	
 	<!-- 승인된 건수 -->
@@ -91,7 +91,7 @@
 	    SELECT COUNT(*)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'PAID'
+	    WHERE p.PAYMENT_STATUS IN ('결제완료', '거래완료')
 	</select>
 	
 	<!-- 취소된 건수 -->
@@ -99,17 +99,18 @@
 	    SELECT COUNT(*)
 	    FROM PAYMENTS p
 	    INNER JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-	    WHERE p.PAYMENT_STATUS = 'REFUNDED'
+	    WHERE p.PAYMENT_STATUS IN ('환불요청', '환불완료')
 	</select>
 	
 	<select id="selectTransactionList" resultType="hashmap">
 		SELECT * FROM (
 			SELECT ROWNUM AS RNUM, DATA.* FROM (
 				SELECT
-					PAYMENT_NO,
-        			PAYMENT_DATE, USER_FIRSTNAME, USER_LASTNAME, 
-        			TITLE, AMOUNT,PAYMENT_STATUS, NUM_PEOPLE,
-        			TOUR_DATE, DURATION, T.TOUR_NO
+					PAYMENT_NO,PAYMENT_DATE, AMOUNT,PAYMENT_STATUS, NUM_PEOPLE, ETC, 
+        			p.USER_NO, USER_FIRSTNAME, USER_LASTNAME,
+        			PHONE, EMAIL, ISFOREIGNER,
+        			T.TOUR_NO, TOUR_DATE, DURATION, TITLE 
+        			
       FROM PAYMENTS p
       JOIN USERS u ON p.USER_NO = u.USER_NO
       JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
@@ -252,8 +253,6 @@
 		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
 		ORDER BY INQ_CREATED_AT DESC
 	</select>
-<<<<<<< HEAD
-<<<<<<< HEAD
 	<!-- 고객 문의 답변 저장 -->
 	<update id="updateInquiryAnswer" parameterType="map">
 		UPDATE INQUIRIES
@@ -272,13 +271,8 @@
 		SET PAYMENT_STATUS = '환불완료'
 		WHERE PAYMENT_NO = #{paymentNo}
 	</update>
-=======
-
-  <select id="selectAllReviews" resultType="hashmap">
-=======
-<!-- 리뷰 리스트 -->
-  <select id="selectReviewList" resultType="hashmap">
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
+	<!-- 리뷰 리스트 -->
+  	<select id="selectReviewList" resultType="hashmap">
 	    SELECT 
 	        R.REVIEW_NO           AS reviewNo,
 	        EMAIL                 AS email,
@@ -306,33 +300,39 @@
 	    	</choose>
 	    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
-
-<!-- 리뷰 전체 수 -->
-<select id="selectReviewCount" resultType="int">
-    SELECT COUNT(*)
-    FROM REVIEWS R
-    LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
-    LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
-    LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
-    WHERE 
+	<!-- 리뷰 전체 수 -->
+	<select id="selectReviewCount" resultType="int">
+    	SELECT COUNT(*)
+    	FROM REVIEWS R
+    	LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+    	LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+    	LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
+    	WHERE 
         T.TITLE LIKE '%' || #{keyword} || '%'
         OR R."COMMENT" LIKE '%' || #{keyword} || '%'
         OR EMAIL LIKE '%' || #{keyword} || '%'
-</select>
+	</select>
 
-<<<<<<< HEAD
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
-=======
+
 	<delete id="deleteReview">
 	    DELETE FROM REVIEWS WHERE REVIEW_NO = #{REVIEWNO}
 	</delete>
 	
 	<select id="getReviewSummary" resultType="hashmap">
-    SELECT 
-        COUNT(*) AS totalCount,
-        ROUND(AVG(RATING), 1) AS avgRating
-    FROM REVIEWS
+	    SELECT 
+	        COUNT(*) AS totalCount,
+	        ROUND(AVG(RATING), 1) AS avgRating
+	    FROM REVIEWS
 	</select>
-	
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
+	<!-- 주문상세내역 조회 -->
+	<update id="updateOrderInfo" parameterType="hashmap">
+		UPDATE PAYMENTS
+		SET PAYMENT_STATUS = #{paymentStatus}
+	    WHERE PAYMENT_NO = #{paymentNo}
+	</update>
+	<!-- 주문내역 삭제 -->
+	<delete id="deleteOrder">
+	    DELETE FROM PAYMENTS
+	    WHERE PAYMENT_NO = #{paymentNo}
+	</delete>
 </mapper>
