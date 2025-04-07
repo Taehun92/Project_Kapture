@@ -215,7 +215,8 @@ public class AdminController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();	
 		resultMap = adminService.userInquiriesList(map);
 	    return new Gson().toJson(resultMap);
-
+	   
+	}    
 	//리뷰 관리 리스트 	
 	@RequestMapping(value = "/admin-review.dox", method = RequestMethod.POST)
 	@ResponseBody
