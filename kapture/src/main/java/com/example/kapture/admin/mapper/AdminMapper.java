@@ -69,6 +69,13 @@ public interface AdminMapper {
 
 		HashMap<String, Object> getReviewSummary();
 
+		List<Map<String, Object>> selectSalesByYear();
+
+		List<Map<String, Object>> selectThemeSummary();
+		int selectThemeTotalCount();
+
+		List<Map<String, Object>> selectLatestReviews();
+
 
 		
 
