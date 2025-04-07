@@ -20,7 +20,7 @@
             <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-mypage.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-mypage.do">가이드 정보수정</a></li>
             <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-schedule.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-schedule.do">나의 스케줄</a></li>
             <li><a class="block p-2 rounded hover:bg-gray-100" href="/cs/qna.do">문의하기</a></li>
-            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-add.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-add.do">여행상품 등록</a></li>
+            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-add.do' }" class="block p-2 rounded hover:bg-blue-700" href="/mypage/guide-add.do">여행상품 등록</a></li>
             <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-sales-list.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-sales-list.do">판매내역</a></li>
         </ul>
     </div>
