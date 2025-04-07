@@ -336,7 +336,10 @@
                     loadSummary() {
                         $.ajax({
                             url: '/admin/getSummary.dox', method: 'POST', dataType: 'json',
-                            success: res => { this.summary = res.summary; },
+                            success: res => { 
+                                console.log(res);
+                                this.summary = res.summary; 
+                            },
                             error: err => console.error("요약 정보 로딩 실패", err)
                         });
                     },
