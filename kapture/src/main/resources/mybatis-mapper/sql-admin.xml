@@ -254,24 +254,58 @@
 		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
 		ORDER BY INQ_CREATED_AT DESC
 	</select>
-
-  <select id="selectAllReviews" resultType="hashmap">
+<!-- 리뷰 리스트 -->
+  <select id="selectReviewList" resultType="hashmap">
 	    SELECT 
 	        R.REVIEW_NO           AS reviewNo,
-	        EMAIL				AS email,
+	        EMAIL                 AS email,
 	        T.TOUR_NO             AS tourNo,
 	        T.TITLE               AS title,
+	        T.DURATION            AS duration,
 	        U.USER_FIRSTNAME      AS userFirstName,
-	        U.USER_LASTNAME      AS userLastName,
-	        R."COMMENT"             AS content,
+	        U.USER_LASTNAME       AS userLastName,
+	        R."COMMENT"           AS content,
 	        R.RATING              AS rating,
 	        TO_CHAR(R.R_CREATED_AT, 'YYYY-MM-DD') AS createdAt
 	    FROM REVIEWS R
-	    INNER JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
-	    INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
-	    INNER JOIN USERS U ON G.USER_NO = U.USER_NO
-	    WHERE T.DELETEYN = 'N'
-	ORDER BY R.R_CREATED_AT DESC
+	    LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+	    LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+	    LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
+	    WHERE
+	    	T.TITLE LIKE '%' || #{keyword} || '%' OR
+        	R."COMMENT" LIKE '%' || #{keyword} || '%' OR
+        	EMAIL LIKE '%' || #{keyword} || '%'
+	    ORDER BY 
+	    	<choose>
+	    	 <when test="sort == 'rating_desc'">R.RATING DESC</when>
+            <when test="sort == 'rating_asc'">R.RATING ASC</when>
+            <otherwise>R.R_CREATED_AT DESC</otherwise>
+	    	</choose>
+	    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+
+<!-- 리뷰 전체 수 -->
+<select id="selectReviewCount" resultType="int">
+    SELECT COUNT(*)
+    FROM REVIEWS R
+    LEFT JOIN TOURS T ON R.TOUR_NO = T.TOUR_NO
+    LEFT JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+    LEFT JOIN USERS U ON G.USER_NO = U.USER_NO
+    WHERE 
+        T.TITLE LIKE '%' || #{keyword} || '%'
+        OR R."COMMENT" LIKE '%' || #{keyword} || '%'
+        OR EMAIL LIKE '%' || #{keyword} || '%'
 </select>
 
+	<delete id="deleteReview">
+	    DELETE FROM REVIEWS WHERE REVIEW_NO = #{REVIEWNO}
+	</delete>
+	
+	<select id="getReviewSummary" resultType="hashmap">
+    SELECT 
+        COUNT(*) AS totalCount,
+        ROUND(AVG(RATING), 1) AS avgRating
+    FROM REVIEWS
+	</select>
+	
 </mapper>
