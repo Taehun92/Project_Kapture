@@ -18,6 +18,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
         <!-- 페이지 체인지 -->
         <script src="/js/page-Change.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
             /* 전체 레이아웃 설정 */
             body {
@@ -218,41 +219,46 @@
         <!-- 공통 헤더 -->
         <jsp:include page="../common/header.jsp" />
 
-        <div id="app" class="container">
-            <!-- 좌측 사이드 메뉴 -->
-            <div class="side-menu">
-                <ul>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-mypage.do' }"
-                            href="http://localhost:8080/mypage/user-mypage.do">
-                            회원 정보수정
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-purchase-history.do' }"
-                            href="http://localhost:8080/mypage/user-purchase-history.do">
-                            구매한 상품
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-reviews.do' }"
-                            href="http://localhost:8080/mypage/user-reviews.do">
-                            이용후기 관리
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://localhost:8080/cs/qna.do">
-                            문의하기
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-unregister.do' }"
-                            href="http://localhost:8080/mypage/user-unregister.do">
-                            회원 탈퇴
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <div id="app" class="max-w-7xl mx-auto flex py-10 px-4">
+             <!-- 사이드 메뉴 -->
+        <aside class="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4">
+            <ul class="space-y-3">
+                <li>
+                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-mypage.do' }"
+                       href="http://localhost:8080/mypage/user-mypage.do"
+                       class="block px-4 py-2 rounded hover:bg-gray-100">
+                        회원 정보수정
+                    </a>
+                </li>
+                <li>
+                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-purchase-history.do' }"
+                       href="http://localhost:8080/mypage/user-purchase-history.do"
+                       class="block px-4 py-2 rounded hover:bg-gray-100">
+                        구매한 상품
+                    </a>
+                </li>
+                <li>
+                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-reviews.do' }"
+                       href="http://localhost:8080/mypage/user-reviews.do"
+                       class="block px-4 py-2 rounded hover:bg-blue-700">
+                        이용후기 관리
+                    </a>
+                </li>
+                <li>
+                    <a href="http://localhost:8080/cs/qna.do"
+                       class="block px-4 py-2 rounded hover:bg-gray-100">
+                        문의하기
+                    </a>
+                </li>
+                <li>
+                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-unregister.do' }"
+                       href="http://localhost:8080/mypage/user-unregister.do"
+                       class="block px-4 py-2 rounded hover:bg-gray-100">
+                        회원 탈퇴
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
             <!-- 우측 메인 콘텐츠 -->
             <div class="content-area">
