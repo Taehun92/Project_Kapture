@@ -1,104 +1,64 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <title>1:1 문의하기</title>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 30px;
-      background: #f9f9fb;
-    }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    h2 { margin-bottom: 10px; }
-    p.subtext { color: #555; margin-bottom: 20px; }
-    select, input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      transition: border 0.2s;
-    }
-    select:focus, input:focus, textarea:focus {
-      border-color: #003366;
-      outline: none;
-    }
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
-      margin-right: 10px;
-      cursor: pointer;
-    }
-    .btn-submit { background-color: #003366; color: white; }
-    .btn-cancel { background-color: #999; color: white; }
-    .btn-link {
-      float: right;
-      color: #003366;
-      font-size: 14px;
-      text-decoration: none;
-      margin-top: -30px;
-    }
-    .btn-link:hover { text-decoration: underline; }
-
-    .file-label {
-      display: block;
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 6px;
-    }
-    .file-warning {
-      color: red;
-      font-size: 13px;
-      margin-top: -15px;
-      margin-bottom: 15px;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../../css/kapture-style.css">
 </head>
 
-<body>
+<body class="bg-white font-sans text-gray-800">
 <jsp:include page="../common/header.jsp" />
 
+<div id="app" class="flex max-w-6xl mx-auto px-6 py-8">
+  <!-- 사이드바 -->
+  <div class="w-56 bg-white shadow-md p-4 rounded">
+    <ul class="space-y-2 font-semibold">
+      <li @click="goTo('notice')" class="cursor-pointer rounded px-3 py-2 hover:bg-blue-900 hover:text-white">
+        공지사항
+      </li>
+      <li @click="goTo('faq')" class="cursor-pointer rounded px-3 py-2 hover:bg-blue-900 hover:text-white">
+        FAQ
+      </li>
+      <li class="text-red-600 bg-blue-100 rounded px-3 py-2">
+        Q&A
+      </li>
+    </ul>
+  </div>
 
-<div id="app">
-  <div class="container">
-    <h2 style="text-align: center;">1:1 문의하기</h2>
-    <p class="subtext">사이트를 사용하시면서 불편한 사항이나 개선 의견이 있다면 언제든지 문의해주세요.</p>
+  <!-- 메인 콘텐츠 -->
+  <div class="flex-1 pl-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-bold mb-2 text-center">1:1 문의하기</h2>
+      <p class="text-gray-600 mb-6 text-center">사이트를 사용하시면서 불편한 사항이나 개선 의견이 있다면 언제든지 문의해주세요.</p>
 
-    <!-- ✅ 문의유형 -->
-    <select v-model="category">
-      <option value="">문의 유형을 선택해주세요</option>
-      <option value="예약/결제">예약/결제</option>
-      <option value="패키지">패키지</option>
-      <option value="취소/환불">취소/환불</option>
-    </select>
+      <select v-model="category" class="w-full border border-gray-300 rounded px-4 py-3 mb-4">
+        <option value="">문의 유형을 선택해주세요</option>
+        <option value="예약/결제">예약/결제</option>
+        <option value="패키지">패키지</option>
+        <option value="취소/환불">취소/환불</option>
+      </select>
 
-    <!-- ✅ 제목 (선택사항) -->
-    <input type="text" placeholder="제목을 입력해주세요 (선택사항)" v-model="qnaTitle" />
+      <input type="text" placeholder="제목을 입력해주세요 (선택사항)" v-model="qnaTitle"
+             class="w-full border border-gray-300 rounded px-4 py-3 mb-4" />
 
-    <!-- ✅ 문의 내용 - 크기 3배 증가 -->
-    <textarea rows="18" placeholder="문의하실 내용을 입력해주세요" v-model="question"></textarea>
+      <textarea rows="12" placeholder="문의하실 내용을 입력해주세요" v-model="question"
+                class="w-full border border-gray-300 rounded px-4 py-3 mb-4"></textarea>
 
-    <!-- ✅ 파일 첨부 -->
-    <label class="file-label">파일첨부 (최대 5MB)</label>
-    <input type="file" ref="file" @change="handleFile" />
-    <div class="file-warning" v-if="fileWarning">{{ fileWarning }}</div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">파일첨부 (최대 5MB)</label>
+      <input type="file" ref="file" @change="handleFile"
+             class="w-full border border-gray-300 rounded px-3 py-2 mb-2" />
+      <div class="text-sm text-red-500 mb-4" v-if="fileWarning">{{ fileWarning }}</div>
 
-    <!-- ✅ 버튼 영역 -->
-    <button class="btn-cancel" @click="fnCancel">취소</button>
-    <button class="btn-submit" @click="fnQna">문의하기</button>
+      <div class="text-right space-x-2">
+        <button class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600" @click="fnCancel">취소</button>
+        <button class="bg-blue-950 text-white px-6 py-2 rounded hover:bg-blue-900" @click="fnQna">문의하기</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -159,10 +119,20 @@
         } else {
           this.fileWarning = "";
         }
+      },
+      goTo(menu) {
+        if (menu === 'notice') {
+          window.location.href = '/cs/notice.do';
+        } else if (menu === 'faq') {
+          window.location.href = '/cs/faq.do';
+        } else if (menu === 'inquiry') {
+          window.location.href = '/cs/qna.do';
+        }
       }
     }
   });
   app.mount("#app");
 </script>
 </body>
+
 </html>
