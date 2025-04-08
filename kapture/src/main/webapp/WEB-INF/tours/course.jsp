@@ -5,14 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <title>여행 코스 리스트</title>
-    <!-- Tailwind CDN (선택) -->
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 CDN -->
     <script src="https://unpkg.com/vue@3"></script>
 </head>
 <body>
 
-  <div id="app" class="p-6 max-w-screen-xl mx-auto font-sans">
+<div id="app" class="p-6 max-w-screen-xl mx-auto font-sans">
     <!-- 카테고리 필터 -->
     <div class="mb-6 flex flex-wrap gap-2">
         <button
@@ -30,14 +30,30 @@
 
     <!-- 언어 및 지역 선택 -->
     <div class="mb-6 flex flex-wrap gap-4 items-center">
-      언어 :  
-      <select v-model="lang" @change="fnSelectLang" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm">
-            <option v-for="langItem in langList" :key="langItem.code" :value="langItem.code">
-                {{ langItem.label }}
-            </option>
-        </select>
+        <span>언어 :</span>
+        <div class="relative inline-block text-left">
+          <button @click="open = !open"
+            class="inline-flex justify-between items-center w-48 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm text-gray-700 hover:bg-gray-100">
+            <img :src="selectedLang.flag" alt="Flag" class="w-5 h-5 mr-2" />
+            {{ selectedLang.label }}
+            <svg class="ml-auto w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
-        지역 : <select v-model="selectedRegion" @change="filterByRegion" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm">
+          <div v-if="open" class="absolute z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+            <div class="py-1">
+              <button v-for="langItem in langList" :key="langItem.code" @click="selectLang(langItem)"
+                class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                <img :src="langItem.flag" alt="Flag" class="w-5 h-5" />
+                <span>{{ langItem.label }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <span>지역 :</span>
+        <select v-model="selectedRegion" @change="filterByRegion" class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm">
             <option value="">전체</option>
             <option value="1">서울</option>
             <option value="6">부산</option>
@@ -102,13 +118,13 @@
     </div>
 </div>
 
-<!-- Vue 앱 스크립트 -->
 <script>
 const { createApp } = Vue;
 
 createApp({
   data() {
     return {
+        open: false,
         categories: [
             { code: 'A0101', label: '관광지' },
             { code: 'A0207', label: '축제공연행사' },
@@ -121,17 +137,15 @@ createApp({
         filteredCourses: [],
         currentPage: 1,
         itemsPerPage: 10,
-        lang : 'Kor',
-        langList : [
-            { code: 'Kor', label: '한국어' },
-            { code: 'Eng', label: '영어' },
-            { code: 'Jpn', label: '일본어' },
-            { code: 'Chs', label: '중국어' },
+        lang: 'Kor',
+        selectedLang: { code: 'Kor', label: '한국어', flag: 'https://flagcdn.com/w40/kr.png' },
+        langList: [
+            { code: 'Kor', label: '한국어', flag: 'https://flagcdn.com/w40/kr.png' },
+            { code: 'Eng', label: '영어', flag: 'https://flagcdn.com/w40/us.png' },
+            { code: 'Jpn', label: '일본어', flag: 'https://flagcdn.com/w40/jp.png' },
+            { code: 'Chs', label: '중국어', flag: 'https://flagcdn.com/w40/cn.png' }
         ],
         selectedRegion: '',
-
-
-
     };
   },
   computed: {
@@ -146,15 +160,7 @@ createApp({
   methods: {
     async fetchCourses() {
       const apiKey = 'O5%2BkPtLkpnsqZVmVJiYW7JDeWEX4mC9Vx3mq4%2FGJs%2Fejvz1ceLY%2B0XySUsy15P%2BhpAdHcZHXHhdn4htsTUuvpA%3D%3D';
-      const url = 'https://apis.data.go.kr/B551011/'
-        +this.lang
-        +'Service1/areaBasedList1?serviceKey='
-        +apiKey
-        +'&areaCode='
-        +this.selectedRegion
-        +'&MobileApp=AppTest&MobileOS=ETC&cat2='
-        +this.selectedCat2
-        +'&_type=json&numOfRows=100&arrange=P';
+      const url = 'https://apis.data.go.kr/B551011/' + this.lang + 'Service1/areaBasedList1?serviceKey=' + apiKey + '&areaCode=' + this.selectedRegion + '&MobileApp=AppTest&MobileOS=ETC&cat2=' + this.selectedCat2 + '&_type=json&numOfRows=100&arrange=P';
 
       try {
         const response = await fetch(url);
@@ -163,26 +169,26 @@ createApp({
         this.courses = allCourses.filter(course => course.firstimage && course.firstimage.trim() !== '');
         this.filteredCourses = this.courses;
         this.currentPage = 1;
-        console.log(this.courses);
       } catch (error) {
         console.error('API 호출 오류:', error);
       }
     },
-
     filterByCategory(cat2) {
       this.selectedCat2 = cat2;
       this.fetchCourses();
     },
-
     fnSelectLang() {
-        this.fetchCourses();
-        
+      this.fetchCourses();
     },
-
+    selectLang(langItem) {
+      this.selectedLang = langItem;
+      this.lang = langItem.code;
+      this.open = false;
+      this.fetchCourses();
+    },
     filterByRegion() {
-        this.fetchCourses();
+      this.fetchCourses();
     },
-
     searchCourses() {
       const keyword = this.searchKeyword.toLowerCase();
       this.filteredCourses = this.courses.filter((item) =>
@@ -190,11 +196,9 @@ createApp({
       );
       this.currentPage = 1;
     },
-
     changePage(page) {
       this.currentPage = page;
     },
-
   },
   mounted() {
     this.fetchCourses();
