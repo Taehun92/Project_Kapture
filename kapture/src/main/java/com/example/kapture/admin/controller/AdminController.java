@@ -303,4 +303,28 @@ public class AdminController {
 	    System.out.println("✅ 리뷰 최신 5건 컨트롤러 도착!");
 	    return new Gson().toJson(resultMap);
 	}
+	// 상품관리 조회
+	@RequestMapping(value = "/admin/toursManagement.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String toursManagementList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.toursManagementList(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 상품관리 수정
+	@RequestMapping(value = "/admin/tourUpdate.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String tourUpdate(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.tourUpdate(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 상품관리 삭제 
+	@RequestMapping(value = "/admin/removeTour.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeTour(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeTour(map);
+	    return new Gson().toJson(resultMap);
+	}
 }

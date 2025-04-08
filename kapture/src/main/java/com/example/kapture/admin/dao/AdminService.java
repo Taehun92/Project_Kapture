@@ -15,10 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
-import com.example.kapture.admin.model.OrderInfo;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.tours.model.Tours;
 
 @Service
 public class AdminService {
@@ -473,4 +473,57 @@ public class AdminService {
 		    resultMap.put("reviews", reviewList);
 		    return resultMap;
 		}
+	 // 상품관리 조회
+	 public HashMap<String, Object> toursManagementList(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int page = Integer.parseInt(String.valueOf(map.get("page")));
+			 int size = Integer.parseInt(String.valueOf(map.get("size")));
+
+			 int start = (page - 1) * size + 1;
+			 int end = page * size;
+			 map.put("start", start);
+			 map.put("end", end);
+			 List<Tours> toursList = adminMapper.selectToursManagementList(map);
+			 // 상품관리 총 갯수
+			 int totalCount = adminMapper.selectToursTotalCount(map);
+			    
+			 resultMap.put("totalCount", totalCount);
+			 resultMap.put("toursList", toursList);
+			 resultMap.put("result", toursList != null ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 // 상품관리 수정
+	 public HashMap<String, Object> tourUpdate(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.updateTour(map);
+			 
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 // 상품관리 삭제
+	 public HashMap<String, Object> removeTour(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.deleteTour(map);
+			 
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
 }
