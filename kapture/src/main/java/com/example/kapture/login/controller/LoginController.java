@@ -115,7 +115,7 @@ public class LoginController {
   
   	    return new Gson().toJson(resultMap);
   	}
- // id 중복체크
+  	// id 중복체크
   	@RequestMapping(value = "/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   	@ResponseBody
   	public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -124,7 +124,7 @@ public class LoginController {
   		resultMap = loginService.checkUser(map); 
   		return new Gson().toJson(resultMap);
   	}
-
+  	
     @RequestMapping("/google/login")
     public String googleLoginRedirect() {
         String loginUrl = "https://accounts.google.com/o/oauth2/v2/auth"
