@@ -870,6 +870,9 @@
                         const chatBox = this.$refs.chatBox;
                         chatBox.scrollTop = chatBox.scrollHeight;
                     });
+                },
+                fnFindLocation() {
+                    location.href = "/course.do";
                 }
 
             },
