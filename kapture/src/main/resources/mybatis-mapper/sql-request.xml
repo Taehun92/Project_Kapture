@@ -36,6 +36,7 @@
 		INNER JOIN REQUESTS R ON R.REQUEST_NO = C1.REQUEST_NO
 		INNER JOIN USERS U ON C1.USER_NO = U.USER_NO
 		WHERE C1.REQUEST_NO = #{requestNo}
+		ORDER BY C1.RQC_CREATED_AT DESC 
 	</select>
 	<insert id="insertRequest" parameterType="hashmap">
 		INSERT INTO REQUESTS
