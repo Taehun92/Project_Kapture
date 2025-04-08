@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
+        <link rel="stylesheet" href="../../css/chatbot.css">
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
         <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
         <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
