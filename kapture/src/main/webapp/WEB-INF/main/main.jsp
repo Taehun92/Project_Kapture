@@ -14,11 +14,33 @@
         <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
         <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
         <title>메인 페이지 | kapture</title>
+
     </head>
 
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">
         <jsp:include page="../common/header.jsp"></jsp:include>
         <div id="app" class="pb-12">
+
+            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+
+            <div class="modal-overlay" v-if="showChat">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        K-apture 챗봇
+                        <button class="close-btn" @click="showChat = false">✕</button>
+                    </div>
+                    <div class="chat-box" ref="chatBox">
+                        <div v-for="msg in messages" :class="['message', msg.type]">
+                            {{ msg.text }}
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                        <button @click="sendMessage">전송</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Swiper 배너 -->
             <div class="relative w-full h-[500px]">
                 <div class="absolute z-10 w-full text-center top-[30%] text-white">
@@ -95,7 +117,10 @@
                 return {
                     swiper: null,
                     toursList: [],
-                    sessionId: "${sessionId}"
+                    sessionId: "${sessionId}",
+                    userInput: "",
+                    messages: [],
+                    showChat: false,
                 };
             },
 
@@ -203,6 +228,35 @@
                 goToTourInfo(tourNo) {
                     location.href="/tours/tour-info.do?tourNo=" + tourNo;
                 },
+
+                sendMessage() {
+                    if (this.userInput.trim() === "") return;
+
+                    this.messages.push({ text: this.userInput, type: 'user' });
+                    const inputText = this.userInput;
+                    this.userInput = "";
+                    this.scrollToBottom();
+
+                    $.ajax({
+                        url: "/gemini/chat",
+                        type: "GET",
+                        data: { input: inputText },
+                        success: (response) => {
+                            this.messages.push({ text: response, type: 'bot' });
+                            this.scrollToBottom();
+                        },
+                        error: (xhr) => {
+                            this.messages.push({ text: "오류 발생: " + xhr.responseText, type: 'bot' });
+                            this.scrollToBottom();
+                        }
+                    });
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatBox = this.$refs.chatBox;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
+                }
             },
             mounted() {
                 let self = this;

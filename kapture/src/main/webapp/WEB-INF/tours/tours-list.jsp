@@ -13,6 +13,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
+        <link rel="stylesheet" href="../../css/chatbot.css">
         <style>
             .slide-modal-enter-active,
             .slide-modal-leave-active {
@@ -31,14 +32,32 @@
                 opacity: 1;
             }
         </style>
-
     </head>
-
-
-    <body class="bg-white text-gray-800 text-[16px] tracking-wide">
+    <body class="bg-white text-gray-800">
         <jsp:include page="../common/header.jsp" />
-        <div id="app" class="w-full px-4 max-w-[1280px] mx-auto ">
-            <div class="relative h-96 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
+        <div id="app" class="max-w-7xl mx-auto py-8 px-4">
+            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+
+            <div class="modal-overlay" v-if="showChat">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        K-apture 챗봇
+                        <button class="close-btn" @click="showChat = false">✕</button>
+                    </div>
+                    <div class="chat-box" ref="chatBox">
+                        <div v-for="msg in messages" :class="['message', msg.type]">
+                            {{ msg.text }}
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                        <button @click="sendMessage">전송</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 지역별 배너 -->
+            <div class="relative h-64 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
                 :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
                 <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center px-4">
                     <h1 class="text-white text-3xl font-bold mb-4">주요 관광지</h1>
@@ -522,7 +541,11 @@
                     defaultHeaderImage: "../../img/region/default.jpg",
                     hoveredRegionImage: null,
 
-                    showDatePicker: true
+                    showDatePicker: true,
+
+                    userInput: "",
+                    messages: [],
+                    showChat: false,
 
                 };
             },
@@ -820,8 +843,33 @@
                     }
                 },
 
-                fnFindLocation(){
-                    location.href="/tour/info"
+                sendMessage() {
+                    if (this.userInput.trim() === "") return;
+
+                    this.messages.push({ text: this.userInput, type: 'user' });
+                    const inputText = this.userInput;
+                    this.userInput = "";
+                    this.scrollToBottom();
+
+                    $.ajax({
+                        url: "/gemini/chat",
+                        type: "GET",
+                        data: { input: inputText },
+                        success: (response) => {
+                            this.messages.push({ text: response, type: 'bot' });
+                            this.scrollToBottom();
+                        },
+                        error: (xhr) => {
+                            this.messages.push({ text: "오류 발생: " + xhr.responseText, type: 'bot' });
+                            this.scrollToBottom();
+                        }
+                    });
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatBox = this.$refs.chatBox;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
                 }
 
             },
