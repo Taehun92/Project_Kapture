@@ -87,6 +87,16 @@ public interface AdminMapper {
 
 		List<Map<String, Object>> selectLatestReviews();
 
+		List<Map<String, Object>> selectMonthlySales();
+
+		List<Map<String, Object>> selectLatestSales(Map<String, Object> param);
+
+		int selectRequestCount();
+
+		List<HashMap<String, Object>> selectLatestRequests(HashMap<String, Object> map);
+
+		
+
 
 		
 
