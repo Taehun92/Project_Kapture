@@ -10,12 +10,32 @@
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
+        <link rel="stylesheet" href="../../css/chatbot.css">
     </head>
 
     <body class="bg-white text-gray-800">
         <jsp:include page="../common/header.jsp" />
-
         <div id="app" class="max-w-7xl mx-auto py-8 px-4">
+            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+
+            <div class="modal-overlay" v-if="showChat">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        K-apture 챗봇
+                        <button class="close-btn" @click="showChat = false">✕</button>
+                    </div>
+                    <div class="chat-box" ref="chatBox">
+                        <div v-for="msg in messages" :class="['message', msg.type]">
+                            {{ msg.text }}
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                        <button @click="sendMessage">전송</button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- 지역별 배너 -->
             <div class="relative h-64 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
                 :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
@@ -346,7 +366,11 @@
                     defaultHeaderImage: "../../img/region/default.jpg",
                     hoveredRegionImage: null,
 
-                    showDatePicker: true
+                    showDatePicker: true,
+
+                    userInput: "",
+                    messages: [],
+                    showChat: false,
 
                 };
             },
@@ -628,6 +652,36 @@
                         });
                     }
                 },
+
+
+                sendMessage() {
+                    if (this.userInput.trim() === "") return;
+
+                    this.messages.push({ text: this.userInput, type: 'user' });
+                    const inputText = this.userInput;
+                    this.userInput = "";
+                    this.scrollToBottom();
+
+                    $.ajax({
+                        url: "/gemini/chat",
+                        type: "GET",
+                        data: { input: inputText },
+                        success: (response) => {
+                            this.messages.push({ text: response, type: 'bot' });
+                            this.scrollToBottom();
+                        },
+                        error: (xhr) => {
+                            this.messages.push({ text: "오류 발생: " + xhr.responseText, type: 'bot' });
+                            this.scrollToBottom();
+                        }
+                    });
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatBox = this.$refs.chatBox;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
+                }
 
             },
 
