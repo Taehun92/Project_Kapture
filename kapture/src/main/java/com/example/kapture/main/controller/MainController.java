@@ -21,7 +21,7 @@ public class MainController {
 	
 	@RequestMapping("/main.do")
     public String main(Model model) throws Exception{
-        return "/main/main";
+        return "/main/test-main";
     }
 	
 	// 장바구니 목록 조회
