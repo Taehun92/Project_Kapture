@@ -456,7 +456,6 @@
                         self.editPaymentStatus = "";
                         self.editOrderInfo = {};
                     },
-                    formatCurrency(val) { return "₩ " + Number(val).toLocaleString(); },
                     fnSaveOrderInfo() {
                         let self = this;
                         self.editOrderInfo.PAYMENT_STATUS = self.editPaymentStatus;
@@ -489,7 +488,7 @@
                     fnRemoveOrder(paymentNo) {
                         let self = this;
                         if (!confirm("정말 삭제하시겠습니까?")) {
-
+                            return;
                         }
                         let nparmap = {
                             paymentNo: paymentNo,

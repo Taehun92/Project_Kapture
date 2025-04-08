@@ -20,6 +20,7 @@
     color: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+	box-sizing: content-box
 }
 
 /* 메뉴 리스트 스타일 */

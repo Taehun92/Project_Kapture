@@ -110,31 +110,30 @@
         			p.USER_NO, USER_FIRSTNAME, USER_LASTNAME,
         			PHONE, EMAIL, ISFOREIGNER,
         			T.TOUR_NO, TOUR_DATE, DURATION, TITLE 
-        			
-      FROM PAYMENTS p
-      JOIN USERS u ON p.USER_NO = u.USER_NO
-      JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
-      WHERE 1 = 1
-      <if test="startDate != null and startDate != ''">
-          AND PAYMENT_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
-      </if>
-      <if test="endDate != null and endDate != ''">
-          AND PAYMENT_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
-      </if>
-      <if test="status != null and status != ''">
-          AND PAYMENT_STATUS = #{status}
-      </if>
-      <if test="keyword != null and keyword != ''">
-          AND (
-              USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
-              OR TITLE LIKE '%' || #{keyword} || '%'
-          )
-      </if>
-      ORDER BY PAYMENT_DATE DESC
-	    ) DATA
-	    WHERE ROWNUM &lt;= #{page} * #{size}
-	  )
-	  WHERE RNUM &gt; (#{page} - 1) * #{size}
+      			FROM PAYMENTS p
+      			JOIN USERS u ON p.USER_NO = u.USER_NO
+      			JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+      			WHERE 1 = 1
+      			<if test="startDate != null and startDate != ''">
+          			AND PAYMENT_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      			</if>
+      			<if test="endDate != null and endDate != ''">
+          			AND PAYMENT_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+      			</if>
+      			<if test="status != null and status != ''">
+          			AND PAYMENT_STATUS = #{status}
+      			</if>
+      			<if test="keyword != null and keyword != ''">
+          			AND (
+              			USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
+              			OR TITLE LIKE '%' || #{keyword} || '%'
+          				)
+      			</if>
+      			ORDER BY PAYMENT_DATE DESC
+	    	) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
 	</select>
 	
 	<!--페이징 처리 -->
@@ -365,25 +364,124 @@
 	  FROM PAYMENTS
 	</select>
 
-		<select id="selectLatestReviews" resultType="hashmap">
-		  SELECT *
-		  FROM (
-		    SELECT 
-		      T.TITLE, 
-		      T.DURATION, 
-		      T.PRICE, 
-		      T.MAX_PEOPLE, 
-		      T.TOUR_DATE,
-		      R."COMMENT", 
-		      R.RATING,
-		      R_CREATED_AT,
-		      USER_FIRSTNAME AS USERFIRSTNAME,
-		      USER_LASTNAME AS USERLASTNAME
-		    FROM TOURS T
-		    INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
-		    INNER JOIN USERS U ON R.USER_NO = U.USER_NO
-		    ORDER BY R_CREATED_AT DESC
-		  )
-		  WHERE ROWNUM &lt;= 5
-		</select>
+	<select id="selectLatestReviews" resultType="hashmap">
+	  SELECT *
+	  FROM (
+	    SELECT 
+	    T.TITLE, 
+	    T.DURATION, 
+	    T.PRICE, 
+	    T.MAX_PEOPLE, 
+	    T.TOUR_DATE,
+	    R."COMMENT", 
+	    R.RATING,
+	    R_CREATED_AT,
+	    USER_FIRSTNAME AS USERFIRSTNAME,
+	    USER_LASTNAME AS USERLASTNAME
+	    FROM TOURS T
+	    INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
+	    INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+	    ORDER BY R_CREATED_AT DESC
+	  )
+	  WHERE ROWNUM &lt;= 5
+	</select>
+	
+	<select id="selectToursManagementList" parameterType="map" resultType="com.example.kapture.tours.model.Tours">
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM TOURS T
+				INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+				INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+				INNER JOIN (SELECT DISTINCT SI_NO,SI_NAME FROM REGION) R ON T.SI_NO = R.SI_NO
+				INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+				LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+				WHERE 1 = 1
+				<if test="startDate != null and startDate != ''">
+					AND TOUR_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  			</if>
+	  			<if test="endDate != null and endDate != ''">
+	    			AND TOUR_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  			</if>
+	  			<if test="statusFilter == null or statusFilter == ''">
+		    		AND (
+						T.TOUR_NO LIKE '%' || #{keyword} || '%' 
+	      				OR TITLE LIKE '%' || #{keyword} || '%' 
+	      				OR SI_NAME LIKE '%' || #{keyword} || '%' 
+	      				OR THEME_NAME LIKE '%' || #{keyword} || '%' 
+	      				)
+	  			</if>
+		  		<if test="statusFilter != null and statusFilter == 'tourNo'">
+				    AND T.TOUR_NO LIKE '%' || #{keyword} || '%'
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'title'">
+		    		AND TITLE LIKE '%' || #{keyword} || '%'
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'siName'">
+		    		AND SI_NAME LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'themeName'">
+		    		AND OR THEME_NAME LIKE '%' || #{keyword} || '%'  
+	  			</if>
+	  			ORDER BY TOUR_DATE DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
+	</select>
+	<!-- 상품관리 총 갯수 -->
+	<select id="selectToursTotalCount" resultType="int">
+		SELECT COUNT(*)
+		FROM TOURS T
+		JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
+		JOIN USERS U ON G.USER_NO = U.USER_NO
+		JOIN (SELECT DISTINCT SI_NO,SI_NAME FROM REGION) R ON T.SI_NO = R.SI_NO
+		JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		WHERE 1 = 1
+		<if test="startDate != null and startDate != ''">
+			AND TOUR_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="endDate != null and endDate != ''">
+	    	AND TOUR_DATE &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="statusFilter == null or statusFilter == ''">
+		    AND (
+				T.TOUR_NO LIKE '%' || #{keyword} || '%' 
+	      		OR TITLE LIKE '%' || #{keyword} || '%' 
+	      		OR SI_NAME LIKE '%' || #{keyword} || '%' 
+	      		OR THEME_NAME LIKE '%' || #{keyword} || '%' 
+	      		)
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'tourNo'">
+		    AND T.TOUR_NO LIKE '%' || #{keyword} || '%'
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'title'">
+		    AND TITLE LIKE '%' || #{keyword} || '%'
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'siName'">
+		    AND SI_NAME LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'themeName'">
+		    AND OR THEME_NAME LIKE '%' || #{keyword} || '%'  
+	  	</if>
+	</select>
+	<!-- 상품관리 수정 -->
+	<update id="updateTour" parameterType="hashmap">
+		UPDATE TOURS SET 
+			TITLE = #{title}, 
+			DURATION = #{duration},
+			PRICE = #{price},
+			TOUR_DATE = #{tourDate},
+			SI_NO = (SELECT DISTINCT SI_NO FROM REGION WHERE SI_NAME=#{siName}),
+			GU_NO = (SELECT DISTINCT GU_NO FROM REGION WHERE SI_NAME=#{siName} AND GU_NAME=#{guName}),
+			THEME_NO = (SELECT THEME_NO FROM THEME WHERE THEME_NAME =#{themeName}), 
+			DESCRIPTION = #{description}
+		WHERE TOUR_NO = #{tourNo}
+	</update>
+	<!-- 상품관리 삭제 -->
+	<delete id="deleteTour">
+	    DELETE FROM TOURS
+	    WHERE TOUR_NO = #{tourNo}
+	</delete>
 </mapper>
