@@ -473,4 +473,46 @@ public class AdminService {
 		    resultMap.put("reviews", reviewList);
 		    return resultMap;
 		}
+	 
+	 public HashMap<String, Object> getMonthlySales() {
+	        HashMap<String, Object> resultMap = new HashMap<>();
+	        List<Map<String, Object>> list = adminMapper.selectMonthlySales();
+	        resultMap.put("monthlyList", list);
+	        return resultMap;
+	    }
+	 
+	 public HashMap<String, Object> getLatestSales() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+
+		    // 오프셋 기본값: 처음 0부터, 5개
+		    Map<String, Object> param = new HashMap<>();
+		    param.put("offset", 0);
+		    param.put("limit", 5);
+
+		    List<Map<String, Object>> list = adminMapper.selectLatestSales(param);
+		    resultMap.put("salesList", list);
+		    return resultMap;
+		}
+	 public HashMap<String, Object> getLatestRequests(HashMap<String, Object> map) {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+
+		    try {
+		        map.put("offset", 0);
+		        map.put("limit", 5);
+
+		        List<HashMap<String, Object>> list = adminMapper.selectLatestRequests(map);
+
+		        resultMap.put("requestList", list);
+		        resultMap.put("totalCount", list.size());
+		        resultMap.put("result", "success");
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        resultMap.put("result", "fail");
+		        resultMap.put("message", "요청글 데이터 조회 실패");
+		    }
+
+		    return resultMap;
+		}
+
 }
