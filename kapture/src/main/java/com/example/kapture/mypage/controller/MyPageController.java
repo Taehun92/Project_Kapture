@@ -330,7 +330,7 @@ public class MyPageController {
 			return new Gson().toJson(resultMap);
 		}
 		// 본문에 이미지 없을 때 썸네일 초기화
-		@RequestMapping(value = "/mypage/resetThumbnail.dox.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@RequestMapping(value = "/mypage/resetThumbnail.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String resetThumbnail(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();

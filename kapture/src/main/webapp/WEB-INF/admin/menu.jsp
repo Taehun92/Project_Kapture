@@ -91,7 +91,7 @@
 		        <li><a href="/admin/customer-inquiry.do">고객 문의 관리</a></li>
 		    </ul>
 		</li>
-        <li><a href="/admin/promotion.do">마케팅 및 프로모션 관리</a></li>
+        <!--<li><a href="/admin/promotion.do">마케팅 및 프로모션 관리</a></li>-->
         <li><a href="/admin/setting.do">운영 및 설정 관리</a></li>
     </ul>
 </div>

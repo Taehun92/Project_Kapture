@@ -4,12 +4,16 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>결제 완료</title>
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+    <title>결제 완료 | kapture</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/kapture-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">
     <jsp:include page="../common/header.jsp" />
 
     <div id="app" class="max-w-4xl mx-auto p-6">
@@ -87,7 +91,6 @@ const app = Vue.createApp({
     },
     mounted() {
         const params = new URLSearchParams(window.location.search);
-        // return (this)에 productId 먼저 선언
         self.merchantId = params.get("merchantId") || "";
         this.fetchPaymentList();
     }
