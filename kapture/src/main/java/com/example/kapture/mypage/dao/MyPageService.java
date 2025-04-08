@@ -276,7 +276,9 @@ public class MyPageService {
 	    resultMap.put("totalCount", totalCount);
 	    
 	    return resultMap;
+
     }
+	
 	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -286,8 +288,6 @@ public class MyPageService {
 		resultMap.put("result", "success");
 		
 		return resultMap;
-		
-
 	}
 	
 	
