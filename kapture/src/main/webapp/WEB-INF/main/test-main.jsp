@@ -201,26 +201,52 @@
         </div>
     </div>
 
+    
     <!-- 추천 리뷰 -->
-    <div class="mb-10">
-        <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
-        <div class="space-y-6">
-            <div v-for="item in limitedReviewList" class="p-4 bg-gray-100 rounded-md shadow">
-                <div class="text-sm text-gray-600 mb-1">
-                    작성자: {{ item.userFirstname }} <span v-if="item.userLastname"> {{ item.userLastname }}</span>
-                </div>
-                <div class="font-semibold">제목: {{ item.title }}</div>
-                <div class="text-gray-800 mb-2">내용: {{ item.comment }}</div>
-                <div>
-                    평점:
-                    <star-rating :rating="item.rating" :read-only="true" :star-size="10"
-                        :increment="1" :border-width="5" :show-rating="false"
-                        :rounded-corners="true"
-                        class="inline-block align-middle"></star-rating>
+<div class="mb-10">
+    <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
+    <div class="space-y-6">
+        <div v-for="item in limitedReviewList" class="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition">
+            <div class="flex items-start gap-4">
+                <!-- 썸네일 이미지 -->
+                <img :src="item.filePath" alt="상품 이미지"
+                     class="w-20 h-20 object-cover rounded-full shadow" />
+
+                <!-- 리뷰 정보 -->
+                <div class="flex-1">
+                    <!-- 작성자 & 작성일 -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-1">
+                        <span>👤 {{ item.userFirstname }} {{ item.userLastname || '' }}</span>
+                        <span>🕒 {{ item.rCreatedAt }}</span>
+                    </div>
+
+                    <!-- 제목 -->
+                    <div class="text-lg font-semibold text-gray-800 mb-1">{{ item.title }}</div>
+
+                    <!-- 투어 정보 -->
+                    <div class="text-sm text-gray-600 mb-1">
+                        📅 투어 날짜: <span class="font-medium">{{ item.tourDate }}</span>
+                        &nbsp;| 💸 가격: <span class="font-medium">₩{{ item.price.toLocaleString() }}</span>
+                        &nbsp;| ⏱ {{ item.duration }}
+                    </div>
+
+                    <!-- 내용 -->
+                    <p class="text-gray-700 text-sm mb-2 leading-relaxed">📝 {{ item.comment }}</p>
+
+                    <!-- 평점 -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600">⭐ 평점:</span>
+                        <star-rating :rating="item.rating" :read-only="true" :star-size="14"
+                                     :increment="1" :border-width="3" :show-rating="false"
+                                     :rounded-corners="true"
+                                     class="inline-block align-middle"></star-rating>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 </div>
 
@@ -361,7 +387,7 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
+                            console.log('리뷰 데이타 : ', data);
                             self.reviewList = data.reviewList;
                         }
                     });
