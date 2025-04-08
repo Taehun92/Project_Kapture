@@ -8,16 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-<<<<<<< HEAD
 	<script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../../css/kapture-style.css">
-	<title>첫번째 페이지</title>
-=======
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>상품 추가 페이지</title>
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
+	<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+  	<link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+	<title>상품 추가 | kapture</title>
+
 </head>
-<<<<<<< HEAD
 <body class="bg-white font-sans text-gray-800">
 	<jsp:include page="../common/header.jsp" />
 	
@@ -30,7 +27,6 @@
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }" href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-100">여행상품 등록</a></li>
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }" href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-950">판매내역</a></li>
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
-		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }" href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 탈퇴</a></li>
 		</ul>
 		  
 	  </div>
@@ -122,102 +118,6 @@
 	</div>
 	
 	<jsp:include page="../common/footer.jsp" />
-=======
-<body class="bg-gray-100 text-gray-800">
-<jsp:include page="../common/header.jsp" />
-<div id="app" class="max-w-7xl mx-auto flex flex-col md:flex-row p-6 gap-6">
-    <!-- 사이드 메뉴 -->
-    <div class="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4">
-        <ul class="space-y-2">
-            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-mypage.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-mypage.do">가이드 정보수정</a></li>
-            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-schedule.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-schedule.do">나의 스케줄</a></li>
-            <li><a class="block p-2 rounded hover:bg-gray-100" href="/cs/qna.do">문의하기</a></li>
-            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-add.do' }" class="block p-2 rounded hover:bg-blue-700" href="/mypage/guide-add.do">여행상품 등록</a></li>
-            <li><a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'guide-sales-list.do' }" class="block p-2 rounded hover:bg-gray-100" href="/mypage/guide-sales-list.do">판매내역</a></li>
-        </ul>
-    </div>
-
-    <!-- 콘텐츠 영역 -->
-    <div class="w-full md:w-3/4 bg-white rounded-lg shadow-md p-6">
-        <table class="w-full table-auto text-sm">
-            <tbody>
-                <tr class="border-b">
-                    <th class="text-left py-2 pr-4 w-24">제목 :</th>
-                    <td colspan="3"><input v-model="title" class="w-full border rounded px-3 py-2" /></td>
-                </tr>
-                <tr class="border-b">
-                    <th class="text-left py-2 pr-4">소요시간 :</th>
-                    <td>
-                        <select v-model="duration" class="border rounded px-2 py-1">
-                            <option value="">:: 선택 ::</option>
-                            <option value="오전">오전</option>
-                            <option value="오후">오후</option>
-                            <option value="종일">종일</option>
-                        </select>
-                    </td>
-                    <th class="text-left py-2 pr-4">가격 :</th>
-                    <td><input v-model="price" class="border rounded px-2 py-1 w-full" /></td>
-                </tr>
-                <tr class="border-b">
-                    <th class="text-left py-2 pr-4">날짜 :</th>
-                    <td><input type="date" v-model="tourDate" :min="minDate" class="border rounded px-2 py-1" /></td>
-				</tr>
-				<tr class="border-b">
-                    <th class="text-left py-2 pr-4">시 :</th>
-                    <td>
-                        <select @change="fnSelectGu()" v-model="siName" class="border rounded px-2 py-1 w-full">
-                            <option value="">:: 선택 ::</option>
-                            <template v-for="item in siList">
-                                <option :value="item.siName">{{item.siName}}</option>
-                            </template>
-                        </select>
-                    </td>
-
-                    <th class="text-left py-2 pr-4">구 :</th>
-                    <td colspan="3">
-                        <select v-model="guName" class="border rounded px-2 py-1 w-full">
-                            <option value="">:: 선택 ::</option>
-                            <template v-for="item in guList">
-                                <option :value="item.guName">{{item.guName}}</option>
-                            </template>
-                        </select>
-                    </td>
-                </tr>
-                <tr class="border-b">
-                    <th class="text-left py-2 pr-4">상위테마 :</th>
-                    <td>
-                        <select @change="fnSelectTheme()" v-model="themeParent" class="border rounded px-2 py-1 w-full">
-                            <option value="">:: 선택 ::</option>
-                            <template v-for="item in themeParentList">
-                                <option :value="item.themeName">{{item.themeName}}</option>
-                            </template>
-                        </select>
-                    </td>
-                    <th class="text-left py-2 pr-4">테마 :</th>
-                    <td>
-                        <select v-model="themeName" class="border rounded px-2 py-1 w-full">
-                            <option value="">:: 선택 ::</option>
-                            <template v-for="item in themeNameList">
-                                <option :value="item.themeName">{{item.themeName}}</option>
-                            </template>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="text-left py-2 pr-4 align-top">내용 :</th>
-                    <td colspan="3">
-                        <div id="editor" class="border rounded w-full" style="height: 400px;"></div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="mt-6 text-right">
-            <button @click="fnSave" class="bg-blue-950 text-white px-6 py-2 rounded hover:bg-blue-700 transition">저장</button>
-        </div>
-    </div>
-</div>
-<jsp:include page="../common/footer.jsp" />
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
 </body>
 </html>
 <script>

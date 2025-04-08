@@ -4,7 +4,9 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>관광지 목록</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>관광지 목록 | kapture</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
@@ -118,11 +120,30 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <div class="mt-32">
+                        <button
+                            class="w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow ">
+                            🏨 숙소 찾기
+                        </button>
+                    </div>
+
+
                 </aside>
 
                 <!-- 본문 영역 -->
                 <main class="flex-1 min-w-0">
-                    <div class="text-sm text-gray-500 mb-2">홈 > 상품</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <!-- 왼쪽: 현재 위치 -->
+                        <div class="text-sm text-gray-500">홈 > 상품</div>
+                    
+                        <!-- 오른쪽: 버튼 -->
+                        <button
+                            class="text-sm bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors shadow-sm" @click="fnFindLocation">
+                            🇰🇷 관광지 알아보기
+                        </button>
+                    </div>
                     <hr class="mb-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div v-for="tour in toursList" :key="tour.tourNo"
@@ -737,6 +758,11 @@
 
                 fnGetWishList() {
                     let self = this;
+
+                    if(!self.sessionId){
+                        return;
+                    }
+
                     let nparmap = {
                         userNo: parseInt(self.sessionId)
                     };
@@ -793,6 +819,10 @@
                         });
                     }
                 },
+
+                fnFindLocation(){
+                    location.href="/tour/info"
+                }
 
             },
 
