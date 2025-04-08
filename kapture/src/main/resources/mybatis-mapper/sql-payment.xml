@@ -14,9 +14,9 @@
 	</select>
 	<insert id="insertPayment" parameterType="map">
 	    INSERT INTO PAYMENTS (PAYMENT_NO, USER_NO, AMOUNT, METHOD, MERCHANT_ID, PAYMENT_STATUS, TOUR_NO, PAYMENT_DATE, NUM_PEOPLE, BASKET_NO) 
-		VALUES (PAYMENT_SEQ.NEXTVAL, #{userNo}, #{amount}, #{method}, #{merchantId}, 'PAID', #{tourNo}, SYSDATE, #{numPeople}, #{basketNo})
+		VALUES (PAYMENT_SEQ.NEXTVAL, #{userNo}, #{amount}, #{method}, #{merchantId}, '결제완료', #{tourNo}, SYSDATE, #{numPeople}, #{basketNo})
 	</insert>
-	<select id="selectPayment" resultType="com.example.kapture.payment.model.Payment">
+	<select id="selectPayment" parameterType="String" resultType="com.example.kapture.payment.model.Payment">
 	    SELECT P.PAYMENT_NO, P.USER_NO, P.TOUR_NO, P.AMOUNT, P.PAYMENT_DATE, P.METHOD, P.NUM_PEOPLE, P.BASKET_NO,T.TITLE, T.PRICE, T.DURATION, T.TOUR_DATE
 	    FROM PAYMENTS P
 	    INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
@@ -36,5 +36,9 @@
 	    DELETE FROM BASKET
 	    WHERE BASKET_NO = #{basketNo}
 	</delete>
-	
+	<update id="updateRequestMessage" parameterType="hashmap">
+    UPDATE PAYMENTS
+    SET ETC = #{requestMessage}
+    WHERE PAYMENT_NO = #{paymentNo}
+</update>
 </mapper> 

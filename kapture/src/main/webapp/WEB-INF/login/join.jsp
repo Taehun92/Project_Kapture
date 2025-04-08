@@ -486,13 +486,27 @@
 
           loadTerms(type) {
             if (!type) return;
-            fetch("/html/terms_" + type + ".html")
-              .then(res => res.text())
-              .then(html => {
-                this.termsContent = html;
+
+            // 🔁 문자열 → 숫자 매핑
+            const typeToIdMap = {
+              use: 3,
+              privacy: 2,
+              marketing: 1
+            };
+
+            const termsId = typeToIdMap[type];
+
+            fetch("/terms/getTermsGetMethod.dox?termsId=" + termsId)
+              .then(res => res.json())
+              .then(data => {
+                if (data.result === "success") {
+                  this.termsContent = data.terms.content;
+                } else {
+                  this.termsContent = "<p>⚠️ 약관을 불러오지 못했습니다.</p>";
+                }
               })
               .catch(() => {
-                this.termsContent = '<p>⚠️ 약관을 불러오지 못했습니다.</p>';
+                this.termsContent = "<p>⚠️ 서버 통신 오류</p>";
               });
           },
 

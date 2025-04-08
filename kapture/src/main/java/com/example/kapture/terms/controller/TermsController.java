@@ -28,6 +28,16 @@ public class TermsController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 약관 가져오기(get방식 - 회원가입)
+	@RequestMapping(value = "/terms/getTermsGetMethod.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getTermsGetMethod(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = termsService.getTerms(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	
+	
 	// 약관 수정
 	@RequestMapping(value = "/terms/saveTerms.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
