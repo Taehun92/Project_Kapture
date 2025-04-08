@@ -9,12 +9,15 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
         <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="../../css/kapture-style.css">
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
-        <link rel="stylesheet" href="../../css/chatbot.css">
-        <title>메인 페이지</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>메인 페이지 | kapture</title>
+
     </head>
 
-    <body>
+    <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">
         <jsp:include page="../common/header.jsp"></jsp:include>
         <div id="app" class="pb-12">
 
@@ -72,6 +75,8 @@
                             <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
                                 <span>{{ formatDate(tour.tourDate) }}</span>
                                 <span># {{ tour.themeName }}</span>
+                                <img :src="tour.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
+                                        alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
                             </div>
                             <h3 class="text-lg font-semibold mb-2">{{ tour.title }}</h3>
                             <p class="text-gray-600 text-sm mb-3">{{ truncateText(tour.description) }}</p>
@@ -81,7 +86,7 @@
                                 <span class="font-bold text-blue-600">₩ {{ tour.price.toLocaleString() }}</span>
                             </div>
                             <button 
-                                class="mt-4 w-full bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded"
+                                class="mt-4 w-full bg-blue-950 hover:bg-blue-700 text-white py-2 px-4 rounded"
                                 @click="goToTourInfo(tour.tourNo)"
                             >예약하기</button>
                         </div>

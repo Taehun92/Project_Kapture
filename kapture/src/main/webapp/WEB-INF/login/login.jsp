@@ -3,9 +3,12 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Kapture - Login</title>
+	<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+  	<link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+	<title>Login | kapture</title>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+	
 	<style>
 		body {
 			font-family: Arial, sans-serif;

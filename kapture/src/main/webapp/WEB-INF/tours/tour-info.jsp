@@ -8,34 +8,74 @@
 			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
 		<script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-		<link rel="stylesheet" href="../../css/tourInfo.css">
-		
-		<title>상품 상세페이지</title>
+		<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="../../css/kapture-style.css">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+		<title>상품 상세 | kapture</title>
 	</head>
 
-	<body>
+	<body class="bg-white text-gray-800 text-[16px] tracking-wide">
 		<jsp:include page="../common/header.jsp" />
-		<div id="app">
-			<!-- 기존 컨텐츠 영역 -->
-			<div class="top-section">
-				<div class="thumbnail">
-					<img class="img-thumbnail" :src="tourInfo.filePath">
-				</div>
-				<div class="info">
-					<div class="title">{{ tourInfo.title }}</div>
-					<div class="guide-info">{{ tourInfo.experience }}</div>
-					<div class="actions">
-						<button class="count-btn" @click="decrease">-</button>
-						<span class="people-count">인원수 {{ count }}명</span>
-						<button class="count-btn" @click="increase">+</button>
-						<div class="favorite" :class="{ active: tourInfo && tourInfo.isFavorite === 'Y' }" v-if="tourInfo" @click="toggleFavorite(tourInfo)"></div>
-						<button @click="fnAddedToCart">🛒 장바구니 담기</button>
+		<div id="app" class="px-4 py-6">
+			<div class="max-w-[1280px] mx-auto">
+				<!-- 상품 정보 섹션 -->
+				<div
+					class="bg-white rounded-xl shadow-lg p-4 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
+					<div class="w-full md:w-1/2">
+						<img class="rounded-xl shadow-md w-full transition-transform duration-300 hover:scale-105"
+							:src="tourInfo.filePath" />
+					</div>
+					<div class="w-full md:w-1/2 flex flex-col gap-4">
+						<h1 class="text-3xl font-bold text-center text-gray-800 relative">
+							{{ tourInfo.title }}
+							<div class="w-160 h-1 bg-blue-950 mx-auto mt-2 rounded"></div>
+						</h1>
+						<div class="flex items-center gap-4 bg-blue-50 border border-gray-200 rounded-lg p-4">
+							<img :src="tourInfo.pfilePath" alt="가이드 사진" class="w-32 h-32 rounded-full border object-cover" />
+							<div class="text-sm text-gray-800 space-y-2">
+								<p class="font-bold text-2xl">{{ tourInfo.userFirstName }}</p>
+								<p class="text-gray-600">성별: {{ tourInfo.gender === 'M' ? '남자' : '여자' }}</p>
+								<p class="text-gray-600 text-lg">사용 언어: {{ tourInfo.guideLanguage }}</p>
+								<p class="text-gray-600 text-lg">소개: {{ tourInfo.experience }}</p>
+							</div>
+						</div>
+						<div class="grid grid-cols-3 gap-4 mt-6">
+							<!-- 👤 인원수 조절 -->
+							<div class="flex justify-center items-center gap-3 text-lg">
+								<button @click="decrease"
+									class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">-</button>
+								<span>인원수 {{ count }}명</span>
+								<button @click="increase"
+									class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">+</button>
+							</div>
+						
+							<!-- ❤️ 찜 아이콘 -->
+							<div class="flex justify-center items-center">
+								<img :src="tourInfo.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
+									alt="찜 아이콘"
+									class="w-10 h-10 cursor-pointer transition-transform duration-200 hover:scale-110" 
+									@click="toggleFavorite(tourInfo)" />
+							</div>
+						
+							<!-- 🛒 장바구니 버튼 -->
+							<div class="flex justify-center items-center">
+								<button @click="fnAddedToCart"
+									class="bg-blue-950 text-white px-6 py-3 rounded hover:bg-blue-700 shadow-lg text-lg font-semibold flex items-center gap-2">
+									🛒 <span>장바구니 담기</span>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
 
+				<!-- 설명 -->
+				<div
+					class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
+					<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
+				</div>
 			<div class="contents" v-html="tourInfo.description"></div>
 			<div v-if="sessionId == tourInfo.userNo">
 				<button @click="fnEdit">
@@ -46,170 +86,338 @@
 				</button>
 			</div>
 
-			<div class="reviews">
-				<div class="review-score">
-					이용후기 <star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01"
-						:show-rating="false" />
-					<span>{{ getReviewAvg() }} / 5</span>
-				</div>
-				<div class="rating-bars">
-					<div class="rating-bar" v-for="n in 5" :key="n">
-						<span>{{ n }}점</span>
-						<div class="progress-bar">
-							<div class="fill" :style="{ width: getReviewPercentage(n) + '%' }"></div>
+				<!-- 후기 -->
+				<div class="bg-white rounded-xl shadow-lg pt-1 p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">
+					<div class="mt-10 border-t pt-6 space-y-6">
+						<div class="flex items-center gap-3">
+							<div
+								class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full mb-2">
+								이용 후기
+							</div>
+							<star-rating :rating="getReviewAvg()" :read-only="true" :increment="0.01"
+								:show-rating="false" />
+							<span class="text-gray-500 text-sm">{{ getReviewAvg() }} / 5</span>
 						</div>
-						<span>{{ getReviewCount(n) }}명</span>
+
+						<div class="space-y-2">
+							<div v-for="n in 5" :key="n" class="flex items-center gap-4 text-sm">
+								<span class="w-10">{{ n }}점</span>
+								<div class="w-full bg-gray-200 rounded h-3 overflow-hidden">
+									<div class="bg-yellow-400 h-full" :style="{ width: getReviewPercentage(n) + '%' }">
+									</div>
+								</div>
+								<span class="w-12 text-right">{{ getReviewCount(n) }}명</span>
+							</div>
+						</div>
+					</div>	
+					<div class="bg-white rounded-xl shadow-lg p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">	
+						<div class="space-y-4">
+							<div v-for="review in reviewsList" class="border-t pt-4">
+								<div class="font-semibold">{{review.userFirstName}} {{review.userLastName}}</div>
+								<star-rating :rating="review.rating" :read-only="true" :show-rating="false"
+									:star-size="20" />
+								<p class="text-sm">{{ review.comment }}</p>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="user-review" v-for="review in reviewsList">
-					<div><strong>{{review.userFirstName}} {{review.userLastName}}</strong></div>
-					<star-rating :rating="review.rating" :read-only="true" :show-rating="false" :star-size="20" />
-					<p>{{ review.comment }}</p>
-				</div>
-			</div>
-
-			<!-- 장바구니 트리거 바 -->
-
-			<div class="bottom-cart-bar" v-if="!showModal && cartList.length > 0">
-				<div class="clickable-area" @click="showModal = true">
-					🛒 장바구니 열기
-				</div>
-			</div>
-			<!-- 하단 모달 창 -->
-			<div class="bottom-cart-modal" :class="{ show: showModal }">
-				<button class="close-button" @click="handleCartClose">닫기</button>
-				<h2 class="modal-title">🗓️ 일정 확인</h2>
-
-				<table class="modal-table">
-					<thead>
-						<tr>
-							<th style="width: 15%">날짜</th>
-							<th style="width: 10%">시간</th>
-							<th style="width: 30%">상품 제목</th>
-							<th style="width: 15%">인원 수</th>
-							<th style="width: 20%">금액</th>
-							<th style="width: 5%">삭제</th>
-						</tr>
-					</thead>
-					<tbody>
-						<template v-for="n in 7" :key="'day-' + n">
-							<tr v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
-								<td>{{ formatDate(addDays(minDate, n - 1)) }}</td>
-								<td>종일</td>
-								<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').title }}</td>
-								<td>
-									<div class="item-controls">
-										<button
-											@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), -1)"
-											:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople <= 1">
-											- </button>
-										<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
-											'종일').numPeople}}명</span>
-										<button
-											@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), 1)"
-											:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일').numPeople >= 4">
-											+ </button>
-									</div>
-								</td>
-								<td>
-									\ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'종일').price) *
-									Number(getCartItemByDateAndTime(addDays(minDate, n -
-									1),'종일').numPeople)).toLocaleString() }}원
-								</td>
-								<td>
-									<button
-										@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'))"
-										class="delete-btn">🗑️</button>
-								</td>
-							</tr>
-
-							<template v-else>
-								<!-- 오전 -->
-								<tr>
-									<td rowspan="2">{{ formatDate(addDays(minDate, n - 1)) }}</td>
-									<td>오전</td>
-									<template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')">
-										<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').title }}</td>
-										<td>
-											<div class="item-controls">
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), -1)"
-													:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople <= 1">
-													- </button>
-												<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
-													'오전').numPeople}}명</span>
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), 1)"
-													:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전').numPeople >= 4">
-													+ </button>
-											</div>
-										</td>
-										<td>
-											\ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오전').price) *
-											Number(getCartItemByDateAndTime(addDays(minDate, n -
-											1),'오전').numPeople)).toLocaleString() }}원
-										</td>
-										<td>
-											<button
-												@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'))"
-												class="delete-btn">🗑️</button>
-										</td>
-									</template>
-									<template v-else>
-										<td> </td>
-										<td> </td>
-										<td> </td>
-										<td> </td>
-									</template>
-								</tr>
-
-								<!-- 오후 -->
-								<tr>
-									<td>오후</td>
-									<template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')">
-										<td>{{ getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').title }}</td>
-										<td>
-											<div class="item-controls">
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), -1)"
-													:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople <= 1">
-													- </button>
-												<span>{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
-													'오후').numPeople}}명</span>
-												<button
-													@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), 1)"
-													:disabled="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후').numPeople >= 4">
-													+ </button>
-											</div>
-										</td>
-										<td>
-											\ {{ (Number(getCartItemByDateAndTime(addDays(minDate, n - 1),'오후').price) *
-											Number(getCartItemByDateAndTime(addDays(minDate, n -
-											1),'오후').numPeople)).toLocaleString() }}원
-										</td>
-										<td>
-											<button
-												@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'))"
-												class="delete-btn">🗑️</button>
-										</td>
-									</template>
-									<template v-else>
-										<td> </td>
-										<td> </td>
-										<td> </td>
-										<td> </td>
-									</template>
-								</tr>
-							</template>
-						</template>
-					</tbody>
-				</table>
-
-				<div class="total-price">
-					💰 최종 금액: <strong>{{ getTotalPrice().toLocaleString() }}</strong> 원
+				<!-- 장바구니 트리거 바 -->
+				<div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-44 text-white text-center py-2 rounded-t-lg cursor-pointer z-50 bg-blue-950 hover:bg-blue-700 transition-colors"
+					@click="showModal = true">
+					<div class="text-sm flex items-center justify-center gap-2 w-32 mx-auto font-bold">
+						🛒 장바구니 열기
+					</div>
 				</div>
 
-				<button class="confirm-btn" @click="fnPay">결제</button>
+				<div class="fixed inset-0 z-50 flex items-end justify-center"
+					:class="showModal ? 'bg-black bg-opacity-50 pointer-events-auto' : 'bg-transparent pointer-events-none'"
+					@click.self="handleCartClose">
+
+					<!-- ✅ 모달 본체 (슬라이드 업) -->
+					<transition name="slide-modal">
+						<div v-if="showModal" class="bg-white w-full max-w-4xl mx-auto rounded-t-2xl" @click.stop>
+
+							<!-- ✅ 내부 컨텐츠 -->
+							<div class="p-6 max-h-[90vh] overflow-y-auto">
+
+								<!-- 고정된 상단 -->
+								<div
+									class="sticky top-0 bg-white z-50 flex justify-between items-center mb-4 border-b pb-2 px-4 pt-4">
+									<h2 class="text-lg font-bold">🗓️ 일정 확인</h2>
+									<button class="text-sm text-red-500 hover:underline"
+										@click="handleCartClose">닫기</button>
+								</div>
+
+								<div class="overflow-x-auto">
+									<!-- text-center, align-middle 추가 -->
+									<table class="w-full text-center align-middle">
+										<thead class="bg-blue-950 text-white">
+											<tr>
+												<th class="border-2 border-gray-400 w-40 
+                                           h-[1rem] box-border px-4 py-2 text-base 
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													날짜
+												</th>
+												<th class="border-2 border-gray-400 w-30
+                                           h-[1rem] box-border px-4 py-2 text-base
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													시간
+												</th>
+												<th class="border-2 border-gray-400
+                                           h-[1rem] box-border px-4 py-2 text-base
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													상품 제목
+												</th>
+												<th class="border-2 border-gray-400 w-30
+                                           h-[1rem] box-border px-4 py-2 text-base
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													인원 수
+												</th>
+												<th class="border-2 border-gray-400
+                                           h-[1rem] box-border px-4 py-2 text-base
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													금액
+												</th>
+												<th class="border-2 border-gray-400 w-20
+                                           h-[1rem] box-border px-4 py-2 text-base
+                                           overflow-hidden whitespace-nowrap text-ellipsis">
+													삭제
+												</th>
+											</tr>
+										</thead>
+
+										<tbody>
+											<!-- 예시: 7일 반복 -->
+											<template v-for="n in 7" :key="'day-' + n">
+												<!-- (1) 종일 예약 -->
+												<template
+													v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
+													<tr>
+														<!-- 날짜 -->
+														<td
+															class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold">
+															{{ formatDate(addDays(minDate, n - 1)) }}
+														</td>
+														<!-- 시간 -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															종일
+														</td>
+														<!-- 상품 제목 -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+															'종일')?.title ||
+															''
+															}}
+														</td>
+														<!-- 인원 수 -->
+														<td
+															class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<div v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')"
+																class="flex items-center justify-center gap-2">
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), -1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')?.numPeople || 0) <= 1">
+																	-
+																</button>
+																<span>
+																	{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+																	'종일')?.numPeople || 0 }}명
+																</span>
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'), 1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')?.numPeople || 0) >= 4">
+																	+
+																</button>
+															</div>
+														</td>
+														<!-- 금액 -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															₩ {{
+															(
+															Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+															'종일')?.price ||
+															0) *
+															Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+															'종일')?.numPeople || 0)
+															).toLocaleString()
+															}}
+														</td>
+														<!-- 삭제 -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<button
+																class="border border-gray-300 rounded text-red-500 hover:underline px-2 py-1"
+																@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '종일'))">
+																🗑️
+															</button>
+														</td>
+													</tr>
+												</template>
+
+												<!-- (2) 오전/오후 예약 -->
+												<template v-else>
+													<!-- 오전 행 -->
+													<tr>
+														<!-- 날짜 (rowspan=2) -->
+														<td class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold"
+															rowspan="2">
+															{{ formatDate(addDays(minDate, n - 1)) }}
+														</td>
+														<!-- 시간(오전) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															오전
+														</td>
+														<!-- 상품 제목(오전) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+															'오전')?.title ||
+															''
+															}}
+														</td>
+														<!-- 인원 수(오전) -->
+														<td
+															class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<div v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')"
+																class="flex items-center justify-center gap-2">
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), -1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')?.numPeople || 0) <= 1">
+																	-
+																</button>
+																<span>
+																	{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+																	'오전')?.numPeople || 0 }}명
+																</span>
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'), 1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')?.numPeople || 0) >= 4">
+																	+
+																</button>
+															</div>
+														</td>
+														<!-- 금액(오전) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<template
+																v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')">
+																₩ {{
+																(
+																Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+																'오전')?.price || 0) *
+																Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+																'오전')?.numPeople || 0)
+																).toLocaleString()
+																}}
+															</template>
+														</td>
+														<!-- 삭제(오전) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<button
+																v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오전')"
+																class="border border-gray-300 rounded text-red-500 hover:underline px-2 py-1"
+																@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오전'))">
+																🗑️
+															</button>
+														</td>
+													</tr>
+													<!-- 오후 행 -->
+													<tr>
+														<!-- 시간(오후) -->
+														<td
+															class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															오후
+														</td>
+														<!-- 상품 제목(오후) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+															'오후')?.title ||
+															''
+															}}
+														</td>
+														<!-- 인원 수(오후) -->
+														<td
+															class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<div v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')"
+																class="flex items-center justify-center gap-2">
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), -1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')?.numPeople || 0) <= 1">
+																	-
+																</button>
+																<span>
+																	{{ getCartItemByDateAndTime(addDays(minDate, n - 1),
+																	'오후')?.numPeople || 0 }}명
+																</span>
+																<button class="px-2 py-1 bg-blue-950 text-white rounded"
+																	@click="changePeople(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'), 1)"
+																	:disabled="(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')?.numPeople || 0) >= 4">
+																	+
+																</button>
+															</div>
+														</td>
+														<!-- 금액(오후) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<template
+																v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')">
+																₩ {{
+																(
+																Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+																'오후')?.price || 0) *
+																Number(getCartItemByDateAndTime(addDays(minDate, n - 1),
+																'오후')?.numPeople || 0)
+																).toLocaleString()
+																}}
+															</template>
+														</td>
+														<!-- 삭제(오후) -->
+														<td class="border border-gray-500
+                                               h-[1rem] box-border px-4 py-2 text-base
+                                               overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+															<button
+																v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '오후')"
+																class="border border-gray-300 rounded text-red-500 hover:underline px-2 py-1"
+																@click="deleteFromCart(getCartItemByDateAndTime(addDays(minDate, n - 1), '오후'))">
+																🗑️
+															</button>
+														</td>
+													</tr>
+												</template>
+											</template>
+										</tbody>
+									</table>
+								</div>
+								<div class="mt-3 text-right text-lg font-semibold text-gray-700 h-47">
+									💰 최종 금액: <span class="text-green-600">{{ getTotalPrice().toLocaleString() }}</span>
+									원
+								</div>
+								<div class="flex justify-end mt-2">
+									<button @click="fnPay"
+										class="w-48 text-sm text-white px-4 py-2 rounded shadow text-center bg-blue-950 hover:bg-blue-700 transition-colors">
+										결제하기
+									</button>
+								</div>
+							</div>
+						</div>
+					</transition>
+				</div>
 			</div>
 		</div>
 		<jsp:include page="../common/footer.jsp" />
@@ -234,7 +442,7 @@
 					maxDate: null,
 
 					cartList: [],
-
+					isFavorite: "N"
 
 				};
 			},
@@ -258,7 +466,8 @@
 							console.log(self.reviewsList);
 							console.log('투어 날짜 : ', self.tourInfo.tourDate);
 							self.fnGetWishList();
-							
+							document.title = self.tourInfo.title + " | Kapture";
+
 						}
 					});
 				},
@@ -644,60 +853,64 @@
 				},
 
 				fnGetWishList() {
-                    let self = this;
-                    let nparmap = {
-                        userNo: parseInt(self.sessionId)
-                    };
+					let self = this;
 
-                    $.ajax({
-                        url: "/wishList/getWishList.dox",
-                        type: "POST",
-                        dataType: "json",
-                        data: nparmap,
-                        success: function(data) {
-                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+					if(!self.sessionId){
+                        return;
+                    }
+
+					let nparmap = {
+						userNo: parseInt(self.sessionId)
+					};
+
+					$.ajax({
+						url: "/wishList/getWishList.dox",
+						type: "POST",
+						dataType: "json",
+						data: nparmap,
+						success: function (data) {
+							const wishTourNos = (data.list || []).map(item => +item.tourNo);
 							console.log("찜목록 tourNo 목록: ", wishTourNos);
 							const currentTourNo = Number(self.tourInfo.tourNo); // 현재 보고 있는 상품 번호
 							self.tourInfo.isFavorite = wishTourNos.includes(currentTourNo) ? "Y" : "N";
 
 							console.log("최종 info 객체: ", self.tourInfo);
 						}
-                    });
-                },
+					});
+				},
 
-                toggleFavorite(tour) {
-                    let self = this;
-                    tour.isFavorite = tour.isFavorite === "Y" ? "N" : "Y";
-                    if (tour.isFavorite === "Y") {
-                        $.ajax({
-                            url: "/wishList/addWishList.dox",
-                            type: "POST",
-                            data: { 
-                                userNo: self.sessionId, 
-                                guideNo : tour.guideNo,
-                                tourNo: tour.tourNo 
-                            },
-                            success: function(res) {
-                                console.log("찜 추가됨", res);
-                            }
-                        });
-                    } else {
-                        $.ajax({
-                            url: "/wishList/removeWishList.dox",
-                            type: "POST",
-                            data: { 
-                                userNo: self.sessionId, 
-                                tourNo: tour.tourNo 
-                            },
-                            success: function(res) {
-                                console.log("찜 제거됨", res);
-                            }
-                        });
-                    }
-                },
+				toggleFavorite(tour) {
+					let self = this;
+					tour.isFavorite = tour.isFavorite === "Y" ? "N" : "Y";
+					if (tour.isFavorite === "Y") {
+						$.ajax({
+							url: "/wishList/addWishList.dox",
+							type: "POST",
+							data: {
+								userNo: self.sessionId,
+								guideNo: tour.guideNo,
+								tourNo: tour.tourNo
+							},
+							success: function (res) {
+								console.log("찜 추가됨", res);
+							}
+						});
+					} else {
+						$.ajax({
+							url: "/wishList/removeWishList.dox",
+							type: "POST",
+							data: {
+								userNo: self.sessionId,
+								tourNo: tour.tourNo
+							},
+							success: function (res) {
+								console.log("찜 제거됨", res);
+							}
+						});
+					}
+				},
 				fnEdit() {
 					location.href = "/mypage/guide-edit.do?tourNo=" + this.tourNo;
-				
 				},
 
 				fnDelete() {
