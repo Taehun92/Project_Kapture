@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/kapture-style.css">
 	<title>푸터</title>
 </head>
 <body>

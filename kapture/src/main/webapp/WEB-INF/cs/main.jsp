@@ -4,7 +4,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>고객센터 메인</title>
+  <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+  <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+  <title>고객센터 메인 | kapture</title>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>

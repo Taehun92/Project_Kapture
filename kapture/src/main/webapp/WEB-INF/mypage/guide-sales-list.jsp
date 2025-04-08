@@ -4,7 +4,9 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>판매내역</title>
+  <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+  <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+  <title>판매내역 | kapture</title>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +25,6 @@
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }" href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-100">여행상품 등록</a></li>
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }" href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-950">판매내역</a></li>
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
-      <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }" href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 탈퇴</a></li>
     </ul>
   </div>
 

@@ -10,7 +10,9 @@
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
-        <title>요청 등록</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>요청 등록 | kapture</title>
     </head>
 
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">

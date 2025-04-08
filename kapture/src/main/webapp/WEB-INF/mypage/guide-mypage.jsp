@@ -4,7 +4,9 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>마이페이지</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+  	    <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>마이페이지 | kapture</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
@@ -45,11 +47,6 @@
                     <li>
                         <a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" 
                         href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a>
-                    </li>
-                    <li>
-                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }"
-                            href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원
-                            탈퇴</a>
                     </li>
                 </ul>
             </div>

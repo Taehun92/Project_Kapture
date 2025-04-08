@@ -5,22 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../../css/style.css">
+        <link rel="stylesheet" href="../../css/kapture-style.css">
     <title>헤더</title>
 </head>
-<body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">
-    <div id="header" class="w-full shadow-sm border-b bg-white">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- 왼쪽 영역 -->
-            <div class="flex items-center gap-6">
+<body class="bg-white text-gray-800 text-[16px] tracking-wide">
+    <div id="header" class="w-full bg-white shadow-sm border-b !w-full !max-w-full !overflow-visible">
+        <div class="w-full max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- 왼쪽 -->
+            <div class="flex flex-wrap items-center gap-6 grow basis-0 min-w-0">
                 <!-- 로고 -->
                 <a href="/main.do">
-                    <img src="../../img/kapture_Logo.png" class="w-32 h-auto" alt="로고" />
+                    <img src="../../img/kapture_Logo.png" class="w-32 h-auto shrink-0" alt="로고" />
                 </a>
-
+        
                 <!-- 검색바 -->
-                <div class="flex items-center gap-2">
-                    <!-- 🔍 검색 입력창 -->
+                <div class="flex items-center gap-2 flex-wrap shrink-0">
                     <div class="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-gray-50 w-[320px]">
                         <input 
                             v-model="keyword" 
@@ -30,24 +29,22 @@
                             class="bg-transparent focus:outline-none text-base w-full"
                         />
                     </div>
-                
-                    <!-- 🔎 검색 버튼 -->
                     <button 
                         @click="fnSearch"
                         class="bg-blue-950 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">
                         검색
                     </button>
                 </div>
-
+        
                 <!-- 메뉴 -->
-                <div class="flex items-center gap-6 text-[1.75rem] text-w-bold font-semibold text-gray-700">
+                <div class="flex items-center gap-6 text-[1.75rem] font-extrabold text-gray-700 whitespace-nowrap">
                     <a href="/tours/list.do" class="hover:text-blue-700">여행상품</a>
                     <a href="/request/list.do" class="hover:text-blue-700">요청게시판</a>
                 </div>
             </div>
 
             <!-- 오른쪽 영역 -->
-            <div class="flex items-center gap-4 text-sm tracking-normal">
+            <div class="flex items-center gap-4 text-sm whitespace-nowrap">
                 <a href="/cs/faq.do" class="hover:text-blue-700">FAQ</a>
                 <a href="/cs/main.do" class="hover:text-blue-700">고객센터</a>
                 <!-- 로그인 상태 -->

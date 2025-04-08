@@ -4,7 +4,9 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>마이페이지</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>구매한 상품 | kapture</title>
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -13,15 +15,9 @@
         <!-- 캘린더 -->
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-<<<<<<< HEAD
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
-=======
-        <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
-        <!-- 페이지 체인지 -->
-        <script src="/js/page-Change.js"></script>
-        <script src="https://cdn.tailwindcss.com"></script>
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
+
         <style>
             .fc .fc-toolbar {
               display: flex;
@@ -61,8 +57,6 @@
 
     <body class="bg-white text-gray-800 text-[16px] tracking-wide">
         <jsp:include page="../common/header.jsp" />
-<<<<<<< HEAD
-        
         <div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10">
             <!-- 사이드바 -->
             <div class="w-56 bg-white shadow-md p-4 rounded">
@@ -103,67 +97,6 @@
                     <li class="flex items-center"><span class="text-green-600 mr-2 text-lg">●</span>오후</li>
                 </ul>
                 <div ref="calendar" class="bg-white p-4 border border-gray-200 rounded shadow-sm"></div>
-=======
-
-        <div id="app" class="max-w-7xl mx-auto flex py-10 px-4">
-             <!-- 사이드 메뉴 -->
-        <aside class="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4">
-            <ul class="space-y-3">
-                <li>
-                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-mypage.do' }"
-                       href="http://localhost:8080/mypage/user-mypage.do"
-                       class="block px-4 py-2 rounded hover:bg-gray-100">
-                        회원 정보수정
-                    </a>
-                </li>
-                <li>
-                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-purchase-history.do' }"
-                       href="http://localhost:8080/mypage/user-purchase-history.do"
-                       class="block px-4 py-2 rounded hover:bg-gray-100">
-                        구매한 상품
-                    </a>
-                </li>
-                <li>
-                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-reviews.do' }"
-                       href="http://localhost:8080/mypage/user-reviews.do"
-                       class="block px-4 py-2 rounded hover:bg-blue-700">
-                        이용후기 관리
-                    </a>
-                </li>
-                <li>
-                    <a href="http://localhost:8080/cs/qna.do"
-                       class="block px-4 py-2 rounded hover:bg-gray-100">
-                        문의하기
-                    </a>
-                </li>
-                <li>
-                    <a :class="{ 'bg-blue-950 text-white rounded': currentPage === 'user-unregister.do' }"
-                       href="http://localhost:8080/mypage/user-unregister.do"
-                       class="block px-4 py-2 rounded hover:bg-gray-100">
-                        회원 탈퇴
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-            <!-- 우측 메인 콘텐츠 -->
-            <div class="content-area">
-                <ol class="custom-buttons">
-                    <li class="custom-button">
-                        <span class="dot" style="color: #3788d8;">●</span>
-                        <span class="label">종일</span>
-                    </li>
-                    <li class="custom-button">
-                        <span class="dot" style="color: red;">●</span>
-                        <span class="label">오전</span>
-                    </li>
-                    <li class="custom-button">
-                        <span class="dot" style="color: green;">●</span>
-                        <span class="label">오후</span>
-                    </li>
-                </ol>
-                <div ref="calendar"></div>
->>>>>>> branch 'feature/temp' of https://github.com/Taehun92/Project_Kapture.git
             </div>
         </div>
         

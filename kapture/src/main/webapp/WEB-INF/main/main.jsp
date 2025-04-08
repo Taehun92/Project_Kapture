@@ -11,7 +11,9 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
         <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
-        <title>메인 페이지</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>메인 페이지 | kapture</title>
     </head>
 
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide">
