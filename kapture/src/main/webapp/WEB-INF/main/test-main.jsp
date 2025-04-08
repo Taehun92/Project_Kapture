@@ -16,11 +16,146 @@
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-container {
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background: #e9ecef;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background: white;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            height: 40px;
+            border: none;
+            resize: none;
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .open-chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 <body class="bg-white text-gray-800">
 <jsp:include page="../common/header.jsp"></jsp:include>
 
 <div id="app" class="p-6">
+
+    <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+
+        <div class="modal-overlay" v-if="showChat">
+            <div class="chat-container">
+                <div class="chat-header">
+                    Gemini 챗봇
+                    <button class="close-btn" @click="showChat = false">✕</button>
+                </div>
+                <div class="chat-box" ref="chatBox">
+                    <div v-for="msg in messages" :class="['message', msg.type]">
+                        {{ msg.text }}
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                    <button @click="sendMessage">전송</button>
+                </div>
+            </div>
+        </div>
 
     <!-- Hero Section -->
     <div class="relative mb-10">
@@ -99,7 +234,10 @@
                     swiper: null,
                     toursList: [],
                     sessionId: "${sessionId}",
-                    reviewList : []
+                    reviewList : [],
+                    userInput: "",
+                    messages: [],
+                    showChat: false,
                 };
             },
 
@@ -226,6 +364,34 @@
                             console.log(data);
                             self.reviewList = data.reviewList;
                         }
+                    });
+                },
+                sendMessage() {
+                    if (this.userInput.trim() === "") return;
+
+                    this.messages.push({ text: this.userInput, type: 'user' });
+                    const inputText = this.userInput;
+                    this.userInput = "";
+                    this.scrollToBottom();
+
+                    $.ajax({
+                        url: "/gemini/chat",
+                        type: "GET",
+                        data: { input: inputText },
+                        success: (response) => {
+                            this.messages.push({ text: response, type: 'bot' });
+                            this.scrollToBottom();
+                        },
+                        error: (xhr) => {
+                            this.messages.push({ text: "오류 발생: " + xhr.responseText, type: 'bot' });
+                            this.scrollToBottom();
+                        }
+                    });
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatBox = this.$refs.chatBox;
+                        chatBox.scrollTop = chatBox.scrollHeight;
                     });
                 }
 
