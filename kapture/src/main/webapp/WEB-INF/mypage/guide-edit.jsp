@@ -186,12 +186,10 @@
 					tourDate: self.tourDate,
 					siName: self.siName,
 					guName: self.guName,
-					sessionId : self.sessionId,
 					themeName : self.themeName,
 					tourNo : self.tourNo,
 
 					// 썸네일 이미지로 설정할 이미지 URL
-					thumbnail : self.thumbnail
 				};
 
 				if(self.sessionId == ""){

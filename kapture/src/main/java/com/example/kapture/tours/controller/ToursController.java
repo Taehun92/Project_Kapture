@@ -129,4 +129,14 @@ public class ToursController {
 	}
 	
 	
+	@RequestMapping("/course.do")
+	public String course(Model model) throws Exception{
+		return "/tours/course";
+	}
+	@RequestMapping("/course-info.do")
+	public String courseInfo(Model model) throws Exception{
+		return "/tours/course-info";
+	}
+	
+	
 }
