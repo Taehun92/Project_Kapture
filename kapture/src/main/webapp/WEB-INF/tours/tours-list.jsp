@@ -138,16 +138,31 @@
                         <!-- 왼쪽: 현재 위치 -->
                         <div class="text-sm text-gray-500">홈 > 상품</div>
                     
-                        <!-- 오른쪽: 버튼 -->
-                        <button
-                            class="text-sm bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors shadow-sm" @click="fnFindLocation">
-                            🇰🇷 관광지 알아보기
-                        </button>
+                        <!-- 오른쪽: 버튼들 묶음 -->
+                        <div class="flex gap-2">
+                            <!-- 찜 상품 필터 버튼 -->
+                            <button
+                                @click="fnWishListTours"
+                                class="text-sm bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors shadow-sm flex items-center gap-2"
+                            >
+                                <!-- 태극 아이콘 -->
+                                <img src="../../svg/taeguk-full.svg" alt="찜" class="w-5 h-5" />
+                                찜 상품
+                            </button>
+                    
+                            <!-- 관광지 알아보기 버튼 -->
+                            <button
+                                class="text-sm bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors shadow-sm"
+                                @click="fnFindLocation"
+                            >
+                                🇰🇷 관광지 알아보기
+                            </button>
+                        </div>
                     </div>
                     <hr class="mb-4">
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="tour in toursList" :key="tour.tourNo"
-                            class="border rounded-lg overflow-hidden shadow hover:shadow-md transition mb-5">
+                        <div v-for="tour in isWishlistMode ? filteredToursList : toursList" :key="tour.tourNo" class="border rounded-lg overflow-hidden shadow hover:shadow-md transition mb-5">
                             <img :src="tour.filePath" alt="썸네일" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <div class="flex justify-between items-center mb-2">
@@ -521,7 +536,8 @@
 
                     defaultHeaderImage: "../../img/region/default.jpg",
                     hoveredRegionImage: null,
-
+                    filteredToursList: [],
+                    isWishlistMode: false,
                     showDatePicker: true
 
                 };
@@ -789,6 +805,31 @@
                     });
                 },
 
+                fnWishListTours() {
+                    let self = this;
+                    if (!self.sessionId) return;
+
+                    let nparmap = { userNo: parseInt(self.sessionId) };
+
+                    $.ajax({
+                        url: "/wishList/getWishList.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: nparmap,
+                        success: function (data) {
+                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+
+                            self.filteredToursList = self.toursList.filter(function (tour) {
+                                return wishTourNos.includes(Number(tour.tourNo));
+                            });
+
+                            self.isWishlistMode = true; // ✅ 찜 보기 모드로 전환
+                        }
+                    });
+                },
+
+
+
                 toggleFavorite(tour) {
                     let self = this;
                     tour.isFavorite = tour.isFavorite === "Y" ? "N" : "Y";
@@ -823,7 +864,6 @@
                 fnFindLocation(){
                     location.href="/tour/info"
                 }
-
             },
 
             created() {

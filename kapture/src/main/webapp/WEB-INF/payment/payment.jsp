@@ -200,6 +200,7 @@
             }, function (rsp) {
               if (rsp.success) {
                 alert("✅ 결제 성공!");
+                console.log(rsp);
                 self.fnPaymentSave(rsp.paid_amount, rsp.pay_method, rsp.merchant_uid);
               } else {
                 alert("❌ 결제 실패: " + rsp.error_msg);
@@ -240,14 +241,14 @@
             }
           },
 
-          fnPaymentSave(amount, method, merchant_uid) {
+          fnPaymentSave(amount, method, merchantId) {
             const self = this;
             let nparam = {
               selectedItems: self.selectedItems,
               userNo: self.sessionId,
               amount: amount,
               method: method,
-              merchantId: merchant_uid
+              merchantId: merchantId
             }
             $.ajax({
               url: "/payment/save.dox",
@@ -258,7 +259,7 @@
               success(res) {
                 if (res.result === "success") {
                   // ✅ POST 방식으로 결제 완료 페이지 이동
-                  location.href = "/product/view.do?merchantId=" + merchant_uid;
+                  location.href = "/payment/success.do?merchantId=" + merchantId;
                 } else {
                   alert("결제 정보 저장 실패");
                 }

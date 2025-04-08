@@ -80,10 +80,10 @@ public class PaymentController {
 	@ResponseBody
 	public String showPaymentSuccess(@RequestParam("merchantId") String merchantId, Model model) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+		System.out.println(">>>>>>>>" + merchantId);
 		// 1. 구매 내역 조회
 		resultMap = paymentService.getPaymentList(merchantId);
-		
+		System.out.println("중간 응답 resultMap: " + resultMap);
 	    // 2. 결제된 상품 예약 상태 처리 + 장바구니 삭제 처리
 		@SuppressWarnings("unchecked")
 		List<Payment> paymentList = (List<Payment>) resultMap.get("paymentList");
@@ -148,5 +148,16 @@ public class PaymentController {
 	    }
 
 	    return result;
+	}
+	
+	// 결제 후 요청사항 저장
+	@RequestMapping(value = "/payment/requestMessageSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String saveRequestMessages(@RequestBody Map<String, Object> data) throws Exception {
+	    List<Map<String, Object>> requests = (List<Map<String, Object>>) data.get("requests");
+
+	    Map<String, Object> result = paymentService.saveAllRequestMessages(requests);
+
+	    return new Gson().toJson(result);
 	}
 }

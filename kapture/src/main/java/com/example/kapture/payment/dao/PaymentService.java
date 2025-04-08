@@ -48,15 +48,14 @@ public class PaymentService {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
 	        List<Map<String, Object>> selectedItems = (List<Map<String, Object>>) map.get("selectedItems");
-
 	        int totalInserted = 0;
 	        for (Map<String, Object> item : selectedItems) {
 	            // 👇 안전하게 문자열 변환 후 파싱
 	            Integer basketNo = Integer.parseInt(item.get("basketNo").toString());
 	            Integer numPeople = Integer.parseInt(item.get("numPeople").toString());
-
+	            
 	            Basket basket = basketMapper.selectBasketByNo(basketNo);
-
+	            
 	            HashMap<String, Object> paymentData = new HashMap<>();
 	            paymentData.put("userNo", map.get("userNo"));
 	            paymentData.put("amount", map.get("amount"));
@@ -67,7 +66,8 @@ public class PaymentService {
 	            paymentData.put("basketNo", basketNo);
 
 	            int inserted = paymentMapper.insertPayment(paymentData);
-	            totalInserted += inserted;
+	            System.out.println(inserted + "<<<<<<<<<< 저장목록");
+	            totalInserted += inserted; 
 	        }
 
 	        resultMap.put("result", "success");
@@ -82,7 +82,9 @@ public class PaymentService {
 	public HashMap<String, Object> getPaymentList(String merchantId) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<>();
+		System.out.println(">>>>>>" + merchantId);
 		List<Payment> list = paymentMapper.selectPayment(merchantId);
+		 System.out.println("결제 내역: " + list);
 		resultMap.put("result", "success");
 		resultMap.put("paymentList", list);
 	    return resultMap;
@@ -115,6 +117,21 @@ public class PaymentService {
 		resultMap.put("num", num);
 	    return resultMap;
 	}
+
+	public Map<String, Object> saveAllRequestMessages(List<Map<String, Object>> requests) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<>();
+        try {
+            for (Map<String, Object> request : requests) {
+                paymentMapper.updateRequestMessage(request);  // 여기서 반복
+            }
+            resultMap.put("result", "success");
+        } catch (Exception e) {
+            resultMap.put("result", "fail");
+            resultMap.put("message", e.getMessage());
+        }
+        return resultMap;
+    }
 
 	
 
