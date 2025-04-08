@@ -76,13 +76,15 @@
 					class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
 					<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
 				</div>
-
-				<!-- 수정 버튼 -->
-				<div v-if="sessionId == tourInfo.userNo" class="mt-4">
-					<button @click="fnEdit" class="px-4 py-2 rounded bg-yellow-400 hover:bg-yellow-500 text-white">
-						수정
-					</button>
-				</div>
+			<div class="contents" v-html="tourInfo.description"></div>
+			<div v-if="sessionId == tourInfo.userNo">
+				<button @click="fnEdit">
+					수정
+				</button>
+				<button @click="fnDelete">
+					삭제
+				</button>
+			</div>
 
 				<!-- 후기 -->
 				<div class="bg-white rounded-xl shadow-lg pt-1 p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">
@@ -908,8 +910,7 @@
 					}
 				},
 				fnEdit() {
-					pageChange("/mypage/guide-edit.do", { tourNo: this.tourNo });
-
+					location.href = "/mypage/guide-edit.do?tourNo=" + this.tourNo;
 				},
 
 				fnDelete() {
