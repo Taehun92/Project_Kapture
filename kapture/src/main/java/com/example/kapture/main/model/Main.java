@@ -10,6 +10,11 @@ public class Main {
 	private double rating;
 	private String userFirstname;
 	private String userLastname;
-	
+	private String filePath;
+	private String duration;
+	private double price;
+	private String thumbnail;
+	private String rCreatedAt;
+	private String tourDate;
 	
 }
