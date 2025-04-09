@@ -9,7 +9,7 @@ body {
     padding: 0;
 }
 
-.modal-overlay {
+.chatbot-overlay {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -102,14 +102,37 @@ body {
 }
 
 .open-chat-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    padding: 10px 15px;
+    width: 130px;
+    padding: 14px 20px;
     background: #1E3A8A;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.open-weather-btn {
+    width: 130px;
+    padding: 14px 20px;
+    background: #1E3A8A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.sidebar {
+    height: 500px;
+    position : fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+}
+
+.weather-overlay {
+    position: fixed;
+    top : 20px;
+    right: 20px;
+    z-index: 1000;
 }
