@@ -416,7 +416,6 @@
                     sessionId: "${sessionId}",
                     toursList: [],
                     editTour: {},
-                    // tempTour: {},
                     today: new Date(),
                     siName: "",
                     siList: [],
