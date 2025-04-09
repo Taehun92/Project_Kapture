@@ -36,11 +36,13 @@ public class Tours {
 	private int userNo;
 	private String experience;
 	private String profileImage;
+	private String vehicle;
 	
 	private String pFilePath;
 	private String userFirstName;
 	private String gender;
 	private String rating;
 	
+	private String comment;
 	
 }

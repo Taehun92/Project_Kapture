@@ -17,15 +17,16 @@
 <body class="bg-white font-sans text-gray-800">
 	<jsp:include page="../common/header.jsp" />
 	
-	<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10">
+	<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
 	  <!-- 사이드바 -->
 	  <div class="w-56 bg-white shadow-md p-4 rounded">
 		<ul class="space-y-2 font-semibold">
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-schedule.do' }" href="/mypage/guide-schedule.do" class="block px-3 py-2 rounded hover:bg-blue-100">나의 스케줄</a></li>
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-mypage.do' }" href="/mypage/guide-mypage.do" class="block px-3 py-2 rounded hover:bg-blue-100">가이드 정보수정</a></li>
-		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }" href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-100">여행상품 등록</a></li>
-		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }" href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-100">판매내역</a></li>
+		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }" href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-950">여행상품 등록</a></li>
+		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }" href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-100">상품 목록</a></li>
 		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
+		  <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-qna.do' }" href="/mypage/guide-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a></li>
 		</ul>
 	  </div>
 	
@@ -122,7 +123,7 @@
     const app = Vue.createApp({
         data() {
             return {
-               tourNo : "${map.tourNo}",
+               tourNo : "",
 			   title: "",
 			   description: "",
 			   duration: "",
@@ -607,6 +608,8 @@
         },
         mounted() {
             let self = this;
+			const params = new URLSearchParams(window.location.search);
+			self.tourNo = params.get("tourNo") || "";
 			
 			if (this.sessionId == '') {
 				alert("로그인 후 이용해주세요.");

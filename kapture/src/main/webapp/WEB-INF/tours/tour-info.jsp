@@ -13,7 +13,7 @@
 		<script src="https://cdn.tailwindcss.com"></script>
 		<link rel="stylesheet" href="../../css/kapture-style.css">
 		<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
-        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+		<link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
 		<title>상품 상세 | kapture</title>
 	</head>
 
@@ -25,7 +25,7 @@
 				<div
 					class="bg-white rounded-xl shadow-lg p-4 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
 					<div class="w-full md:w-1/2">
-						<img class="rounded-xl shadow-md w-full transition-transform duration-300 hover:scale-105"
+						<img class="rounded-xl shadow-md w-full h-96 object-cover transition-transform duration-300 hover:scale-105"
 							:src="tourInfo.filePath" />
 					</div>
 					<div class="w-full md:w-1/2 flex flex-col gap-4">
@@ -34,7 +34,8 @@
 							<div class="w-160 h-1 bg-blue-950 mx-auto mt-2 rounded"></div>
 						</h1>
 						<div class="flex items-center gap-4 bg-blue-50 border border-gray-200 rounded-lg p-4">
-							<img :src="tourInfo.pfilePath" alt="가이드 사진" class="w-32 h-32 rounded-full border object-cover" />
+							<img :src="tourInfo.pfilePath" alt="가이드 사진"
+								class="w-32 h-32 rounded-full border object-cover" />
 							<div class="text-sm text-gray-800 space-y-2">
 								<p class="font-bold text-2xl">{{ tourInfo.userFirstName }}</p>
 								<p class="text-gray-600">성별: {{ tourInfo.gender === 'M' ? '남자' : '여자' }}</p>
@@ -42,35 +43,71 @@
 								<p class="text-gray-600 text-lg">소개: {{ tourInfo.experience }}</p>
 							</div>
 						</div>
-						<div class="grid grid-cols-3 gap-4 mt-6">
-							<!-- 👤 인원수 조절 -->
-							<div class="flex justify-center items-center gap-3 text-lg">
+						<!-- 📌 2. 금액 + 차량 정보 -->
+						<div class="flex justify-between items-center mt-3 ml-3 text-[16px]">
+							<!-- 💰 금액 -->
+							<div
+								class="flex flex-col md:flex-row md:items-center gap-2 text-green-600 font-semibold text-base md:text-lg">
+								<!-- 1인 가격 -->
+								<div>
+									₩{{ Number(tourInfo.price).toLocaleString() }}
+									<span class="text-sm text-gray-600 font-semibold">/ 인당</span>
+								</div>
+								<!-- 총 금액 -->
+								<div class="text-blue-950 font-extrabold gap-2 md:ml-4">
+									총 금액 : ₩{{ (Number(tourInfo.price) * count).toLocaleString() }}
+								</div>
+							</div>
+
+							<!-- 🚗 차량 정보 -->
+							<div class="flex items-center gap-3 text-blue-950 text-lg font-medium mr-5">
+								<img v-if="tourInfo.vehicle === 'COMPANY'" src="/svg/car-company.svg" class="w-7 h-7"
+									alt="회사 차량">
+								<img v-else-if="tourInfo.vehicle === 'GUIDE'" src="/svg/car.svg" class="w-7 h-7"
+									alt="가이드 차량">
+								<img v-else-if="tourInfo.vehicle === 'PUBLIC'" src="/svg/bus.svg" class="w-7 h-7"
+									alt="대중교통">
+								<span class="align-middle">
+									{{
+									tourInfo.vehicle === 'COMPANY' ? '회사 차량 제공' :
+									tourInfo.vehicle === 'GUIDE' ? '가이드 차량 이용' :
+									tourInfo.vehicle === 'PUBLIC' ? '대중교통 이용' : ''
+									}}
+								</span>
+							</div>
+						</div>
+
+						<!-- 📌 3. 인원수 + 찜/장바구니 -->
+						<div class="flex justify-between items-center mt-4">
+							<!-- 👥 인원수 -->
+							<div class="flex items-center text-xl gap-6 text-base">
 								<button @click="decrease"
-									class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">-</button>
-								<span>인원수 {{ count }}명</span>
+									class="px-5 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">-</button>
+								<span class="min-w-[100px] text-center">인원수 {{ count }}명</span>
 								<button @click="increase"
-									class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">+</button>
+									class="px-5 py-2 rounded bg-gray-200 hover:bg-gray-300 text-lg">+</button>
 							</div>
-						
-							<!-- ❤️ 찜 아이콘 -->
-							<div class="flex justify-center items-center">
-								<img :src="tourInfo.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
-									alt="찜 아이콘"
-									class="w-10 h-10 cursor-pointer transition-transform duration-200 hover:scale-110" 
-									@click="toggleFavorite(tourInfo)" />
-							</div>
-						
-							<!-- 🛒 장바구니 버튼 -->
-							<div class="flex justify-center items-center">
+
+							<!-- 💙 찜 + 장바구니 -->
+							<div class="flex items-center gap-4 mr-3">
+								<div class="flex items-center gap-2 cursor-pointer mr-5" @click="toggleFavorite(tourInfo)">
+									<img
+									  :src="tourInfo.isFavorite === 'Y' ? '/svg/taeguk-full.svg' : '/svg/taeguk-outline.svg'"
+									  alt="찜 아이콘"
+									  class="w-9 h-9 hover:scale-110 transition-transform"
+									/>
+									<span class="text-blue-950 font-semibold text-base">
+									  {{ tourInfo.isFavorite === 'Y' ? '찜 취소' : '찜 하기' }}
+									</span>
+								  </div>
 								<button @click="fnAddedToCart"
-									class="bg-blue-950 text-white px-6 py-3 rounded hover:bg-blue-700 shadow-lg text-lg font-semibold flex items-center gap-2">
+									class="bg-blue-950 text-white px-5 py-2.5 rounded hover:bg-blue-800 flex items-center gap-2 text-base font-medium shadow-sm">
 									🛒 <span>장바구니 담기</span>
 								</button>
 							</div>
 						</div>
 					</div>
 				</div>
-
 				<!-- 설명 -->
 				<div
 					class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
@@ -82,7 +119,8 @@
 				  </div>
 
 				<!-- 후기 -->
-				<div class="bg-white rounded-xl shadow-lg pt-1 p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">
+				<div
+					class="bg-white rounded-xl shadow-lg pt-1 p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">
 					<div class="mt-10 border-t pt-6 space-y-6">
 						<div class="flex items-center gap-3">
 							<div
@@ -104,14 +142,33 @@
 								<span class="w-12 text-right">{{ getReviewCount(n) }}명</span>
 							</div>
 						</div>
-					</div>	
-					<div class="bg-white rounded-xl shadow-lg p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">	
-						<div class="space-y-4">
-							<div v-for="review in reviewsList" class="border-t pt-4">
-								<div class="font-semibold">{{review.userFirstName}} {{review.userLastName}}</div>
-								<star-rating :rating="review.rating" :read-only="true" :show-rating="false"
-									:star-size="20" />
-								<p class="text-sm">{{ review.comment }}</p>
+					</div>
+					<!-- 후기 목록 -->
+					<div class="bg-white rounded-xl shadow-lg p-6 flex flex-col gap-6 border border-gray-200 mb-6">
+						<div class="space-y-6">
+							<div v-for="review in reviewsList" :key="review.reviewNo" class="border-t pt-4">
+								<!-- 이름 -->
+								<div class="flex justify-between items-center text-base font-bold text-blue-950">
+									<!-- 좌측: 이름 + 별점 -->
+									<div class="flex text-lg items-center gap-3">
+									  <span>{{ review.userFirstName }} {{ review.userLastName }}</span>
+									  <star-rating
+										:rating="Number(review.rating)"
+										:read-only="true"
+										:show-rating="false"
+										:star-size="20"
+									  />
+									</div>
+									<!-- 우측: 작성일 -->
+									<div class="text-sm text-gray-500 font-semibold">
+										{{ formatDate(new Date(review.rCreatedAt)) }}
+									</div>
+								  </div>
+								<!-- 코멘트 -->
+								<div
+									class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded text-gray-800 text-[15px] leading-relaxed whitespace-pre-line break-words">
+									{{ review.comment }}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -433,7 +490,7 @@
 					showCartButton: false,
 					tourDate: null,
 					dateList: [],
-					minDate: null,
+					minDate: new Date(),
 					maxDate: null,
 
 					cartList: [],
@@ -850,9 +907,9 @@
 				fnGetWishList() {
 					let self = this;
 
-					if(!self.sessionId){
-                        return;
-                    }
+					if (!self.sessionId) {
+						return;
+					}
 
 					let nparmap = {
 						userNo: parseInt(self.sessionId)

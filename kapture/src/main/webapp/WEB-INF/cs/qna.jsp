@@ -20,14 +20,21 @@
   <!-- 사이드바 -->
   <div class="w-56 bg-white shadow-md p-4 rounded">
     <ul class="space-y-2 font-semibold">
-      <li @click="goTo('notice')" class="cursor-pointer rounded px-3 py-2 hover:bg-blue-900 hover:text-white">
+      <li :class="{ 'bg-blue-950 text-white': activeMenu === 'notice' }" @click="goTo('notice')"
+          class="cursor-pointer rounded px-3 py-2 hover:bg-blue-100 hover:text-blue-950">
         공지사항
       </li>
-      <li @click="goTo('faq')" class="cursor-pointer rounded px-3 py-2 hover:bg-blue-900 hover:text-white">
+      <li :class="{ 'bg-blue-950 text-white': activeMenu === 'faq' }" @click="goTo('faq')"
+          class="cursor-pointer rounded px-3 py-2 hover:bg-blue-950 hover:text-white">
         FAQ
       </li>
-      <li class="text-red-600 bg-blue-100 rounded px-3 py-2">
+      <li :class="{ 'bg-blue-950 text-white': activeMenu === 'inquiry' }" @click="goTo('inquiry')"
+          class="cursor-pointer rounded px-3 py-2 hover:bg-blue-100 hover:text-blue-950">
         Q&A
+      </li>
+      <li :class="{ 'bg-blue-950 text-white': activeMenu === 'partnership' }" @click="goTo('partnership')"
+        class="cursor-pointer rounded px-3 py-2 hover:bg-blue-100 hover:text-blue-950">
+        제휴문의
       </li>
     </ul>
   </div>
@@ -75,7 +82,9 @@
         question: "",
         userNo: "${sessionId}",
         file: null,
-        fileWarning: ""
+        fileWarning: "",
+        sessionId: "${sessionId}",
+        activeMenu: 'qna'
       };
     },
     methods: {
@@ -123,14 +132,22 @@
         }
       },
       goTo(menu) {
+        let self = this;
         if (menu === 'notice') {
           window.location.href = '/cs/notice.do';
         } else if (menu === 'faq') {
           window.location.href = '/cs/faq.do';
         } else if (menu === 'inquiry') {
-          window.location.href = '/cs/qna.do';
+          if (!self.sessionId) {
+            alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+            window.location.href = '/login.do';
+          } else {
+            window.location.href = '/cs/qna.do';
+          }
+        } else if (menu === 'partnership') {
+          window.location.href = '/cs/partnership.do';
         }
-      }
+      },
     }
   });
   app.mount("#app");
