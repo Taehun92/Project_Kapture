@@ -191,9 +191,15 @@ public class AdminService {
 			String hashPwd = passwordEncoder.encode((String) map.get("password"));
 	        map.put("password", hashPwd);
 			int guideInfo = adminMapper.updateGuideInfo(map);
+			System.out.println("가이드 수정 쿼리 실행 후 : " + map);
 			int userInfo = adminMapper.updateUserInfo(map);
+			String pFilePath = (String)map.get("pFilePath");
+			int guideImg = 0;
+			if(pFilePath != null && pFilePath != "") {
+				guideImg = adminMapper.updateGuideImg(map);
+			}
 			String result;
-			if(guideInfo > 0 && userInfo > 0) {
+			if(guideInfo > 0 && userInfo > 0 && guideImg > 0) {
 				result = "success";
 			} else {
 				result = "fail";
@@ -232,9 +238,12 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			System.out.println(map);
+			
 			int result = adminMapper.insertGuideProfile(map);
-			System.out.println(result);
+			System.out.println("insertGuideProfile 이후 "+map);
+			int pFileNo = Integer.parseInt(String.valueOf(map.get("pFileNo")));
+			System.out.println("map.get(\"pFileNo\")"+pFileNo);
+			resultMap.put("pFileNo", pFileNo);
 			resultMap.put("result", result > 0 ? "success" : "fail");			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -525,5 +534,30 @@ public class AdminService {
 			 resultMap.put("result", e.getMessage());
 		 }
 		 return resultMap;
+	}
+	 // 가이드 추가(유저 정보, 가이드 정보)
+	 public HashMap<String, Object> addGuide(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println("insertNewUser 이전 " + map);
+			int insertUserResult = adminMapper.insertNewUser(map);
+			System.out.println("insertNewUser 이후 " + map);
+			int insertGuideResult = adminMapper.insertNewGuide(map);
+			String pFilePath = (String)map.get("pFilePath");
+			int guideImg = 0;
+			if(pFilePath != null && pFilePath != "") {
+				guideImg = adminMapper.updateGuideImg(map);
+			}
+			if(insertGuideResult > 0 && insertUserResult > 0 && guideImg > 0) {
+				resultMap.put("result", "success");
+			} else {
+				resultMap.put("result", "fail");
+			}
+		} catch (Exception e) {
+		    System.out.println(e.getMessage());
+		    resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
 	}
 }

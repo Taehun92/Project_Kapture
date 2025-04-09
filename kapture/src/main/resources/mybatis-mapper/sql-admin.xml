@@ -171,7 +171,7 @@
         		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
         		FROM GUIDE_IMG
        			GROUP BY P_GUIDE_NO
-    	) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
+    		) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
             AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
 		) I ON G.GUIDE_NO = I.P_GUIDE_NO
     </select>
@@ -179,7 +179,6 @@
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
 		SET 
-		<if test="profileImage != null">PROFILE_IMAGE = #{profileImage},</if>
 		<if test="language != null">LANGUAGE = #{language},</if>
 		<if test="experience != null">EXPERIENCE = #{experience},</if>
 			G_UPDATED_AT = SYSDATE
@@ -200,12 +199,17 @@
 			U_UPDATED_AT = SYSDATE
 		WHERE USER_NO = #{userNo}
 	</update>
-
-	<insert id="insertGuideProfile" parameterType="hashmap">
+	<!-- 가이드 프로필 수정(가이드번호) -->
+	<update id="updateGuideImg" parameterType="hashmap">
+		UPDATE GUIDE_IMG
+		SET P_GUIDE_NO = #{guideNo}
+		WHERE P_FILE_NO = #{pFileNo}
+	</update>
+	<!-- 프로필 이미지 저장-->
+	<insert id="insertGuideProfile" parameterType="hashmap" useGeneratedKeys="true" keyProperty="pFileNo" keyColumn="P_FILE_NO">
 		INSERT INTO GUIDE_IMG
-		VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
+			VALUES (GUIDE_IMG_SEQ.NEXTVAL, 0, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
-
 	<!-- 회원관리 유저정보 조회 -->
 	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
 		SELECT *
@@ -484,4 +488,14 @@
 	    DELETE FROM TOURS
 	    WHERE TOUR_NO = #{tourNo}
 	</delete>
+	<!-- 가이드 추가(유저 정보) -->
+	<insert id="insertNewUser" parameterType="hashmap" useGeneratedKeys="true" keyProperty="userNo" keyColumn="USER_NO">
+		INSERT INTO USERS
+		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, 'GUIDE', #{birthday}, #{address}, #{gender}, SYSDATE, SYSDATE, #{userFirstName}, null, null, 'Y', 'N', 'N' )
+	</insert>
+	<!-- 가이드 추가(가이드 정보) -->
+	<insert id="insertNewGuide" parameterType="hashmap" useGeneratedKeys="true" keyProperty="guideNo" keyColumn="GUIDE_NO">
+		INSERT INTO GUIDES
+		VALUES (GUIDES_SEQ.NEXTVAL, #{userNo}, #{language}, #{experience}, SYSDATE, SYSDATE)
+	</insert>
 </mapper>
