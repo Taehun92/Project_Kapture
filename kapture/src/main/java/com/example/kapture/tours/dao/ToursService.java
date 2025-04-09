@@ -83,5 +83,37 @@ public class ToursService {
 	}
 
 
+	public HashMap<String, Object> removeTour(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = toursMapper.deleteTour(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+			
+		} catch (Exception e) {
+      System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+
+	public HashMap<String, Object> toggleTourDeleteYn(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = toursMapper.toggleTourDeleteYn(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+			
+		} catch (Exception e) {
+      System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+
+
 	
 }

@@ -1,5 +1,6 @@
 package com.example.kapture.payment.controller;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,11 @@ public class PaymentController {
 	
 	@Autowired
 	private Environment env;
-
+	
+	private Map<String, Object> cachedRates = null;
+	
+	private LocalDate lastFetchedDate = null;
+	
 	
 	@RequestMapping("/payment.do")
     public String payment(Model model) throws Exception{
@@ -80,10 +85,10 @@ public class PaymentController {
 	@ResponseBody
 	public String showPaymentSuccess(@RequestParam("merchantId") String merchantId, Model model) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+		System.out.println(">>>>>>>>" + merchantId);
 		// 1. 구매 내역 조회
 		resultMap = paymentService.getPaymentList(merchantId);
-		
+		System.out.println("중간 응답 resultMap: " + resultMap);
 	    // 2. 결제된 상품 예약 상태 처리 + 장바구니 삭제 처리
 		@SuppressWarnings("unchecked")
 		List<Payment> paymentList = (List<Payment>) resultMap.get("paymentList");
@@ -103,34 +108,20 @@ public class PaymentController {
 	}
 	
 	
-	// 환율 계산 API
-	@RequestMapping("/exchangeRate/USD")
-	@ResponseBody
-    public Map<String, Object> getUsdExchangeRate() throws Exception {
-        String apiKey = env.getProperty("exchange.api.key"); // application.properties에 저장한 키
-        String urlStr = "https://v6.exchangerate-api.com/v6/" + apiKey + "/pair/USD/KRW";
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(urlStr, String.class);
-
-        JSONObject json = new JSONObject(response.getBody());
-        double rate = json.getDouble("conversion_rate");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("rate", rate);
-        return result;
-    }
-	
-	// 환율 계산 ( 일, 미, 중 )
+	// 환율 계산 (일, 미, 중)
 	@RequestMapping("/exchangeRate/all")
 	@ResponseBody
 	public Map<String, Object> getAllExchangeRates() throws Exception {
 	    String apiKey = env.getProperty("exchange.api.key"); // API 키
 	    RestTemplate restTemplate = new RestTemplate();
 
-	    Map<String, Object> result = new HashMap<>();
+	    // ✅ static 변수로 캐시 데이터 유지
+	    // (Spring에서 이 컨트롤러는 싱글톤으로 유지되므로 안전)
+	    if (cachedRates != null && lastFetchedDate != null && lastFetchedDate.equals(LocalDate.now())) {
+	        return cachedRates; // 오늘 이미 호출했다면 캐시 반환
+	    }
 
-	    // 통화 리스트
+	    Map<String, Object> result = new HashMap<>();
 	    Map<String, String> currencies = new HashMap<>();
 	    currencies.put("USD", "USD");
 	    currencies.put("JPY", "JPY");
@@ -147,6 +138,21 @@ public class PaymentController {
 	        result.put(code, rate);
 	    }
 
+	    // ✅ 캐시 갱신
+	    cachedRates = result;
+	    lastFetchedDate = LocalDate.now();
+
 	    return result;
+	}
+	
+	// 결제 후 요청사항 저장
+	@RequestMapping(value = "/payment/requestMessageSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String saveRequestMessages(@RequestBody Map<String, Object> data) throws Exception {
+	    List<Map<String, Object>> requests = (List<Map<String, Object>>) data.get("requests");
+
+	    Map<String, Object> result = paymentService.saveAllRequestMessages(requests);
+
+	    return new Gson().toJson(result);
 	}
 }

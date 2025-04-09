@@ -50,7 +50,7 @@ public class CsService {
 			resultMap.put("result", "fail");
 		}
 		return resultMap;
-}
+	}
 
 	public HashMap<String, Object> qnaAdd(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -69,4 +69,18 @@ public class CsService {
         result.put("qnaList", qnaList);
         return result;
     }
+
+	public HashMap<String, Object> savePartnership(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = csMapper.insertPartnership(map);
+			resultMap.put("num", num);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 }

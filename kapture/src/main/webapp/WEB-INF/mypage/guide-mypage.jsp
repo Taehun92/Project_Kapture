@@ -1,374 +1,210 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <!DOCTYPE html>
-    <html>
+    <html lang="ko">
 
     <head>
         <meta charset="UTF-8">
-        <title>마이페이지</title>
-        <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-        <!-- Vue.js -->
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>마이페이지 | kapture</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="../../css/kapture-style.css">
         <style>
-            /* 전체 레이아웃 설정 */
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: 'Noto Sans KR', sans-serif;
-                background-color: #fff;
-                color: #333;
-            }
-
-            .container {
-                /* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
-                display: flex;
-                max-width: 1200px;
-                min-height: calc(100vh - 300px);
-                margin: 0 auto;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-
-            /* 사이드 메뉴 */
-            .side-menu {
-                width: 200px;
-                height: 100%;
-                border: 1px solid #ddd;
-                position: sticky;
-                top: 0;
-                background: white;
-                transition: top 0.3s;
-            }
-
-            .side-menu ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .side-menu li {
-                margin-bottom: 10px;
-            }
-
-            .side-menu a {
-                text-decoration: none;
-                color: #333;
-                font-weight: 500;
-            }
-
-            .side-menu li a.active {
-                display: block;
-                background-color: #3e4a97;
-                color: white;
-                padding: 10px;
-                text-decoration: none;
-            }
-
-            .side-menu a:hover {
-                color: #ff5555;
-            }
-
-            /* 메인 콘텐츠 영역 */
-            .content-area {
-                flex: 1;
-            }
-
-            /* 공통 박스 스타일 */
-            .box {
-                border: 1px solid #ccc;
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-
-            .box .title {
-                margin: 0 0 15px;
-                font-size: 16px;
-                font-weight: bold;
-            }
-
-            /* 폼 그룹 공통 스타일 */
-            .form-group {
-                margin-bottom: 15px;
-                display: flex;
-                align-items: center;
-            }
-
-            .form-group label {
-                width: 115px;
-                font-weight: 600;
-                margin-right: 10px;
-            }
-
-            .form-group input[type="text"],
-            .form-group input[type="password"] {
-                flex: 1;
-                padding: 8px;
-                width: 300px;
-                border: 1px solid #ccc;
-            }
-
-            /* 필수 항목 표시 */
-            .required::after {
-                content: "*";
-                margin-left: 4px;
-                color: red;
-            }
-
-            /* 라디오 버튼 그룹 */
-            .radio-group {
-                display: flex;
-                align-items: center;
-            }
-
-            .radio-group label {
-                margin-right: 15px;
-                font-weight: normal;
-                cursor: pointer;
-            }
-
-            /* 저장하기 버튼 */
-            .btn-save {
-                margin-top: 20px;
-                padding: 10px 20px;
-                background-color: #3e4a97;
-                border: none;
-                color: #fff;
-                font-size: 14px;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-
-            .btn-save:hover {
-                background-color: #2e3d9c;
-            }
-
-            .center-box {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                margin-top: 150px;
-
-                /* 필요 시 조정 */
-                text-align: center;
-                gap: 10px;
-            }
-
-            .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-            }
-
-            /* 팝업(모달) 콘텐츠 스타일 */
-            .modal-content {
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 5px;
-                width: 450px;
-                margin-bottom: 15px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .modal-group {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
-                margin-bottom: 15px;
-            }
-
-            /* 모달 인풋 스타일 */
-            .modal-input {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                margin-bottom: 8px;
-                box-sizing: border-box;
-            }
-
-            /* 유효성 검사 메시지 스타일 */
-            .modal-validation {
-                font-size: 13px;
-                line-height: 1.4;
+            [v-cloak] {
+                display: none !important;
             }
         </style>
     </head>
 
-    <body>
-        <!-- 공통 헤더 -->
+    <body class="bg-white font-sans text-gray-800">
         <jsp:include page="../common/header.jsp" />
 
-        <div id="app" class="container">
-            <!-- 좌측 사이드 메뉴 -->
-            <div class="side-menu">
-                <ul>
+        <div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
+            <!-- 사이드바 -->
+            <div class="w-56 bg-white shadow-md p-4 rounded">
+                <ul class="space-y-2 font-semibold">
                     <li>
-                        <a :class="{ active: currentPage === 'guide-mypage.do' }"
-                            href="http://localhost:8080/mypage/guide-mypage.do">
-                            가이드 정보수정
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-schedule.do' }"
+                            href="/mypage/guide-schedule.do" class="block px-3 py-2 rounded hover:bg-blue-100">나의
+                            스케줄</a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'guide-schedule.do' }"
-                            href="http://localhost:8080/mypage/guide-schedule.do">
-                            나의 스케줄
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-mypage.do' }"
+                            href="/mypage/guide-mypage.do" class="block px-3 py-2 rounded hover:bg-blue-950">가이드
+                            정보수정</a>
                     </li>
                     <li>
-                        <a href="http://localhost:8080/cs/qna.do">
-                            문의하기
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }"
+                            href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-100">여행상품 등록</a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'user-unregister.do' }"
-                            href="http://localhost:8080/mypage/user-unregister.do">
-                            회원 탈퇴
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }"
+                            href="/mypage/guide-sales-list.do"
+                            class="block px-3 py-2 rounded hover:bg-blue-100">상품 목록</a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'guide-add.do' }"
-                            href="http://localhost:8080/mypage/guide-add.do">
-                            여행상품 등록
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do"
+                            class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a>
                     </li>
                     <li>
-                        <a :class="{ active: currentPage === 'guide-sales-list.do' }"
-                            href="http://localhost:8080/mypage/guide-sales-list.do">
-                            판매내역
-                        </a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-qna.do' }"
+                         href="/mypage/guide-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a>
                     </li>
                 </ul>
             </div>
 
-            <!-- 우측 메인 콘텐츠 -->
-            <div class="content-area">
-                <!-- 비밀번호 확인 -->
-                <template v-if="!pwdCheckFlg">
-                    <div class="center-box">
-                        <label>비밀 번호 : </label>
-                        <input type="password" v-model="confirmPassword" placeholder="비밀번호를 입력해주세요."
-                            @keyup.enter="fnCheckPassword">
-                        <button @click="fnCheckPassword">확인</button>
-                    </div>
-                </template>
-                <template v-if="pwdCheckFlg">
-                    <!-- 회원 정보 섹션 -->
-                    <div class="box">
-                        <h3 class="title">회원 정보</h3>
-                        <!-- 비밀번호 변경 -->
-                        <div class="form-group">
-                            <button class="btn-save" @click="fnNewPassword">비밀번호 변경</button>
-                        </div>
-                        <!-- 퍼스트 네임 -->
-                        <div class="form-group">
-                            <label for="firstName" class="required">FirstName</label>
-                            <input type="text" id="firstName" v-model="userInfo.userFirstName" disabled />
-                        </div>
-                        <!-- 라스트 네임 -->
-                        <div class="form-group">
-                            <label for="lastName">LastName</label>
-                            <input type="text" id="lastName" v-model="userInfo.userLastName" />
-                        </div>
-                        <!-- 연락처 -->
-                        <div class="form-group">
-                            <label for="phone" class="required">연락처</label>
-                            <input type="text" id="phone" v-model="userInfo.phone" />
-                        </div>
-                        <!-- 이메일 -->
-                        <div class="form-group">
-                            <label for="email" class="required">이메일</label>
-                            <input type="text" id="email" v-model="userInfo.email" disabled />
-                        </div>
-                        <!-- 주소 -->
-                        <div class="form-group">
-                            <label for="address">주소</label>
-                            <input type="text" id="address" v-model="userInfo.address" />
-                        </div>
-                        <!-- 성별 -->
-                        <div class="form-group">
-                            <label for="gender" class="required">성별</label>
-                            <div class="radio-group" style="flex: 1;">
-                                <label><input type="radio" value="M" v-model="userInfo.gender" /> 남성</label>
-                                <label><input type="radio" value="F" v-model="userInfo.gender" /> 여성</label>
+            <!-- 콘텐츠 영역 -->
+            <div class="flex-1 space-y-6">
+                <div v-if="!pwdCheckFlg" class="flex justify-center items-center h-80 space-x-4">
+                    <label class="font-semibold">비밀번호 :</label>
+                    <input type="password" v-model="confirmPassword" placeholder="비밀번호를 입력해주세요."
+                        class="border border-gray-300 px-4 py-2 rounded w-64" @keyup.enter="fnCheckPassword">
+                    <button @click="fnCheckPassword" class="bg-blue-950 text-white px-4 py-2 rounded">확인</button>
+                </div>
+
+                <div v-else class="space-y-6">
+                    <!-- 회원 정보 -->
+                    <div class="bg-white border rounded shadow p-6">
+                        <div class="text-lg font-bold mb-4">가이드 정보 수정</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 프로필이미지 -->
+                            <span class="form-group profile-upload-container">
+                                <span v-if="userinfo.P_FILE_PATH && userinfo.P_FILE_PATH !== ''">
+                                    <img :src="userinfo.P_FILE_PATH" alt="가이드사진" class="guide-img" />
+                                </span>
+                                <span v-else class="no-image">NO Image</span>
+                                <input type="file" @change="handleProfileUpload" />
+                            </span>
+                            <div>
+                                <label class="block font-semibold mb-1">FIRSTNAME <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" v-model="userInfo.USER_FIRSTNAME"
+                                    class="w-full border px-3 py-2 rounded" disabled />
                             </div>
-                        </div>
-                        <!-- 생년월일 -->
-                        <div class="form-group">
-                            <label for="birthday" class="required">생년월일</label>
-                            <input type="text" id="birthday" v-model="userInfo.birthday" disabled />
-                        </div>
-                    </div>
-                    <!-- 푸쉬알림 동의여부 -->
-                    <div class="box">
-                        <h3 class="title">푸쉬알림 동의여부</h3>
-                        <div class="form-group">
-                            <label style="width:auto;">수신 동의</label>
-                            <div class="radio-group">
-                                <label><input type="radio" value="Y" v-model="userInfo.pushYN" /> 예</label>
-                                <label><input type="radio" value="N" v-model="userInfo.pushYN" /> 아니요</label>
+                            <div>
+                                <label class="block font-semibold mb-1">LastName</label>
+                                <input type="text" v-model="userInfo.USER_LASTNAME"
+                                    class="w-full border px-3 py-2 rounded" />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">연락처 <span class="text-red-500">*</span></label>
+                                <input type="text" v-model="userInfo.PHONE" class="w-full border px-3 py-2 rounded" />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">이메일 <span class="text-red-500">*</span></label>
+                                <input type="text" v-model="userInfo.EMAIL" class="w-full border px-3 py-2 rounded"
+                                    disabled />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">주소</label>
+                                <input type="text" v-model="userInfo.ADDRESS" class="w-full border px-3 py-2 rounded" />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">생년월일 <span class="text-red-500">*</span></label>
+                                <input type="text" v-model="userInfo.BIRTHDAY" class="w-full border px-3 py-2 rounded"
+                                    disabled />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">성별 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" value="M" v-model="userInfo.GENDER"> 남성
+                                    </label>
+                                    <label class="flex items-center gap-2">
+                                        <input type="radio" value="F" v-model="userInfo.GENDER"> 여성
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">Language</label>
+                                <input type="text" v-model="userInfo.LANGUAGE" class="w-full border px-3 py-2 rounded"
+                                    placeholder="예:japanese, english, chinese" />
+                            </div>
+
+                            <div class="mb-4">
+                                <button @click="fnNewPassword" class="bg-blue-950 text-white px-4 py-2 rounded">비밀번호
+                                    변경</button>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block font-semibold mb-1">경험 또는 자기소개</label>
+                                <textarea v-model="userInfo.EXPERIENCE" rows="10"
+                                    class="w-full border px-3 py-2 rounded resize-none"
+                                    placeholder="여행 가이드로서의 경험이나 소개를 작성해주세요"></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 저장하기 버튼 -->
-                    <button class="btn-save" @click="saveInfo">저장하기</button>
-                </template>
-                <template v-if="showPasswordModal">
-                    <div class="modal-overlay" @click.self="closeModal">
-                        <div class="modal-content">
-                            <!-- 비밀번호 -->
-                            <div class="modal-group">
-                                <label for="newPassword1" class="required">비밀번호</label>
-                                <input type="password" id="newPassword1" v-model="newPassword1"
-                                       @input="validateNewPassword" class="modal-input" />
-                                <div v-if="newPassword1.length > 0 && !passwordValid" class="modal-validation">
-                                  <div :style="{ color: passwordRules.length ? 'green' : 'red' }">
-                                    {{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters' }}
-                                  </div>
-                                  <div :style="{ color: passwordRules.number ? 'green' : 'red' }">
-                                    {{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
-                                  </div>
-                                  <div :style="{ color: passwordRules.upper ? 'green' : 'red' }">
-                                    {{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
-                                  </div>
-                                  <div :style="{ color: passwordRules.lower ? 'green' : 'red' }">
-                                    {{ passwordRules.lower ? '✅ At least one lowercase letter' : '❌ At least one lowercase letter' }}
-                                  </div>
-                                  <div :style="{ color: passwordRules.special ? 'green' : 'red' }">
-                                    {{ passwordRules.special ? '✅ At least one special character' : '❌ At least one special character' }}
-                                  </div>
-                                </div>
-                            </div>
-                            <div class="modal-group">
-                                <label for="newPassword2" class="required">비밀번호 확인</label>
-                                <input type="password" id="newPassword2" v-model="newPassword2"
-                                    @input="validateNewPassword"   
-                                    @keyup.enter="fnChangePassword" class="modal-input" />
-                                <div v-if="newPassword2.length > 0 && passwordValid"
-                                     class="modal-validation"
-                                     :style="{ color: passwordsMatch ? 'green' : 'red' }">
-                                  {{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
-                                </div>
-                            </div>
-                            <button class="btn-save" @click="fnChangePassword">변경</button>
+                    <!-- 푸시알림 동의 -->
+                    <div class="bg-white border rounded shadow p-6">
+                        <div class="text-lg font-bold mb-4">푸쉬알림 동의여부</div>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" value="Y" v-model="userInfo.PUSHYN"> 예
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" value="N" v-model="userInfo.PUSHYN"> 아니요
+                            </label>
                         </div>
-                </template>
+                    </div>
+
+                    <!-- 저장 버튼 -->
+                    <div class="text-right">
+                        <button @click="saveInfo" class="bg-blue-950 text-white px-6 py-2 rounded">저장하기</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 모달 -->
+            <div v-cloak v-show="showPasswordModal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div
+                    class="bg-white rounded shadow-lg w-full max-w-md p-6 m-auto transform transition-all duration-300">
+                    <h2 class="text-lg font-bold mb-4">비밀번호 변경</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-semibold mb-1">비밀번호 <span class="text-red-500">*</span></label>
+                            <input type="password" v-model="newPassword1" @input="validateNewPassword"
+                                class="w-full border px-3 py-2 rounded" />
+                            <div v-if="newPassword1.length > 0 && !passwordValid" class="text-sm mt-2 space-y-1">
+                                <p
+                                    :class="{ 'text-green-600': passwordRules.length, 'text-red-500': !passwordRules.length }">
+                                    {{ passwordRules.length ? '✅ 6자 이상' : '❌ 6자 이상' }}</p>
+                                <p
+                                    :class="{ 'text-green-600': passwordRules.number, 'text-red-500': !passwordRules.number }">
+                                    {{ passwordRules.number ? '✅ 숫자 포함' : '❌ 숫자 포함' }}</p>
+                                <p
+                                    :class="{ 'text-green-600': passwordRules.upper, 'text-red-500': !passwordRules.upper }">
+                                    {{ passwordRules.upper ? '✅ 대문자 포함' : '❌ 대문자 포함' }}</p>
+                                <p
+                                    :class="{ 'text-green-600': passwordRules.lower, 'text-red-500': !passwordRules.lower }">
+                                    {{ passwordRules.lower ? '✅ 소문자 포함' : '❌ 소문자 포함' }}</p>
+                                <p
+                                    :class="{ 'text-green-600': passwordRules.special, 'text-red-500': !passwordRules.special }">
+                                    {{ passwordRules.special ? '✅ 특수문자 포함' : '❌ 특수문자 포함' }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">비밀번호 확인 <span class="text-red-500">*</span></label>
+                            <input type="password" v-model="newPassword2" @input="validateNewPassword"
+                                @keyup.enter="fnChangePassword" class="w-full border px-3 py-2 rounded" />
+                            <div v-if="newPassword2.length > 0 && passwordValid"
+                                :class="passwordsMatch ? 'text-green-600' : 'text-red-500'" class="text-sm mt-1">
+                                {{ passwordsMatch ? '✅ 비밀번호 일치' : '❌ 비밀번호 불일치' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-2">
+                        <button @click="closeModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">취소</button>
+                        <button @click="fnChangePassword"
+                            class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700">변경</button>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- 공통 푸터 -->
         <jsp:include page="../common/footer.jsp" />
 
         <script>
@@ -376,10 +212,14 @@
                 data() {
                     return {
                         userInfo: {
-                            birthday: "",
-                            gender: "",
-                            address: "",
+                            BIRTHDAY: "",
+                            GENDER: "",
+                            ADDRESS: "",
+                            EXPERIENCE: "",
+                            LANGUAGE: "",
+                            P_FILE_PATH: "",
                         },
+                        
                         confirmPassword: "",
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
@@ -397,29 +237,31 @@
                     // '저장하기' 버튼 클릭 시
                     saveInfo() {
                         let self = this;
-                        
+
                         // 서버로 전송할 데이터
                         let nparmap = {
-                            userLastName: self.userInfo.userLastName,
-                            phone: self.userInfo.phone,
-                            address: self.userInfo.address,
-                            gender: self.userInfo.gender,
-                            birthday: self.userInfo.birthday,
-                            pushYN: self.userInfo.pushYN,
+                            userLastName: self.userInfo.USER_FIRSTNAME,
+                            phone: self.userInfo.PHONE,
+                            address: self.userInfo.ADDRESS,
+                            gender: self.userInfo.GENDER,
+                            birthday: self.userInfo.BIRTHDAY,
+                            pushYN: self.userInfo.PUSHYN,
+                            experience : self.userInfo.EXPERIENCE,
+                            language : self.userInfo.LANGUAGE,
                             sessionId: self.sessionId,
                         };
                         // Ajax 요청
                         $.ajax({
-                            url: "/mypage/info-edit.dox", // 실제 처리할 URL로 수정
+                            url: "/mypage/guide-edit.dox", // 실제 처리할 URL로 수정
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
                             success: function (data) {
                                 console.log("서버 응답:", data);
-                                if(data.result === "success"){
+                                if (data.result === "success") {
                                     alert("회원정보가 저장되었습니다.");
                                     // location.href = "/mypage/user-purchase-history.do";
-                                } else{
+                                } else {
                                     alert("회원정보가 저장이 실패했습니다.");
                                 }
                             },
@@ -436,7 +278,7 @@
                         };
                         console.log(self.sessionId);
                         $.ajax({
-                            url: "/mypage/user-info.dox",
+                            url: "/mypage/guide-info.dox",
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -444,7 +286,7 @@
                                 if (data.result == "success") {
                                     console.log(data);
                                     self.userInfo = data.userInfo;
-                                    } else {
+                                } else {
                                     alert("정보를 가지고 오는데 실패했습니다.");
                                 }
                             }
@@ -516,6 +358,36 @@
                                 } else {
                                     alert("비밀번호 변경에 실패했습니다.");
                                 }
+                            }
+                        });
+                    },
+                    handleProfileUpload(event) {
+                        let self = this;
+                        const profile = event.target.files[0];
+                        if (!profile) return;
+                        const formData = new FormData();
+                        formData.append('profile', profile);
+                        // 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
+                        formData.append('guideNo', self.userInfo.GUIDE_NO);
+
+                        $.ajax({
+                            url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
+                            type: 'POST',
+                            data: formData,
+                            processData: false,   // 파일 업로드 시 필수: 데이터를 문자열로 처리하지 않음
+                            contentType: false,   // 필수: multipart/form-data로 전송
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.result === 'success') {
+                                    // 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
+                                    self.userInfo.P_FILE_PATH = data.newFilePath;
+                                } else {
+                                    alert('이미지 업로드에 실패했습니다.');
+                                }
+                            },
+                            error: function (err) {
+                                console.error('이미지 업로드 중 오류 발생:', err);
+                                alert('이미지 업로드 중 오류가 발생했습니다.');
                             }
                         });
                     },

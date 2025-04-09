@@ -50,6 +50,11 @@ public class CsController {
     public String search(Model model) throws Exception{
         return "cs/search";
     }
+	
+	@RequestMapping("/cs/partnership.do")
+    public String partnership(Model model) throws Exception{
+        return "cs/partnership";
+    }
 
 	
 	
@@ -91,5 +96,15 @@ public class CsController {
 		    HashMap<String, Object> resultMap = csService.searchAll(map);
 		    return new Gson().toJson(resultMap);
 		}
+		
+		// 제휴문의 추가
+		@RequestMapping(value = "/cs/partnershipSave.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+			public String partnershipSave(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+				HashMap<String, Object> resultMap = new HashMap<String, Object>();
+				
+				resultMap = csService.savePartnership(map);
+				return new Gson().toJson(resultMap);
+			}
 		
 }

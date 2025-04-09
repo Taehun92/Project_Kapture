@@ -2,6 +2,7 @@ package com.example.kapture.payment.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,5 +25,7 @@ public interface PaymentMapper {
 	void deleteBasketsByNo(@Param("basketNoList") List<Integer> basketNoList);
 
 	int deleteBasket(HashMap<String, Object> map);
+
+	void updateRequestMessage(Map<String, Object> request);
 
 }

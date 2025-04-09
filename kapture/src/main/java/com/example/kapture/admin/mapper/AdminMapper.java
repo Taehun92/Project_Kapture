@@ -102,6 +102,16 @@ public interface AdminMapper {
 		// 가이드 프로필 수정
 		int updateGuideImg(HashMap<String, Object> map);
 
+		List<Map<String, Object>> selectMonthlySales();
+
+		List<Map<String, Object>> selectLatestSales(Map<String, Object> param);
+
+		int selectRequestCount();
+
+		List<HashMap<String, Object>> selectLatestRequests(HashMap<String, Object> map);
+
+		
+
 
 		
 
