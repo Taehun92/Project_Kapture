@@ -90,7 +90,9 @@
 	    WHERE TITLE LIKE '%' || #{keyword} || '%'
 	       OR CONTENT LIKE '%' || #{keyword} || '%'
 	</select>
-
 	
-	
+	<insert id="insertPartnership" parameterType="hashmap">
+	    INSERT INTO PARTNERSHIP
+	    VALUES (PARTNERSHIP_SEQ.NEXTVAL, #{title}, #{content}, #{name}, #{email}, #{phone})
+	</insert>
 </mapper>

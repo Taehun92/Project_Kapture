@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.mypage.model.Inquiry;
 import com.example.kapture.mypage.model.Payments;
 import com.example.kapture.tours.model.Tours;
 
@@ -56,8 +57,9 @@ public interface MyPageMapper {
 
 	void deleteTourImg(HashMap<String, Object> map);
 
-	
 	void resetThumbnail(HashMap<String, Object> map);
 
 	void setThumbnail(HashMap<String, Object> map);
+	
+	List<Inquiry> selectInquiryList(HashMap<String, Object> map);
 }

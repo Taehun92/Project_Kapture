@@ -192,5 +192,12 @@
 		WHERE FILE_PATH = #{thumbnail}
 	</update>
 	
+	<select id="selectInquiryList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Inquiry">
+	    SELECT *
+	    FROM INQUIRIES
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY INQ_CREATED_AT DESC
+	</select>
+	
 </mapper>
 

@@ -25,7 +25,7 @@
         <label for="selectAll" class="text-gray-700 font-bold">전체 선택</label>
       </div>
 
-      <div v-if="basketList.length === 0" class="text-gray-500">장바구니에 상품이 없습니다.</div>
+      <div v-if="basketList.length === 0" class=" text-center text-gray-500">장바구니에 상품이 없습니다.</div>
 
       <div v-else class="space-y-4">
         <div v-for="item in basketList" :key="item.basketNo"
@@ -155,11 +155,11 @@
           getExchangeRate() {
             const self = this;
             $.ajax({
-              url: "/exchangeRate/USD",
+              url: "/exchangeRate/all",
               type: "GET",
               dataType: "json",
               success(data) {
-                self.exchangeRate = parseFloat(data.rate);
+                self.exchangeRate = data.USD;
                 self.$nextTick(() => {
                   self.loadPaypalButton();
                 });

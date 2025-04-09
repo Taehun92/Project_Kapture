@@ -16,7 +16,7 @@
 <body class="bg-white text-gray-800 text-[16px] tracking-wide">
 <jsp:include page="../common/header.jsp" />
 
-<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10">
+<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
     <!-- 사이드바 -->
     <div class="w-56 bg-white shadow-md p-4 rounded">
         <ul class="space-y-2 font-semibold">
@@ -24,6 +24,7 @@
             <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-purchase-history.do' }" href="/mypage/user-purchase-history.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
             <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-reviews.do' }" href="/mypage/user-reviews.do" class="block px-3 py-2 rounded hover:bg-blue-100">이용후기 관리</a></li>
             <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
+            <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-qna.do' }" href="/mypage/user-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a></li>
             <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }" href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-950">회원 탈퇴</a></li>
         </ul>
     </div>
