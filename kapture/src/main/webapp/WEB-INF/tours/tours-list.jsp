@@ -57,15 +57,16 @@
             </div>
             
             <!-- 지역별 배너 -->
-            <div class="relative h-64 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
+            <div class="relative h-96 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
                 :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
-                <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center px-4">
-                    <h1 class="text-white text-3xl font-bold mb-4">주요 관광지</h1>
-                    <div class="flex flex-wrap gap-2 justify-center">
+                <div class="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center px-4">
+                    <h1 class="text-white text-4xl font-bold mb-4">주요 관광지</h1>
+                    <div class="flex flex-wrap gap-3 mt-6 justify-center">
                         <button v-for="region in regions" :key="region.region"
                             @mouseover="hoveredRegionImage = region.image"
-                            @mouseleave="hoveredRegionImage = null" @click="fnRegionalTours(region.siNo)"
-                            class="px-4 py-2 bg-blue-700 text-white hover:bg-blue-950 rounded text-sm font-semibold">
+                            @mouseleave="hoveredRegionImage = null"
+                            @click="selectOnlyThisRegion(region.siNo)"
+                            class="px-5 py-3 bg-blue-950 text-white hover:bg-blue-700 rounded text-base font-semibold transition-all duration-200">
                             {{ region.region }}
                         </button>
                     </div>
@@ -139,11 +140,8 @@
                             </div>
                         </div>
                     </div>
-
-
                     <div class="mt-32">
-                        <button
-                            class="w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow ">
+                        <button  @click="goToAirbnb" class="w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow">
                             🏨 숙소 찾기
                         </button>
                     </div>
@@ -185,15 +183,20 @@
                             <img :src="tour.filePath" alt="썸네일" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs text-gray-500 font-bold">{{ formatDate(tour.tourDate) }}</span>
-                                    <span class="text-sm text-blue-600"> # {{ tour.themeName }}</span>
+                                    <span class="text-sm text-gray-600 font-bold">{{ formatDate(tour.tourDate) }}</span>
+                                    <span class="text-gray-600 text-xs"> ⏱ {{ tour.duration }}</span>
+                                    <span class="text-sm text-blue-700"> # {{ tour.themeName }}</span>
                                     <img :src="tour.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
                                         alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
                                 </div>
-                                <div class="text-lg font-semibold mb-1 truncate">{{ tour.title }}</div>
-                                <div class="text-sm text-gray-600 h-12 overflow-hidden">{{ truncateText(tour.description) }}</div>
+                                <div class="text-xl font-bold mb-1 truncate">{{ tour.title }}</div>
+                                <div class="text-sm text-gray-400 h-12 overflow-hidden">{{ truncateText(tour.description) }}</div>
                                 <div class="flex justify-between items-center mt-3">
-                                    <span class="text-yellow-500 text-sm">⭐ {{ tour.rating }}</span>
+                                    <span class="text-yellow-500 text-sm flex items-center gap-1">
+                                        <span>⭐</span>
+                                        <span>{{ tour.rating || 0 }}</span>
+                                        <span>/ 5</span>
+                                    </span>
                                     <span class="font-bold text-gray-800"> ₩ {{ tour.price.toLocaleString() }}</span>
                                 </div>
                                 <button @click="goToTourInfo(tour.tourNo)"
@@ -539,7 +542,7 @@
                     selectedLanguages: [],
                     selectedThemes: [],
 
-                    keyword: "${keyword}",
+                    keyword: "",
 
                     sessionId: "${sessionId}",
                     showModal: false,
@@ -610,7 +613,7 @@
                     return year + '-' + month + '-' + day;
                 },
 
-                truncateText(text, maxLength = 30) {
+                truncateText(text, maxLength = 40) {
                     if (!text) return '';
                     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
                 },
@@ -623,15 +626,16 @@
                 toggleFilter(type) {
                     this.filters[type] = !this.filters[type];
                 },
-                fnToursList() {
+                fnToursList(keyword) {
                     const self = this;
                     const nparmap = {
                         selectedDates: JSON.stringify(self.selectedDates),
                         selectedRegions: JSON.stringify(self.selectedRegions),
                         selectedLanguages: JSON.stringify(self.selectedLanguages),
                         selectedThemes: JSON.stringify(self.selectedThemes),
+                        keyword : keyword
                     };
-
+                    console.log(">>>>>>>>>>>" + nparmap);
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
@@ -645,6 +649,7 @@
                         }
                     });
                 },
+
                 goToTourInfo(tourNo) {
                     location.href = "/tours/tour-info.do?tourNo=" + tourNo;
                 },
@@ -849,7 +854,10 @@
                     });
                 },
 
-
+                selectOnlyThisRegion(siNo) {
+                    this.selectedRegions = [siNo]; // 기존 필터 제거하고 이 지역만 선택
+                    this.fnToursList();           // 필터 적용
+                },
 
                 toggleFavorite(tour) {
                     let self = this;
@@ -912,7 +920,12 @@
                 },
                 fnFindLocation() {
                     location.href = "/course.do";
+                },
+
+                goToAirbnb() {
+                    window.open("https://www.airbnb.co.kr", "_blank");
                 }
+
             },
 
             created() {
@@ -921,13 +934,15 @@
 
                 if (keyword) {
                     this.keyword = keyword; // 검색창에 표시
-                    this.fnGetSearchResult(keyword); // 검색 로직 실행
+                    this.fnToursList(keyword); // 검색 로직 실행
                 }
             },
 
             mounted() {
                 let self = this;
-                self.fnToursList();
+                if (!self.keyword) {
+                    self.fnToursList(); // keyword가 없는 경우에만 호출
+                }
                 self.fnGetMinTourDate();
                 self.fnGetMaxTourDate();
                 self.fnGetTourDateList();

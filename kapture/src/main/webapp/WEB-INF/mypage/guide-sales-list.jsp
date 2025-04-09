@@ -16,7 +16,7 @@
 <body class="bg-white text-gray-800 text-[16px] tracking-wide">
 <jsp:include page="../common/header.jsp" />
 
-<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10">
+<div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
   <!-- 사이드바 -->
   <div class="w-56 bg-white shadow-md p-4 rounded">
     <ul class="space-y-2 font-semibold">
@@ -25,6 +25,7 @@
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-add.do' }" href="/mypage/guide-add.do" class="block px-3 py-2 rounded hover:bg-blue-100">여행상품 등록</a></li>
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }" href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-950">판매내역</a></li>
       <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
+      <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-qna.do' }" href="/mypage/guide-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a></li>
     </ul>
   </div>
 

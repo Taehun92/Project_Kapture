@@ -6,7 +6,7 @@
 	
 	<select id="selectToursList" parameterType="hashmap" resultType="com.example.kapture.tours.model.Tours">
 		SELECT DISTINCT 
-    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.T_CREATED_AT, T.T_UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
+    	T.TOUR_NO, T.GUIDE_NO, T.TITLE, T.DURATION, TO_CHAR(T.DESCRIPTION) AS DESCRIPTION, T.PRICE, T.MAX_PEOPLE, T.TOUR_DATE, T.T_CREATED_AT, T.T_UPDATED_AT, T.DELETEYN, T.SI_NO, T.GU_NO, T.THEME_NO,
     	M.*, I.*, R.*, G.*, TEMP1.*
 		FROM TOURS T
 		INNER JOIN THEME M ON T.THEME_NO = M.THEME_NO
@@ -28,29 +28,32 @@
 		<if test="siNo != null and siNo == 999">
 			AND T.SI_NO IN(34, 37, 26, 38, 25, 22, 29, 24, 33, 36)
 		</if>
+		<if test="keyword != null">
+			AND T.TITLE LIKE '%' || #{keyword} || '%'
+		</if>
 		<if test="selectedDates != null and selectedDates.size() > 0">
         	AND TOUR_DATE BETWEEN
-        <foreach collection="selectedDates" item="item" open="" close="" separator=" AND ">
-            TO_DATE(#{item}, 'YY/MM/DD')
-        </foreach>
+	        <foreach collection="selectedDates" item="item" open="" close="" separator=" AND ">
+	            TO_DATE(#{item}, 'YY/MM/DD')
+	        </foreach>
    		</if>
 		<if test="selectedThemes != null and selectedThemes.size() > 0">
         	AND T.THEME_NO IN
-        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
-            #{item}
-        </foreach>
+	        <foreach collection="selectedThemes" item="item" open="(" close=")" separator=",">
+	            #{item}
+	        </foreach>
    		</if>
    		<if test="selectedRegions != null and selectedRegions.size() > 0">
         	AND T.SI_NO IN
-        <foreach collection="selectedRegions" item="item" open="(" close=")" separator=",">
-            #{item}
-        </foreach>
+	        <foreach collection="selectedRegions" item="item" open="(" close=")" separator=",">
+	            #{item}
+	        </foreach>
    		</if>
    		<if test="selectedLanguages != null and selectedLanguages.size() > 0">
         	AND 
-        <foreach collection="selectedLanguages" item="item" separator=" OR ">
-            LANGUAGE LIKE '%' || #{item} || '%'
-        </foreach>
+	        <foreach collection="selectedLanguages" item="item" separator=" OR ">
+	            LANGUAGE LIKE '%' || #{item} || '%'
+	        </foreach>
    		</if>
    		ORDER BY T.TOUR_NO 
 	</select>
@@ -69,8 +72,16 @@
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND THUMBNAIL = 'Y'
 		INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
-		LEFT JOIN GUIDE_IMG GI ON G.GUIDE_NO = GI.P_GUIDE_NO
-		WHERE T.TOUR_NO = #{tourNo}
+		LEFT JOIN(
+		  SELECT GI.*
+		  FROM GUIDE_IMG GI
+		  INNER JOIN (
+		     SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+		     FROM GUIDE_IMG
+		     GROUP BY P_GUIDE_NO
+		  ) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+		) GI ON GI.P_GUIDE_NO = T.GUIDE_NO
+		WHERE T.TOUR_NO =  #{tourNo}
 	</select>
 	
 </mapper>

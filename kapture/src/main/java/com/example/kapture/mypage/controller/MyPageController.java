@@ -53,6 +53,12 @@ public class MyPageController {
 		public String userUnRegister(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			return "/mypage/user-unregister";
 		}
+		// 문의 내역 조회 페이지
+		@RequestMapping("/mypage/user-qna.do")
+		public String userQna(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			return "/mypage/user-qna";
+		}
+		
 		
 	
 //---------------------------------------------------------dox---------------------------------------------------------------------------
@@ -176,7 +182,12 @@ public class MyPageController {
 		public String guideReviews(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			request.setAttribute("map", map);
 			return "/mypage/guide-reviews";
-		}		
+		}
+		// 문의 내역 조회 페이지
+		@RequestMapping("/mypage/guide-qna.do")
+		public String guideQna(Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			return "/mypage/guide-qna";
+		}
 		
 		// 가이드 글쓰기
 		@RequestMapping(value = "/mypage/guide-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -338,5 +349,15 @@ public class MyPageController {
 			resultMap = myPageService.resetThumbnail(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		// 문의 내역 조회
+		@RequestMapping(value = "/mypage/getInquiryList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String getInquiryList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			resultMap = myPageService.getInquiryList(map);
+			return new Gson().toJson(resultMap);
+		}
+		
 }
 
