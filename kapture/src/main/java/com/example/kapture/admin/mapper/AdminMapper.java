@@ -10,6 +10,7 @@ import com.example.kapture.admin.model.OrderInfo;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.tours.model.Tours;
 
 @Mapper
 public interface AdminMapper {
@@ -86,6 +87,20 @@ public interface AdminMapper {
 		int selectThemeTotalCount();
 
 		List<Map<String, Object>> selectLatestReviews();
+		// 상품관리 조회
+		List<Tours> selectToursManagementList(HashMap<String, Object> map);
+		// 상품관리 총 갯수
+		int selectToursTotalCount(HashMap<String, Object> map);
+		// 상품관리 수정
+		int updateTour(HashMap<String, Object> map);
+		// 상품관리 삭제
+		int deleteTour(HashMap<String, Object> map);
+		// 가이드 추가(가이드 정보)
+		int insertNewGuide(HashMap<String, Object> map);
+		// 가이드 추가(유저 정보)
+		int insertNewUser(HashMap<String, Object> map);
+		// 가이드 프로필 수정
+		int updateGuideImg(HashMap<String, Object> map);
 
 		List<Map<String, Object>> selectMonthlySales();
 
