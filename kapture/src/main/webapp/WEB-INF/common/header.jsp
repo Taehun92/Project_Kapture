@@ -24,7 +24,7 @@
                         <input 
                             v-model="keyword" 
                             type="text" 
-                            placeholder="상품을 검색하세요..." 
+                            placeholder="상품 제목을 검색하세요..." 
                             @keyUp.enter="fnSearch"
                             class="bg-transparent focus:outline-none text-base w-full"
                         />
@@ -37,7 +37,7 @@
                 </div>
         
                 <!-- 메뉴 -->
-                <div class="flex items-center gap-6 text-[1.75rem] font-extrabold text-gray-700 whitespace-nowrap">
+                <div class="flex items-center gap-6 text-[1.75rem] font-black text-gray-700 whitespace-nowrap">
                     <a href="/tours/list.do" class="hover:text-blue-700">여행상품</a>
                     <a href="/request/list.do" class="hover:text-blue-700">요청게시판</a>
                 </div>

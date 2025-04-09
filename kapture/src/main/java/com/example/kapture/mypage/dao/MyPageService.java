@@ -14,6 +14,7 @@ import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.mypage.model.Inquiry;
 import com.example.kapture.mypage.model.Payments;
 import com.example.kapture.tours.model.Tours;
 
@@ -347,5 +348,19 @@ public class MyPageService {
 	    return resultMap;
 	}
 	
+	// 문의 내역 조회
+	public HashMap<String, Object> getInquiryList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+	        List<Inquiry> list = myPageMapper.selectInquiryList(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("list", list);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 	
 }
