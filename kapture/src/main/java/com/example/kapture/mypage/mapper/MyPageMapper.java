@@ -18,7 +18,8 @@ public interface MyPageMapper {
 
 	Login selectUser(HashMap<String, Object> map);
 
-	void userInfoUpdate(HashMap<String, Object> map);
+	int userInfoUpdate(HashMap<String, Object> map);
+	
 
 	List<Payments> selectPayList(HashMap<String, Object> map);
 
@@ -60,4 +61,10 @@ public interface MyPageMapper {
 	void resetThumbnail(HashMap<String, Object> map);
 
 	void setThumbnail(HashMap<String, Object> map);
+
+	HashMap<String, Object> selectGuideInfo(HashMap<String, Object> map);
+
+
+	int updateGuideInfo(HashMap<String, Object> map);
+
 }
