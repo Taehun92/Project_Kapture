@@ -3,6 +3,7 @@ package com.example.kapture.admin.controller;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -216,6 +217,7 @@ public class AdminController {
 		resultMap = adminService.userInquiriesList(map);
 	    return new Gson().toJson(resultMap);
 	}
+
 	//리뷰 관리 리스트 	
 	@RequestMapping(value = "/admin-review.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -295,12 +297,11 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getThemeSummary();
 	    return new Gson().toJson(resultMap);
 	}
-	
+	//대시보드 4번 리뷰차트 
 	@RequestMapping(value = "/admin/review/latest.dox", method = RequestMethod.POST)
 	@ResponseBody
 	public String getLatestReviews() {
 	    HashMap<String, Object> resultMap = adminService.getLatestReviews();
-	    System.out.println("✅ 리뷰 최신 5건 컨트롤러 도착!");
 	    return new Gson().toJson(resultMap);
 	}
 	// 상품관리 조회
@@ -335,4 +336,27 @@ public class AdminController {
 		resultMap = adminService.addGuide(map);
 	    return new Gson().toJson(resultMap);
 	}
+
+	//대시보드 3번 월판매율 
+	@RequestMapping(value = "/admin/sales/monthly.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getMonthlySales() {
+	    HashMap<String, Object> resultMap = adminService.getMonthlySales(); // 바로 호출
+	    return new Gson().toJson(resultMap);
+	}
+	//대시보드 5번 최근판매한 상품 5개 
+	@RequestMapping(value = "/admin/sales/latest.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getLatestSales() {
+	    HashMap<String, Object> resultMap = adminService.getLatestSales();
+	    return new Gson().toJson(resultMap);
+	}
+	//요청 게시판 글 5개 
+	@RequestMapping(value = "/admin/request/latest.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getRequestSummary(@RequestParam HashMap<String, Object> map) {
+	    return new Gson().toJson(adminService.getLatestRequests(map));
+	}
+
+
 }

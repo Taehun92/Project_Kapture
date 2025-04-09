@@ -1,17 +1,20 @@
 package com.example.kapture.mypage.dao;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.common.model.Reviews;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.mypage.model.Inquiry;
 import com.example.kapture.mypage.model.Payments;
 import com.example.kapture.tours.model.Tours;
 
@@ -65,23 +68,25 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
-	// 회원정보 수정
+	// 회원정보 수정-------------------------------------------------------
+
 	public HashMap<String, Object> userInfoEdit(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		try {
-			
-	        myPageMapper.userInfoUpdate(map);
+	    HashMap<String, Object> resultMap = new HashMap<>();
+
+	    try {
+	        myPageMapper.userInfoUpdate(map); // USERS 테이블 정보 수정
 	        resultMap.put("result", "success");
-	        
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			resultMap.put("result", "fail");
-		}
-		return resultMap;
+	    } catch (Exception e) {
+	        System.out.println(e.getMessage());
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
 	}
 
+
+
+	
 	// 구매내역 리스트
 	public HashMap<String, Object> getPayList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -204,6 +209,20 @@ public class MyPageService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> getGuideInfo(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        HashMap<String, Object> user = myPageMapper.selectGuideInfo(map);
+
+	        resultMap.put("result", "success");
+	        resultMap.put("userInfo", user);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+	
 	public HashMap<String, Object> getGuideSchedule(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
@@ -276,7 +295,9 @@ public class MyPageService {
 	    resultMap.put("totalCount", totalCount);
 	    
 	    return resultMap;
+
     }
+	
 	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -286,8 +307,6 @@ public class MyPageService {
 		resultMap.put("result", "success");
 		
 		return resultMap;
-		
-
 	}
 	
 	
@@ -310,6 +329,38 @@ public class MyPageService {
 		
 		return resultMap;		
 	}
+	public HashMap<String, Object> updateGuideInfo(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+
+	    try {
+	        // GUIDE 테이블 정보 업데이트 (예: 경험, 사용 언어 등)
+	        int result = myPageMapper.updateGuideInfo(map);
+
+	        // USERS 테이블 기본 정보도 같이 수정 (선택 사항)
+	        result += myPageMapper.userInfoUpdate(map);
+
+	        resultMap.put("result", result > 1 ? "success" : "fail");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
+	}
 	
+	// 문의 내역 조회
+	public HashMap<String, Object> getInquiryList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+	        List<Inquiry> list = myPageMapper.selectInquiryList(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("list", list);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 	
 }

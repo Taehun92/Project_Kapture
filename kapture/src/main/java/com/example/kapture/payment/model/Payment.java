@@ -12,7 +12,7 @@ public class Payment {
 	private String paymentDate; 
 	private String paymentStatus; 
 	private String method;
-	
+	private String merchantId;
 	private int basketNo;
 	private int numPeople;
 	

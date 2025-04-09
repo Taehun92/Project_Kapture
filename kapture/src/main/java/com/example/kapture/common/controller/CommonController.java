@@ -99,6 +99,42 @@ public class CommonController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 날씨 정보
+	@RequestMapping(value = "/common/selectSi.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String selectSi(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.selectSi(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/common/selectGu.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String selectGu(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.selectGu(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/common/selectDong.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String selectDong(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.selectDong(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/common/selectXY.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String selectXY(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = commonService.selectXY(map);
+		return new Gson().toJson(resultMap);
+	}
 	
 	
 	

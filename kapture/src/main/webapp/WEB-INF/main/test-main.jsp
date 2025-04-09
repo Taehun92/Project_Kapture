@@ -16,11 +16,146 @@
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-container {
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background: #e9ecef;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background: white;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            height: 40px;
+            border: none;
+            resize: none;
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .open-chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 <body class="bg-white text-gray-800">
 <jsp:include page="../common/header.jsp"></jsp:include>
 
 <div id="app" class="p-6">
+
+    <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+
+        <div class="modal-overlay" v-if="showChat">
+            <div class="chat-container">
+                <div class="chat-header">
+                    Gemini 챗봇
+                    <button class="close-btn" @click="showChat = false">✕</button>
+                </div>
+                <div class="chat-box" ref="chatBox">
+                    <div v-for="msg in messages" :class="['message', msg.type]">
+                        {{ msg.text }}
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                    <button @click="sendMessage">전송</button>
+                </div>
+            </div>
+        </div>
 
     <!-- Hero Section -->
     <div class="relative mb-10">
@@ -66,26 +201,52 @@
         </div>
     </div>
 
+    
     <!-- 추천 리뷰 -->
-    <div class="mb-10">
-        <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
-        <div class="space-y-6">
-            <div v-for="item in limitedReviewList" class="p-4 bg-gray-100 rounded-md shadow">
-                <div class="text-sm text-gray-600 mb-1">
-                    작성자: {{ item.userFirstname }} <span v-if="item.userLastname"> {{ item.userLastname }}</span>
-                </div>
-                <div class="font-semibold">제목: {{ item.title }}</div>
-                <div class="text-gray-800 mb-2">내용: {{ item.comment }}</div>
-                <div>
-                    평점:
-                    <star-rating :rating="item.rating" :read-only="true" :star-size="10"
-                        :increment="1" :border-width="5" :show-rating="false"
-                        :rounded-corners="true"
-                        class="inline-block align-middle"></star-rating>
+<div class="mb-10">
+    <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
+    <div class="space-y-6">
+        <div v-for="item in limitedReviewList" class="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition">
+            <div class="flex items-start gap-4">
+                <!-- 썸네일 이미지 -->
+                <img :src="item.filePath" alt="상품 이미지"
+                     class="w-20 h-20 object-cover rounded-full shadow" />
+
+                <!-- 리뷰 정보 -->
+                <div class="flex-1">
+                    <!-- 작성자 & 작성일 -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-1">
+                        <span>👤 {{ item.userFirstname }} {{ item.userLastname || '' }}</span>
+                        <span>🕒 {{ item.rCreatedAt }}</span>
+                    </div>
+
+                    <!-- 제목 -->
+                    <div class="text-lg font-semibold text-gray-800 mb-1">{{ item.title }}</div>
+
+                    <!-- 투어 정보 -->
+                    <div class="text-sm text-gray-600 mb-1">
+                        📅 투어 날짜: <span class="font-medium">{{ item.tourDate }}</span>
+                        &nbsp;| 💸 가격: <span class="font-medium">₩{{ item.price.toLocaleString() }}</span>
+                        &nbsp;| ⏱ {{ item.duration }}
+                    </div>
+
+                    <!-- 내용 -->
+                    <p class="text-gray-700 text-sm mb-2 leading-relaxed">📝 {{ item.comment }}</p>
+
+                    <!-- 평점 -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600">⭐ 평점:</span>
+                        <star-rating :rating="item.rating" :read-only="true" :star-size="14"
+                                     :increment="1" :border-width="3" :show-rating="false"
+                                     :rounded-corners="true"
+                                     class="inline-block align-middle"></star-rating>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 </div>
 
@@ -99,7 +260,10 @@
                     swiper: null,
                     toursList: [],
                     sessionId: "${sessionId}",
-                    reviewList : []
+                    reviewList : [],
+                    userInput: "",
+                    messages: [],
+                    showChat: false,
                 };
             },
 
@@ -223,9 +387,37 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
-                            console.log(data);
+                            console.log('리뷰 데이타 : ', data);
                             self.reviewList = data.reviewList;
                         }
+                    });
+                },
+                sendMessage() {
+                    if (this.userInput.trim() === "") return;
+
+                    this.messages.push({ text: this.userInput, type: 'user' });
+                    const inputText = this.userInput;
+                    this.userInput = "";
+                    this.scrollToBottom();
+
+                    $.ajax({
+                        url: "/gemini/chat",
+                        type: "GET",
+                        data: { input: inputText },
+                        success: (response) => {
+                            this.messages.push({ text: response, type: 'bot' });
+                            this.scrollToBottom();
+                        },
+                        error: (xhr) => {
+                            this.messages.push({ text: "오류 발생: " + xhr.responseText, type: 'bot' });
+                            this.scrollToBottom();
+                        }
+                    });
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatBox = this.$refs.chatBox;
+                        chatBox.scrollTop = chatBox.scrollHeight;
                     });
                 }
 

@@ -23,4 +23,6 @@ public interface CsMapper {
 	List<HashMap<String, Object>> searchFaq(HashMap<String, Object> map);
 
 	List<HashMap<String, Object>> searchQna(HashMap<String, Object> map);
+
+	int insertPartnership(HashMap<String, Object> map);
 }
