@@ -91,8 +91,28 @@
 		WHERE THEME_NO = #{themeNo}
 	</select>
 	
+	<!--날씨 정보-->
 	
+	<select id="selectSi" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
+		SELECT DISTINCT SI FROM AREA
+	</select>
 	
+	<select id="selectGu" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
+		SELECT DISTINCT GU
+		FROM AREA
+		WHERE SI = #{si} AND GU IS NOT NULL
+	</select>
+	
+	<select id="selectDong" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
+		SELECT DONG
+		FROM AREA
+		WHERE GU = #{gu} AND DONG IS NOT NULL
+	</select>
+	
+
+	<select id="selectXY" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
+		SELECT NX, NY FROM AREA WHERE SI = #{si} AND DONG = #{dong}
+	</select>
 	
 </mapper>
 
