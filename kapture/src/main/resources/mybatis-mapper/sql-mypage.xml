@@ -12,20 +12,64 @@
 	<update id="userInfoUpdate" parameterType="hashmap">
 		UPDATE USERS
 	    SET PHONE = #{phone},
-	    	PUSHYN = #{pushYN},
-	    	GENDER = #{gender},
-	    	<if test="address != null">
-	    		ADDRESS = #{address},
-	    	</if>
-	    	U_UPDATED_AT = SYSDATE,
-	    	<if test="birthday != null">
-	    		BIRTHDAY = #{birthday},
-	    	</if>
-	    	<if test="userLastName != null">
-	    		USER_LASTNAME = #{userLastName}
-	    	</if>
+	   	PUSHYN = #{pushYN},
+	   	GENDER = #{gender},
+	    <if test="address != null">
+	    ADDRESS = #{address},
+	    </if>
+	    U_UPDATED_AT = SYSDATE,
+	    <if test="birthday != null">
+	    BIRTHDAY = #{birthday},
+	    </if>
+	    <if test="userLastName != null">
+	    USER_LASTNAME = #{userLastName}
+	    </if>
 	    WHERE USER_NO = #{sessionId}
 	</update>
+	
+	<select id="selectGuideInfo" parameterType="hashmap">
+		SELECT U.USER_NO, GUIDE_NO, PASSWORD, EMAIL, PHONE, ROLE, TO_CHAR(BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, ADDRESS, GENDER, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME, SOCIAL_TYPE, ISFOREIGNER, PUSHYN, UNREGISTERYN
+			FROM USERS U
+			INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO 
+			WHERE U.USER_NO = #{sessionId}
+	</select>
+
+	
+	<update id="updateGuideInfo" parameterType="hashmap">
+	    UPDATE GUIDES
+	    SET 
+	    	<if	test= "experience != null and experience != '' ">
+	        	EXPERIENCE = #{experience}
+	        </if>
+	       	<if test = "language != null and language != '' ">,</if>
+	        <if test = "language != null and language != '' ">
+	        	LANGUAGE = #{language}
+	        </if>
+	    WHERE USER_NO = #{sessionId}
+	</update>
+
+	<select id="getGuideInfo" resultType="hashmap">
+	    SELECT U.*, I.P_FILE_PATH, LANGUAGE, EXPERIENCE
+	    FROM USERS U
+	    INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
+	    LEFT JOIN(				
+			SELECT GI.*				
+			FROM GUIDE_IMG GI				
+			INNER JOIN (				
+				SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO				
+				FROM GUIDE_IMG				
+				GROUP BY P_GUIDE_NO				
+			) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO				
+				AND GI.P_FILE_NO = LATEST.MAX_FILE_NO				
+			) I ON G.GUIDE_NO = I.P_GUIDE_NO				
+	    WHERE U.USER_NO = #{sessionId}
+	</select>
+		
+	
+	<select id="checkGuideImageExists" resultType="int">
+	    SELECT COUNT(*) FROM GUIDE_IMG WHERE P_GUIDE_NO = #{P_GUIDE_NO}
+	</select>
+
 	
 	<select id="selectPayList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
 		SELECT P.*, TITLE, DURATION, TOUR_DATE

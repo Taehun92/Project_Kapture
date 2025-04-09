@@ -84,11 +84,14 @@ public class MyPageController {
 		@RequestMapping(value = "/mypage/info-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String userInfoEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-			HashMap<String, Object> resultMap = new HashMap<String, Object>();
-			
-			resultMap = myPageService.userInfoEdit(map);
-			return new Gson().toJson(resultMap);
+		    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		    
+		    resultMap = myPageService.userInfoEdit(map);
+		    return new Gson().toJson(resultMap);
 		}
+		
+
+
 		// 구매내역 
 		@RequestMapping(value = "/mypage/user-purchase-history.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
@@ -198,6 +201,23 @@ public class MyPageController {
 			resultMap = myPageService.addTour(map);
 			return new Gson().toJson(resultMap);
 		}
+		
+		//가이드 정보불러오기 
+		@RequestMapping(value = "/mypage/guide-info.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String getGuideInfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		    HashMap<String, Object> resultMap = myPageService.getGuideInfo(map);
+		    return new Gson().toJson(resultMap);
+		}
+		//가이드 정보수정 
+		@RequestMapping(value = "/mypage/guide-info-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String guideInfoEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		    HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		    
+		    resultMap = myPageService.updateGuideInfo(map);
+		    return new Gson().toJson(resultMap);
+		}
 
 		// 가이드 스케줄 관리
 		@RequestMapping(value = "/mypage/guide-schedule.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -212,10 +232,10 @@ public class MyPageController {
 		// 가이드 글 수정
 		@RequestMapping(value = "/mypage/guide-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
-		public String editTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		public String editGuide(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();
 			
-			resultMap = myPageService.editTour(map);
+			resultMap = myPageService.updateGuideInfo(map);
 			return new Gson().toJson(resultMap);
 		}
 		

@@ -113,14 +113,10 @@
 					class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
 					<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
 				</div>
-				<div v-if="sessionId == tourInfo.userNo">
-					<button @click="fnEdit">
-						수정
-					</button>
-					<button @click="fnDelete">
-						삭제
-					</button>
-				</div>
+				<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
+					<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700" @click="fnEdit">수정</button>
+					<button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" @click="fnDelete">삭제</button>
+				  </div>
 
 				<!-- 후기 -->
 				<div

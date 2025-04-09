@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.common.mapper.CommonMapper;
+import com.example.kapture.common.model.Common;
 import com.example.kapture.common.model.Region;
 import com.example.kapture.common.model.Theme;
 
@@ -103,6 +104,51 @@ public class CommonService {
 		Theme themeName = commonMapper.selectThemeName(map);
 		
 		resultMap.put("themeName", themeName);
+		
+		return resultMap;
+	}
+	
+	// 날씨 정보
+	public HashMap<String, Object> selectSi(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Common> si = commonMapper.selectSi(map);
+		
+		resultMap.put("si", si);
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> selectGu(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Common> gu = commonMapper.selectGu(map);
+		
+		resultMap.put("gu", gu);
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> selectDong(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Common> dong = commonMapper.selectDong(map);
+		
+		resultMap.put("dong", dong);
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> selectXY(HashMap<String, Object> map) {
+		
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		Common xy = commonMapper.selectXY(map);
+		
+		resultMap.put("xy", xy);
 		
 		return resultMap;
 	}
