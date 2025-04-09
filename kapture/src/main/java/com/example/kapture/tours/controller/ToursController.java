@@ -138,5 +138,22 @@ public class ToursController {
 		return "/tours/course-info";
 	}
 	
+	// 상품 삭제
+	@RequestMapping(value = "/tours/removeTour.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String removeTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = toursService.removeTour(map);
+		return new Gson().toJson(resultMap);
+	}
+	
+	// 상품 deleteYN 수정
+	@RequestMapping(value = "/tours/toggleTourDeleteYn.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String toggleTourDeleteYn(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = toursService.toggleTourDeleteYn(map);
+		return new Gson().toJson(resultMap);
+	}
 	
 }
