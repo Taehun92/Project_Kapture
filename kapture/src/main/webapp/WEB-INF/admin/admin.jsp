@@ -8,6 +8,7 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <title>Admin 대시보드</title>
         <style>
             .dashboard {
