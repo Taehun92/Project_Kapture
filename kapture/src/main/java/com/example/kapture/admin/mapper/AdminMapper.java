@@ -109,6 +109,8 @@ public interface AdminMapper {
 		int selectRequestCount();
 
 		List<HashMap<String, Object>> selectLatestRequests(HashMap<String, Object> map);
+		// 가이드리스트 총 인원 
+		int selectGuidesTotalCount(HashMap<String, Object> map);
 
 		
 

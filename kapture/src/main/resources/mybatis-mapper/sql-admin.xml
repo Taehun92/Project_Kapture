@@ -161,20 +161,78 @@
 	</select>	
     <!-- 가이드 정보조회 -->
     <select id="selectguidesList" parameterType="map" resultType="com.example.kapture.mypage.model.Guide">
-        SELECT *
-        FROM USERS U
-        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
-        LEFT JOIN(
-    		SELECT GI.*
-    		FROM GUIDE_IMG GI
-    		INNER JOIN (
-        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
-        		FROM GUIDE_IMG
-       			GROUP BY P_GUIDE_NO
-    		) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
-            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
-		) I ON G.GUIDE_NO = I.P_GUIDE_NO
+        SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+		        SELECT *
+		        FROM USERS U
+		        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+		        LEFT JOIN(
+		    		SELECT GI.*
+		    		FROM GUIDE_IMG GI
+		    		INNER JOIN (
+		        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+		        		FROM GUIDE_IMG
+		       			GROUP BY P_GUIDE_NO
+		    		) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
+		            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+				) I ON G.GUIDE_NO = I.P_GUIDE_NO
+				<if test="startDate != null and startDate != ''">
+			    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="endDate != null and endDate != ''">
+			    	AND U_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="statusFilter == null or statusFilter == ''">
+			    	AND (
+						U.USER_NO LIKE '%' || #{keyword} || '%' 
+				    	OR GUIDE_NO LIKE '%' || #{keyword} || '%' 
+				    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%'  
+			    	)
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'tourNo'">
+					AND U.USER_NO LIKE '%' || #{keyword} || '%' 
+				</if>
+			  	<if test="statusFilter != null and statusFilter == 'title'">
+				    AND GUIDE_NO LIKE '%' || #{keyword} || '%' 
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'siName'">
+				    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+			  	</if>
+	  			ORDER BY U_CREATED_AT DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
     </select>
+    <!--  가이드리스트 총 인원  -->
+    <select id="selectGuidesTotalCount" resultType="int">
+    	SELECT COUNT(*)
+	  	FROM USERS U
+	  	JOIN GUIDES G ON G.USER_NO = U.USER_NO
+	  	WHERE 1 = 1
+	  	<if test="startDate != null and startDate != ''">
+	    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="endDate != null and endDate != ''">
+	    	AND U_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="statusFilter == null or statusFilter == ''">
+	    	AND (
+				U.USER_NO LIKE '%' || #{keyword} || '%' 
+		    	OR GUIDE_NO LIKE '%' || #{keyword} || '%' 
+		    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%'  
+	    	)
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'tourNo'">
+			AND U.USER_NO LIKE '%' || #{keyword} || '%' 
+		</if>
+	  	<if test="statusFilter != null and statusFilter == 'title'">
+		    AND GUIDE_NO LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'siName'">
+		    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	</select>
     <!-- 가이드관리 가이드정보 수정 -->
 	<update id="updateGuideInfo" parameterType="hashmap">
 		UPDATE GUIDES
@@ -390,7 +448,7 @@
 	  )
 	  WHERE ROWNUM &lt;= 5
 	</select>
-	
+	<!-- 상품관리 조회-->
 	<select id="selectToursManagementList" parameterType="map" resultType="com.example.kapture.tours.model.Tours">
 		SELECT * FROM (
 			SELECT ROWNUM AS RNUM, DATA.* FROM (

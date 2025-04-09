@@ -174,6 +174,9 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Guide> guidesList = adminMapper.selectguidesList(map);
+			int totalCount = adminMapper.selectGuidesTotalCount(map);
+		    
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("result", "success");
 			resultMap.put("guidesList", guidesList);
 			
@@ -488,13 +491,6 @@ public class AdminService {
 		 // TODO Auto-generated method stub
 		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		 try {
-			 int page = Integer.parseInt(String.valueOf(map.get("page")));
-			 int size = Integer.parseInt(String.valueOf(map.get("size")));
-
-			 int start = (page - 1) * size + 1;
-			 int end = page * size;
-			 map.put("start", start);
-			 map.put("end", end);
 			 List<Tours> toursList = adminMapper.selectToursManagementList(map);
 			 // 상품관리 총 갯수
 			 int totalCount = adminMapper.selectToursTotalCount(map);

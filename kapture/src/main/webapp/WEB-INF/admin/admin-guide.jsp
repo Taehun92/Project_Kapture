@@ -10,13 +10,11 @@
 		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
 
-
-
 		<title>관리자 페이지</title>
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90%;
+				width: 90% ;
 				margin: 20px auto;
 				border-collapse: collapse;
 				font-size: 14px;
@@ -205,6 +203,54 @@
 				justify-content: flex-end;
 				margin: 5px;
 			}
+			
+			.search-div{
+				width: 90%;
+    			margin: 20px auto;
+    			border-collapse: collapse;
+    			font-size: 14px;
+			}
+
+			.search-input,
+            .search-select,
+            .search-date {
+                padding: 10px 14px;
+                font-size: 16px;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                margin-right: 10px;
+                box-sizing: border-box;
+            }
+
+            .search-button {
+                padding: 10px 20px;
+                font-size: 16px;
+                height: 40px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .search-button:hover {
+                background-color: #0056b3;
+            }
+
+			.tab-btn {
+                margin-right: 10px;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                background: #f4f4f4;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+
+            .tab-btn.active {
+                background-color: #007bff;
+                color: white;
+            }
 		</style>
 	</head>
 
@@ -215,11 +261,24 @@
 			<div class="page-title">가이드 정보 관리</div>
 
 			<hr>
-
+			
 			<div class="content">
-				<div class="add-button">
-					<button class="btn-manage" @click="fnOpenAddModal">가이드 추가</button>
-				</div>
+			<div class="add-button">
+				<button class="btn-manage" @click="fnOpenAddModal">가이드 추가</button>
+			</div>
+			<div class="search-div">	
+				<input type="date" v-model="startDate" class="search-date">
+					~
+				<input type="date" v-model="endDate" class="search-date">
+				<select v-model="statusFilter" class="search-select">
+					<option value="">전체</option>
+					<option value="userNo">회원번호</option>
+					<option value="guideNo">가이드번호</option>
+					<option value="name">이름</option>
+				</select>
+            	<input type="text" v-model="keyword" class="search-input" placeholder="회원명/상품 검색">
+            	<button class="search-button" @click="loadFilteredData">검색</button>
+			</div>
 				<table>
 					<thead>
 						<tr>
@@ -237,7 +296,7 @@
 					</thead>
 					<tbody>
 						<!-- 가이드 리스트 반복 출력 -->
-						<tr v-for="guide in guidesList" :key="guide.id">
+						<tr v-for="guide in guidesList" >
 							<!-- 회원번호 -->
 							<td>{{ guide.userNo }}</td>
 							<!-- 가이드번호-->
@@ -278,6 +337,14 @@
 					</tbody>
 				</table>
 			</div>
+			<div style="margin-top: 20px; text-align: center;">
+                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                    @click="goPage(p)">
+                    {{ p }}
+                </button>
+                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+            </div>
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnGuideEditClose()">
 				<div class="modal-content">
 					<h2>가이드 정보 수정</h2>
@@ -520,15 +587,32 @@
 					confirmPassword: "",
 					passwordRules: { length: false, upper: false, lower: false, special: false, number: false },
 					passwordValid: false,
-					passwordsMatch: false
+					passwordsMatch: false,
+					minDate: new Date().toISOString().split("T")[0],
+					startDate: "",
+                    endDate: "",
+                    keyword: "",
+                    page: 1,
+                    size: 10,
+                    totalCount: 0,
+                    totalPages: 1,
+                    statusFilter: "",
 				};
 			},
 			methods: {
+				loadFilteredData() { 
+                    this.fnGetGuidesList(); 
+                },
 				// 가이드 목록 불러오기
 				fnGetGuidesList() {
 					let self = this;
 					let nparmap = {
-
+						startDate: self.startDate,
+                        endDate: self.endDate,
+                        statusFilter: self.statusFilter,
+                        keyword: self.keyword,
+                        page: self.page,
+                        size: self.size,
 					};
 					$.ajax({
 						url: "/admin/guides-list.dox",
@@ -558,7 +642,7 @@
 				goPage(p) {
                     if (p < 1 || p > this.totalPages) return;
                     this.page = p;
-                    this.fnGetToursManagement();
+                    this.fnGetGuidesList();
                 },
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
 				fnGuideEdit(guide) {
