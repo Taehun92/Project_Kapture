@@ -159,22 +159,15 @@
         	#{imageUrl}
     	</foreach>
 	</update>
-<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
-		SELECT 
-		    GUIDE_USER.USER_FIRSTNAME AS guide_name,
-		    MEMBER_USER.USER_FIRSTNAME AS member_name,
-		    T.TITLE,
-		    P.PAYMENT_DATE,
-		    ETC,
-		    NUM_PEOPLE,
-		    AMOUNT,
-		    PAYMENT_STATUS
-		    
+	<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
+		SELECT *
 		FROM GUIDES G
-		INNER JOIN USERS GUIDE_USER ON G.USER_NO = GUIDE_USER.USER_NO
-		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
-		LEFT JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
-		LEFT JOIN USERS MEMBER_USER ON P.USER_NO = MEMBER_USER.USER_NO
+		INNER JOIN TOURS T ON T.GUIDE_NO = G.GUIDE_NO
+		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+		INNER JOIN (SELECT DISTINCT SI_NO,SI_NAME FROM REGION) R ON T.SI_NO = R.SI_NO
+		INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+		LEFT JOIN PAYMENTS P ON P.TOUR_NO = T.TOUR_NO 
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
 		WHERE G.USER_NO = #{sessionId}
 		<if test="keyword != null and keyword != ''">
 		    AND (
@@ -182,9 +175,8 @@
 		        T.TITLE LIKE '%' || #{keyword} || '%'
 		    )
 		</if>
-		ORDER BY P.PAYMENT_DATE DESC
 		OFFSET ((#{page} - 1) * #{size}) ROWS FETCH NEXT #{size} ROWS ONLY
-</select>
+	</select>
 	<!--가이드 판매내역 페이징처리-->
 <select id="selectTransactionTotalCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*)

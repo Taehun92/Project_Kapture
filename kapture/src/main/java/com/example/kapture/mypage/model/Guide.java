@@ -57,6 +57,18 @@ public class Guide {
 	private String guideName;
     private String memberName;
 	
+    private String price;
+	private String description;
+	private String tCreatedAt;
+	private String tUpdatedAt;
+	private int siNo;
+	private int guNo;
+	private String themeName;
+	private int themeParentNo;
+	private String siName;
+	private String guName;
+	private String vehicle;
+	
 	
 	
 }
