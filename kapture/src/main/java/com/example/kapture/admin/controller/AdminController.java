@@ -142,7 +142,7 @@ public class AdminController {
 	// 프로필 이미지 저장
 	@RequestMapping("/admin/guide-profile.dox")
 	@ResponseBody
-	public String result(@RequestParam("profile") List<MultipartFile> profile, @RequestParam("guideNo") int guideNo, HttpServletRequest request,HttpServletResponse response, Model model)
+	public String result(@RequestParam("profile") List<MultipartFile> profile, HttpServletRequest request,HttpServletResponse response, Model model)
 	{
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
@@ -163,7 +163,7 @@ public class AdminController {
 					
 					
 					HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("guideNo", guideNo);
+					
 					map.put("pFilePath", "../img/" + saveFileName);
 					map.put("pFileName", saveFileName);
 					map.put("pFileOrgName", originFilename);
@@ -304,6 +304,39 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getLatestReviews();
 	    return new Gson().toJson(resultMap);
 	}
+	// 상품관리 조회
+	@RequestMapping(value = "/admin/toursManagement.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String toursManagementList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.toursManagementList(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 상품관리 수정
+	@RequestMapping(value = "/admin/tourUpdate.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String tourUpdate(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.tourUpdate(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 상품관리 삭제 
+	@RequestMapping(value = "/admin/removeTour.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String removeTour(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.removeTour(map);
+	    return new Gson().toJson(resultMap);
+	}
+	// 가이드 추가(유저 정보, 가이드 정보)
+	@RequestMapping(value = "/admin/guide-insert.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String addGuide(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.addGuide(map);
+	    return new Gson().toJson(resultMap);
+	}
+
 	//대시보드 3번 월판매율 
 	@RequestMapping(value = "/admin/sales/monthly.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -324,5 +357,6 @@ public class AdminController {
 	public String getRequestSummary(@RequestParam HashMap<String, Object> map) {
 	    return new Gson().toJson(adminService.getLatestRequests(map));
 	}
+
 
 }
