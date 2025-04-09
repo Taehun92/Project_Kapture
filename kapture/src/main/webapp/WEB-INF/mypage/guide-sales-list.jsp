@@ -15,8 +15,7 @@
 
   <body class="bg-white text-gray-800 text-[16px] tracking-wide">
     <jsp:include page="../common/header.jsp" />
-
-    <div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
+    <div id="app" class="flex max-w-7xl mx-auto px-6 py-8 gap-8 min-h-[700px]">
       <!-- 사이드바 -->
       <div class="w-56 bg-white shadow-md p-4 rounded">
         <ul class="space-y-2 font-semibold">
@@ -35,174 +34,235 @@
         </ul>
       </div>
 
-      <!-- 콘텐츠 영역 -->
+      <!-- 메인 콘텐츠 -->
       <div class="flex-1">
-        <div class="mb-6 flex items-center gap-4">
-          <input v-model="keyword" placeholder="회원명/상품 검색" class="border rounded px-4 py-2 w-80" />
-          <button @click="loadFilteredData" class="bg-blue-950 text-white px-4 py-2 rounded">검색</button>
-          <a href="/mypage/guide-add.do" class="ml-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            + 상품 등록
-          </a>
+        <!-- 필터 영역 -->
+        <div class="flex flex-wrap gap-4 items-center mb-6">
+          <select v-model="statusFilter" class="border px-3 py-2 rounded-md text-sm">
+            <option value="">전체</option>
+            <option value="tourNo">상품번호</option>
+            <option value="title">제목</option>
+            <option value="siName">지역명</option>
+            <option value="themeName">테마명</option>
+          </select>
+          <input type="text" v-model="keyword" placeholder="회원명/상품 검색"
+            class="border px-3 py-2 rounded-md text-sm w-60" />
+          <button @click="loadFilteredData"
+            class="bg-blue-950 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm">검색</button>
         </div>
 
-        <div class="overflow-x-auto">
-          <!-- 카드 컨테이너 -->
-          <div v-for="item in transactions" :key="item.paymentDate + item.title"
-            class="border rounded-lg p-5 shadow bg-white hover:shadow-md transition-shadow flex justify-between items-start">
-            <!-- 카드 전체 -->
-            <!-- 왼쪽: 정보 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 text-sm text-gray-800 flex-1 leading-tight">
-              <!-- 날짜 (글씨색 연하고 기본 크기) -->
-              <div class="text-gray-600"><strong>결제일 : </strong> {{ item.paymentDate }}</div>
+        <div class="space-y-6">
+          <div
+            class="grid grid-cols-12 gap-4 p-4 border rounded-lg shadow-sm hover:shadow-md bg-white w-full items-start"
+            v-for="tour in transactions" :key="tour.tourNo">
+            <!-- 썸네일 -->
+            <div class="col-span-2 flex justify-center items-center">
+              <img :src="tour.filePath" class="w-24 h-24 rounded-full object-cover border" alt="썸네일" />
+            </div>
 
-              <!-- 회원 이름 -->
-              <div><strong>회원 이름 : </strong> {{ item.memberName || '-' }}</div>
-
-              <!-- 상품 제목 (굵고 크게) -->
-              <div class="text-base font-semibold"><strong>상품 제목:</strong> {{ item.title }}</div>
-
-              <!-- 결제 금액 -->
-              <div><strong>결제 금액 : </strong> ₩ {{ Number(item.amount).toLocaleString() }}</div>
-
-              <!-- 상태 -->
-              <div>
-                <strong>상태 : </strong>
-                <span :class="item.paymentStatus === 'PAID' ? 'text-green-600 font-bold' : 'text-red-600'">
-                  {{ item.paymentStatus }}
-                </span>
+            <!-- 텍스트 정보 영역 -->
+            <div class="col-span-9 flex flex-col justify-center gap-1 text-sm text-gray-800 w-full">
+              <!-- 1줄: 제목 + 여행 날짜/기간 + 가격 -->
+              <div class="flex justify-between flex-wrap items-center">
+                <div class="font-semibold text-xl">
+                  제목: {{ tour.title }}
+                </div>
+                <div class="text-gray-600">
+                  날짜: {{ formatDate(tour.tourDate) }} / {{ tour.duration }}
+                </div>
+                <div class="font-bold text-lg">
+                  가격: {{ formatCurrency(tour.price) }}
+                </div>
               </div>
 
-              <!-- 인원 (굵고 크게) -->
-              <div class="text-base font-semibold"><strong>인원 : </strong> {{ item.numPeople }}명</div>
+              <!-- 2줄: 지역 - 테마 / 차량 -->
+              <div class="grid grid-cols-3 gap-4 mt-1 text-gray-700 text-sm">
+                <div class="flex gap-1">
+                  <span class="font-semibold w-10">지역:</span>
+                  <span>{{ tour.siName }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <span class="font-semibold w-10">테마:</span>
+                  <span>{{ tour.themeName }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <span class="font-semibold w-10">차량:</span>
+                  <span>
+                    {{ tour.vehicle === 'PUBLIC' ? '대중교통' : (tour.vehicle === 'GUIDE' ? '가이드 차량' : '회사 차량') }}
+                  </span>
+                </div>
+              </div>
 
-              <!-- 요구사항 (굵고 크게) -->
-              <div class="text-base font-semibold"><strong>요구사항 : </strong> {{ item.etc || '-' }}</div>
+              <!-- 요청사항 + 상태/버튼 라인 -->
+              <div class="flex justify-between items-start pt-2 mt-1">
+                <!-- 왼쪽: 요청사항 -->
+                <div class="text-gray-700 text-base">
+                  <strong>요청사항:</strong>
+                  <span>{{ tour.etc && tour.etc.trim() !== '' ? tour.etc : '없음' }}</span>
+                </div>
+
+                <!-- 오른쪽: 상태 + 재게시 버튼 (세로 배치) -->
+                <div class="flex flex-col items-end">
+                  <div>
+                    <strong>상태:</strong>
+                    <span :class="{
+                      'text-green-600': tour.deleteYN === 'N' && new Date(tour.tourDate) >= today,
+                      'text-red-500': tour.deleteYN === 'N' && new Date(tour.tourDate) < today,
+                      'text-blue-600': tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today,
+                      'text-gray-500': tour.deleteYN === 'Y' && new Date(tour.tourDate) < today
+                    }" class="font-semibold">
+                      {{ tour.deleteYN === 'N' && new Date(tour.tourDate) >= today ? '판매중'
+                      : tour.deleteYN === 'N' && new Date(tour.tourDate) < today ? '미판매' : tour.deleteYN==='Y' && new
+                        Date(tour.tourDate)>= today ? '판매완료' : '거래완료' }}
+                    </span>
+                  </div>
+
+                  <!-- 버튼: 항상 자리는 차지하지만 필요할 때만 보여줌 -->
+                  <button :class="[
+                      'mt-1 px-3 py-1 rounded text-sm bg-gray-500 hover:bg-gray-600 text-white',
+                      !(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today) && 'invisible'
+                    ]" @click="fnToggleDeleteYn(tour)">
+                    재게시
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <!-- 오른쪽: 세로 버튼 -->
-            <div class="flex flex-col items-end gap-2 ml-6 mt-1">
-              <button @click="fnToggleDeleteYn(item)" :class="item.deleteYn === 'Y' ? 'bg-gray-500' : 'bg-green-600'"
-                class="text-white px-4 py-1 rounded text-sm">
-                {{ item.deleteYn === 'Y' ? '재게시' : '게시중지' }}
+            <div class="col-span-1 flex flex-col gap-2 justify-center items-end">
+              <button @click="fnGetTourEdit(tour)"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                수정
               </button>
-              <button @click="fnEdit(item)"
-                class="bg-blue-500 text-white px-4 py-1 rounded text-sm hover:bg-blue-600">수정</button>
-              <button @click="fnDelete(item.tourNo)"
-                class="bg-red-500 text-white px-4 py-1 rounded text-sm hover:bg-red-600">삭제</button>
+              <button @click="fnRemoveTour(tour.tourNo)"
+                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                삭제
+              </button>
             </div>
           </div>
-        </div>
-
-        <!-- 페이징 -->
-        <div class="mt-6 text-center flex justify-center items-center gap-2">
-          <button @click="goPage(page - 1)" :disabled="page === 1"
-            class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">이전</button>
-          <button v-for="p in totalPages" :key="p" @click="goPage(p)"
-            :class="['px-3 py-1 border rounded hover:bg-gray-100', { 'bg-blue-950 text-white': p === page }]">
-            {{ p }}
-          </button>
-          <button @click="goPage(page + 1)" :disabled="page === totalPages"
-            class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">다음</button>
+          <!-- 페이징 -->
+          <div class="mt-6 flex justify-center gap-2">
+            <button @click="goPage(page - 1)" :disabled="page === 1"
+              class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">이전</button>
+            <button v-for="p in totalPages" :key="p" @click="goPage(p)"
+              :class="['px-3 py-1 border rounded', p === page ? 'bg-blue-950 text-white' : 'hover:bg-gray-100']">
+              {{ p }}
+            </button>
+            <button @click="goPage(page + 1)" :disabled="page === totalPages"
+              class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">다음</button>
+          </div>
         </div>
       </div>
     </div>
-
     <jsp:include page="../common/footer.jsp" />
-    <script>
-      const app = Vue.createApp({
-        data() {
-          return {
-            keyword: '',
-            transactions: [],
-            page: 1,
-            size: 10,
-            totalPages: 1,
-            sessionId: "${sessionId}",
-            currentPage: ''
-          };
+  </body>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          keyword: '',
+          statusFilter: "",
+          transactions: [],
+          page: 1,
+          size: 10,
+          totalPages: 1,
+          sessionId: "${sessionId}",
+          currentPage: '',
+          today: new Date()
+        };
+      },
+      methods: {
+        setCurrentPage() {
+          const path = window.location.pathname;
+          this.currentPage = path.substring(path.lastIndexOf("/") + 1);
         },
-        methods: {
-          setCurrentPage() {
-            const path = window.location.pathname;
-            this.currentPage = path.substring(path.lastIndexOf("/") + 1);
-          },
-          loadFilteredData() {
-            this.page = 1;
-            this.fnGetTransactions();
-          },
-          fnGetTransactions() {
-            let self = this;
-            let nparam = {
-              keyword: self.keyword,
-              page: self.page,
-              size: self.size,
-              sessionId: self.sessionId
-            };
-            $.ajax({
-              url: '/mypage/getTransactionList.dox',
-              method: 'POST',
-              data: nparam,
-              dataType: 'json',
-              success(res) {
-                self.transactions = res.list;
-                self.totalPages = Math.ceil(res.totalCount / self.size);
-              }
-            });
-          },
-          goPage(p) {
-            if (p < 1 || p > this.totalPages) return;
-            this.page = p;
-            this.fnGetTransactions();
-          },
-          formatCurrency(val) {
-            return '₩ ' + Number(val).toLocaleString();
-          },
-
-          fnEdit(item) {
-            location.href = "/mypage/guide-edit.do?tourNo=" + item.tourNo;
-          },
-
-          fnDelete(tourNo) {
-            if (confirm("정말 삭제하시겠습니까?")) {
-              $.ajax({
-                url: "/tours/deleteTour.dox",
-                method: "POST",
-                data: { tourNo : tourNo },
-                dataType: "json",
-                success: (res) => {
-                  if (res.num > 0) {
-                    alert("삭제되었습니다.");
-                    this.fnGetTransactions();
-                  }
-                }
-              });
+        loadFilteredData() {
+          this.page = 1;
+          this.fnGetTransactions();
+        },
+        fnGetTransactions() {
+          let self = this;
+          let nparam = {
+            keyword: self.keyword,
+            page: self.page,
+            size: self.size,
+            sessionId: self.sessionId
+          };
+          $.ajax({
+            url: '/mypage/getTransactionList.dox',
+            method: 'POST',
+            data: nparam,
+            dataType: 'json',
+            success(res) {
+              console.log(res);
+              self.transactions = res.list;
+              self.totalPages = Math.ceil(res.totalCount / self.size);
             }
-          },
+          });
+        },
+        goPage(p) {
+          if (p < 1 || p > this.totalPages) return;
+          this.page = p;
+          this.fnGetTransactions();
+        },
 
-          fnToggleDeleteYn(item) {
-            let self = this;
-            let toggleTo = item.deleteYn === "Y" ? "N" : "Y";
+        formatCurrency(val) {
+          return '₩ ' + Number(val).toLocaleString();
+        },
+
+        formatDate(date) {
+          if (!date) return '-'; // null, undefined 방지
+          var d = new Date(date);
+          if (isNaN(d)) return '-'; // 유효하지 않은 날짜일 경우
+          var year = d.getFullYear();
+          var month = ('0' + (d.getMonth() + 1)).slice(-2);
+          var day = ('0' + d.getDate()).slice(-2);
+          return year + '-' + month + '-' + day;
+        },
+
+        fnEdit(item) {
+          location.href = "/mypage/guide-edit.do?tourNo=" + item.tourNo;
+        },
+
+        fnDelete(tourNo) {
+          if (confirm("정말 삭제하시겠습니까?")) {
             $.ajax({
-              url: "/tours/toggleTourDeleteYn.dox",
+              url: "/tours/deleteTour.dox",
               method: "POST",
-              data: { tourNo: item.tourNo, deleteYn: toggleTo },
+              data: { tourNo: tourNo },
               dataType: "json",
-              success: function (res) {
+              success: (res) => {
                 if (res.num > 0) {
-                  alert("상태가 변경되었습니다.");
-                  self.fnGetTransactions();
+                  alert("삭제되었습니다.");
+                  this.fnGetTransactions();
                 }
               }
             });
           }
         },
-        mounted() {
-          this.setCurrentPage();
-          this.fnGetTransactions();
+
+        fnToggleDeleteYn(item) {
+          let self = this;
+          let toggleTo = item.deleteYn === "Y" ? "N" : "Y";
+          $.ajax({
+            url: "/tours/toggleTourDeleteYn.dox",
+            method: "POST",
+            data: { tourNo: item.tourNo, deleteYn: toggleTo },
+            dataType: "json",
+            success: function (res) {
+              if (res.num > 0) {
+                alert("상태가 변경되었습니다.");
+                self.fnGetTransactions();
+              }
+            }
+          });
         }
-      });
-      app.mount('#app');
-    </script>
+      },
+      mounted() {
+        this.setCurrentPage();
+        this.fnGetTransactions();
+      }
+    });
+    app.mount('#app');
+  </script>
   </body>
 
   </html>
