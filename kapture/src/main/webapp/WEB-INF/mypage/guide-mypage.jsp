@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
-  	    <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
         <title>마이페이지 | kapture</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
@@ -45,8 +45,8 @@
                             class="block px-3 py-2 rounded hover:bg-blue-100">판매내역</a>
                     </li>
                     <li>
-                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" 
-                        href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do"
+                            class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a>
                     </li>
                 </ul>
             </div>
@@ -63,51 +63,72 @@
                 <div v-else class="space-y-6">
                     <!-- 회원 정보 -->
                     <div class="bg-white border rounded shadow p-6">
-                        <div class="text-lg font-bold mb-4">회원 정보</div>
-                        <div class="mb-4">
-                            <button @click="fnNewPassword" class="bg-blue-950 text-white px-4 py-2 rounded">비밀번호
-                                변경</button>
-                        </div>
+                        <div class="text-lg font-bold mb-4">가이드 정보 수정</div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 프로필이미지 -->
+                            <span class="form-group profile-upload-container">
+                                <span v-if="userinfo.P_FILE_PATH && userinfo.P_FILE_PATH !== ''">
+                                    <img :src="userinfo.P_FILE_PATH" alt="가이드사진" class="guide-img" />
+                                </span>
+                                <span v-else class="no-image">NO Image</span>
+                                <input type="file" @change="handleProfileUpload" />
+                            </span>
                             <div>
-                                <label class="block font-semibold mb-1">FirstName <span
+                                <label class="block font-semibold mb-1">FIRSTNAME <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" v-model="userInfo.userFirstName"
+                                <input type="text" v-model="userInfo.USER_FIRSTNAME"
                                     class="w-full border px-3 py-2 rounded" disabled />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">LastName</label>
-                                <input type="text" v-model="userInfo.userLastName"
+                                <input type="text" v-model="userInfo.USER_LASTNAME"
                                     class="w-full border px-3 py-2 rounded" />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">연락처 <span class="text-red-500">*</span></label>
-                                <input type="text" v-model="userInfo.phone" class="w-full border px-3 py-2 rounded" />
+                                <input type="text" v-model="userInfo.PHONE" class="w-full border px-3 py-2 rounded" />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">이메일 <span class="text-red-500">*</span></label>
-                                <input type="text" v-model="userInfo.email" class="w-full border px-3 py-2 rounded"
+                                <input type="text" v-model="userInfo.EMAIL" class="w-full border px-3 py-2 rounded"
                                     disabled />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">주소</label>
-                                <input type="text" v-model="userInfo.address" class="w-full border px-3 py-2 rounded" />
+                                <input type="text" v-model="userInfo.ADDRESS" class="w-full border px-3 py-2 rounded" />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">생년월일 <span class="text-red-500">*</span></label>
-                                <input type="text" v-model="userInfo.birthday" class="w-full border px-3 py-2 rounded"
+                                <input type="text" v-model="userInfo.BIRTHDAY" class="w-full border px-3 py-2 rounded"
                                     disabled />
                             </div>
                             <div>
                                 <label class="block font-semibold mb-1">성별 <span class="text-red-500">*</span></label>
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" value="M" v-model="userInfo.gender"> 남성
+                                        <input type="radio" value="M" v-model="userInfo.GENDER"> 남성
                                     </label>
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" value="F" v-model="userInfo.gender"> 여성
+                                        <input type="radio" value="F" v-model="userInfo.GENDER"> 여성
                                     </label>
                                 </div>
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">Language</label>
+                                <input type="text" v-model="userInfo.LANGUAGE" class="w-full border px-3 py-2 rounded"
+                                    placeholder="예:japanese, english, chinese" />
+                            </div>
+
+                            <div class="mb-4">
+                                <button @click="fnNewPassword" class="bg-blue-950 text-white px-4 py-2 rounded">비밀번호
+                                    변경</button>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block font-semibold mb-1">경험 또는 자기소개</label>
+                                <textarea v-model="userInfo.EXPERIENCE" rows="10"
+                                    class="w-full border px-3 py-2 rounded resize-none"
+                                    placeholder="여행 가이드로서의 경험이나 소개를 작성해주세요"></textarea>
                             </div>
                         </div>
                     </div>
@@ -117,10 +138,10 @@
                         <div class="text-lg font-bold mb-4">푸쉬알림 동의여부</div>
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
-                                <input type="radio" value="Y" v-model="userInfo.pushYN"> 예
+                                <input type="radio" value="Y" v-model="userInfo.PUSHYN"> 예
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" value="N" v-model="userInfo.pushYN"> 아니요
+                                <input type="radio" value="N" v-model="userInfo.PUSHYN"> 아니요
                             </label>
                         </div>
                     </div>
@@ -187,10 +208,14 @@
                 data() {
                     return {
                         userInfo: {
-                            birthday: "",
-                            gender: "",
-                            address: "",
+                            BIRTHDAY: "",
+                            GENDER: "",
+                            ADDRESS: "",
+                            EXPERIENCE: "",
+                            LANGUAGE: "",
+                            P_FILE_PATH: "",
                         },
+                        
                         confirmPassword: "",
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
@@ -211,17 +236,19 @@
 
                         // 서버로 전송할 데이터
                         let nparmap = {
-                            userLastName: self.userInfo.userLastName,
-                            phone: self.userInfo.phone,
-                            address: self.userInfo.address,
-                            gender: self.userInfo.gender,
-                            birthday: self.userInfo.birthday,
-                            pushYN: self.userInfo.pushYN,
+                            userLastName: self.userInfo.USER_FIRSTNAME,
+                            phone: self.userInfo.PHONE,
+                            address: self.userInfo.ADDRESS,
+                            gender: self.userInfo.GENDER,
+                            birthday: self.userInfo.BIRTHDAY,
+                            pushYN: self.userInfo.PUSHYN,
+                            experience : self.userInfo.EXPERIENCE,
+                            language : self.userInfo.LANGUAGE,
                             sessionId: self.sessionId,
                         };
                         // Ajax 요청
                         $.ajax({
-                            url: "/mypage/info-edit.dox", // 실제 처리할 URL로 수정
+                            url: "/mypage/guide-edit.dox", // 실제 처리할 URL로 수정
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -247,7 +274,7 @@
                         };
                         console.log(self.sessionId);
                         $.ajax({
-                            url: "/mypage/user-info.dox",
+                            url: "/mypage/guide-info.dox",
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -327,6 +354,36 @@
                                 } else {
                                     alert("비밀번호 변경에 실패했습니다.");
                                 }
+                            }
+                        });
+                    },
+                    handleProfileUpload(event) {
+                        let self = this;
+                        const profile = event.target.files[0];
+                        if (!profile) return;
+                        const formData = new FormData();
+                        formData.append('profile', profile);
+                        // 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
+                        formData.append('guideNo', self.userInfo.GUIDE_NO);
+
+                        $.ajax({
+                            url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
+                            type: 'POST',
+                            data: formData,
+                            processData: false,   // 파일 업로드 시 필수: 데이터를 문자열로 처리하지 않음
+                            contentType: false,   // 필수: multipart/form-data로 전송
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.result === 'success') {
+                                    // 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
+                                    self.userInfo.P_FILE_PATH = data.newFilePath;
+                                } else {
+                                    alert('이미지 업로드에 실패했습니다.');
+                                }
+                            },
+                            error: function (err) {
+                                console.error('이미지 업로드 중 오류 발생:', err);
+                                alert('이미지 업로드 중 오류가 발생했습니다.');
                             }
                         });
                     },
