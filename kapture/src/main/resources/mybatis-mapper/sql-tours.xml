@@ -84,6 +84,17 @@
 		WHERE T.TOUR_NO =  #{tourNo}
 	</select>
 	
+	<delete id="deleteTour" parameterType="hashmap">
+		DELETE FROM TOURS
+		WHERE TOUR_NO = #{tourNo}
+	</delete>
+	
+	<update id="toggleTourDeleteYn" parameterType="hashmap">
+		UPDATE TOURS
+	    SET DELETEYN = #{deleteYn}
+	    WHERE TOUR_NO = #{tourNo}
+	</update>
+	
 </mapper>
 
 

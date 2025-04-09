@@ -22,6 +22,10 @@ public interface ToursMapper {
 
 	void insertToursFile(HashMap<String, Object> map);
 
+	int deleteTour(HashMap<String, Object> map);
+
+	int toggleTourDeleteYn(HashMap<String, Object> map);
+
 	
 	
 
