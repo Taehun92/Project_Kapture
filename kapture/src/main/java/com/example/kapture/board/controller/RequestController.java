@@ -69,6 +69,15 @@ public class RequestController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 게시글 수정
+	@RequestMapping(value = "/request/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String requestEdit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = requestService.editRequest(map);
+		return new Gson().toJson(resultMap);
+	}
+	
 	// 게시글 조회
 	@RequestMapping(value = "/request/view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
