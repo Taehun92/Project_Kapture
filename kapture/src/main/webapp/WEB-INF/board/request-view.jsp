@@ -134,11 +134,14 @@
                 },
                 canReply() {
                     return this.requestStatus !== '2' &&
-                        (this.sessionRole === 'ADMIN' || this.sessionRole === 'GUIDE' || this.sessionId === (String)(this.comment.userNo));
+                        (this.sessionRole === 'ADMIN' || this.sessionRole === 'GUIDE' || this.sessionId === (String)(this.comment.userNo) || this.sessionId == (String)(this.requestUserNo));
                 },
                 canEditDelete() {
                     return (this.requestStatus !== '2' && this.sessionId === (String)(this.comment.userNo));
-                }
+                },
+                canAccept() {
+                    return this.requestStatus !== '2' && this.sessionId == (String)(this.requestUserNo) && (this.comment.userNo) !== (this.requestUserNo);
+                },
             },
             methods: {
                 submitReply() {
@@ -164,7 +167,7 @@
 
                     <!-- 버튼 영역 -->
                     <div class="mt-1 sm:mt-0 flex space-x-3 text-sm text-right">
-                        <span v-if="depth < 9 && (!comment.children || comment.children.length === 0) && canReply && !comment.deleted" 
+                        <span v-if="depth < 9 && (!comment.children || comment.children.length === 0) && canReply && !comment.deleted"
                             class="text-gray-500 hover:underline cursor-pointer" @click="$emit('reply', comment.commentNo)">
                             댓글쓰기
                         </span>
@@ -255,11 +258,8 @@
                 canEditRequest() {
                     return this.sessionId === (String)(this.info.userNo) || this.sessionRole == 'ADMIN';
                 },
-                canAccept() {
-                    return this.info.status === '1' && this.sessionId == (String)(this.info.userNo);
-                },
                 canWriteAnswer() {
-                    return this.info.status !== '2' && (this.sessionRole === 'ADMIN' || this.sessionRole === 'GUIDE');
+                    return this.info.status !== '2' && (this.sessionRole === 'ADMIN' || this.sessionRole === 'GUIDE' || this.sessionId == (String)(this.info.userNo));
                 },
                 canEdit() {
                     return (this.info.status !== '2' && this.sessionId === (String)(this.info.userNo));

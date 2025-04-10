@@ -54,6 +54,23 @@ public class RequestService {
 		}
 		return resultMap;
 	}
+	
+	public HashMap<String, Object> editRequest(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int num = requestMapper.updateRequest(map);
+			resultMap.put("result", "success");
+			resultMap.put("num", num);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
+	
+	
 
 	public HashMap<String, Object> getRequest(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -102,6 +119,7 @@ public class RequestService {
 			requestMapper.updateRequestStatus(map);
 			resultMap.put("result", "success");
 			resultMap.put("num", num);
+			resultMap.put("num2", num2);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
@@ -154,5 +172,7 @@ public class RequestService {
 		}
 		return resultMap;
 	}
+
+	
 	
 }

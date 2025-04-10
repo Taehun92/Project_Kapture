@@ -21,7 +21,7 @@
             FROM REGION
         )R ON T.SI_NO = R.SI_NO
         INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
-		WHERE 1=1 
+		WHERE T.DELETEYN = 'N'
 		<if test="siNo != null and siNo != 999">
 			AND T.SI_NO = #{siNo}
 		</if>
