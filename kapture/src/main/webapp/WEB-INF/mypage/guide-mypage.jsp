@@ -224,6 +224,7 @@
                             EXPERIENCE: "",
                             LANGUAGE: "",
                             P_FILE_PATH: "",
+                            pFileNo: "",
                         },
 
                         confirmPassword: "",
@@ -255,10 +256,13 @@
                             experience: self.userInfo.EXPERIENCE,
                             language: self.userInfo.LANGUAGE,
                             sessionId: self.sessionId,
+                            pFileNo: self.userInfo.pFileNo,
+                            guideNo: self.userInfo.GUIDE_NO,
+                            pFilePath: self.userInfo.P_FILE_PATH,
                         };
                         // Ajax 요청
                         $.ajax({
-                            url: "/mypage/guide-edit.dox", // 실제 처리할 URL로 수정
+                            url: "/mypage/guide-info-edit.dox", // 실제 처리할 URL로 수정
                             dataType: "json",
                             type: "POST",
                             data: nparmap,
@@ -376,7 +380,6 @@
                         const formData = new FormData();
                         formData.append('profile', profile);
                         // 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
-                        formData.append('guideNo', self.userInfo.GUIDE_NO);
 
                         $.ajax({
                             url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
@@ -389,6 +392,7 @@
                                 if (data.result === 'success') {
                                     // 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
                                     self.userInfo.P_FILE_PATH = data.newFilePath;
+                                    self.userInfo.pFileNo = data.pFileNo;
                                 } else {
                                     alert('이미지 업로드에 실패했습니다.');
                                 }

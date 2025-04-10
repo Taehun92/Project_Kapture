@@ -166,16 +166,7 @@
 		        SELECT *
 		        FROM USERS U
 		        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
-		        LEFT JOIN(
-		    		SELECT GI.*
-		    		FROM GUIDE_IMG GI
-		    		INNER JOIN (
-		        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
-		        		FROM GUIDE_IMG
-		       			GROUP BY P_GUIDE_NO
-		    		) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
-		            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
-				) I ON G.GUIDE_NO = I.P_GUIDE_NO
+		        INNER JOIN GUIDE_IMG I ON G.GUIDE_NO = I.P_GUIDE_NO
 				<if test="startDate != null and startDate != ''">
 			    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
 			  	</if>
@@ -208,7 +199,8 @@
     <select id="selectGuidesTotalCount" resultType="int">
     	SELECT COUNT(*)
 	  	FROM USERS U
-	  	JOIN GUIDES G ON G.USER_NO = U.USER_NO
+	  	INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+	  	INNER JOIN GUIDE_IMG I ON G.GUIDE_NO = I.P_GUIDE_NO
 	  	WHERE 1 = 1
 	  	<if test="startDate != null and startDate != ''">
 	    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
@@ -257,7 +249,7 @@
 			U_UPDATED_AT = SYSDATE
 		WHERE USER_NO = #{userNo}
 	</update>
-	<!-- 가이드 프로필 수정(가이드번호) -->
+	<!-- 가이드 프로필 수정(가이드번호 수정) -->
 	<update id="updateGuideImg" parameterType="hashmap">
 		UPDATE GUIDE_IMG
 		SET P_GUIDE_NO = #{guideNo}
@@ -266,8 +258,17 @@
 	<!-- 프로필 이미지 저장-->
 	<insert id="insertGuideProfile" parameterType="hashmap" useGeneratedKeys="true" keyProperty="pFileNo" keyColumn="P_FILE_NO">
 		INSERT INTO GUIDE_IMG
-			VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
+			VALUES (GUIDE_IMG_SEQ.NEXTVAL, 0, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
+	<!-- 프로필 수정 후 이전 프로필 삭제 -->
+	<delete id="deleteBeforeGuideImg" parameterType="hashmap">
+		DELETE FROM GUIDE_IMG
+		WHERE P_FILE_NO = (
+        SELECT MIN(P_FILE_NO)
+        FROM GUIDE_IMG
+        WHERE P_GUIDE_NO = #{guideNo}
+    	)
+	</delete>
 	<!-- 회원관리 유저정보 조회 -->
 	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
 		SELECT * FROM (
@@ -377,19 +378,19 @@
 		DELETE FROM GUIDES
 		WHERE USER_NO = #{userNo}
 	</delete>
-	<!-- 고객관리 삭제, 역할 수정시 가이드이미지 삭제(가이드 번호 조회) -->
+	<!-- 고객관리 삭제 가이드이미지 삭제(가이드 번호 조회) -->
 	<select id="selectGuideNo" parameterType="hashmap" resultType="int">
 		SELECT GUIDE_NO
 		FROM GUIDES
 		WHERE USER_NO = #{userNo}
 	</select>
-	<!-- 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(프로필 존재 여부) -->
+	<!-- 가이드관리 삭제, 고객관리 삭제(프로필 존재 여부) -->
 	<select id="selectPFilePath" parameterType="hashmap" resultType="String">
 		SELECT P_FILE_PATH
 		FROM GUIDE_IMG
 		WHERE P_GUIDE_NO = #{guideNo}
 	</select>
-	<!-- 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(가이드 이미지 삭제) -->
+	<!-- 가이드관리 삭제, 고객관리 삭제(가이드 이미지 삭제) -->
 	<delete id="deleteGuideImg" parameterType="hashmap">
 		DELETE FROM GUIDE_IMG
 		WHERE P_GUIDE_NO = #{guideNo}
