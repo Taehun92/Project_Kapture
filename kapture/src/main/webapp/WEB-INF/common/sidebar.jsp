@@ -80,6 +80,9 @@
                                     </template>
                                 </select>
                             </div>
+                            <div v-if="isLoadingWeather" class="text-center py-4">
+                                <span class="text-blue-600 font-semibold animate-pulse">날씨 정보를 불러오는 중...</span>
+                            </div>
                             <div v-if="weatherForecastDaily.length">
                                 
                                 <table class="table-auto border-collapse border border-gray-300 text-center text-xs">
@@ -142,8 +145,8 @@
                     tmx: ''
                 },
                 weatherForecast: [],
-                weatherForecastDaily: []
-
+                weatherForecastDaily: [],
+                isLoadingWeather: false,
             };
         },
 
@@ -181,6 +184,7 @@
             //날씨 정보 가져오기
             fnWeather() {
                 let self = this;
+                self.isLoadingWeather = true;
                 const today = new Date();
                 const year = today.getFullYear();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -287,6 +291,7 @@
                         });
 
                         self.weatherForecastDaily = dailyForecast;
+                        self.isLoadingWeather = false; // 로딩 완료
                     }
                 };
             },
