@@ -72,15 +72,7 @@
 		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND THUMBNAIL = 'Y'
 		INNER JOIN GUIDES G ON T.GUIDE_NO = G.GUIDE_NO
 		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
-		LEFT JOIN(
-		  SELECT GI.*
-		  FROM GUIDE_IMG GI
-		  INNER JOIN (
-		     SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
-		     FROM GUIDE_IMG
-		     GROUP BY P_GUIDE_NO
-		  ) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
-		) GI ON GI.P_GUIDE_NO = T.GUIDE_NO
+		INNER JOIN GUIDE_IMG I ON G.GUIDE_NO = I.P_GUIDE_NO
 		WHERE T.TOUR_NO =  #{tourNo}
 	</select>
 	
@@ -91,11 +83,18 @@
 	
 	<update id="toggleTourDeleteYn" parameterType="hashmap">
 		UPDATE TOURS
-	    SET DELETEYN = #{deleteYn}
+	    SET DELETEYN = #{deleteYN}
 	    WHERE TOUR_NO = #{tourNo}
 	</update>
+	<insert id="insertResaleTour" parameterType="hashmap">
+	INSERT INTO TOURS
+	VALUES (TOUR_SEQ.NEXTVAL, #{guideNo}, #{title}, #{duration}, #{price}, 4, #{tourDate}, SYSDATE, SYSDATE,
+		'N', #{siNo}, #{guNo}, #{themeNo}, #{description}, #{vehicle})
+	</insert>
 	
 </mapper>
+
+
 
 
 

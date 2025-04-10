@@ -26,6 +26,8 @@ public interface ToursMapper {
 
 	int toggleTourDeleteYn(HashMap<String, Object> map);
 
+	int insertResaleTour(HashMap<String, Object> map);
+
 	
 	
 

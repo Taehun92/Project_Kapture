@@ -41,8 +41,8 @@
                     </li>
                     <li>
                         <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-sales-list.do' }"
-                            href="/mypage/guide-sales-list.do"
-                            class="block px-3 py-2 rounded hover:bg-blue-100">상품 목록</a>
+                            href="/mypage/guide-sales-list.do" class="block px-3 py-2 rounded hover:bg-blue-100">상품
+                            목록</a>
                     </li>
                     <li>
                         <a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do"
@@ -50,7 +50,7 @@
                     </li>
                     <li>
                         <a :class="{ 'bg-blue-950 text-white': currentPage === 'guide-qna.do' }"
-                         href="/mypage/guide-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a>
+                            href="/mypage/guide-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a>
                     </li>
                 </ul>
             </div>
@@ -70,14 +70,20 @@
                         <div class="text-lg font-bold mb-4">가이드 정보 수정</div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                             <!-- 프로필이미지 -->
                             <span class="form-group profile-upload-container">
-                                <span v-if="userinfo.P_FILE_PATH && userinfo.P_FILE_PATH !== ''">
-                                    <img :src="userinfo.P_FILE_PATH" alt="가이드사진" class="guide-img" />
-                                </span>
-                                <span v-else class="no-image">NO Image</span>
+                                <div
+                                    class="w-[150px] h-[150px] overflow-hidden rounded-full border flex items-center justify-center bg-gray-50">
+                                    <img v-if="userInfo.P_FILE_PATH && userInfo.P_FILE_PATH !== ''"
+                                        :src="userInfo.P_FILE_PATH" alt="가이드사진" class="w-full h-full object-contain" />
+                                    <span v-else class="text-gray-400 text-sm">
+                                        NO Image
+                                    </span>
+                                </div>
                                 <input type="file" @change="handleProfileUpload" />
                             </span>
+
                             <div>
                                 <label class="block font-semibold mb-1">FIRSTNAME <span
                                         class="text-red-500">*</span></label>
@@ -219,7 +225,7 @@
                             LANGUAGE: "",
                             P_FILE_PATH: "",
                         },
-                        
+
                         confirmPassword: "",
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
@@ -240,14 +246,14 @@
 
                         // 서버로 전송할 데이터
                         let nparmap = {
-                            userLastName: self.userInfo.USER_FIRSTNAME,
+                            userLastName: self.userInfo.USER_LASTNAME,
                             phone: self.userInfo.PHONE,
                             address: self.userInfo.ADDRESS,
                             gender: self.userInfo.GENDER,
                             birthday: self.userInfo.BIRTHDAY,
                             pushYN: self.userInfo.PUSHYN,
-                            experience : self.userInfo.EXPERIENCE,
-                            language : self.userInfo.LANGUAGE,
+                            experience: self.userInfo.EXPERIENCE,
+                            language: self.userInfo.LANGUAGE,
                             sessionId: self.sessionId,
                         };
                         // Ajax 요청
@@ -258,6 +264,7 @@
                             data: nparmap,
                             success: function (data) {
                                 console.log("서버 응답:", data);
+                                
                                 if (data.result === "success") {
                                     alert("회원정보가 저장되었습니다.");
                                     // location.href = "/mypage/user-purchase-history.do";
@@ -283,6 +290,7 @@
                             type: "POST",
                             data: nparmap,
                             success: function (data) {
+                                console.log("불러온 데이터", data);
                                 if (data.result == "success") {
                                     console.log(data);
                                     self.userInfo = data.userInfo;

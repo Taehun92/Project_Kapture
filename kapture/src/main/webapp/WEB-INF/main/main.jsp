@@ -22,7 +22,7 @@
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide overflow-x-hidden">
         <jsp:include page="../common/header.jsp"></jsp:include>
         <aside class="w-[250px] bg-gray-100">
-            <jsp:include page="../common/test-sidebar.jsp"></jsp:include>
+            <jsp:include page="../common/sidebar.jsp"></jsp:include>
         </aside>
         <div id="app" class="pb-12">
 
@@ -123,8 +123,8 @@
 
                                 <div class="flex flex-wrap items-center gap-8 mb-1">
                                     <!-- 제목 -->
-                                    <div class="text-xl font-bold text-gray-800">
-                                        {{ item.title }}
+                                    <div class="text-xl font-bold text-gray-800 cursor-pointer" @click="goToTourInfo(item.tourNo)">
+                                        {{ item.title }} 
                                     </div>
                                     
                                     <!-- 투어 정보 -->

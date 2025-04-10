@@ -156,4 +156,13 @@ public class ToursController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	// 상품 재판매 등록
+	@RequestMapping(value = "/tours/resaleTour.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String resaleTour(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap = toursService.saveResaleTour(map);
+		return new Gson().toJson(resultMap);
+	}
 }
