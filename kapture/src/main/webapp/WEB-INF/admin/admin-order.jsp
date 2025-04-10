@@ -15,15 +15,23 @@
                 font-family: Arial, sans-serif;
             }
 
-            #sidebar {
-                width: 220px;
-                background-color: #222;
-                color: #fff;
-                padding: 20px;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                left: 0;
+            /* 제목 스타일 */
+			.page-title {
+				text-align: center;
+				font-size: 24px;
+				font-weight: bold;
+				/* margin-top: 20px; */
+				margin-left: 220px;
+				/* 사이드바 너비(200px) + 여백(20px) */
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+				/* 수평 중앙 정렬 */
+				align-items: center;
+			}
+
+            .title-hr {
+                margin-bottom: 30px;
             }
 
             #app {
@@ -95,6 +103,10 @@
                 background-color: #0056b3;
             }
 
+            .search-input{
+				width: 300px;
+			}
+            
             .refunded-button {
                 margin-top: 5px;
                 padding: 2px 5px;
@@ -195,7 +207,7 @@
             }
 
             .table-button {
-                margin-top: 5px;
+                margin: 5px;
                 padding: 2px 5px;
                 background-color: #007bff;
                 color: white;
@@ -213,6 +225,9 @@
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <div id="app">
+            <!-- 제목 추가 -->
+			<div class="page-title">주문내역 관리</div>
+			<hr class="title-hr">
             <input type="date" v-model="startDate" class="search-date">
             ~
             <input type="date" v-model="endDate" class="search-date">
@@ -223,7 +238,7 @@
                 <option value="환불요청">환불요청</option>
                 <option value="환불완료">환불완료</option>
             </select>
-            <input type="text" v-model="keyword" class="search-input" placeholder="회원명/상품 검색">
+            <input type="text" v-model="keyword" class="search-input"   @keyup.enter="loadFilteredData" placeholder="상태 검색">
             <button class="search-button" @click="loadFilteredData">검색</button>
 
             <table class="transaction-table">

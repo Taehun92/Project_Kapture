@@ -121,6 +121,23 @@
 				align-items: center;
 				text-align: center;
 			}
+			.modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+				width: 95%;
+				margin-bottom: 15px;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+                font-weight: bold;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                cursor: pointer;
+            }
 
 			/* 모달 내부 폼 스타일 예시 */
 			.modal-form label {
@@ -140,6 +157,19 @@
 				width: 20px;
 				margin-right: 30px;
 			}
+			.modal-form input[type="text"],
+            .modal-form input[type="date"],
+			.modal-form input[type="password"],
+            .modal-form textarea,
+            .modal-form select {
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+                width: auto;
+                min-width: 150px;
+                max-width: 220px;
+            }
 
 			.modal-form .form-group {
 				margin-bottom: 10px;
@@ -238,6 +268,10 @@
                 background-color: #0056b3;
             }
 
+			.search-input{
+				width: 300px;
+			}
+
 			.tab-btn {
                 margin-right: 10px;
                 padding: 8px 12px;
@@ -274,9 +308,9 @@
 					<option value="">전체</option>
 					<option value="userNo">회원번호</option>
 					<option value="guideNo">가이드번호</option>
-					<option value="name">이름</option>
+					<option value="name">회원명</option>
 				</select>
-            	<input type="text" v-model="keyword" class="search-input" placeholder="회원명/상품 검색">
+            	<input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="회원번호 / 회원명 / 가이드번호 검색">
             	<button class="search-button" @click="loadFilteredData">검색</button>
 			</div>
 				<table>
@@ -345,9 +379,13 @@
                 </button>
                 <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
             </div>
+			<!-- 가이드 정보 수정 모달 -->
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnGuideEditClose()">
 				<div class="modal-content">
-					<h2>가이드 정보 수정</h2>
+					<div class="modal-header">
+                        <h2>가이드 추가</h2>
+                        <span class="close-btn" @click="fnGuideEditClose()">&times;</span>
+                    </div>
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
@@ -471,9 +509,10 @@
 			<div v-if="showAddModal" class="modal-overlay" @click.self="fnCloseAddModal">
 				<div class="modal-content add-guide-modal">
 					<!-- 닫기 버튼 -->
-					<button class="modal-close-btn" @click="fnCloseAddModal">✖</button>
-					<!-- 제목 -->
-					<h2 class="modal-title">가이드 추가</h2>
+					<div class="modal-header">
+                        <h2>가이드 추가</h2>
+                        <span class="close-btn" @click="fnCloseAddModal">&times;</span>
+                    </div>					
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
@@ -724,6 +763,12 @@
 						success: function (data) {
 							if (data.result === "success") {
 								alert("삭제되었습니다.");
+								if(data.guideResult === "fail"){
+									alert("가이드 정보 삭제 실패");
+								}
+								if(data.guideImgResult === "fail"){
+									alert("가이드 이미지 삭제 실패");
+								}
 								// 목록 새로고침
 								location.reload();
 							} else {
@@ -903,27 +948,27 @@
 						alert("비밀번호를 입력하세요.");
 						return;
 					}
-					if(self.passwordRules.length){
+					if(!self.passwordRules.length){
 						alert("비밀번호는 6글자 이상입니다.");
 						return;
 					}
-					if(self.passwordRules.upper){
+					if(!self.passwordRules.upper){
 						alert("비밀번호에 대문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(self.passwordRules.lower){
+					if(!self.passwordRules.lower){
 						alert("비밀번호에 소문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(self.passwordRules.special){
+					if(!self.passwordRules.special){
 						alert("비밀번호에 특수문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(self.passwordRules.number){
+					if(!self.passwordRules.number){
 						alert("비밀번호에 숫자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(self.passwordsMatch){
+					if(!self.passwordsMatch){
 						alert("비밀번호를 확인해주세요.");
 						return;
 					}
@@ -939,6 +984,10 @@
 						alert("생년월일을 입력하세요.");
 						return;
 					}
+					if(!self.newGuide.birthday >= new Date()){
+						alert("생년월일을 확인해주세요.");
+						return;
+					}
 					if(!self.newGuide.address || self.newGuide.address.trim() === ""){
 						alert("주소를 입력하세요.");
 						return;
@@ -947,7 +996,7 @@
 						alert("사용가능 언어를 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.email || self.newGuide.email.trim() === ""){
+					if(!self.newGuide.experience || self.newGuide.experience.trim() === ""){
 						alert("자기소개 및 경력을 입력하세요.");
 						return;
 					}
