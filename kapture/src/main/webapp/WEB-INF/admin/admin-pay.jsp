@@ -230,6 +230,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="transactions.length === 0">
+                            <td colspan="10">검색 결과가 없습니다.</td>
+                        </tr>
                         <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
                             <td>{{ item.PAYMENT_DATE }}</td>
                             <td>{{ item.USER_FIRSTNAME }}</td>

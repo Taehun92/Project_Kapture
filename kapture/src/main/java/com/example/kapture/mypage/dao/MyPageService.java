@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.kapture.admin.mapper.AdminMapper;
 import com.example.kapture.common.mapper.CommonMapper;
 import com.example.kapture.common.model.Region;
 import com.example.kapture.common.model.Reviews;
@@ -28,6 +29,9 @@ public class MyPageService {
 	
 	@Autowired
 	CommonMapper commonMapper;
+	
+	@Autowired
+    AdminMapper adminMapper;
 	
 	@Autowired
     PasswordEncoder passwordEncoder;
@@ -339,12 +343,29 @@ public class MyPageService {
 
 	    try {
 	        // GUIDE 테이블 정보 업데이트 (예: 경험, 사용 언어 등)
-	        int result = myPageMapper.updateGuideInfo(map);
-
+	    	int guideInfo = myPageMapper.updateGuideInfo(map);
 	        // USERS 테이블 기본 정보도 같이 수정 (선택 사항)
-	        result += myPageMapper.userInfoUpdate(map);
-
-	        resultMap.put("result", result > 1 ? "success" : "fail");
+	    	int userInfo = myPageMapper.userInfoUpdate(map);
+	        
+	    	String result;
+	        String pFilePath = (String)map.get("pFilePath");
+			if(pFilePath != null && pFilePath != "") {
+				int guideImg = adminMapper.updateGuideImg(map);
+				int beforeGuideImg = adminMapper.deleteBeforeGuideImg(map);
+				if (guideInfo > 0 && userInfo > 0 && guideImg > 0 && beforeGuideImg > 0) {
+		            result = "success";
+		        } else {
+		            result = "fail";
+		        }
+			} else {
+				if (guideInfo > 0 && userInfo > 0) {
+		            result = "success";
+		        } else {
+		            result = "fail";
+		        }
+			}
+			
+			resultMap.put("result", result);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        resultMap.put("result", "fail");
