@@ -142,7 +142,7 @@ public class AdminController {
 	// 프로필 이미지 저장
 	@RequestMapping("/admin/guide-profile.dox")
 	@ResponseBody
-	public String result(@RequestParam("profile") List<MultipartFile> profile, HttpServletRequest request,HttpServletResponse response, Model model)
+	public String result(@RequestParam("profile") List<MultipartFile> profile,@RequestParam("guideNo") int guideNo,  HttpServletRequest request,HttpServletResponse response, Model model)
 	{
 		HashMap<String, Object> resultMap = new HashMap<>();
 		try {
@@ -163,7 +163,7 @@ public class AdminController {
 					
 					
 					HashMap<String, Object> map = new HashMap<String, Object>();
-					
+					map.put("guideNo", guideNo);
 					map.put("pFilePath", "../img/" + saveFileName);
 					map.put("pFileName", saveFileName);
 					map.put("pFileOrgName", originFilename);

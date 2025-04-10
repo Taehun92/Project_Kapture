@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.kapture.common.mapper.CommonMapper;
 import com.example.kapture.common.model.Common;
+import com.example.kapture.common.model.Img;
 import com.example.kapture.common.model.Region;
 import com.example.kapture.common.model.Theme;
 
@@ -108,6 +109,40 @@ public class CommonService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> getThemeListByParent(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Theme> themeList = commonMapper.selectThemeListByParentNo(map);
+		
+		resultMap.put("themeList", themeList);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getGuListBysiNo(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Region> guList = commonMapper.selectGuListBysiNo(map);
+		
+		resultMap.put("guList", guList);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getSiNameNoList(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		
+		List<Region> siList = commonMapper.selectgetSiNameNoList(map);
+		
+		resultMap.put("siList", siList);
+		resultMap.put("result", "success");
+		
+		return resultMap;
+	}
+	
+	
 	// 날씨 정보
 	public HashMap<String, Object> selectSi(HashMap<String, Object> map) {
 		
@@ -150,6 +185,21 @@ public class CommonService {
 		
 		resultMap.put("xy", xy);
 		
+		return resultMap;
+	}
+
+	public HashMap<String, Object> getTourThumbnail(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Img img = commonMapper.selectTourThumbnail(map);
+			resultMap.put("result", "success");
+			resultMap.put("img", img);
+			
+		} catch (Exception e) {
+      System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
 		return resultMap;
 	}
 	

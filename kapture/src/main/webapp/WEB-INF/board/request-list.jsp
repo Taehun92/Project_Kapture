@@ -63,9 +63,16 @@
                     </tbody>
                 </table>
             </div>
+            <!-- 글쓰기 버튼 -->
+            <div class="mt-1 text-right">
+                <button v-if="sessionId !== '' && sessionRole === 'TOURIST'"
+                    class="px-6 py-3 text-base bg-blue-950 hover:bg-blue-700 text-white rounded shadow" @click="fnAdd">
+                    글쓰기
+                </button>
+            </div>
 
             <!-- 페이징 -->
-            <div class="flex justify-center mt-8 space-x-2 text-base">
+            <div class="flex justify-center mt-2 space-x-2 text-base">
                 <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
                     class="px-4 py-2 rounded border border-gray-300 disabled:opacity-50">이전</button>
                 <button v-for="page in totalPages" :key="page" @click="changePage(page)"
@@ -74,14 +81,6 @@
                 </button>
                 <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
                     class="px-4 py-2 rounded border border-gray-300 disabled:opacity-50">다음</button>
-            </div>
-
-            <!-- 글쓰기 버튼 -->
-            <div class="mt-8 text-right">
-                <button v-if="sessionId !== '' && sessionRole === 'TOURLIST'"
-                    class="px-6 py-3 text-base bg-blue-950 hover:bg-blue-700 text-white rounded shadow" @click="fnAdd">
-                    글쓰기
-                </button>
             </div>
         </div>
         <jsp:include page="../common/footer.jsp" />
@@ -94,6 +93,7 @@
                     list: [],
                     keyword: '',
                     sessionId: "${sessionId}",
+                    sessionRole: "${sessionRole}",
                     currentPage: 1,        // 현재 페이지
                     pageSize: 10,          // 한 페이지당 게시글 수
                     totalPages: 1
