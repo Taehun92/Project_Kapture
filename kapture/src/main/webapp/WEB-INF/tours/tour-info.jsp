@@ -33,14 +33,16 @@
 							{{ tourInfo.title }}
 							<div class="w-160 h-1 bg-blue-950 mx-auto mt-2 rounded"></div>
 						</h1>
-						<div class="flex items-center gap-4 bg-blue-50 border border-gray-200 rounded-lg p-4">
-							<img :src="tourInfo.pfilePath" alt="가이드 사진"
-								class="w-32 h-32 rounded-full border object-cover" />
+						<div class="flex items-start gap-4 bg-blue-50 border border-gray-200 rounded-lg p-4">
+							<img :src="getImagePath(tourInfo.pFilePath)" alt="가이드 사진"
+								class="w-32 h-32 flex-shrink-0 rounded-full border object-cover" />
 							<div class="text-sm text-gray-800 space-y-2">
-								<p class="font-bold text-2xl">{{ tourInfo.userFirstName }}</p>
-								<p class="text-gray-600">성별: {{ tourInfo.gender === 'M' ? '남자' : '여자' }}</p>
-								<p class="text-gray-600 text-lg">사용 언어: {{ tourInfo.guideLanguage }}</p>
-								<p class="text-gray-600 text-lg">소개: {{ tourInfo.experience }}</p>
+								<div class="flex items-center gap-4 text-gray-600 text-lg flex-wrap">
+									<p class="font-bold text-2xl text-black">{{ tourInfo.userFirstName }}</p>
+									<p class="font-semibold text-lg">성별: {{ tourInfo.gender === 'M' ? '남자' : '여자' }}</p>
+									<p class="font-semibold text-lg">사용 언어: {{ tourInfo.guideLanguage }}</p>
+								</div>
+								<p class="text-gray-600 text-lg whitespace-pre-wrap">{{ tourInfo.experience }}</p>
 							</div>
 						</div>
 						<!-- 📌 2. 금액 + 차량 정보 -->
@@ -90,16 +92,14 @@
 
 							<!-- 💙 찜 + 장바구니 -->
 							<div class="flex items-center gap-4 mr-3">
-								<div class="flex items-center gap-2 cursor-pointer mr-5" @click="toggleFavorite(tourInfo)">
-									<img
-									  :src="tourInfo.isFavorite === 'Y' ? '/svg/taeguk-full.svg' : '/svg/taeguk-outline.svg'"
-									  alt="찜 아이콘"
-									  class="w-9 h-9 hover:scale-110 transition-transform"
-									/>
+								<div class="flex items-center gap-2 cursor-pointer mr-5"
+									@click="toggleFavorite(tourInfo)">
+									<img :src="tourInfo.isFavorite === 'Y' ? '/svg/taeguk-full.svg' : '/svg/taeguk-outline.svg'"
+										alt="찜 아이콘" class="w-9 h-9 hover:scale-110 transition-transform" />
 									<span class="text-blue-950 font-semibold text-base">
-									  {{ tourInfo.isFavorite === 'Y' ? '찜 취소' : '찜 하기' }}
+										{{ tourInfo.isFavorite === 'Y' ? '찜 취소' : '찜 하기' }}
 									</span>
-								  </div>
+								</div>
 								<button @click="fnAddedToCart"
 									class="bg-blue-950 text-white px-5 py-2.5 rounded hover:bg-blue-800 flex items-center gap-2 text-base font-medium shadow-sm">
 									🛒 <span>장바구니 담기</span>
@@ -114,9 +114,11 @@
 					<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
 				</div>
 				<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
-					<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700" @click="fnEdit">수정</button>
-					<button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" @click="fnDelete">삭제</button>
-				  </div>
+					<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700"
+						@click="fnEdit">수정</button>
+					<button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+						@click="fnDelete">삭제</button>
+				</div>
 
 				<!-- 후기 -->
 				<div
@@ -151,19 +153,15 @@
 								<div class="flex justify-between items-center text-base font-bold text-blue-950">
 									<!-- 좌측: 이름 + 별점 -->
 									<div class="flex text-lg items-center gap-3">
-									  <span>{{ review.userFirstName }} {{ review.userLastName }}</span>
-									  <star-rating
-										:rating="Number(review.rating)"
-										:read-only="true"
-										:show-rating="false"
-										:star-size="20"
-									  />
+										<span>{{ review.userFirstName }} {{ review.userLastName }}</span>
+										<star-rating :rating="Number(review.rating)" :read-only="true"
+											:show-rating="false" :star-size="20" />
 									</div>
 									<!-- 우측: 작성일 -->
 									<div class="text-sm text-gray-500 font-semibold">
 										{{ formatDate(new Date(review.rCreatedAt)) }}
 									</div>
-								  </div>
+								</div>
 								<!-- 코멘트 -->
 								<div
 									class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded text-gray-800 text-[15px] leading-relaxed whitespace-pre-line break-words">
@@ -490,7 +488,7 @@
 					showCartButton: false,
 					tourDate: null,
 					dateList: [],
-					minDate: new Date(),
+					minDate: null,
 					maxDate: null,
 
 					cartList: [],
@@ -545,6 +543,13 @@
 					if (this.reviewsList.length === 0) return 0;
 					const total = this.reviewsList.reduce((sum, rating) => sum + rating.rating, 0);
 					return parseFloat((total / this.reviewsList.length).toFixed(1));
+				},
+
+				getImagePath(path) {
+					console.log('원본 path >>>', path);
+					if (!path) return '/img/logo/kapture_Logo.png';
+					if (path.startsWith('http')) return path;
+					return path.replace('..', '');
 				},
 
 				fnAddedToCart() {
