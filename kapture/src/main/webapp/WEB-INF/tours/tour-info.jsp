@@ -490,7 +490,7 @@
 					showCartButton: false,
 					tourDate: null,
 					dateList: [],
-					minDate: new Date(),
+					minDate: null,
 					maxDate: null,
 
 					cartList: [],
@@ -554,14 +554,20 @@
 						sessionId: self.sessionId,
 						count: self.count
 					};
-					self.fnGetMinTourDate();
-					self.fnGetMaxTourDate();
-
-
+					
+					if (!self.sessionId) {
+						alert('로그인이 필요합니다.');
+						location.href = '/login.do'
+						return;
+					}
+					
 					if (self.count <= 0) {
 						alert('인원수를 선택해주세요.');
 						return;
 					}
+					
+					self.fnGetMinTourDate();
+					self.fnGetMaxTourDate();
 
 					// 같은 날짜에 "종일" 상품이 있는지 확인
 					const selectedDate = self.formatDate(new Date(self.tourInfo.tourDate));
@@ -596,11 +602,6 @@
 						}
 					}
 
-					if (!self.sessionId) {
-						alert('로그인이 필요합니다.');
-						location.href = '/login.do'
-						return;
-					}
 
 					let existingItem = self.cartList.find(item =>
 						item.tourNo == self.tourNo &&

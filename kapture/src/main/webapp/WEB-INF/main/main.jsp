@@ -22,7 +22,7 @@
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide overflow-x-hidden">
         <jsp:include page="../common/header.jsp"></jsp:include>
         <aside class="w-[250px] bg-gray-100">
-            <jsp:include page="../common/test-sidebar.jsp"></jsp:include>
+            <jsp:include page="../common/sidebar.jsp"></jsp:include>
         </aside>
         <div id="app" class="pb-12">
 
