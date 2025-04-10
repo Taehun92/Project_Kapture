@@ -22,6 +22,8 @@ public interface RequestMapper {
 	int insertRequestComment(HashMap<String, Object> map);
 
 	int insertRequest(HashMap<String, Object> map);
+	
+	int updateRequest(HashMap<String, Object> map);
 
 	void updateRequestStatus(HashMap<String, Object> map);
 
@@ -34,6 +36,8 @@ public interface RequestMapper {
 	int acceptRequestStatus(HashMap<String, Object> map);
 
 	HashMap<String, Object> selectCommentDetail(Integer commentNo);
+
+	
 
 	
 
