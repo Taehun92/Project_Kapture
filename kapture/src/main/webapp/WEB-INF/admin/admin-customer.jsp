@@ -554,6 +554,7 @@
 			},
 			methods: {
 				loadFilteredData() { 
+					this.page = 1;
                     this.fnGetUsersList(); 
                 },
 				// 유저 목록 불러오기

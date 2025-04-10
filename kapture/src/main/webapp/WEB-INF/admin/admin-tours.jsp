@@ -467,6 +467,7 @@
             },
             methods: {
                 loadFilteredData() { 
+                    this.page = 1;
                     this.fnGetToursManagement(); 
                 },
                 fnGetToursManagement() {

@@ -166,16 +166,7 @@
 		        SELECT *
 		        FROM USERS U
 		        INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
-		        LEFT JOIN(
-		    		SELECT GI.*
-		    		FROM GUIDE_IMG GI
-		    		INNER JOIN (
-		        		SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
-		        		FROM GUIDE_IMG
-		       			GROUP BY P_GUIDE_NO
-		    		) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO 
-		            AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
-				) I ON G.GUIDE_NO = I.P_GUIDE_NO
+		        INNER JOIN GUIDE_IMG I ON G.GUIDE_NO = I.P_GUIDE_NO
 				<if test="startDate != null and startDate != ''">
 			    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
 			  	</if>
@@ -208,7 +199,8 @@
     <select id="selectGuidesTotalCount" resultType="int">
     	SELECT COUNT(*)
 	  	FROM USERS U
-	  	JOIN GUIDES G ON G.USER_NO = U.USER_NO
+	  	INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+	  	INNER JOIN GUIDE_IMG I ON G.GUIDE_NO = I.P_GUIDE_NO
 	  	WHERE 1 = 1
 	  	<if test="startDate != null and startDate != ''">
 	    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')

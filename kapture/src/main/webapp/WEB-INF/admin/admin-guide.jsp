@@ -640,6 +640,7 @@
 			},
 			methods: {
 				loadFilteredData() { 
+					this.page = 1;
                     this.fnGetGuidesList(); 
                 },
 				// 가이드 목록 불러오기
