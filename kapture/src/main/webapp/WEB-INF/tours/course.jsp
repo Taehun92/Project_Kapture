@@ -77,10 +77,7 @@
 
     <!-- 검색창 -->
     <div class="mb-6 flex gap-2 items-center">
-        <input
-            v-model="searchKeyword"
-            type="text"
-            placeholder="검색어를 입력하세요"
+        <input v-model="searchKeyword" type="text" placeholder="검색어를 입력하세요" @keyup.enter="searchCourses"
             class="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-950"
         />
         <button @click="searchCourses" class="px-5 py-2 bg-blue-950 text-white rounded-lg shadow hover:bg-blue-700 transition">
