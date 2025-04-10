@@ -595,6 +595,10 @@
                     handler: 'handleFilterChange',
                     deep: true
                   },
+                  selectedDates: {
+                    handler: 'handleFilterChange',
+                    deep: true
+                  }
             },
             methods: {
                 resetDatePicker() {
