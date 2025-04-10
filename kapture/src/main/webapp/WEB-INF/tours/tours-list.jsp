@@ -36,7 +36,9 @@
     <body class="bg-white text-gray-800">
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="max-w-7xl mx-auto py-8 px-4">
-            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+            <div id="sidebar" class="sidebar">
+            
+            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">🤖챗봇 열기</button>
 
             <div class="modal-overlay" v-if="showChat">
                 <div class="chat-container">
@@ -55,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            
+            </div>
             <!-- 지역별 배너 -->
             <div class="relative h-96 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
                 :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
