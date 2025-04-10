@@ -55,6 +55,11 @@
 	    INNER JOIN USERS U ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMENT_NO = #{commentNo}
 	</select>
+	<update id="updateRequest" parameterType="hashmap">
+		UPDATE REQUESTS
+		SET TITLE = #{title}, REGION = #{region}, BUDGET = #{budget}, RQ_UPDATED_AT = SYSDATE, DESCRIPTION = #{contents}, CURRENCY = #{currency}
+		WHERE REQUEST_NO = #{requestNo}
+	</update>
 	<update id="updateRequestStatus" parameterType="hashmap">
 		UPDATE REQUESTS
 		SET STATUS = '1'
@@ -77,6 +82,12 @@
 	<update id="deleteRequestComment" parameterType="hashmap">
 		UPDATE REQUEST_COMMENTS
     	SET DELETEYN = 'Y', RQC_UPDATED_AT = SYSDATE
-    	WHERE COMMENT_NO = #{commentNo}
+    	WHERE 1=1
+    	<if test="commentNo != null">
+            AND COMMENT_NO = #{commentNo}
+        </if>
+        <if test="commentNo == null">
+            AND REQUEST_NO = #{requestNo}
+        </if>
 	</update>
 </mapper>

@@ -895,7 +895,7 @@
                               .filter(tour => wishTourNos.includes(Number(tour.tourNo)));
                           });
                         }, 500); // 서버 응답 시간에 따라 필요 시 조정
-                      }
+                    }
                 },
 
                 toggleFavorite(tour) {
@@ -1031,7 +1031,7 @@
                 self.fnGetTourDateList();
                 self.fnGetBasket();
                 self.fnGetBasketList();
-
+                
                 setTimeout(() => {
                     if (this.sessionId && !isNaN(this.sessionId)) {
                         this.fnGetWishList();

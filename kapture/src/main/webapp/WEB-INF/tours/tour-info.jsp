@@ -45,37 +45,45 @@
 								<p class="text-gray-600 text-lg whitespace-pre-wrap">{{ tourInfo.experience }}</p>
 							</div>
 						</div>
-						<!-- 📌 2. 금액 + 차량 정보 -->
-						<div class="flex justify-between items-center mt-3 ml-3 text-[16px]">
-							<!-- 💰 금액 -->
+
+						<!-- 📌 가격/날짜/차량 정보 -->
+						<div class="flex flex-col items-center gap-5 mt-4 text-xl text-gray-700">
+
+							<!-- 💰 윗줄: 가격 + 총 금액 -->
 							<div
-								class="flex flex-col md:flex-row md:items-center gap-2 text-green-600 font-semibold text-base md:text-lg">
-								<!-- 1인 가격 -->
+								class="flex flex-wrap justify-center items-center gap-16 text-2xl font-semibold text-blue-950">
 								<div>
 									₩{{ Number(tourInfo.price).toLocaleString() }}
-									<span class="text-sm text-gray-600 font-semibold">/ 인당</span>
+									<span class="text-sm text-gray-600 font-medium">/ 인당</span>
 								</div>
-								<!-- 총 금액 -->
-								<div class="text-blue-950 font-extrabold gap-2 md:ml-4">
+								<div class="text-gray-800 font-bold">
 									총 금액 : ₩{{ (Number(tourInfo.price) * count).toLocaleString() }}
 								</div>
 							</div>
 
-							<!-- 🚗 차량 정보 -->
-							<div class="flex items-center gap-3 text-blue-950 text-lg font-medium mr-5">
-								<img v-if="tourInfo.vehicle === 'COMPANY'" src="/svg/car-company.svg" class="w-7 h-7"
-									alt="회사 차량">
-								<img v-else-if="tourInfo.vehicle === 'GUIDE'" src="/svg/car.svg" class="w-7 h-7"
-									alt="가이드 차량">
-								<img v-else-if="tourInfo.vehicle === 'PUBLIC'" src="/svg/bus.svg" class="w-7 h-7"
-									alt="대중교통">
-								<span class="align-middle">
-									{{
-									tourInfo.vehicle === 'COMPANY' ? '회사 차량 제공' :
-									tourInfo.vehicle === 'GUIDE' ? '가이드 차량 이용' :
-									tourInfo.vehicle === 'PUBLIC' ? '대중교통 이용' : ''
-									}}
-								</span>
+							<!-- 🗓️ 아랫줄: 날짜 / 시간 / 차량 -->
+							<div class="flex flex-wrap justify-center items-center gap-16 text-xl text-gray-600">
+								<div class="flex items-center gap-1">
+									📅 {{ formatDate(tourInfo.tourDate) }}
+								</div>
+								<div class="flex items-center gap-1">
+									⏰ {{ tourInfo.duration }}
+								</div>
+								<div class="flex items-center gap-2">
+									<img v-if="tourInfo.vehicle === 'COMPANY'" src="/svg/car-company.svg"
+										class="w-5 h-5" alt="회사 차량">
+									<img v-else-if="tourInfo.vehicle === 'GUIDE'" src="/svg/car.svg" class="w-5 h-5"
+										alt="가이드 차량">
+									<img v-else-if="tourInfo.vehicle === 'PUBLIC'" src="/svg/bus.svg" class="w-5 h-5"
+										alt="대중교통">
+									<span>
+										{{
+										tourInfo.vehicle === 'COMPANY' ? '회사 차량 제공' :
+										tourInfo.vehicle === 'GUIDE' ? '가이드 차량 이용' :
+										tourInfo.vehicle === 'PUBLIC' ? '대중교통 이용' : ''
+										}}
+									</span>
+								</div>
 							</div>
 						</div>
 
@@ -559,18 +567,33 @@
 						sessionId: self.sessionId,
 						count: self.count
 					};
-					
+
 					if (!self.sessionId) {
 						alert('로그인이 필요합니다.');
 						location.href = '/login.do'
 						return;
 					}
-					
+
 					if (self.count <= 0) {
 						alert('인원수를 선택해주세요.');
 						return;
 					}
-					
+
+					if (!self.cartList || self.cartList.length === 0) {
+						const today = new Date();
+						const selectedDate = new Date(self.tourInfo.tourDate);
+
+						// 오늘보다 이전 또는 같은 날짜면 담을 수 없음
+						if (selectedDate <= today) {
+							alert('오늘 이후의 날짜만 선택 가능합니다.');
+							return;
+						}
+
+						// 최초 담기이므로 min/maxDate는 오늘 기준으로 초기화
+						self.minDate = selectedDate;
+						self.maxDate = selectedDate;
+					}
+
 					self.fnGetMinTourDate();
 					self.fnGetMaxTourDate();
 
@@ -595,7 +618,7 @@
 						return;
 					}
 
-					if (self.minDate) { // 장바구니에 이미 투어가 담겨있다면 날짜 비교
+					if (self.minDate && self.cartList.length > 0) { // 장바구니에 이미 투어가 담겨있다면 날짜 비교
 						const selectedDate = new Date(self.tourInfo.tourDate);
 						const mindate = new Date(self.minDate);
 						const maxdate = new Date(self.maxDate);
@@ -605,6 +628,11 @@
 							alert('장바구니에 담긴 투어와 6일 이상 차이납니다. 담을 수 없습니다.');
 							return;
 						}
+					} else {
+						// 🧠 장바구니가 비어있는 경우 → tourDate를 기준으로 초기화
+						const baseDate = new Date();
+						self.minDate = baseDate;
+						self.maxDate = baseDate;
 					}
 
 
@@ -692,6 +720,7 @@
 				},
 				fnGetMinTourDate() {
 					let self = this;
+
 					let nparmap = {
 						tourNo: self.tourNo,
 						sessionId: self.sessionId,
@@ -780,6 +809,12 @@
 
 				formatDate(date) {
 					if (!date) return '';
+
+					// 문자열이면 Date 객체로 변환
+					if (!(date instanceof Date)) {
+						date = new Date(date);
+					}
+
 					const year = date.getFullYear();
 					const month = (date.getMonth() + 1).toString().padStart(2, '0');
 					const day = date.getDate().toString().padStart(2, '0');
@@ -1001,9 +1036,17 @@
 				let self = this;
 				const params = new URLSearchParams(window.location.search);
 				self.tourNo = params.get("tourNo") || "";
+
+				self.fnGetBasketList();
+
+				setTimeout(() => {
+					if (self.cartList.length === 0 && self.tourInfo?.tourDate) {
+						self.minDate = new Date(self.tourInfo.tourDate);
+					}
+				}, 300);
+
 				self.fnTourInfo();
 				self.fnGetCart();
-				self.fnGetBasketList();
 				self.fnGetBasket();
 				self.fnGetMinTourDate();
 				self.fnGetMaxTourDate();
