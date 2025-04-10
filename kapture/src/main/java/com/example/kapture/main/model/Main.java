@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Main {
-
+	private String tourNo;
 	private String title;
 	private String comment;
 	private double rating;

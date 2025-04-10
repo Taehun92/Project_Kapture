@@ -123,8 +123,8 @@
 
                                 <div class="flex flex-wrap items-center gap-8 mb-1">
                                     <!-- 제목 -->
-                                    <div class="text-xl font-bold text-gray-800">
-                                        {{ item.title }}
+                                    <div class="text-xl font-bold text-gray-800 cursor-pointer" @click="goToTourInfo(item.tourNo)">
+                                        {{ item.title }} 
                                     </div>
                                     
                                     <!-- 투어 정보 -->
