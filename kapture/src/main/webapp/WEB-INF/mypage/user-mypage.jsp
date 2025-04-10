@@ -60,7 +60,7 @@
                     </li>
                     <li>
                         <a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }"
-                            href="mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">
+                            href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">
                             회원 탈퇴
                         </a>
                     </li>
