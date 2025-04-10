@@ -111,6 +111,16 @@ public interface AdminMapper {
 		List<HashMap<String, Object>> selectLatestRequests(HashMap<String, Object> map);
 		// 가이드리스트 총 인원 
 		int selectGuidesTotalCount(HashMap<String, Object> map);
+		// 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(가이드 이미지 삭제)
+		int deleteGuideImg(HashMap<String, Object> map);
+		// 고객관리 삭제, 역할 수정시 가이드이미지 삭제(가이드 번호 조회)
+		int selectGuideNo(HashMap<String, Object> map);
+		// 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(프로필 존재 여부)
+		String selectPFilePath(HashMap<String, Object> map);
+		// 회원 총 인원
+		int selectUsersTotalCount(HashMap<String, Object> map);
+		// 문의조회 총 갯수
+		int selectInquiriesTotalCount(HashMap<String, Object> map);
 
 		
 

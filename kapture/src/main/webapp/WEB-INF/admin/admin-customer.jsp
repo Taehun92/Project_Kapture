@@ -117,22 +117,49 @@
 				text-align: center;
 			}
 
+			.modal-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 95%;
+				margin-bottom: 15px;
+			}
+
+			.modal-header h2 {
+				margin: 0;
+				font-weight: bold;
+			}
+
+			.close-btn {
+				font-size: 28px;
+				cursor: pointer;
+			}
+
 			/* 모달 내부 폼 스타일 예시 */
 			.modal-form label {
 				display: inline-block;
-				width: 110px;
+				width: auto;
 				margin-bottom: 5px;
 			}
 
-			.modal-form input,
-			.modal-form select,
-			.modal-form textarea {
-				width: 300px;
-				margin-bottom: 10px;
+			.modal-form input[type="text"],
+			.modal-form input[type="date"],
+			.modal-form input[type="password"],
+			.modal-form textarea,
+			.modal-form select {
+				padding: 5px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 14px;
+				width: auto;
+				min-width: 150px;
+				max-width: 220px;
+				margin-left: 10px;
 			}
 
 			.modal-form input[type=radio] {
 				width: 20px;
+				margin-left: 10px;
 				margin-right: 30px;
 			}
 
@@ -141,7 +168,21 @@
 			}
 
 			.modal-form button {
+				margin-left: 10px;
 				margin-right: 10px;
+				margin-top: 5px;
+				padding: 10px 20px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				font-size: 16px;
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+
+			.modal-form button:hover {
+				background-color: #0056b3;
 			}
 
 			/* 유효성 검사 메시지 스타일 */
@@ -197,7 +238,7 @@
 				/* 다른 input과 동일한 폭을 맞추고 싶다면 */
 				display: inline-block;
 				/* 또는 flex */
-				width: 300px;
+				width: auto;
 				/* 필요하다면 수평 정렬 방식도 조정 가능 */
 				/* justify-content: space-between; (flex 사용 시) */
 				text-align: left;
@@ -215,6 +256,56 @@
 				margin-right: 15px;
 				/* 버튼들 간격 */
 			}
+
+			.search-input,
+			.search-select,
+			.search-date {
+				padding: 10px 14px;
+				font-size: 16px;
+				height: 40px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				margin-right: 10px;
+				box-sizing: border-box;
+			}
+
+			.search-input{
+				width: 300px;
+			}
+
+			.search-button {
+				padding: 10px 20px;
+				font-size: 16px;
+				height: 40px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+			}
+
+			.search-button:hover {
+				background-color: #0056b3;
+			}
+
+			.search-container{
+				width: 90%;
+				margin: 20px auto;
+			}
+
+			.tab-btn {
+				margin-right: 10px;
+				padding: 8px 12px;
+				border: 1px solid #ccc;
+				background: #f4f4f4;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+
+			.tab-btn.active {
+				background-color: #007bff;
+				color: white;
+			}
 		</style>
 	</head>
 
@@ -223,16 +314,26 @@
 		<div id="app">
 			<!-- 제목 추가 -->
 			<div class="page-title">고객 정보 관리</div>
-
 			<hr>
+			
 			<div class="content">
+				<div class="search-container">
+					<input type="date" v-model="startDate" class="search-date">
+            		 ~ 
+					<input type="date" v-model="endDate" class="search-date">
+					<select v-model="statusFilter" class="search-select">
+						<option value="">전체</option>
+						<option value="userNo">회원번호</option>
+						<option value="email">이메일</option>
+						<option value="name">회원명</option>
+						<option value="phone">연락처</option>
+            		</select>
+            		<input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData" placeholder="회원번호 / 회원명 / 이메일 / 연락처 검색">
+            		<button class="search-button" @click="loadFilteredData">검색</button>
+				</div>
 				<table>
 					<thead>
 						<tr>
-							<th>
-								<input type="checkbox" class="check-all" @change="toggleAll($event)"
-									:checked="isAllChecked" />
-							</th>
 							<th>회원번호</th>
 							<th>이메일</th>
 							<th>이름</th>
@@ -241,7 +342,7 @@
 							<th>생년월일</th>
 							<th>주소</th>
 							<th>역할</th>
-							<th>국적</th>	
+							<th>국적</th>
 							<th>소셜타입</th>
 							<th>알림 동의</th>
 							<th>최근접속</th>
@@ -252,10 +353,6 @@
 					<tbody>
 						<!-- 가이드 리스트 반복 출력 -->
 						<tr v-for="user in usersList">
-							<!-- 선택 체크박스 -->
-							<td>
-								<input type="checkbox" :value="user.userNo" v-model="selectedUsers">
-							</td>
 							<!-- 회원번호 -->
 							<td>{{ user.userNo }}</td>
 							<!-- 이메일-->
@@ -300,10 +397,22 @@
 						</tr>
 					</tbody>
 				</table>
+				<div style="margin-top: 20px; text-align: center;">
+					<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+					<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+						@click="goPage(p)">
+						{{ p }}
+					</button>
+					<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+				</div>
 			</div>
+			
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnUserEditClose()">
 				<div class="modal-content">
-					<h2>회원 정보 수정</h2>
+					<div class="modal-header">
+						<h2>회원 정보 수정</h2>
+						<span class="close-btn" @click="fnUserEditClose()">&times;</span>
+					</div>
 					<div class="modal-form">
 						<!-- 이메일 -->
 						<div class="form-group">
@@ -375,7 +484,11 @@
 						<!-- 역할 -->
 						<div class="form-group">
 							<label>역할</label>
-							<input type="text" v-model="editUser.role" />
+							<select v-model="editUser.role">
+								<option value="TOURIST">일반회원</option>
+								<option value="GUIDE">가이드</option>
+								<option value="ADMIN">관리자</option>
+							</select>
 						</div>
 						<!-- 국적 -->
 						<div class="form-group">
@@ -428,30 +541,31 @@
 					passwordValid: false,
 					passwordsMatch: false,
 					beforeRole: "",
+					startDate: "",
+                    endDate: "",
+                    keyword: "",
+                    page: 1,
+                    size: 10,
+                    totalCount: 0,
+                    totalPages: 1,
+                    statusFilter: "",
+
 				};
 			},
-			computed: {
-				// 모든 행이 체크되어 있는지 여부
-				isAllChecked() {
-					// return this.usersList.length > 0 && this.selectedUsers.length === this.sList.length;
-				}
-			},
 			methods: {
-				// 예: 전체선택/해제
-				toggleAll(event) {
-					if (event.target.checked) {
-						this.selectedUsers = this.usersList.map(u => u.userNo);
-					} else {
-						// 모두 해제
-						this.selectedUsers = [];
-					}
-				},
-
+				loadFilteredData() { 
+                    this.fnGetUsersList(); 
+                },
 				// 유저 목록 불러오기
 				fnGetUsersList() {
 					let self = this;
 					let nparmap = {
-
+						startDate: self.startDate,
+                        endDate: self.endDate,
+                        statusFilter: self.statusFilter,
+                        keyword: self.keyword,
+                        page: self.page,
+                        size: self.size,
 					};
 					$.ajax({
 						url: "/admin/users-list.dox",
@@ -460,21 +574,31 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							for (let i = 0; i < data.usersList.length; i++) {
-								if (data.usersList[i].birthday && typeof data.usersList[i].birthday === 'string') {
-									data.usersList[i].birthday = data.usersList[i].birthday.substring(0, 10);
-								} else {
-									data.usersList[i].birthday = ""; // 또는 기본값 설정
+							if(data.result === 'success'){
+								for (let i = 0; i < data.usersList.length; i++) {
+									if (data.usersList[i].birthday && typeof data.usersList[i].birthday === 'string') {
+										data.usersList[i].birthday = data.usersList[i].birthday.substring(0, 10);
+									} else {
+										data.usersList[i].birthday = ""; // 또는 기본값 설정
+									}
 								}
+								self.usersList = data.usersList;
+								self.totalCount = data.totalCount;
+								self.totalPages = Math.ceil(self.totalCount / self.size);
+							} else {
+								alert("데이터를 가지고 오는데 실패했습니다.");
 							}
-							self.usersList = data.usersList;
-							
 						},
 						error: function (err) {
 							console.error(err);
 						}
 					});
 				},
+				goPage(p) {
+                    if (p < 1 || p > this.totalPages) return;
+                    this.page = p;
+                    this.fnGetUsersList();
+                },
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
 				fnUserEdit(user) {
 					let self = this;
@@ -561,6 +685,12 @@
 							console.log(data);
 							if (data.result === "success") {
 								alert("삭제되었습니다.");
+								if (data.guideResult === "fail") {
+									alert("가이드 정보 삭제 실패");
+								}
+								if (data.guideImgResult === "fail") {
+									alert("가이드 이미지 삭제 실패");
+								}
 								// 목록 새로고침
 								location.reload();
 							} else {

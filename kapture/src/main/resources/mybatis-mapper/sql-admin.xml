@@ -189,13 +189,13 @@
 				    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%'  
 			    	)
 			  	</if>
-			  	<if test="statusFilter != null and statusFilter == 'tourNo'">
+			  	<if test="statusFilter != null and statusFilter == 'userNo'">
 					AND U.USER_NO LIKE '%' || #{keyword} || '%' 
 				</if>
-			  	<if test="statusFilter != null and statusFilter == 'title'">
+			  	<if test="statusFilter != null and statusFilter == 'guideNo'">
 				    AND GUIDE_NO LIKE '%' || #{keyword} || '%' 
 			  	</if>
-			  	<if test="statusFilter != null and statusFilter == 'siName'">
+			  	<if test="statusFilter != null and statusFilter == 'name'">
 				    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
 			  	</if>
 	  			ORDER BY U_CREATED_AT DESC
@@ -223,13 +223,13 @@
 		    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%'  
 	    	)
 	  	</if>
-	  	<if test="statusFilter != null and statusFilter == 'tourNo'">
+	  	<if test="statusFilter != null and statusFilter == 'userNo'">
 			AND U.USER_NO LIKE '%' || #{keyword} || '%' 
 		</if>
-	  	<if test="statusFilter != null and statusFilter == 'title'">
+	  	<if test="statusFilter != null and statusFilter == 'guideNo'">
 		    AND GUIDE_NO LIKE '%' || #{keyword} || '%' 
 	  	</if>
-	  	<if test="statusFilter != null and statusFilter == 'siName'">
+	  	<if test="statusFilter != null and statusFilter == 'name'">
 		    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
 	  	</if>
 	</select>
@@ -270,8 +270,78 @@
 	</insert>
 	<!-- 회원관리 유저정보 조회 -->
 	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
-		SELECT *
-		FROM USERS
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM USERS
+				WHERE 1 = 1
+			  	<if test="startDate != null and startDate != ''">
+			    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="endDate != null and endDate != ''">
+			    	AND U_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="statusFilter == null or statusFilter == ''">
+			    	AND (
+						USER_NO LIKE '%' || #{keyword} || '%' 
+				    	OR EMAIL LIKE '%' || #{keyword} || '%' 
+				    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+				    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'
+				    	OR PHONE LIKE '%' || #{keyword} || '%'    
+			    	)
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'userNo'">
+					AND USER_NO LIKE '%' || #{keyword} || '%' 
+				</if>
+			  	<if test="statusFilter != null and statusFilter == 'email'">
+				    AND EMAIL LIKE '%' || #{keyword} || '%' 
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'name'">
+				    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+				    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%' 
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'phone'">
+				    AND PHONE LIKE '%' || #{keyword} || '%' 
+			  	</if>
+	  			ORDER BY U_CREATED_AT DESC
+	  		) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
+	</select>
+	<!--  회원 총 인원  -->
+    <select id="selectUsersTotalCount" resultType="int">
+    	SELECT COUNT(*)
+	  	FROM USERS
+	  	WHERE 1 = 1
+	  	<if test="startDate != null and startDate != ''">
+	    	AND U_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="endDate != null and endDate != ''">
+	    	AND U_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="statusFilter == null or statusFilter == ''">
+	    	AND (
+				USER_NO LIKE '%' || #{keyword} || '%' 
+		    	OR EMAIL LIKE '%' || #{keyword} || '%' 
+		    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+		    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'
+		    	OR PHONE LIKE '%' || #{keyword} || '%'    
+	    	)
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'userNo'">
+			AND USER_NO LIKE '%' || #{keyword} || '%' 
+		</if>
+	  	<if test="statusFilter != null and statusFilter == 'email'">
+		    AND EMAIL LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'name'">
+		    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+		    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'phone'">
+		    AND PHONE LIKE '%' || #{keyword} || '%' 
+	  	</if>
 	</select>
 	<!-- 회원관리 유저정보 수정 -->
 	<update id="updateUser" parameterType="map">
@@ -292,7 +362,7 @@
 			U_UPDATED_AT = SYSDATE
 		WHERE USER_NO = #{userNo}
 	</update>
-	<!-- 회원관리 회원 탈퇴 처리(삭제) -->
+	<!-- 회원관리 회원 탈퇴 처리(삭제), 가이드관리 삭제 -->
 	<delete id="deleteUser" parameterType="hashmap">
 		DELETE FROM USERS
 		WHERE USER_NO = #{userNo}
@@ -302,17 +372,120 @@
 		INSERT INTO GUIDES (GUIDE_NO, USER_NO)
 		VALUES (GUIDES_SEQ.NEXTVAL, #{userNo})
 	</insert>
-	<!-- 가이드관리 삭제,역할 수정시 가이드 삭제 -->
+	<!-- 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제 -->
 	<delete id="deleteGuide" parameterType="hashmap">
 		DELETE FROM GUIDES
 		WHERE USER_NO = #{userNo}
 	</delete>
+	<!-- 고객관리 삭제, 역할 수정시 가이드이미지 삭제(가이드 번호 조회) -->
+	<select id="selectGuideNo" parameterType="hashmap" resultType="int">
+		SELECT GUIDE_NO
+		FROM GUIDES
+		WHERE USER_NO = #{userNo}
+	</select>
+	<!-- 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(프로필 존재 여부) -->
+	<select id="selectPFilePath" parameterType="hashmap" resultType="String">
+		SELECT P_FILE_PATH
+		FROM GUIDE_IMG
+		WHERE P_GUIDE_NO = #{guideNo}
+	</select>
+	<!-- 가이드관리 삭제, 고객관리 삭제, 역할 수정시 가이드 삭제(가이드 이미지 삭제) -->
+	<delete id="deleteGuideImg" parameterType="hashmap">
+		DELETE FROM GUIDE_IMG
+		WHERE P_GUIDE_NO = #{guideNo}
+	</delete>
 	<!-- 고객 문의 리스트 조회 -->
 	<select id="selectInquiriesList" parameterType="map" resultType="com.example.kapture.cs.model.Cs">
-		SELECT *
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM INQUIRIES I
+				INNER JOIN USERS U ON I.USER_NO = U.USER_NO
+				WHERE 1 = 1
+			  	<if test="startDate != null and startDate != ''">
+			    	AND INQ_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="endDate != null and endDate != ''">
+			    	AND INQ_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+			  	</if>
+			  	<if test="statusFilter == null or statusFilter == ''">
+			    	AND (
+						INQUIRY_NO LIKE '%' || #{keyword} || '%' 
+				    	OR U.USER_NO LIKE '%' || #{keyword} || '%' 
+				    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+				    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'  
+				    	OR CATEGORY LIKE '%' || #{keyword} || '%' 
+				    	OR QNA_TITLE LIKE '%' || #{keyword} || '%' 
+				    	OR QNA_STATUS LIKE '%' || #{keyword} || '%'  
+			    	)
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'inquiryNo'">
+					AND INQUIRY_NO LIKE '%' || #{keyword} || '%' 
+				</if>
+				<if test="statusFilter != null and statusFilter == 'userNo'">
+				    AND U.USER_NO LIKE '%' || #{keyword} || '%' 
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'name'">
+				    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+				    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'  
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'category'">
+				    AND CATEGORY LIKE '%' || #{keyword} || '%' 
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'qnaTitle'">
+				    AND QNA_TITLE LIKE '%' || #{keyword} || '%'
+			  	</if>
+			  	<if test="statusFilter != null and statusFilter == 'qnaStatus'">
+				    AND QNA_STATUS LIKE '%' || #{keyword} || '%' 
+			  	</if>
+				ORDER BY INQ_CREATED_AT DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
+	</select>
+	<!-- 문의조회 총 갯수 -->
+	<select id="selectInquiriesTotalCount" resultType="int">
+		SELECT COUNT(*)
 		FROM INQUIRIES I
 		INNER JOIN USERS U ON I.USER_NO = U.USER_NO
-		ORDER BY INQ_CREATED_AT DESC
+		WHERE 1 = 1
+	  	<if test="startDate != null and startDate != ''">
+	    	AND INQ_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="endDate != null and endDate != ''">
+	    	AND INQ_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="statusFilter == null or statusFilter == ''">
+	    	AND (
+				INQUIRY_NO LIKE '%' || #{keyword} || '%' 
+		    	OR U.USER_NO LIKE '%' || #{keyword} || '%' 
+		    	OR USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+		    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'  
+		    	OR CATEGORY LIKE '%' || #{keyword} || '%' 
+		    	OR QNA_TITLE LIKE '%' || #{keyword} || '%' 
+		    	OR QNA_STATUS LIKE '%' || #{keyword} || '%'  
+	    	)
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'inquiryNo'">
+			AND INQUIRY_NO LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="statusFilter != null and statusFilter == 'userNo'">
+		    AND U.USER_NO LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'name'">
+		    AND USER_FIRSTNAME LIKE '%' || #{keyword} || '%' 
+		    	OR USER_LASTNAME LIKE '%' || #{keyword} || '%'  
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'category'">
+		    AND CATEGORY LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'qnaTitle'">
+		    AND QNA_TITLE LIKE '%' || #{keyword} || '%'
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'qnaStatus'">
+		    AND QNA_STATUS LIKE '%' || #{keyword} || '%' 
+	  	</if>
 	</select>
 	<!-- 고객 문의 답변 저장 -->
 	<update id="updateInquiryAnswer" parameterType="map">
@@ -484,7 +657,7 @@
 		    		AND SI_NAME LIKE '%' || #{keyword} || '%' 
 	  			</if>
 	  			<if test="statusFilter != null and statusFilter == 'themeName'">
-		    		AND OR THEME_NAME LIKE '%' || #{keyword} || '%'  
+		    		AND THEME_NAME LIKE '%' || #{keyword} || '%'  
 	  			</if>
 	  			ORDER BY TOUR_DATE DESC
 			) DATA

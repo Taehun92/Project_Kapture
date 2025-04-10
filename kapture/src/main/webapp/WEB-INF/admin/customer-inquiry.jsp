@@ -93,6 +93,56 @@
 				resize: none;
 				margin-top: 10px;
 			}
+
+			.search-input,
+			.search-select,
+			.search-date {
+				padding: 10px 14px;
+				font-size: 16px;
+				height: 40px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				margin-right: 10px;
+				box-sizing: border-box;
+			}
+
+			.search-input {
+				width: 300px;
+			}
+
+			.search-button {
+				padding: 10px 20px;
+				font-size: 16px;
+				height: 40px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+			}
+
+			.search-button:hover {
+				background-color: #0056b3;
+			}
+
+			.search-container {
+				width: 90%;
+				margin: 20px auto;
+			}
+
+			.tab-btn {
+				margin-right: 10px;
+				padding: 8px 12px;
+				border: 1px solid #ccc;
+				background: #f4f4f4;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+
+			.tab-btn.active {
+				background-color: #007bff;
+				color: white;
+			}
 		</style>
 		</style>
 	</head>
@@ -105,6 +155,23 @@
 
 			<hr>
 			<div class="content">
+				<div class="search-container">
+					<input type="date" v-model="startDate" class="search-date">
+					~
+					<input type="date" v-model="endDate" class="search-date">
+					<select v-model="statusFilter" class="search-select">
+						<option value="">전체</option>
+						<option value="inquiryNo">문의번호</option>
+						<option value="userNo">회원번호</option>
+						<option value="naem">회원명</option>
+						<option value="category">카테고리</option>
+						<option value="qnaTitle">제목</option>
+						<option value="qnaStatus">상태</option>
+					</select>
+					<input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+						placeholder="회원명/상품 검색">
+					<button class="search-button" @click="loadFilteredData">검색</button>
+				</div>
 				<table>
 					<thead>
 						<tr>
@@ -116,6 +183,7 @@
 							<th>카테고리</th>
 							<th>제목</th>
 							<th>문의내용</th>
+							<th>답변내용</th>
 							<th>접수일</th>
 							<th>처리상태</th>
 							<th>관리</th>
@@ -161,12 +229,20 @@
 						</tr>
 					</tbody>
 				</table>
+				<div style="margin-top: 20px; text-align: center;">
+					<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+					<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+						@click="goPage(p)">
+						{{ p }}
+					</button>
+					<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+				</div>
 			</div>
 			<div v-if="showAnswerModal" class="modal-overlay" @click.self="fnCloseAnswerModal">
 				<div class="modal-content">
 					<h2>1:1 문의 답변</h2>
-					 <!-- 테이블 시작 -->
-					 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+					<!-- 테이블 시작 -->
+					<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
 						<tbody>
 							<!-- 문의유형 -->
 							<tr>
@@ -177,12 +253,11 @@
 								</td>
 								<!-- 오른쪽 셀: 인풋박스 -->
 								<td style="border: 1px solid #ccc; padding: 10px;">
-									<input type="text" v-model="selectedInquiry.category" 
-										   readonly
-										   style="width: 97%; padding: 5px;" />
+									<input type="text" v-model="selectedInquiry.category" readonly
+										style="width: 97%; padding: 5px;" />
 								</td>
 							</tr>
-							
+
 							<!-- 제목 -->
 							<tr>
 								<td style="background-color: #f4f4f4; text-align: center; 
@@ -190,12 +265,11 @@
 									제목
 								</td>
 								<td style="border: 1px solid #ccc; padding: 10px;">
-									<input type="text" v-model="selectedInquiry.qnaTitle" 
-										   readonly
-										   style="width: 97%; padding: 5px;" />
+									<input type="text" v-model="selectedInquiry.qnaTitle" readonly
+										style="width: 97%; padding: 5px;" />
 								</td>
 							</tr>
-							
+
 							<!-- 문의내용 -->
 							<tr>
 								<td style="background-color: #f4f4f4; text-align: center; 
@@ -203,12 +277,11 @@
 									문의내용
 								</td>
 								<td style="border: 1px solid #ccc; padding: 10px;">
-									<textarea v-model="selectedInquiry.question"
-											  readonly
-											  style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
+									<textarea v-model="selectedInquiry.question" readonly
+										style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
 								</td>
 							</tr>
-							
+
 							<!-- 답변 -->
 							<tr>
 								<td style="background-color: #f4f4f4; text-align: center; 
@@ -216,9 +289,8 @@
 									답변
 								</td>
 								<td style="border: 1px solid #ccc; padding: 10px;">
-									<textarea v-model="answerText"
-											  placeholder="답변 내용을 입력해주세요"
-											  style="width: 97%; height: 150px; padding: 5px; resize: none;"></textarea>
+									<textarea v-model="answerText" placeholder="답변 내용을 입력해주세요"
+										style="width: 97%; height: 150px; padding: 5px; resize: none;"></textarea>
 								</td>
 							</tr>
 						</tbody>
@@ -240,13 +312,31 @@
 					inquiriesList: [],
 					showAnswerModal: false,// 답변 모달 표시 여부
 					selectedInquiry: null, // 현재 선택된 문의 정보
+					startDate: "",
+                    endDate: "",
+                    keyword: "",
+                    page: 1,
+                    size: 10,
+                    totalCount: 0,
+                    totalPages: 1,
+                    statusFilter: "",
 				};
 			},
 			methods: {
+				loadFilteredData() { 
+                    this.fnGetInquiryiesList(); 
+                },
 				// 문의 목록 불러오기
 				fnGetInquiryiesList() {
 					let self = this;
-					let nparmap = {};
+					let nparmap = {
+						startDate: self.startDate,
+                        endDate: self.endDate,
+                        statusFilter: self.statusFilter,
+                        keyword: self.keyword,
+                        page: self.page,
+                        size: self.size,
+					};
 					$.ajax({
 						url: "/admin/users-inquiries.dox",
 						dataType: "json",
@@ -254,16 +344,24 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							self.inquiriesList = data.inquiriesList;
-
+							if(data.result === "success"){
+								self.inquiriesList = data.inquiriesList;
+								self.totalCount = data.totalCount;
+                            	self.totalPages = Math.ceil(self.totalCount / self.size);	
+							} else {
+								alert("데이터를 불러오는데 실패했습니다.");
+							}
 						},
 						error: function (err) {
 							console.error(err);
 						}
 					});
 				},
-
-
+				goPage(p) {
+                    if (p < 1 || p > this.totalPages) return;
+                    this.page = p;
+                    this.fnGetInquiryiesList();
+                },
 				// '답변' 버튼 클릭 시 모달 열기
 				fnInquiryAnswer(inquiry) {
 					this.selectedInquiry = inquiry;
@@ -286,7 +384,7 @@
 						return;
 					}
 					// 서버 전송 전에 원본 객체에도 answerText 반영 (선택사항)
-    				self.selectedInquiry.answer = self.answerText;
+					self.selectedInquiry.answer = self.answerText;
 					let nparmap = {
 						inquiryNo: self.selectedInquiry.inquiryNo,
 						answer: self.answerText
@@ -334,7 +432,7 @@
 							} else {
 								alert("삭제에 실패하였습니다.");
 							}
-							
+
 						},
 						error: function (err) {
 							console.error(err);
