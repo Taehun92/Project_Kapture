@@ -106,12 +106,13 @@
 	<select id="selectDong" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
 		SELECT DONG
 		FROM AREA
-		WHERE GU = #{gu} AND DONG IS NOT NULL
+		WHERE SI = #{si} AND GU = #{gu} AND DONG IS NOT NULL
 	</select>
 	
 
 	<select id="selectXY" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
-		SELECT NX, NY FROM AREA WHERE SI = #{si} AND DONG = #{dong}
+		SELECT NX, NY FROM AREA 
+		WHERE SI = #{si} AND GU = #{gu} AND DONG = #{dong}
 	</select>
 	
 </mapper>

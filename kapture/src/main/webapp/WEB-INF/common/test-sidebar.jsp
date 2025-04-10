@@ -80,7 +80,31 @@
                                     </template>
                                 </select>
                             </div>
-                            
+                            <div v-if="weatherForecastDaily.length">
+                                
+                                <table class="table-auto border-collapse border border-gray-300 text-center text-xs">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="border p-1">날짜</th>
+                                            <th class="border p-1">기온</th>
+                                            <th class="border p-1">하늘</th>
+                                            <th class="border p-1">강수</th>
+                                            <th class="border p-1">최저</th>
+                                            <th class="border p-1">최고</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(day, index) in weatherForecastDaily" :key="index">
+                                            <td class="border p-1">{{ day.date.slice(0,4) }}-{{ day.date.slice(4,6) }}-{{ day.date.slice(6,8) }}</td>
+                                            <td class="border p-1">{{ day.tmp }}</td>
+                                            <td class="border p-1">{{ day.sky }}</td>
+                                            <td class="border p-1">{{ day.pty }}</td>
+                                            <td class="border p-1">{{ day.tmn }}</td>
+                                            <td class="border p-1">{{ day.tmx }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,6 +134,15 @@
                 dongList : [],
                 nx : "",
                 ny : "",
+                weatherInfo: {
+                    tmp: '',
+                    sky: '',
+                    pty: '',
+                    tmn: '',
+                    tmx: ''
+                },
+                weatherForecast: [],
+                weatherForecastDaily: []
 
             };
         },
@@ -148,6 +181,11 @@
             //날씨 정보 가져오기
             fnWeather() {
                 let self = this;
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                const baseDate = year + month + day;
                  // 날씨 정보 표시
                 let xhr = new XMLHttpRequest();
                 let url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst'; /*URL*/
@@ -155,7 +193,7 @@
                 queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /**/
                 queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('1000'); /**/
                 queryParams += '&' + encodeURIComponent('dataType') + '=' + encodeURIComponent('JSON'); /**/
-                queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent('20250409'); /**/
+                queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent(baseDate); /**/
                 queryParams += '&' + encodeURIComponent('base_time') + '=' + encodeURIComponent('0500'); /**/
                 queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(self.nx); /**/
                 queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(self.ny); /**/
@@ -173,10 +211,82 @@
                         const items = response.response.body.items.item; // ✅ 여기에 item 리스트 있음
                 
                         console.log("날씨 항목 리스트:", items);
-                        
-                        // 예: 기온(TMP)만 필터링해서 출력
-                        const temperatureList = items.filter(i => i.category === 'TMP' || i.category === 'SKY' || i.category === 'PTY');
-                        console.log("기온, 구름 정보만:", temperatureList);
+                        const hours = String(today.getHours()).padStart(2, '0');
+                        const minutes = today.getMinutes();
+
+                        // 30분 이전이면 한 시간 전 값 사용 (예보 데이터는 보통 매시마다 업데이트되니까)
+                        const forecastHour = minutes < 30 ? String(today.getHours() - 1).padStart(2, '0') : hours;
+
+                        // 현재 시각에 맞는 예보 시간
+                        const currentFcstTime = forecastHour + "00";
+
+                        const filteredItems = items.filter(item => item.fcstTime === currentFcstTime);
+                        console.log("현재 시간에 해당하는 항목:", filteredItems);
+
+                        const TMPList = filteredItems.filter(i => i.category === 'TMP');
+                        console.log("기온 정보만:", TMPList);
+
+                        const SKYList = filteredItems.filter(i => i.category === 'SKY');
+                        console.log("하늘 상태:", SKYList);
+
+                        const PTYList = filteredItems.filter(i => i.category === 'PTY');
+                        console.log("강수형태:", PTYList);
+
+                        const tmnList = items.filter(i => i.category === 'TMN');
+                        console.log("최저 정보만:", tmnList);
+
+                        const tmxList = items.filter(i => i.category === 'TMX');
+                        console.log("최대 정보만:", tmxList);
+
+                        const TMP = filteredItems.find(i => i.category === 'TMP')?.fcstValue || '-';
+                        const SKY = filteredItems.find(i => i.category === 'SKY')?.fcstValue || '-';
+                        const PTY = filteredItems.find(i => i.category === 'PTY')?.fcstValue || '-';
+                        const TMN = items.find(i => i.category === 'TMN')?.fcstValue || '-';
+                        const TMX = items.find(i => i.category === 'TMX')?.fcstValue || '-';
+
+                        self.weatherInfo = {
+                            tmp: TMP + "°C",
+                            sky: self.mapSky(SKY),
+                            pty: self.mapPty(PTY),
+                            tmn: TMN + "°C",
+                            tmx: TMX + "°C"
+                        };
+                        const forecastList = items.filter(i => i.category === 'TMP' && i.fcstTime === '1100').slice(0, 3);
+
+                        self.weatherForecast = forecastList.map(i => ({
+                            fcstDate: i.fcstDate,
+                            fcstTime: i.fcstTime,
+                            fcstValue: i.fcstValue
+                        }));
+
+                        const groupByDate = {};
+                        items.forEach(i => {
+                            if (!groupByDate[i.fcstDate]) {
+                                groupByDate[i.fcstDate] = [];
+                            }
+                        groupByDate[i.fcstDate].push(i);
+                        });
+
+                        // 3일치만 뽑아서 정보 구성
+                        const dailyForecast = Object.keys(groupByDate).sort().slice(0, 3).map(date => {
+                            const dayItems = groupByDate[date];
+                            const TMP = dayItems.find(i => i.category === 'TMP' && i.fcstTime === '1100')?.fcstValue || '-';
+                            const SKY = dayItems.find(i => i.category === 'SKY' && i.fcstTime === '1100')?.fcstValue || '-';
+                            const PTY = dayItems.find(i => i.category === 'PTY' && i.fcstTime === '1100')?.fcstValue || '-';
+                            const TMN = dayItems.find(i => i.category === 'TMN')?.fcstValue || '-';
+                            const TMX = dayItems.find(i => i.category === 'TMX')?.fcstValue || '-';
+
+                            return {
+                                date: date,
+                                tmp: TMP + "°C",
+                                sky: self.mapSky(SKY),
+                                pty: self.mapPty(PTY),
+                                tmn: TMN + "°C",
+                                tmx: TMX + "°C"
+                            };
+                        });
+
+                        self.weatherForecastDaily = dailyForecast;
                     }
                 };
             },
@@ -240,6 +350,7 @@
                 let self = this;
                 let nparmap = {
                     si : self.si,
+                    gu : self.gu,
                     dong : self.dong
                 }
                 $.ajax({
@@ -253,6 +364,29 @@
                         self.fnWeather(); // 날씨 정보 가져오기
                     },
                 });
+            },
+
+            mapSky(code) {
+                const skyValue = parseInt(code);
+                if (skyValue >= 0 && skyValue <= 5) {
+                    return '☀️ 맑음';
+                } else if (skyValue >= 6 && skyValue <= 8) {
+                    return '⛅ 구름 많음';
+                } else if (skyValue >= 9 && skyValue <= 10) {
+                    return '☁️ 흐림';
+                } else {
+                    return '알 수 없음';
+                }
+            },
+            mapPty(code) {
+                switch(code) {
+                    case '0': return '🌈 없음';
+                    case '1': return '🌧️ 비';
+                    case '2': return '🌨️ 비/눈';
+                    case '3': return '❄️ 눈';
+                    case '4': return '🌫️ 소나기';
+                    default: return '알 수 없음';
+                }
             }
             
 
