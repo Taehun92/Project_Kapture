@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="../../css/kapture-style.css">
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <link rel="stylesheet" href="../../css/chatbot.css">
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
         <style>
             .slide-modal-enter-active,
             .slide-modal-leave-active {
@@ -36,7 +37,9 @@
     <body class="bg-white text-gray-800">
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="max-w-7xl mx-auto py-8 px-4">
-            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">챗봇 열기</button>
+            <div id="sidebar" class="sidebar">
+            
+            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">🤖챗봇 열기</button>
 
             <div class="modal-overlay" v-if="showChat">
                 <div class="chat-container">
@@ -55,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            
+            </div>
             <!-- 지역별 배너 -->
             <div class="relative h-96 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
                 :style="{ backgroundImage: 'url(' + (hoveredRegionImage || defaultHeaderImage) + ')' }">
@@ -101,8 +104,7 @@
                         <div v-if="filters.language">
                             <div v-for="language in languages" :key="language.eng">
                                 <label class="text-sm">
-                                    <input type="checkbox" v-model="selectedLanguages" :value="language.eng"
-                                        @change="fnToursList" class="mr-1">
+                                    <input type="checkbox" v-model="selectedLanguages" :value="language.eng" class="mr-1">
                                     {{ language.kor }}
                                 </label>
                             </div>
@@ -117,8 +119,7 @@
                         <div v-if="filters.region">
                             <div v-for="item in regionList" :key="item.siNo">
                                 <label class="text-sm">
-                                    <input type="checkbox" v-model="selectedRegions" :value="item.siNo"
-                                        @change="fnToursList" class="mr-1">
+                                    <input type="checkbox" v-model="selectedRegions" :value="item.siNo" class="mr-1">
                                     {{ item.siName }}
                                 </label>
                             </div>
@@ -133,8 +134,7 @@
                         <div v-if="filters.theme">
                             <div v-for="theme in themeList" :key="theme.themeNo">
                                 <label class="text-sm">
-                                    <input type="checkbox" v-model="selectedThemes" :value="theme.themeNo"
-                                        @change="fnToursList" class="mr-1">
+                                    <input type="checkbox" v-model="selectedThemes" :value="theme.themeNo" class="mr-1">
                                     {{ theme.themeName }}
                                 </label>
                             </div>
@@ -578,13 +578,30 @@
                         this.modalAnimationClass = 'modal-slide-down';
                         document.body.classList.remove('overflow-hidden');
                     }
-                }
+                },
+                selectedLanguages: {
+                    handler: 'debouncedToursList',
+                    deep: true
+                  },
+                  selectedRegions: {
+                    handler: 'debouncedToursList',
+                    deep: true
+                  },
+                  selectedThemes : {
+                    handler: 'debouncedToursList',
+                    deep: true
+                  },
             },
             methods: {
                 resetDatePicker() {
                     this.selectedDates = [];
                     this.showDatePicker = true;
                 },
+
+                debouncedToursList: _.debounce(function () {
+                    this.fnToursList();
+                  }, 300),
+
                 handleDateInput(dates) {
                     this.selectedDates = dates;
                     this.showDatePicker = false;
