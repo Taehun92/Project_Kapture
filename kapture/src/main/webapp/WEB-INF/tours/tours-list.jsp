@@ -65,6 +65,10 @@
                 <div class="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center px-4">
                     <h1 class="text-white text-4xl font-bold mb-4">주요 관광지</h1>
                     <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                        <button class="px-5 py-3 bg-blue-950 text-white hover:bg-blue-700 rounded text-base font-semibold transition-all duration-200"
+                            @click="resetFiltersAndList">
+                            전체
+                        </button>
                         <button v-for="region in regions" :key="region.region"
                             @mouseover="hoveredRegionImage = region.image"
                             @mouseleave="hoveredRegionImage = null"
@@ -580,15 +584,15 @@
                     }
                 },
                 selectedLanguages: {
-                    handler: 'debouncedToursList',
+                    handler: 'handleFilterChange',
                     deep: true
                   },
                   selectedRegions: {
-                    handler: 'debouncedToursList',
+                    handler: 'handleFilterChange',
                     deep: true
                   },
                   selectedThemes : {
-                    handler: 'debouncedToursList',
+                    handler: 'handleFilterChange',
                     deep: true
                   },
             },
@@ -663,6 +667,10 @@
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
                             console.log(self.toursList);
+
+                            if (self.sessionId && !isNaN(self.sessionId)) {
+                                self.fnGetWishList();
+                            }
                         }
                     });
                 },
@@ -815,65 +823,75 @@
                     location.href = "/payment.do"
                 },
 
-                fnGetWishList() {
+                fnGetWishList(callback) {
                     let self = this;
-
-                    if(!self.sessionId){
-                        return;
-                    }
-
+                    if (!self.sessionId) return;
+                  
                     let nparmap = {
-                        userNo: parseInt(self.sessionId)
+                      userNo: parseInt(self.sessionId)
                     };
-
+                  
                     $.ajax({
-                        url: "/wishList/getWishList.dox",
-                        type: "POST",
-                        dataType: "json",
-                        data: nparmap,
-                        success: function (data) {
-                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
-                            console.log("찜목록 tourNo 목록: ", wishTourNos);
-
-                            self.toursList = self.toursList.map(function (tour) {
-                                const tourNo = Number(tour.tourNo);
-                                return {
-                                    ...tour,
-                                    isFavorite: wishTourNos.includes(tourNo) ? "Y" : "N"
-                                };
-                            });
-
-                            console.log("최종 toursList: ", self.toursList);
+                      url: "/wishList/getWishList.dox",
+                      type: "POST",
+                      dataType: "json",
+                      data: nparmap,
+                      success: function (data) {
+                        const wishTourNos = (data.list || []).map(item => +item.tourNo);
+                  
+                        // 찜 여부 추가
+                        self.toursList = self.toursList.map(tour => ({
+                          ...tour,
+                          isFavorite: wishTourNos.includes(Number(tour.tourNo)) ? "Y" : "N"
+                        }));
+                  
+                        // 🔥 콜백으로 후처리
+                        if (typeof callback === 'function') {
+                          callback(wishTourNos);
                         }
+                      }
                     });
-                },
+                  },
 
                 fnWishListTours() {
                     let self = this;
                     if (!self.sessionId) return;
-
+                  
                     let nparmap = { userNo: parseInt(self.sessionId) };
-
+                  
                     $.ajax({
-                        url: "/wishList/getWishList.dox",
-                        type: "POST",
-                        dataType: "json",
-                        data: nparmap,
-                        success: function (data) {
-                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
-
-                            self.filteredToursList = self.toursList.filter(function (tour) {
-                                return wishTourNos.includes(Number(tour.tourNo));
-                            });
-
-                            self.isWishlistMode = true; // ✅ 찜 보기 모드로 전환
+                      url: "/wishList/getWishList.dox",
+                      type: "POST",
+                      dataType: "json",
+                      data: nparmap,
+                      success: function (data) {
+                        const wishTourNos = (data.list || []).map(item => +item.tourNo);
+                        self.isWishlistMode = !self.isWishlistMode;
+                  
+                        if (self.isWishlistMode) {
+                          self.applyWishlistFilters(wishTourNos);
+                        } else {
+                          self.filteredToursList = [];
                         }
+                      }
                     });
-                },
+                  },
 
                 selectOnlyThisRegion(siNo) {
+                    let self = this;
                     this.selectedRegions = [siNo]; // 기존 필터 제거하고 이 지역만 선택
-                    this.fnToursList();           // 필터 적용
+                    this.fnToursList();
+                    
+                    if (this.isWishlistMode) {
+                        // toursList가 AJAX로 불러와지고 나서 처리되도록 타이밍 맞춰서
+                        setTimeout(() => {
+                          self.fnGetWishList((wishTourNos) => {
+                            // wishTourNos를 기준으로 새로 불러온 toursList를 필터
+                            self.filteredToursList = self.toursList
+                              .filter(tour => wishTourNos.includes(Number(tour.tourNo)));
+                          });
+                        }, 500); // 서버 응답 시간에 따라 필요 시 조정
+                      }
                 },
 
                 toggleFavorite(tour) {
@@ -941,7 +959,51 @@
 
                 goToAirbnb() {
                     window.open("https://www.airbnb.co.kr", "_blank");
-                }
+                },
+                resetFiltersAndList() {
+                    this.selectedDates = [];
+                    this.selectedRegions = [];
+                    this.selectedLanguages = [];
+                    this.selectedThemes = [];
+                    this.showDatePicker = true;
+                    this.fnToursList(); // 전체 상품 목록 다시 불러오기
+                  },
+                  applyWishlistFilters(wishTourNos) {
+                    const self = this;
+                  
+                    self.filteredToursList = self.toursList.filter(tour => {
+                      const isWish = wishTourNos.includes(Number(tour.tourNo));
+                      const matchRegion = self.selectedRegions.length === 0 || self.selectedRegions.includes(tour.siNo);
+                      const matchLanguage = self.selectedLanguages.length === 0 || (tour.language &&tour.language
+                            .split(",")// 배열로 분리
+                            .map(l => l.trim())// 공백 제거
+                            .some(lang => self.selectedLanguages.includes(lang)) // 하나라도 일치하면 true
+                        );
+                      const matchTheme = self.selectedThemes.length === 0 || self.selectedThemes.includes(tour.themeNo);
+                  
+                      // 날짜는 tour.tourDate가 selectedDates 사이에 포함되어야 함
+                      let matchDate = true;
+                      if (self.selectedDates.length === 2) {
+                        const start = new Date(self.selectedDates[0]);
+                        const end = new Date(self.selectedDates[1]);
+                        const tourDate = new Date(tour.tourDate);
+                        matchDate = tourDate >= start && tourDate <= end;
+                      }
+                      console.log('tour: '+ tour.title + ' lang: ' + tour.language + ' matchLang: ' + matchLanguage +' selectedLang: ' + self.selectedLanguages);
+                      return isWish && matchRegion && matchLanguage && matchTheme && matchDate;
+                    });
+                  },
+
+                  handleFilterChange() {
+                    if (this.isWishlistMode) {
+                      this.fnGetWishList((wishTourNos) => {
+                        this.applyWishlistFilters(wishTourNos);
+                      });
+                    } else {
+                      this.debouncedToursList(); // 기본 모드일 땐 서버에서 필터링
+                    }
+                  }
+
 
             },
 

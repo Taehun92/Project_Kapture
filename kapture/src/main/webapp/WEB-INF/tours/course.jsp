@@ -157,13 +157,13 @@ createApp({
   methods: {
     async fetchCourses() {
       const apiKey = 'O5%2BkPtLkpnsqZVmVJiYW7JDeWEX4mC9Vx3mq4%2FGJs%2Fejvz1ceLY%2B0XySUsy15P%2BhpAdHcZHXHhdn4htsTUuvpA%3D%3D';
-      const url = 'https://apis.data.go.kr/B551011/' + this.lang + 'Service1/areaBasedList1?serviceKey=' + apiKey + '&areaCode=' + this.selectedRegion + '&MobileApp=AppTest&MobileOS=ETC&cat2=' + this.selectedCat2 + '&_type=json&numOfRows=100&arrange=P';
+      const url = 'https://apis.data.go.kr/B551011/' + this.lang + 'Service1/areaBasedList1?serviceKey=' + apiKey + '&areaCode=' + this.selectedRegion + '&MobileApp=AppTest&MobileOS=ETC&cat2=' + this.selectedCat2 + '&_type=json&numOfRows=100';
 
       try {
         const response = await fetch(url);
         const data = await response.json();
         const allCourses = data.response.body.items.item || [];
-        this.courses = allCourses.filter(course => course.firstimage && course.firstimage.trim() !== '');
+        this.courses = allCourses.filter(course => course.firstimage && course.firstimage.trim() !== '' && course.title && course.title.trim() !== '');
         this.filteredCourses = this.courses;
         this.currentPage = 1;
       } catch (error) {
