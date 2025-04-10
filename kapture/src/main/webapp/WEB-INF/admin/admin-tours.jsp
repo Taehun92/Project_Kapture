@@ -24,6 +24,24 @@
                 width: calc(100% - 220px);
             }
 
+            /* 제목 스타일 */
+			.page-title {
+				text-align: center;
+				font-size: 24px;
+				font-weight: bold;
+				/* margin-top: 20px; */
+				margin-left: 220px;
+				/* 사이드바 너비(200px) + 여백(20px) */
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+				/* 수평 중앙 정렬 */
+				align-items: center;
+			}
+            .title-hr {
+                margin-bottom: 30px;
+            }
+
             .tab-btn {
                 margin-right: 10px;
                 padding: 8px 12px;
@@ -87,6 +105,10 @@
                 background-color: #0056b3;
             }
 
+            .search-input{
+				width: 300px;
+			}
+            
             /* 모달 관련 CSS */
             .order-modal {
                 position: fixed;
@@ -238,6 +260,9 @@
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <div id="app">
+            <!-- 제목 추가 -->
+			<div class="page-title">상품 관리</div>
+			<hr class="title-hr">
             <input type="date" v-model="startDate" class="search-date">
             ~
             <input type="date" v-model="endDate" class="search-date">
@@ -248,7 +273,7 @@
                 <option value="siName">지역명</option>
                 <option value="themeName">테마명</option>
             </select>
-            <input type="text" v-model="keyword" class="search-input" placeholder="회원명/상품 검색">
+            <input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="상품번호 / 제목 / 지역명 / 테마명 검색">
             <button class="search-button" @click="loadFilteredData">검색</button>
 
             <table class="tours-table">
@@ -416,7 +441,6 @@
                     sessionId: "${sessionId}",
                     toursList: [],
                     editTour: {},
-                    // tempTour: {},
                     today: new Date(),
                     siName: "",
                     siList: [],
@@ -443,7 +467,6 @@
             },
             methods: {
                 loadFilteredData() { 
-                    console.log("test");
                     this.fnGetToursManagement(); 
                 },
                 fnGetToursManagement() {

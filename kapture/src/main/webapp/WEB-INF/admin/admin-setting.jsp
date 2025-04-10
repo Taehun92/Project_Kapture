@@ -13,13 +13,31 @@
         <link rel="stylesheet" href="../../css/kapture-style.css">
         <title>관리자 페이지</title>
         <style>
-
+            .page-title {
+				text-align: center;
+				font-size: 24px;
+				font-weight: bold;
+				/* margin-top: 20px; */
+				margin-left: 220px;
+				/* 사이드바 너비(200px) + 여백(20px) */
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+				/* 수평 중앙 정렬 */
+				align-items: center;
+			}
+            .title-hr {
+                margin-bottom: 30px;
+            }
         </style>
     </head>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <div id="app">
+            <!-- 제목 추가 -->
+			<div class="page-title">운영 및 설정 관리</div>
+			<hr class="title-hr">
             <div class="flex gap-8 ml-[240px] mt-8 px-6">
                 <button
                     class="font-semibold text-gray-600 hover:text-blue-700"

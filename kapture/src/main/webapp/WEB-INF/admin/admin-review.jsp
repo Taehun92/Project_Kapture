@@ -45,11 +45,31 @@
             background-color: #555;
         }
 
+        /* 제목 스타일 */
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            /* margin-top: 20px; */
+            margin-left: 220px;
+            /* 사이드바 너비(200px) + 여백(20px) */
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            /* 수평 중앙 정렬 */
+            align-items: center;
+        }
+
+        .title-hr {
+            margin-bottom: 30px;
+        }
+
         /* ✅ 콘텐츠 영역 - 여백 개선 + 너비 조정 */
         .content {
             margin-left: 220px;
             padding: 40px 60px;
-            max-width: 1200px;
+            max-width: 100%;
+            height: 100vh;
             background-color: #f7f9fc;
         }
 
@@ -63,6 +83,13 @@
             padding-bottom: 10px;
         }
 
+        .review-list-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 가운데 정렬 핵심! */
+        }
+
         /* ✅ 리뷰 카드 */
         .review-box {
             background: white;
@@ -73,6 +100,10 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            width: 100%;
+            /* 기본은 전체 너비 */
+            max-width: 800px;
+            /* 너무 넓지 않게 */
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
@@ -183,52 +214,60 @@
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <!-- ✅ 이 영역만 Vue에서 리스트 출력 -->
-        <div class="maincontent" id="app">
+        <div id="app">
+
             <div class="content">
+                <!-- 제목 추가 -->
+                <div class="page-title">리뷰 및 평점 관리</div>
+                <hr class="title-hr">
                 <h2>전체 리뷰 리스트</h2>
                 <!-- ✅ 리뷰 요약 박스 -->
                 <div class="summary-box">
                     <div>📝 <span style="color:#34495e;">총 리뷰 수:</span> <strong>{{ summary.TOTALCOUNT }}</strong>건</div>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="text" v-model="keyword" placeholder="검색어 입력" @keyup.enter="onSearch"
+                            style="padding: 6px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
+                        <button @click="onSearch">🔍 검색</button>
+    
+                        <select v-model="sort" @change="fnReviewList"
+                            style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;">
+                            <option value="">최신순</option>
+                            <option value="rating_desc">평점 높은순</option>
+                            <option value="rating_asc">평점 낮은순</option>
+                        </select>
+                    </div>
                     <div>⭐ <span style="color:#34495e;">평균 평점:</span> <strong>{{ summary.AVGRATING }}</strong>점</div>
-                </div>
-                <div style="margin-bottom: 20px; display: flex; gap: 12px; align-items: center;">
-                    <input type="text" v-model="keyword" placeholder="검색어 입력" @keyup.enter="onSearch"
-                        style="padding: 6px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-                    <button @click="onSearch">🔍 검색</button>
 
-                    <select v-model="sort" @change="fnReviewList"
-                        style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;">
-                        <option value="">최신순</option>
-                        <option value="rating_desc">평점 높은순</option>
-                        <option value="rating_asc">평점 낮은순</option>
-                    </select>
                 </div>
-
-                <div v-for="review in list" class="review-box">
-                    <div class="review-info">
-                        <div class="review-title"> {{ review.TITLE }}</div>
-                        <div class="review-meta">
-                            작성자: {{ review.USERFIRSTNAME }} {{ review.USERRASTNAME }} &nbsp;|&nbsp;
-                            평점: ⭐ {{ review.RATING }} &nbsp;|&nbsp;
-                            상품 시간대: {{ review.DURATION }} &nbsp;|&nbsp;
-                            작성자 이메일: {{review.EMAIL}} &nbsp;|&nbsp;
-                            날짜: {{ review.CREATEDAT }}
+                
+                <div class="review-list-wrapper">
+                    <div v-for="review in list" class="review-box">
+                        <div class="review-info">
+                            <div class="review-title"> {{ review.TITLE }}</div>
+                            <div class="review-meta">
+                                작성자: {{ review.USERFIRSTNAME }} {{ review.USERRASTNAME }} &nbsp;|&nbsp;
+                                평점: ⭐ {{ review.RATING }} &nbsp;|&nbsp;
+                                상품 시간대: {{ review.DURATION }} &nbsp;|&nbsp;
+                                작성자 이메일: {{review.EMAIL}} &nbsp;|&nbsp;
+                                날짜: {{ review.CREATEDAT }}
+                            </div>
+                            <div class="review-content">
+                                {{ review.CONTENT }}
+                            </div>
                         </div>
-                        <div class="review-content">
-                            {{ review.CONTENT }}
+                        <div class="review-actions">
+                            <button @click="fnDelete(review.REVIEWNO)">리뷰 삭제하기</button>
                         </div>
                     </div>
-                    <div class="review-actions">
-                        <button @click="fnDelete(review.REVIEWNO)">리뷰 삭제하기</button>
-                    </div>
+                </div>
+                <div style="text-align:center; margin-top: 20px;">
+                    <button @click="changePage(page - 1)" :disabled="page === 1">이전</button>
+                    <span> {{ page }} / {{ totalPages }} </span>
+                    <button @click="changePage(page + 1)" :disabled="page === totalPages">다음</button>
                 </div>
             </div>
 
-            <div style="text-align:center; margin-top: 20px;">
-                <button @click="changePage(page - 1)" :disabled="page === 1">이전</button>
-                <span> {{ page }} / {{ totalPages }} </span>
-                <button @click="changePage(page + 1)" :disabled="page === totalPages">다음</button>
-            </div>
+            
         </div>
     </body>
 
