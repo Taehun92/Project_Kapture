@@ -174,6 +174,9 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Guide> guidesList = adminMapper.selectguidesList(map);
+			int totalCount = adminMapper.selectGuidesTotalCount(map);
+		    
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("result", "success");
 			resultMap.put("guidesList", guidesList);
 			
@@ -218,12 +221,6 @@ public class AdminService {
 	    
 	    int page = Integer.parseInt(String.valueOf(map.get("page")));
 	    int size = Integer.parseInt(String.valueOf(map.get("size")));
-
-	    int start = (page - 1) * size + 1;
-	    int end = page * size;
-
-	    map.put("start", start);
-	    map.put("end", end);
 	    
 	    List<HashMap<String, Object>> list = adminMapper.selectTransactionList(map);
 	    int totalCount = adminMapper.selectTransactionTotalCount(map);
@@ -252,7 +249,7 @@ public class AdminService {
 		return resultMap;
 	}
 
-	// 회원 탈퇴 처리(삭제)
+	// 가이드 관리 삭제, 고객관리 회원 탈퇴 처리(삭제)
 	public HashMap<String, Object> userUnregister(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -269,12 +266,34 @@ public class AdminService {
 			        guideNo = (Integer) guideNoObj;
 			    }
 			}
+			int getGuideNo = 0;
+			// 가이드이미지 삭제(가이드 번호 조회)
+			if("GUIDE".equals(role)) {
+				getGuideNo = adminMapper.selectGuideNo(map);
+				map.put("guideNo", getGuideNo);
+				System.out.println("가이드넘버조회====="+map);
+			}
+			// 프로필 존재 여부
+			String getPFilePath = "";
+			if(guideNo != null || getGuideNo >0) {
+				getPFilePath = adminMapper.selectPFilePath(map);
+				System.out.println("가이드이미지조회====="+getPFilePath);
+			}
 	        // 가이드 번호가 있을 경우 가이드 삭제도 수행
 	        if (((guideNo != null && guideNo > 0) || "GUIDE".equals(role)) && result > 0) {
 	            int guideResult = adminMapper.deleteGuide(map);
-	            	resultMap.put("guideResult", "success");
+	            if(getPFilePath != null && getPFilePath != "") {
+	            	int guideImg = adminMapper.deleteGuideImg(map);
+	            	if (guideImg <= 0) {
+		                resultMap.put("guideImgResult", "fail");
+		            } else {
+		            	resultMap.put("guideImgResult", "success");
+		            }
+	            }
 	            if (guideResult <= 0) {
 	                resultMap.put("guideResult", "fail");
+	            } else {
+	            	resultMap.put("guideResult", "success");
 	            }
 	        }
 	        resultMap.put("result", result > 0 ? "success" : "fail");
@@ -322,6 +341,10 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Login> usersList= adminMapper.selectUsersList(map);
+			// 회원 총 인원
+			int totalCount = adminMapper.selectUsersTotalCount(map);
+
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("usersList", usersList);
 			resultMap.put("result", "success");			
 		} catch (Exception e) {
@@ -336,6 +359,9 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Cs> inquiriesList= adminMapper.selectInquiriesList(map);
+			// 문의조회 총 갯수
+			int totalCount = adminMapper.selectInquiriesTotalCount(map);
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("inquiriesList", inquiriesList);
 			resultMap.put("result", "success");			
 		} catch (Exception e) {
@@ -488,13 +514,6 @@ public class AdminService {
 		 // TODO Auto-generated method stub
 		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		 try {
-			 int page = Integer.parseInt(String.valueOf(map.get("page")));
-			 int size = Integer.parseInt(String.valueOf(map.get("size")));
-
-			 int start = (page - 1) * size + 1;
-			 int end = page * size;
-			 map.put("start", start);
-			 map.put("end", end);
 			 List<Tours> toursList = adminMapper.selectToursManagementList(map);
 			 // 상품관리 총 갯수
 			 int totalCount = adminMapper.selectToursTotalCount(map);
@@ -549,12 +568,19 @@ public class AdminService {
 			int guideImg = 0;
 			if(pFilePath != null && pFilePath != "") {
 				guideImg = adminMapper.updateGuideImg(map);
-			}
-			if(insertGuideResult > 0 && insertUserResult > 0 && guideImg > 0) {
-				resultMap.put("result", "success");
+				if(insertGuideResult > 0 && insertUserResult > 0 && guideImg > 0) {
+					resultMap.put("result", "success");
+				} else {
+					resultMap.put("result", "fail");
+				}
 			} else {
-				resultMap.put("result", "fail");
+				if(insertGuideResult > 0 && insertUserResult > 0) {
+					resultMap.put("result", "success");
+				} else {
+					resultMap.put("result", "fail");
+				}
 			}
+			
 		} catch (Exception e) {
 		    System.out.println(e.getMessage());
 		    resultMap.put("result", e.getMessage());

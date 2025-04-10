@@ -16,15 +16,23 @@
                 font-family: Arial, sans-serif;
             }
 
-            #sidebar {
-                width: 220px;
-                background-color: #222;
-                color: #fff;
-                padding: 20px;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                left: 0;
+            /* 제목 스타일 */
+			.page-title {
+				text-align: center;
+				font-size: 24px;
+				font-weight: bold;
+				/* margin-top: 20px; */
+				margin-left: 220px;
+				/* 사이드바 너비(200px) + 여백(20px) */
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+				/* 수평 중앙 정렬 */
+				align-items: center;
+			}
+
+            .title-hr {
+                margin-bottom: 30px;
             }
 
             #app {
@@ -139,12 +147,20 @@
             .search-button:hover {
                 background-color: #0056b3;
             }
+
+            .search-input{
+				width: 300px;
+			}
+
         </style>
     </head>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <div id="app">
+            <!-- 제목 추가 -->
+			<div class="page-title">결제 및 수익 관리</div>
+			<hr class="title-hr">
             <div class="date-header" v-text="today"></div>
 
             <div class="card-container">
@@ -194,10 +210,12 @@
                 <input type="date" v-model="endDate" class="search-date">
                 <select v-model="statusFilter" class="search-select">
                     <option value="">전체</option>
-                    <option value="PAID">승인</option>
-                    <option value="REFUNDED">취소</option>
+                    <option value="결제완료">결제완료</option>
+                    <option value="거래완료">거래완료</option>
+                    <option value="환불요청">환불요청</option>
+                    <option value="환불완료">환불완료</option>
                 </select>
-                <input type="text" v-model="keyword" class="search-input" placeholder="회원명/상품 검색">
+                <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData" placeholder="회원명/상품 검색">
                 <button class="search-button" @click="loadFilteredData">검색</button>
 
                 <table class="transaction-table">
