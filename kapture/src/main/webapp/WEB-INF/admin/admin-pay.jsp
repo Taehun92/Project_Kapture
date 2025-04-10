@@ -230,6 +230,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="transactions.length === 0">
+                            <td colspan="10">검색 결과가 없습니다.</td>
+                        </tr>
                         <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
                             <td>{{ item.PAYMENT_DATE }}</td>
                             <td>{{ item.USER_FIRSTNAME }}</td>
@@ -343,7 +346,10 @@
                     };
                 },
                 methods: {
-                    loadFilteredData() { this.fnGetTransactions(); },
+                    loadFilteredData() { 
+                        this.page = 1;
+                        this.fnGetTransactions();
+                     },
                     setToday() {
                         const now = new Date();
                         const days = ['일', '월', '화', '수', '목', '금', '토'];

@@ -292,6 +292,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr v-if="toursList.length === 0">
+                        <td colspan="10">검색 결과가 없습니다.</td>
+                    </tr>
                     <tr v-for="tour in toursList">
                         <td>{{ tour.tourNo }}</td>
                         <td>
@@ -467,6 +470,7 @@
             },
             methods: {
                 loadFilteredData() { 
+                    this.page = 1;
                     this.fnGetToursManagement(); 
                 },
                 fnGetToursManagement() {
