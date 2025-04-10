@@ -1,16 +1,16 @@
 package com.example.kapture.mypage.dao;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.example.kapture.common.mapper.CommonMapper;
+import com.example.kapture.common.model.Region;
 import com.example.kapture.common.model.Reviews;
+import com.example.kapture.common.model.Theme;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.mapper.MyPageMapper;
 import com.example.kapture.mypage.model.Guide;
@@ -25,6 +25,9 @@ public class MyPageService {
 
 	@Autowired
 	MyPageMapper myPageMapper;
+	
+	@Autowired
+	CommonMapper commonMapper;
 	
 	@Autowired
     PasswordEncoder passwordEncoder;
@@ -286,12 +289,14 @@ public class MyPageService {
 	    
 	    // 🔸 DB 조회
 	    List<Guide> list  = myPageMapper.selectTransactionList(map);
+		List<Region> siList= commonMapper.selectgetSiNameNoList(map);
+		List<Theme> themeParentList = commonMapper.selectThemeParentList(map);
 	    int totalCount = myPageMapper.selectTransactionTotalCount(map);
 	
 
-
 	    resultMap.put("list", list);
-	    
+	    resultMap.put("siList", siList);
+	    resultMap.put("themeParentList", themeParentList);
 	    resultMap.put("totalCount", totalCount);
 	    
 	    return resultMap;
