@@ -69,6 +69,9 @@ public class Guide {
 	private String guName;
 	private String vehicle;
 	
+	private int fileNo;
+	private String filePath;
+	private String thumbnail;
 	
 	
 }

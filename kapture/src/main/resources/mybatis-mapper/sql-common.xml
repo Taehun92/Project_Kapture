@@ -57,7 +57,7 @@
 	</select>
 	
 	<select id="selectThemeParentList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
-		SELECT THEME_NAME FROM THEME
+		SELECT * FROM THEME
 		WHERE THEME_NO IN (100, 200, 300, 400, 500)
 	</select>
 	
@@ -84,11 +84,27 @@
 	<select id="selectThemeParent" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
 		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 		WHERE THEME_NO = #{themeParentNo}
-	</select>
+	</select> 
 	
 	<select id="selectThemeName" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
 		SELECT THEME_NAME FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 		WHERE THEME_NO = #{themeNo}
+	</select>
+	
+	<select id="selectThemeListByParentNo" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
+		SELECT * 
+		FROM THEME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		WHERE THEME_PARENT_NO = #{themeParentNo}
+	</select>
+	
+	<select id="selectGuListBysiNo" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT * 
+		FROM REGION
+		WHERE SI_NO = #{siNo} AND GU_NO IS NOT NULL
+	</select>
+	<select id="selectgetSiNameNoList" parameterType="hashmap" resultType="com.example.kapture.common.model.Region">
+		SELECT DISTINCT SI_NAME, SI_NO 
+		FROM REGION
 	</select>
 	
 	<!--날씨 정보-->
@@ -109,9 +125,13 @@
 		WHERE GU = #{gu} AND DONG IS NOT NULL
 	</select>
 	
-
 	<select id="selectXY" parameterType="hashmap" resultType="com.example.kapture.common.model.Common">
 		SELECT NX, NY FROM AREA WHERE SI = #{si} AND DONG = #{dong}
+	</select>
+	
+	<select id="selectTourThumbnail" parameterType="hashmap" resultType="com.example.kapture.common.model.Img">
+		SELECT * FROM IMG
+		WHERE TOUR_NO = #{tourNo} AND THUMBNAIL = 'Y'
 	</select>
 	
 </mapper>
