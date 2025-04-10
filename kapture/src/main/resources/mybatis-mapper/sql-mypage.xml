@@ -10,29 +10,57 @@
 	</select>
 	
 	<update id="userInfoUpdate" parameterType="hashmap">
-		UPDATE USERS
-	    SET PHONE = #{phone},
-	   	PUSHYN = #{pushYN},
-	   	GENDER = #{gender},
-	    <if test="address != null">
-	    ADDRESS = #{address},
-	    </if>
-	    U_UPDATED_AT = SYSDATE,
-	    <if test="birthday != null">
-	    BIRTHDAY = #{birthday},
-	    </if>
-	    <if test="userLastName != null">
-	    USER_LASTNAME = #{userLastName}
-	    </if>
-	    WHERE USER_NO = #{sessionId}
+		  UPDATE USERS
+		  <set>
+		    PHONE = #{phone},
+		    PUSHYN = #{pushYN},
+		    GENDER = #{gender},
+			    <if test="address != null and address != ''">
+			      ADDRESS = #{address},
+			    </if>
+			    U_UPDATED_AT = SYSDATE,
+			    <if test="birthday != null and birthday != ''">
+			      BIRTHDAY = #{birthday},
+			    </if>
+			    <if test="userLastName != null and userLastName != ''">
+			      USER_LASTNAME = #{userLastName}
+			    </if>
+		  </set>
+		  		WHERE USER_NO = #{sessionId}
 	</update>
-	
+
 	<select id="selectGuideInfo" parameterType="hashmap">
-		SELECT U.USER_NO, GUIDE_NO, PASSWORD, EMAIL, PHONE, ROLE, TO_CHAR(BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, ADDRESS, GENDER, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME, SOCIAL_TYPE, ISFOREIGNER, PUSHYN, UNREGISTERYN
-			FROM USERS U
-			INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO 
-			WHERE U.USER_NO = #{sessionId}
+		SELECT 
+			U.USER_NO, 
+			G.GUIDE_NO, 
+			U.PASSWORD, 
+			U.EMAIL, 
+			U.PHONE, 
+			U.ROLE, 
+			TO_CHAR(U.BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, 
+			U.ADDRESS, 
+			U.GENDER, 
+			U.U_CREATED_AT, 
+			U.U_UPDATED_AT, 
+			U.USER_FIRSTNAME, 
+			U.USER_LASTNAME, 
+			U.SOCIAL_TYPE, 
+			U.ISFOREIGNER, 
+			U.PUSHYN, 
+			U.UNREGISTERYN,
+			G.LANGUAGE, 
+			G.EXPERIENCE,
+			(
+				SELECT P_FILE_PATH 
+				FROM GUIDE_IMG 
+				WHERE P_GUIDE_NO = G.GUIDE_NO
+				AND ROWNUM = 1
+			) AS P_FILE_PATH
+		FROM USERS U
+		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
+		WHERE U.USER_NO = #{sessionId}
 	</select>
+
 
 	
 	<update id="updateGuideInfo" parameterType="hashmap">
@@ -49,20 +77,19 @@
 	</update>
 
 	<select id="getGuideInfo" resultType="hashmap">
-	    SELECT U.*, I.P_FILE_PATH, LANGUAGE, EXPERIENCE
-	    FROM USERS U
-	    INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
-	    LEFT JOIN(				
-			SELECT GI.*				
-			FROM GUIDE_IMG GI				
-			INNER JOIN (				
-				SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO				
-				FROM GUIDE_IMG				
-				GROUP BY P_GUIDE_NO				
-			) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO				
-				AND GI.P_FILE_NO = LATEST.MAX_FILE_NO				
-			) I ON G.GUIDE_NO = I.P_GUIDE_NO				
-	    WHERE U.USER_NO = #{sessionId}
+	   SELECT *
+			FROM USERS U
+				INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+				LEFT JOIN(
+			SELECT GI.*
+			FROM GUIDE_IMG GI
+				INNER JOIN (
+				SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+				FROM GUIDE_IMG
+				GROUP BY P_GUIDE_NO
+			) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+			) GI ON GI.P_GUIDE_NO = G.GUIDE_NO
+			WHERE U.USER_NO = #{sessionId};
 	</select>
 		
 	
