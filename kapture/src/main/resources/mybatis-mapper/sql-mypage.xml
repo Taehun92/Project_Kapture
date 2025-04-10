@@ -191,10 +191,10 @@
 		FROM GUIDES G
 		INNER JOIN TOURS T ON T.GUIDE_NO = G.GUIDE_NO
 		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
-		INNER JOIN (SELECT DISTINCT SI_NO,SI_NAME FROM REGION) R ON T.SI_NO = R.SI_NO
+		INNER JOIN REGION R ON T.SI_NO = R.SI_NO AND T.GU_NO = R.GU_NO
 		INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
 		LEFT JOIN PAYMENTS P ON P.TOUR_NO = T.TOUR_NO 
-		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
 		WHERE G.USER_NO = #{sessionId}
 		<if test="keyword != null and keyword != ''">
 		    AND (
@@ -202,15 +202,20 @@
 		        T.TITLE LIKE '%' || #{keyword} || '%'
 		    )
 		</if>
+		ORDER BY T.TOUR_DATE DESC
 		OFFSET ((#{page} - 1) * #{size}) ROWS FETCH NEXT #{size} ROWS ONLY
 	</select>
 	<!--가이드 판매내역 페이징처리-->
 <select id="selectTransactionTotalCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*)
-	    FROM PAYMENTS P
-	    JOIN USERS U ON P.USER_NO = U.USER_NO
-	    JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-	    WHERE U.USER_NO = #{sessionId, jdbcType=INTEGER}
+		FROM GUIDES G
+		INNER JOIN TOURS T ON T.GUIDE_NO = G.GUIDE_NO
+		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+		INNER JOIN REGION R ON T.SI_NO = R.SI_NO AND T.GU_NO = R.GU_NO
+		INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+		LEFT JOIN PAYMENTS P ON P.TOUR_NO = T.TOUR_NO 
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
+		WHERE G.USER_NO = #{sessionId}
 	    	<if test="keyword != null and keyword != ''">
 	        	AND (
 	            	USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
