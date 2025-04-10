@@ -190,7 +190,10 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!-- 가이드 리스트 반복 출력 -->
+						<tr v-if="inquiriesList.length === 0">
+							<td colspan="12">검색 결과가 없습니다.</td>
+						</tr>
+						<!-- 문의 리스트 반복 출력 -->
 						<tr v-for="inquiry in inquiriesList">
 							<!-- 문의번호 -->
 							<td>{{ inquiry.inquiryNo }}</td>

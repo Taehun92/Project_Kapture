@@ -329,6 +329,9 @@
 						</tr>
 					</thead>
 					<tbody>
+						<tr v-if="guidesList.length === 0">
+							<td colspan="10">검색 결과가 없습니다.</td>
+						</tr>
 						<!-- 가이드 리스트 반복 출력 -->
 						<tr v-for="guide in guidesList" >
 							<!-- 회원번호 -->

@@ -197,19 +197,23 @@ public class AdminService {
 			System.out.println("가이드 수정 쿼리 실행 후 : " + map);
 			int userInfo = adminMapper.updateUserInfo(map);
 			String pFilePath = (String)map.get("pFilePath");
-			int guideImg = 0;
-			if(pFilePath != null && pFilePath != "") {
-				guideImg = adminMapper.updateGuideImg(map);
-			}
 			String result;
-			if(guideInfo > 0 && userInfo > 0 && guideImg > 0) {
-				result = "success";
+			if(pFilePath != null && pFilePath != "") {
+				int guideImg = adminMapper.updateGuideImg(map);
+				int beforeGuideImg = adminMapper.deleteBeforeGuideImg(map);
+				if(guideInfo > 0 && userInfo > 0 && guideImg > 0 && beforeGuideImg > 0) {
+					result = "success";
+				} else {
+					result = "fail";
+				}
 			} else {
-				result = "fail";
+				if(guideInfo > 0 && userInfo > 0) {
+					result = "success";
+				} else {
+					result = "fail";
+				}
 			}
 			resultMap.put("result", result);
-			
-			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", e.getMessage());
@@ -565,9 +569,8 @@ public class AdminService {
 			System.out.println("insertNewUser 이후 " + map);
 			int insertGuideResult = adminMapper.insertNewGuide(map);
 			String pFilePath = (String)map.get("pFilePath");
-			int guideImg = 0;
 			if(pFilePath != null && pFilePath != "") {
-				guideImg = adminMapper.updateGuideImg(map);
+				int guideImg = adminMapper.updateGuideImg(map);
 				if(insertGuideResult > 0 && insertUserResult > 0 && guideImg > 0) {
 					resultMap.put("result", "success");
 				} else {
