@@ -490,7 +490,7 @@
 					showCartButton: false,
 					tourDate: null,
 					dateList: [],
-					minDate: new Date(),
+					minDate: null,
 					maxDate: null,
 
 					cartList: [],

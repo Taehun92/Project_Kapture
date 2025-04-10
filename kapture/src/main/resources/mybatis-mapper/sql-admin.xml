@@ -208,7 +208,7 @@
 	<!-- 프로필 이미지 저장-->
 	<insert id="insertGuideProfile" parameterType="hashmap" useGeneratedKeys="true" keyProperty="pFileNo" keyColumn="P_FILE_NO">
 		INSERT INTO GUIDE_IMG
-			VALUES (GUIDE_IMG_SEQ.NEXTVAL, 0, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
+			VALUES (GUIDE_IMG_SEQ.NEXTVAL, #{guideNo}, #{pFilePath}, #{pFileName}, #{pFileOrgName}, #{pFileSize}, #{pFileType}, #{pFileExtension}, SYSDATE)
 	</insert>
 	<!-- 회원관리 유저정보 조회 -->
 	<select id="selectUsersList" parameterType="map" resultType="com.example.kapture.login.model.Login">
