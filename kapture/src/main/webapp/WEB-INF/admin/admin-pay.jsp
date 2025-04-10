@@ -343,7 +343,10 @@
                     };
                 },
                 methods: {
-                    loadFilteredData() { this.fnGetTransactions(); },
+                    loadFilteredData() { 
+                        this.page = 1;
+                        this.fnGetTransactions();
+                     },
                     setToday() {
                         const now = new Date();
                         const days = ['일', '월', '화', '수', '목', '금', '토'];

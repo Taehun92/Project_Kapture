@@ -324,6 +324,7 @@
 			},
 			methods: {
 				loadFilteredData() { 
+					this.page = 1;
                     this.fnGetInquiryiesList(); 
                 },
 				// 문의 목록 불러오기

@@ -387,7 +387,10 @@
                     };
                 },
                 methods: {
-                    loadFilteredData() { this.fnGetTransactions(); },
+                    loadFilteredData() {
+                        this.page = 1;
+                        this.fnGetTransactions();
+                    },
                     fnGetTransactions() {
                         let self = this;
                         let nparmap = {
