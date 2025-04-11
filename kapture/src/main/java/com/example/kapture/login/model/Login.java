@@ -21,4 +21,6 @@ public class Login {
 	private String pushYN;
 	private String unregisterYN;
 	
+	private String lastLogin;
+	
 }	

@@ -35,4 +35,5 @@ public interface LoginMapper {
     // 트위터 사용자 신규 등록
     int insertTwitterUser(Map<String, Object> param);
 
+    void updateLastLogin(int userNo);
 }
