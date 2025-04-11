@@ -50,7 +50,7 @@
         </select>
         <input v-model="keyword" @keyup.enter="fnMain" placeholder="검색어"
           class="w-96 px-4 py-2 border border-gray-300 rounded" />
-        <button @click="fnMain" class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700">검색</button>
+        <button @click="page = 1; fnMain" class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700">검색</button>
       </div>
 
       <!-- 카테고리 필터 -->
