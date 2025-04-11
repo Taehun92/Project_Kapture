@@ -159,7 +159,7 @@
 	<selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
         SELECT TOUR_SEQ.NEXTVAL FROM DUAL
     </selectKey>
-    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
+    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION, VEHICLE)
     	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description},#{vehicle}
     	FROM GUIDES G
     	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
