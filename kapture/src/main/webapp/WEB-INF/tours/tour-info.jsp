@@ -22,7 +22,7 @@
 		<div id="app" class="px-4 py-6">
 			<div class="max-w-[1280px] mx-auto">
 				<!-- 상품 정보 섹션 -->
-				<div
+				<div v-if="tourInfo && tourInfo.title"
 					class="bg-white rounded-xl shadow-lg p-4 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
 					<div class="w-full md:w-1/2">
 						<img class="rounded-xl shadow-md w-full h-96 object-cover transition-transform duration-300 hover:scale-105"
@@ -99,7 +99,7 @@
 							</div>
 
 							<!-- 💙 찜 + 장바구니 -->
-							<div class="flex items-center gap-4 mr-3">
+							<div class="flex items-center gap-4 mr-3" v-if="tourInfo && tourInfo.title">
 								<div class="flex items-center gap-2 cursor-pointer mr-5"
 									@click="toggleFavorite(tourInfo)">
 									<img :src="tourInfo.isFavorite === 'Y' ? '/svg/taeguk-full.svg' : '/svg/taeguk-outline.svg'"
@@ -117,17 +117,18 @@
 					</div>
 				</div>
 				<!-- 설명 -->
-				<div
-					class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
-					<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
+				<div v-if="tourInfo && tourInfo.title">
+					<div
+						class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
+						<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
+					</div>
+					<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
+						<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700"
+							@click="fnEdit">수정</button>
+						<button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+							@click="fnDelete">삭제</button>
+					</div>
 				</div>
-				<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
-					<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700"
-						@click="fnEdit">수정</button>
-					<button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-						@click="fnDelete">삭제</button>
-				</div>
-
 				<!-- 후기 -->
 				<div
 					class="bg-white rounded-xl shadow-lg pt-1 p-6 flex flex-row md:flex-col gap-6 border border-gray-200 mb-6">
@@ -510,13 +511,14 @@
 					let nparmap = {
 						tourNo: self.tourNo,
 					};
+					console.log("파라미터tourNo :",nparmap);
 					$.ajax({
 						url: "/tours/tour-info.dox",
 						dataType: "json",
 						type: "POST",
 						data: nparmap,
 						success: function (data) {
-							console.log(data);
+							console.log("tourInfo>>>>>>",data);
 							self.tourInfo = data.tourInfo;
 							self.tourInfo.isFavorite = "N";
 							console.log(self.tourInfo);
@@ -1034,9 +1036,10 @@
 			},
 			mounted() {
 				let self = this;
+				
 				const params = new URLSearchParams(window.location.search);
 				self.tourNo = params.get("tourNo") || "";
-
+				
 				self.fnGetBasketList();
 
 				setTimeout(() => {
@@ -1044,7 +1047,7 @@
 						self.minDate = new Date(self.tourInfo.tourDate);
 					}
 				}, 300);
-
+				
 				self.fnTourInfo();
 				self.fnGetCart();
 				self.fnGetBasket();
