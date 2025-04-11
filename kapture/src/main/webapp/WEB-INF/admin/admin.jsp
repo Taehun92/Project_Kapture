@@ -350,7 +350,7 @@
                         window.location.href = '/admin/pay.do'; // 👉 원하는 경로로 수정 가능
                     }
                     if (type === 'tours') {
-                        window.location.href = '/tours/list.do'; // 👉 원하는 경로로 수정 가능
+                        window.location.href = '/admin/order.do'; // 👉 원하는 경로로 수정 가능
                     }
                     if (type === 'request') {
                         window.location.href = '/request/list.do';
