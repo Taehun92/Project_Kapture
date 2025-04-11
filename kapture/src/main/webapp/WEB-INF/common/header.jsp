@@ -21,7 +21,7 @@
                 <div class="flex flex-wrap items-center gap-6 grow basis-0 min-w-0">
                     <!-- 로고 -->
                     <a href="/main.do">
-                        <img src="../../img/kapture_Logo.png" class="w-32 h-auto shrink-0" alt="로고" />
+                        <img src="../../img/logo/kapture_Logo.png" class="w-32 h-auto shrink-0" alt="로고" />
                     </a>
 
                     <!-- 검색바 -->
