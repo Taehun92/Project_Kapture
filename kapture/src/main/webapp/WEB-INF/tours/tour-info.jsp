@@ -15,6 +15,9 @@
 		<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
 		<link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
 		<title>상품 상세 | kapture</title>
+		<style>
+			
+		</style>
 	</head>
 
 	<body class="bg-white text-gray-800 text-[16px] tracking-wide">
@@ -120,7 +123,7 @@
 				<div v-if="tourInfo && tourInfo.title">
 					<div
 						class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
-						<div class="prose max-w-none mt-6 min-h-[600px]" v-html="tourInfo.description"></div>
+						<div class="prose max-w-none mt-6 min-h-[600px]" v-html="styledDescription"></div>
 					</div>
 					<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
 						<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700"
@@ -505,6 +508,15 @@
 
 				};
 			},
+			computed: {
+				styledDescription() {
+				  if (!this.tourInfo?.description) return "";
+				  return this.tourInfo.description.replace(
+					/<img([^>]+)>/g,
+					'<img style="width:1000px; height:800px;" $1>'
+				  );
+				}
+			  },
 			methods: {
 				fnTourInfo() {
 					let self = this;
