@@ -349,9 +349,10 @@ public class MyPageService {
 	        
 	    	String result;
 	        String pFilePath = (String)map.get("pFilePath");
-	        int guideImgCount = adminMapper.guideImgCount(map);
+	        
 			if(pFilePath != null && pFilePath != "") {
 				int guideImg = adminMapper.updateGuideImg(map);
+				int guideImgCount = adminMapper.guideImgCount(map);
 				if(guideImgCount > 1) {
 					int beforeGuideImg = adminMapper.deleteBeforeGuideImg(map);
 				}
