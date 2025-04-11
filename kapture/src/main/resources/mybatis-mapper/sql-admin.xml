@@ -395,6 +395,12 @@
 		DELETE FROM GUIDE_IMG
 		WHERE P_GUIDE_NO = #{guideNo}
 	</delete>
+	<!-- 가이드 프로필 중복 개수 조회-->
+	<select id="guideImgCount" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*)
+		FROM GUIDE_IMG
+		WHERE P_GUIDE_NO = #{guideNo}
+	</select>
 	<!-- 고객 문의 리스트 조회 -->
 	<select id="selectInquiriesList" parameterType="map" resultType="com.example.kapture.cs.model.Cs">
 		SELECT * FROM (
