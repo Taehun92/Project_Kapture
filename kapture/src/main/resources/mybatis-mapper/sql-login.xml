@@ -104,6 +104,11 @@
     )
 	</insert>
 	
+	<update id="updateLastLogin" parameterType="int">
+		UPDATE USERS
+    	SET LAST_LOGIN = SYSDATE
+    	WHERE USER_NO = #{userNo}
+	</update>
 	
 </mapper>
 
