@@ -102,7 +102,7 @@
 	    WHERE p.PAYMENT_STATUS IN ('환불요청', '환불완료')
 	</select>
 	
-	<select id="selectTransactionList" resultType="hashmap">
+<select id="selectTransactionList" resultType="hashmap">
 		SELECT * FROM (
 			SELECT ROWNUM AS RNUM, DATA.* FROM (
 				SELECT
@@ -134,8 +134,9 @@
 	    	WHERE ROWNUM &lt;= #{page} * #{size}
 		)
 		WHERE RNUM &gt; (#{page} - 1) * #{size}
-	</select>
-	
+	</select> 
+
+
 	<!--페이징 처리 -->
 	<select id="selectTransactionTotalCount" resultType="int">
 	  SELECT COUNT(*)
