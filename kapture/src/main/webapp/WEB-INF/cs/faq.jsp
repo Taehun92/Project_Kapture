@@ -48,16 +48,16 @@
           <option value="category">카테고리</option>
           <option value="question">질문</option>
         </select>
-        <input v-model="keyword" @keyup.enter="fnMain" placeholder="검색어"
+        <input v-model="keyword" @keyup.enter="fnMain()" placeholder="검색어"
           class="w-96 px-4 py-2 border border-gray-300 rounded" />
-        <button @click="page = 1; fnMain" class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700">검색</button>
+        <button @click="fnMain()" class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700">검색</button>
       </div>
 
       <!-- 카테고리 필터 -->
       <div class="flex gap-4 border-b pb-3 mb-6 font-bold text-gray-800">
         <span v-for="cat in categories" :key="cat.value"
           :class="['cursor-pointer px-3 py-1 rounded', selectedCategory === cat.value ? 'text-red-600 border-b-2 border-red-600' : 'hover:text-blue-700']"
-          @click="filterByCategory(cat.value)">
+          @click="page = 1; fnMain(cat.value)">
           {{ cat.label }}
         </span>
       </div>
@@ -108,7 +108,7 @@
         };
       },
       methods: {
-        fnMain() {
+        fnMain(cat = this.selectedCategory) {
           let self = this;
           let nparmap = {
             keyword: self.keyword,
@@ -126,20 +126,25 @@
                 ...item,
                 isOpen: false
               }));
+              console.log('현재 페이지 :', self.page);
               self.index = Math.ceil(data.count / self.pageSize);
-              self.filterByCategory(self.selectedCategory);
+              self.filterByCategory(cat);
+              console.log(cat);
             }
           });
         },
         fnPage(num) {
-          this.page = num;
-          this.fnMain();
+          let self = this;
+          self.page = num;
+          self.fnMain(self.selectedCategory);
+          console.log('현재 페이지 :', self.page);
         },
         toggleAnswer(item) {
           item.isOpen = !item.isOpen;
         },
         setActive(menu) {
-          this.activeMenu = menu;
+          let self = this;
+          self.activeMenu = menu;
         },
         goTo(menu) {
           let self = this;
@@ -159,16 +164,22 @@
           }
         },
         filterByCategory(category) {
-          this.selectedCategory = category;
+          let self = this;
+          self.selectedCategory = category;
           if (category === "all") {
-            this.filteredList = this.list;
+            
+            self.filteredList = self.list;
           } else {
-            this.filteredList = this.list.filter(item => item.category === category);
+            
+            self.filteredList = self.list.filter(item => item.category === category);
+            self.index = Math.ceil(self.filteredList.length / self.pageSize);
           }
         }
       },
       mounted() {
-        this.fnMain();
+        let self = this;
+        let cat = 'all';
+        self.fnMain(cat);
       }
     });
     app.mount('#app');
