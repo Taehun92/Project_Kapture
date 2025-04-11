@@ -94,6 +94,9 @@
       methods: {
         fnNotice() {
           let self = this;
+          if(self.keyword) {
+            self.page = 1;
+          }
           let params = {
             keyword: self.keyword,
             searchOption: self.searchOption,
@@ -106,17 +109,20 @@
             type: "POST",
             data: params,
             success: function (data) {
+              console.log(data);
               self.list = data.list.map(item => ({
                 ...item,
                 isOpen: false
               }));
+              console.log(self.list);
               self.index = Math.ceil(data.count / self.pageSize);
             }
           });
         },
         fnPage(num) {
-          this.page = num;
-          this.fnNotice();
+          let self = this;
+          self.page = num;
+          self.fnNotice();
         },
         toggleContent(item) {
           item.isOpen = !item.isOpen;
@@ -139,11 +145,13 @@
           }
         },
         setActive(menu) {
-          this.activeMenu = menu;
+          let self = this;
+          self.activeMenu = menu;
         }
       },
       mounted() {
-        this.fnNotice();
+        let self = this;
+        self.fnNotice();
       }
     });
 

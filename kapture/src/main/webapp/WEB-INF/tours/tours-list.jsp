@@ -194,7 +194,7 @@
                                         alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
                                 </div>
                                 <div class="text-xl font-bold mb-1 truncate">{{ tour.title }}</div>
-                                <div class="text-sm text-gray-400 h-12 overflow-hidden">{{ truncateText(tour.description) }}</div>
+                                <div class="text-sm text-gray-400 h-12 overflow-hidden" v-html="truncateHtml(tour.description)"></div>
                                 <div class="flex justify-between items-center mt-3">
                                     <span class="text-yellow-500 text-sm flex items-center gap-1">
                                         <span>⭐</span>
@@ -638,9 +638,11 @@
                     return year + '-' + month + '-' + day;
                 },
 
-                truncateText(text, maxLength = 40) {
-                    if (!text) return '';
-                    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+                truncateHtml(html, maxLength = 40) {
+                    const div = document.createElement("div");
+                    div.innerHTML = html;
+                    const text = div.textContent || div.innerText || "";
+                    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
                 },
 
                 addDays(date, days) {
