@@ -133,7 +133,7 @@ createApp({
         courses: [],
         filteredCourses: [],
         currentPage: 1,
-        itemsPerPage: 10,
+        itemsPerPage: 12,
         lang: 'Kor',
         selectedLang: { code: 'Kor', label: '한국어', flag: 'https://flagcdn.com/w40/kr.png' },
         langList: [
@@ -157,48 +157,60 @@ createApp({
   methods: {
     async fetchCourses() {
       const apiKey = 'O5%2BkPtLkpnsqZVmVJiYW7JDeWEX4mC9Vx3mq4%2FGJs%2Fejvz1ceLY%2B0XySUsy15P%2BhpAdHcZHXHhdn4htsTUuvpA%3D%3D';
-      const url = 'https://apis.data.go.kr/B551011/' + this.lang + 'Service1/areaBasedList1?serviceKey=' + apiKey + '&areaCode=' + this.selectedRegion + '&MobileApp=AppTest&MobileOS=ETC&cat2=' + this.selectedCat2 + '&_type=json&numOfRows=100';
+      const url = 'https://apis.data.go.kr/B551011/' + this.lang + 'Service1/areaBasedList1?serviceKey=' + apiKey + '&areaCode=' + this.selectedRegion + '&MobileApp=AppTest&MobileOS=ETC&cat2=' + this.selectedCat2 + '&_type=json&numOfRows=300&arrange=P';
 
       try {
+        let self = this;
         const response = await fetch(url);
         const data = await response.json();
         const allCourses = data.response.body.items.item || [];
-        this.courses = allCourses.filter(course => course.firstimage && course.firstimage.trim() !== '' && course.title && course.title.trim() !== '');
-        this.filteredCourses = this.courses;
-        this.currentPage = 1;
+        self.courses = allCourses.filter(course => course.firstimage && course.firstimage.trim() !== '' && course.title && course.title.trim() !== '');
+        self.filteredCourses = self.courses;
+        self.currentPage = 1;
+        console.log('URL:', url);
+        console.log(allCourses);
       } catch (error) {
         console.error('API 호출 오류:', error);
       }
     },
     filterByCategory(cat2) {
-      this.selectedCat2 = cat2;
-      this.fetchCourses();
+      let self = this;
+      self.selectedCat2 = cat2;
+      self.fetchCourses();
     },
     fnSelectLang() {
-      this.fetchCourses();
+      let self = this;
+      self.fetchCourses();
     },
     selectLang(langItem) {
-      this.selectedLang = langItem;
-      this.lang = langItem.code;
-      this.open = false;
-      this.fetchCourses();
+      let self = this;
+      self.selectedLang = langItem;
+      self.lang = langItem.code;
+      self.open = false;
+      self.fetchCourses();
     },
     filterByRegion() {
-      this.fetchCourses();
+      let self = this;
+      self.fetchCourses();
     },
     searchCourses() {
-      const keyword = this.searchKeyword.toLowerCase();
-      this.filteredCourses = this.courses.filter((item) =>
-        item.title.toLowerCase().includes(keyword)
-      );
-      this.currentPage = 1;
+      let self = this;
+      const keyword = self.searchKeyword.toLowerCase();
+      self.filteredCourses = this.courses.filter((item) => {
+        const title = item.title?.toLowerCase() || "";
+        const addr1 = item.addr1?.toLowerCase() || "";
+      return title.includes(keyword) || addr1.includes(keyword);
+    });
+      self.currentPage = 1;
     },
     changePage(page) {
-      this.currentPage = page;
+      let self = this;
+      self.currentPage = page;
     },
   },
   mounted() {
-    this.fetchCourses();
+    let self = this;
+    self.fetchCourses();
   },
 }).mount('#app');
 </script>
