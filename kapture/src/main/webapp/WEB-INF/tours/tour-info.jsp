@@ -123,7 +123,7 @@
 				<div v-if="tourInfo && tourInfo.title">
 					<div
 						class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 border border-gray-200 mb-6">
-						<div class="prose max-w-none mt-6 min-h-[600px]" v-html="styledDescription"></div>
+						<div class="prose max-w-none mt-6 min-h-[600px] px-20 py-10" v-html="styledDescription"></div>
 					</div>
 					<div class="flex gap-4 mb-8" v-if="sessionId == tourInfo.userNo">
 						<button class="px-4 py-2 bg-blue-950 text-white rounded hover:bg-blue-700"
