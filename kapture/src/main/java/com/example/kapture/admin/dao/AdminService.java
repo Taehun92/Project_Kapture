@@ -193,14 +193,16 @@ public class AdminService {
 		try {
 			String hashPwd = passwordEncoder.encode((String) map.get("password"));
 	        map.put("password", hashPwd);
-			int guideInfo = adminMapper.updateGuideInfo(map);
+	        int guideInfo = adminMapper.updateGuideInfo(map);
 			System.out.println("가이드 수정 쿼리 실행 후 : " + map);
+			
 			int userInfo = adminMapper.updateUserInfo(map);
 			String pFilePath = (String)map.get("pFilePath");
 			String result;
-			int guideImgCount = adminMapper.guideImgCount(map);
+			
 			if(pFilePath != null && pFilePath != "") {
 				int guideImg = adminMapper.updateGuideImg(map);
+				int guideImgCount = adminMapper.guideImgCount(map);
 				if(guideImgCount > 1) {
 					int beforeGuideImg = adminMapper.deleteBeforeGuideImg(map);
 				}
