@@ -490,7 +490,9 @@
 								['link', 'image'],
 								[{ 'color': [] }, { 'background': [] }],
 								[{ 'align': [] }],
-								['clean']
+								['clean'],
+								[{ indent: "-1" }, { indent: "+1" }],
+								[{ direction: "rtl" }]
 							],
 							handlers: {
 								image: function () {
