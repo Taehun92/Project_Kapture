@@ -310,11 +310,14 @@ public class MyPageService {
 	public HashMap<String, Object> deleteTour(HashMap<String, Object> map) {
 		
 		HashMap<String, Object> resultMap = new HashMap<>();
-		
-		myPageMapper.deleteTour(map);
-		myPageMapper.deleteTourImg(map);
-		resultMap.put("result", "success");
-		
+		try {
+			myPageMapper.deleteTour(map);
+			myPageMapper.deleteTourImg(map);
+			resultMap.put("result", "success");
+		} catch(Exception e){
+			System.out.println(e.getMessage());
+			resultMap.put("result", "fail");
+		}
 		return resultMap;
 	}
 	
