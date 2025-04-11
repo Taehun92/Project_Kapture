@@ -124,6 +124,8 @@ public interface AdminMapper {
 
 		int deleteBeforeGuideImg(HashMap<String, Object> map);
 
+		int guideImgCount(HashMap<String, Object> map);
+
 		
 
 
