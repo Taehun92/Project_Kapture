@@ -73,7 +73,7 @@ public class Guide {
 	private String filePath;
 	private String thumbnail;
 	
-	
+	private String lastLogin;
 	
 	
 	
