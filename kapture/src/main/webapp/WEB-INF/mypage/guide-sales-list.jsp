@@ -712,6 +712,10 @@
       },
       mounted() {
         let self = this;
+		if (!this.sessionId || this.sessionRole === 'TOURIST') {
+			alert("가이드만 이용가능합니다.");
+			location.href = "http://localhost:8080/main.do";
+		}
         this.setCurrentPage();
         this.fnGetTransactions();
 
