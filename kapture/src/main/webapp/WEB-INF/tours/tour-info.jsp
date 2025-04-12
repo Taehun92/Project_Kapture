@@ -43,7 +43,7 @@
 								<div class="flex items-center gap-4 text-gray-600 text-lg flex-wrap">
 									<p class="font-bold text-2xl text-black">{{ tourInfo.userFirstName }}</p>
 									<p class="font-semibold text-lg">성별: {{ tourInfo.gender === 'M' ? '남자' : '여자' }}</p>
-									<p class="font-semibold text-lg">사용 언어: {{ tourInfo.guideLanguage }}</p>
+									<p class="font-semibold text-lg">사용 언어: {{ tourInfo.language }}</p>
 								</div>
 								<p class="text-gray-600 text-lg whitespace-pre-wrap">{{ tourInfo.experience }}</p>
 							</div>
