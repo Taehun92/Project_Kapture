@@ -534,6 +534,8 @@
 		const app = Vue.createApp({
 			data() {
 				return {
+					sessionId : "${sessionId}",
+					sessionRole : "${sessionRole}",
 					usersList: [],
 					selectedUsers: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
@@ -722,6 +724,10 @@
 			},
 			mounted() {
 				let self = this;
+				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                    alert("관리자만 이용가능합니다.");
+                    location.href = "/main.do";
+                }
 				self.fnGetUsersList();
 			}
 		});

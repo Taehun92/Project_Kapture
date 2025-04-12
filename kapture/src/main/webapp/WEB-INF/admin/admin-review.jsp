@@ -277,6 +277,8 @@
         const app = Vue.createApp({
             data() {
                 return {
+                    sessionId : "${sessionId}",
+                    sessionRole : "${sessionRole}",
                     list: [],  // ✅ 서버에서 가져온 리뷰 저장
                     page: 1,              // 현재 페이지
                     pageSize: 10,         // 페이지당 항목 수
@@ -376,6 +378,11 @@
                 }
             },
             mounted() {
+                let self = this;
+				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                    alert("관리자만 이용가능합니다.");
+                    location.href = "/main.do";
+                }
                 this.fnReviewList(); // ✅ 최초 진입 시 데이터 불러오기
                 this.fnGetSummary();
             }
