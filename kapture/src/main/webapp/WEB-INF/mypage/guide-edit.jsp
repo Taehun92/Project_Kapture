@@ -613,11 +613,7 @@
 			const params = new URLSearchParams(window.location.search);
 			self.tourNo = params.get("tourNo") || "";
 			
-			if (this.sessionId == '') {
-				alert("로그인 후 이용해주세요.");
-				location.href = "http://localhost:8080/main.do";
-			}
-			if (this.sessionRole === 'TOURIST') {
+			if (!this.sessionId || this.sessionRole === 'TOURIST') {
 				alert("가이드만 이용가능합니다.");
 				location.href = "http://localhost:8080/main.do";
 			}

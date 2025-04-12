@@ -313,33 +313,35 @@
 			data() {
 				return {
 					inquiriesList: [],
+					sessionId: "${sessionId}",
+					sessionRole: "${sessionRole}",
 					showAnswerModal: false,// 답변 모달 표시 여부
 					selectedInquiry: null, // 현재 선택된 문의 정보
 					startDate: "",
-                    endDate: "",
-                    keyword: "",
-                    page: 1,
-                    size: 10,
-                    totalCount: 0,
-                    totalPages: 1,
-                    statusFilter: "",
+					endDate: "",
+					keyword: "",
+					page: 1,
+					size: 10,
+					totalCount: 0,
+					totalPages: 1,
+					statusFilter: "",
 				};
 			},
 			methods: {
-				loadFilteredData() { 
+				loadFilteredData() {
 					this.page = 1;
-                    this.fnGetInquiryiesList(); 
-                },
+					this.fnGetInquiryiesList();
+				},
 				// 문의 목록 불러오기
 				fnGetInquiryiesList() {
 					let self = this;
 					let nparmap = {
 						startDate: self.startDate,
-                        endDate: self.endDate,
-                        statusFilter: self.statusFilter,
-                        keyword: self.keyword,
-                        page: self.page,
-                        size: self.size,
+						endDate: self.endDate,
+						statusFilter: self.statusFilter,
+						keyword: self.keyword,
+						page: self.page,
+						size: self.size,
 					};
 					$.ajax({
 						url: "/admin/users-inquiries.dox",
@@ -348,10 +350,10 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							if(data.result === "success"){
+							if (data.result === "success") {
 								self.inquiriesList = data.inquiriesList;
 								self.totalCount = data.totalCount;
-                            	self.totalPages = Math.ceil(self.totalCount / self.size);	
+								self.totalPages = Math.ceil(self.totalCount / self.size);
 							} else {
 								alert("데이터를 불러오는데 실패했습니다.");
 							}
@@ -362,10 +364,10 @@
 					});
 				},
 				goPage(p) {
-                    if (p < 1 || p > this.totalPages) return;
-                    this.page = p;
-                    this.fnGetInquiryiesList();
-                },
+					if (p < 1 || p > this.totalPages) return;
+					this.page = p;
+					this.fnGetInquiryiesList();
+				},
 				// '답변' 버튼 클릭 시 모달 열기
 				fnInquiryAnswer(inquiry) {
 					this.selectedInquiry = inquiry;
@@ -447,6 +449,10 @@
 			},
 			mounted() {
 				let self = this;
+                if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                    alert("관리자만 이용가능합니다.");
+                    location.href = "/main.do";
+                }
 				self.fnGetInquiryiesList();
 			}
 		});
