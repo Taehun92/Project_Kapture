@@ -7,4 +7,5 @@ public class Theme {
 	private int themeNo;
 	private String themeName;
 	private int themeParentNo;
+	private String parentName;
 }
