@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <!DOCTYPE html>
+    <html>
+
     <head>
         <meta charset="UTF-8">
         <script src="https://code.jquery.com/jquery-3.7.1.js"
@@ -30,13 +30,14 @@
             <div class="relative w-full h-[600px]">
                 <!-- ✅ 전체 어두운 오버레이 -->
                 <div class="absolute inset-0 bg-black bg-opacity-40 z-10"></div>
-            
+
                 <!-- ✅ 텍스트를 배너 정중앙에 위치시키기 -->
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white text-center px-4">
+                <div
+                    class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white text-center px-4">
                     <h1 class="text-5xl font-black">Capture Korea, Kapture Memories</h1>
                     <p class="text-xl mt-4 font-black">한국을 담고, 기억을 Kapture 하세요</p>
                 </div>
-            
+
                 <!-- ✅ 배경 이미지 (Swiper) -->
                 <div class="swiper-container w-full h-full relative z-0">
                     <div class="swiper-wrapper">
@@ -54,23 +55,20 @@
             </div>
             <div class="max-w-[1200px] mx-auto mt-12">
                 <h2 class="text-2xl font-bold mb-4 border-b-2 pb-2">추천 상품</h2>
-            
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    <div 
-                        class="border rounded-xl shadow-md overflow-hidden flex flex-col justify-between"
-                        v-for="tour in limitedToursList" 
-                        :key="tour.tourNo"
-                    >
+                    <div class="border rounded-xl shadow-md overflow-hidden flex flex-col justify-between"
+                        v-for="tour in limitedToursList" :key="tour.tourNo">
                         <img :src="tour.filePath" class="w-full h-48 object-cover" alt="썸네일" />
                         <div class="p-4">
                             <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
                                 <span>{{ formatDate(tour.tourDate) }}</span>
                                 <span># {{ tour.themeName }}</span>
                                 <img :src="tour.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
-                                        alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
+                                    alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
                             </div>
                             <h3 class="text-lg font-semibold mb-2">{{ tour.title }}</h3>
-                            <p class="text-gray-600 text-sm mb-3">{{ truncateText(tour.description) }}</p>
+                            <p class="text-gray-600 text-sm mb-3">{{ truncateHtml(tour.description) }}</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-500 text-sm flex items-center gap-1">
                                     <span>⭐</span>
@@ -79,10 +77,8 @@
                                 </span>
                                 <span class="font-bold text-blue-600">₩ {{ tour.price.toLocaleString() }}</span>
                             </div>
-                            <button 
-                                class="mt-4 w-full bg-blue-950 hover:bg-blue-700 text-white py-2 px-4 rounded"
-                                @click="goToTourInfo(tour.tourNo)"
-                            >예약하기</button>
+                            <button class="mt-4 w-full bg-blue-950 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                                @click="goToTourInfo(tour.tourNo)">예약하기</button>
                         </div>
                     </div>
                 </div>
@@ -92,7 +88,8 @@
             <div class="mb-10 max-w-[1200px] mx-auto mt-12">
                 <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
                 <div class="space-y-6">
-                    <div v-for="item in limitedReviewList" class="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition">
+                    <div v-for="item in limitedReviewList"
+                        class="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition">
                         <div class="flex items-start gap-4">
                             <!-- 썸네일 이미지 -->
                             <img :src="item.filePath" alt="상품 이미지" class="w-20 h-20 object-cover rounded-full shadow" />
@@ -105,16 +102,9 @@
                                         <span>👤 {{ item.userFirstname }} {{ item.userLastname || '' }}</span>
                                         <div class="flex items-center gap-1 text-gray-600">
                                             <span>⭐ 평점:</span>
-                                            <star-rating
-                                                :rating="item.rating"
-                                                :read-only="true"
-                                                :star-size="14"
-                                                :increment="1"
-                                                :border-width="3"
-                                                :show-rating="false"
-                                                :rounded-corners="true"
-                                                class="inline-block align-middle"
-                                            ></star-rating>
+                                            <star-rating :rating="item.rating" :read-only="true" :star-size="14"
+                                                :increment="1" :border-width="3" :show-rating="false"
+                                                :rounded-corners="true" class="inline-block align-middle"></star-rating>
                                         </div>
                                     </div>
                                     <!-- 🕒 작성일 -->
@@ -123,26 +113,30 @@
 
                                 <div class="flex flex-wrap items-center gap-8 mb-1">
                                     <!-- 제목 -->
-                                    <div class="text-xl font-bold text-gray-800 cursor-pointer" @click="goToTourInfo(item.tourNo)">
-                                        {{ item.title }} 
+                                    <div class="text-xl font-bold text-gray-800 cursor-pointer"
+                                        @click="goToTourInfo(item.tourNo)">
+                                        {{ item.title }}
                                     </div>
-                                    
+
                                     <!-- 투어 정보 -->
                                     <div class="flex flex-wrap items-center gap-x-4 text-sm text-gray-600">
-                                        <span>📅 투어 날짜: <span class="font-semibold">{{ formatDate(item.tourDate) }}</span></span>
+                                        <span>📅 투어 날짜: <span class="font-semibold">{{ formatDate(item.tourDate)
+                                                }}</span></span>
                                         <span>⏱ {{ item.duration }}</span>
-                                        <span>💸 가격: <span class="font-semibold">₩{{ item.price.toLocaleString() }}</span></span>
+                                        <span>💸 가격: <span class="font-semibold">₩{{ item.price.toLocaleString()
+                                                }}</span></span>
                                     </div>
                                 </div>
 
                                 <!-- 내용 -->
-                                <p class="text-gray-700 mt-2 text-lg  mb-2 font-bold leading-relaxed">📝 {{ item.comment }}</p>
+                                <p class="text-gray-700 mt-2 text-lg  mb-2 font-bold leading-relaxed">📝 {{ item.comment
+                                    }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>    
+        </div>
         <jsp:include page="../common/footer.jsp"></jsp:include>
     </body>
 
@@ -173,7 +167,7 @@
             methods: {
                 formatDate(input) {
                     if (!input) return '';
-                    
+
                     // 문자열인 경우: "2025-04-12 00:00:00"
                     if (typeof input === 'string') {
                         return input.split(' ')[0];
@@ -186,9 +180,11 @@
                     return year + '-' + month + '-' + day;
                 },
 
-                truncateText(text, maxLength = 30) {
-                    if (!text) return '';
-                    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+                truncateHtml(html, maxLength = 40) {
+                    const div = document.createElement("div");
+                    div.innerHTML = html;
+                    const text = div.textContent || div.innerText || "";
+                    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
                 },
 
                 fnToursList() {
@@ -218,11 +214,11 @@
                         type: "POST",
                         dataType: "json",
                         data: nparmap,
-                        success: function(data) {
+                        success: function (data) {
                             const wishTourNos = (data.list || []).map(item => +item.tourNo);
                             console.log("찜목록 tourNo 목록: ", wishTourNos);
 
-                            self.toursList = self.toursList.map(function(tour) {
+                            self.toursList = self.toursList.map(function (tour) {
                                 const tourNo = Number(tour.tourNo);
                                 return {
                                     ...tour,
@@ -242,12 +238,12 @@
                         $.ajax({
                             url: "/wishList/addWishList.dox",
                             type: "POST",
-                            data: { 
-                                userNo: self.sessionId, 
-                                guideNo : tour.guideNo,
-                                tourNo: tour.tourNo 
+                            data: {
+                                userNo: self.sessionId,
+                                guideNo: tour.guideNo,
+                                tourNo: tour.tourNo
                             },
-                            success: function(res) {
+                            success: function (res) {
                                 console.log("찜 추가됨", res);
                             }
                         });
@@ -255,11 +251,11 @@
                         $.ajax({
                             url: "/wishList/removeWishList.dox",
                             type: "POST",
-                            data: { 
-                                userNo: self.sessionId, 
-                                tourNo: tour.tourNo 
+                            data: {
+                                userNo: self.sessionId,
+                                tourNo: tour.tourNo
                             },
-                            success: function(res) {
+                            success: function (res) {
                                 console.log("찜 제거됨", res);
                             }
                         });
@@ -267,7 +263,7 @@
                 },
 
                 goToTourInfo(tourNo) {
-                    location.href="/tours/tour-info.do?tourNo=" + tourNo;
+                    location.href = "/tours/tour-info.do?tourNo=" + tourNo;
                 },
 
                 fnGetReviewList() {

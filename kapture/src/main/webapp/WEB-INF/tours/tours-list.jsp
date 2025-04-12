@@ -34,30 +34,31 @@
             }
         </style>
     </head>
+
     <body class="bg-white text-gray-800">
         <jsp:include page="../common/header.jsp" />
         <div id="app" class="max-w-7xl mx-auto py-8 px-4">
             <div id="sidebar" class="sidebar">
-            
-            <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">🤖챗봇 열기</button>
 
-            <div class="modal-overlay" v-if="showChat">
-                <div class="chat-container">
-                    <div class="chat-header">
-                        K-apture 챗봇
-                        <button class="close-btn" @click="showChat = false">✕</button>
-                    </div>
-                    <div class="chat-box" ref="chatBox">
-                        <div v-for="msg in messages" :class="['message', msg.type]">
-                            {{ msg.text }}
+                <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">🤖챗봇 열기</button>
+
+                <div class="modal-overlay" v-if="showChat">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            K-apture 챗봇
+                            <button class="close-btn" @click="showChat = false">✕</button>
+                        </div>
+                        <div class="chat-box" ref="chatBox">
+                            <div v-for="msg in messages" :class="['message', msg.type]">
+                                {{ msg.text }}
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
+                            <button @click="sendMessage">전송</button>
                         </div>
                     </div>
-                    <div class="chat-input">
-                        <textarea v-model="userInput" placeholder="메시지를 입력하세요..."></textarea>
-                        <button @click="sendMessage">전송</button>
-                    </div>
                 </div>
-            </div>
             </div>
             <!-- 지역별 배너 -->
             <div class="relative h-96 rounded-lg overflow-hidden mb-6 bg-cover bg-center"
@@ -65,13 +66,13 @@
                 <div class="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center px-4">
                     <h1 class="text-white text-4xl font-bold mb-4">주요 관광지</h1>
                     <div class="flex flex-wrap gap-3 mt-6 justify-center">
-                        <button class="px-5 py-3 bg-blue-950 text-white hover:bg-blue-700 rounded text-base font-semibold transition-all duration-200"
+                        <button
+                            class="px-5 py-3 bg-blue-950 text-white hover:bg-blue-700 rounded text-base font-semibold transition-all duration-200"
                             @click="resetFiltersAndList">
                             전체
                         </button>
                         <button v-for="region in regions" :key="region.region"
-                            @mouseover="hoveredRegionImage = region.image"
-                            @mouseleave="hoveredRegionImage = null"
+                            @mouseover="hoveredRegionImage = region.image" @mouseleave="hoveredRegionImage = null"
                             @click="selectOnlyThisRegion(region.siNo)"
                             class="px-5 py-3 bg-blue-950 text-white hover:bg-blue-700 rounded text-base font-semibold transition-all duration-200">
                             {{ region.region }}
@@ -108,7 +109,8 @@
                         <div v-if="filters.language">
                             <div v-for="language in languages" :key="language.eng">
                                 <label class="text-sm">
-                                    <input type="checkbox" v-model="selectedLanguages" :value="language.eng" class="mr-1">
+                                    <input type="checkbox" v-model="selectedLanguages" :value="language.eng"
+                                        class="mr-1">
                                     {{ language.kor }}
                                 </label>
                             </div>
@@ -136,16 +138,19 @@
                             '∨'
                             }}</button>
                         <div v-if="filters.theme">
-                            <div v-for="theme in themeList" :key="theme.themeNo">
+                            <div v-for="theme in uniqueParentThemes" :key="theme.themeNo">
                                 <label class="text-sm">
-                                    <input type="checkbox" v-model="selectedThemes" :value="theme.themeNo" class="mr-1">
-                                    {{ theme.themeName }}
+                                    <input type="checkbox" :value="theme.parentName"
+                                        :checked="isParentChecked(theme.parentName)"
+                                        @change="toggleParentTheme(theme.parentName)" class="mr-1">
+                                    {{ theme.parentName }}
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="mt-32">
-                        <button  @click="goToAirbnb" class="w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow">
+                        <button @click="goToAirbnb"
+                            class="w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-700 transition-colors font-semibold shadow">
                             🏨 숙소 찾기
                         </button>
                     </div>
@@ -158,32 +163,30 @@
                     <div class="flex justify-between items-center mb-4">
                         <!-- 왼쪽: 현재 위치 -->
                         <div class="text-sm text-gray-500">홈 > 상품</div>
-                    
+
                         <!-- 오른쪽: 버튼들 묶음 -->
                         <div class="flex gap-2">
                             <!-- 찜 상품 필터 버튼 -->
-                            <button
-                                @click="fnWishListTours"
-                                class="text-sm bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors shadow-sm flex items-center gap-2"
-                            >
+                            <button @click="fnWishListTours"
+                                class="text-sm bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors shadow-sm flex items-center gap-2">
                                 <!-- 태극 아이콘 -->
                                 <img src="../../svg/taeguk-full.svg" alt="찜" class="w-5 h-5" />
                                 찜 상품
                             </button>
-                    
+
                             <!-- 관광지 알아보기 버튼 -->
                             <button
                                 class="text-sm bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors shadow-sm"
-                                @click="fnFindLocation"
-                            >
+                                @click="fnFindLocation">
                                 🇰🇷 관광지 알아보기
                             </button>
                         </div>
                     </div>
                     <hr class="mb-4">
-                    
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="tour in isWishlistMode ? filteredToursList : toursList" :key="tour.tourNo" class="border rounded-lg overflow-hidden shadow hover:shadow-md transition mb-5">
+                        <div v-for="tour in isWishlistMode ? filteredToursList : toursList" :key="tour.tourNo"
+                            class="border rounded-lg overflow-hidden shadow hover:shadow-md transition mb-5">
                             <img :src="tour.filePath" alt="썸네일" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <div class="flex justify-between items-center mb-2">
@@ -194,7 +197,8 @@
                                         alt="찜 아이콘" class="w-8 h-8 cursor-pointer" @click="toggleFavorite(tour)" />
                                 </div>
                                 <div class="text-xl font-bold mb-1 truncate">{{ tour.title }}</div>
-                                <div class="text-sm text-gray-400 h-12 overflow-hidden" v-html="truncateHtml(tour.description)"></div>
+                                <div class="text-sm text-gray-400 h-12 overflow-hidden"
+                                    v-html="truncateHtml(tour.description)"></div>
                                 <div class="flex justify-between items-center mt-3">
                                     <span class="text-yellow-500 text-sm flex items-center gap-1">
                                         <span>⭐</span>
@@ -214,7 +218,8 @@
             </div>
 
             <!-- 장바구니 트리거 바 -->
-            <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-44 text-white text-center py-2 rounded-t-lg cursor-pointer z-50 bg-blue-950 hover:bg-blue-700 transition-colors" @click="showModal = true">
+            <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-44 text-white text-center py-2 rounded-t-lg cursor-pointer z-50 bg-blue-950 hover:bg-blue-700 transition-colors"
+                @click="showModal = true">
                 <div class="text-sm flex items-center justify-center gap-2 w-32 mx-auto font-bold">
                     🛒 장바구니 열기
                 </div>
@@ -284,7 +289,8 @@
                                             <template v-if="getCartItemByDateAndTime(addDays(minDate, n - 1), '종일')">
                                                 <tr>
                                                     <!-- 날짜 -->
-                                                    <td class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold">
+                                                    <td
+                                                        class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold">
                                                         {{ formatDate(addDays(minDate, n - 1)) }}
                                                     </td>
                                                     <!-- 시간 -->
@@ -355,7 +361,8 @@
                                                 <!-- 오전 행 -->
                                                 <tr>
                                                     <!-- 날짜 (rowspan=2) -->
-                                                    <td class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold" rowspan="2">
+                                                    <td class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle font-bold"
+                                                        rowspan="2">
                                                         {{ formatDate(addDays(minDate, n - 1)) }}
                                                     </td>
                                                     <!-- 시간(오전) -->
@@ -425,7 +432,8 @@
                                                 <!-- 오후 행 -->
                                                 <tr>
                                                     <!-- 시간(오후) -->
-                                                    <td class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
+                                                    <td
+                                                        class="border border-gray-500 h-[1rem] box-border px-4 py-2 text-base overflow-hidden whitespace-nowrap text-ellipsis align-middle">
                                                         오후
                                                     </td>
                                                     <!-- 상품 제목(오후) -->
@@ -573,6 +581,16 @@
             components: {
                 VueDatePicker
             },
+            computed: {
+                uniqueParentThemes() {
+                    const seen = new Set();
+                    return this.themeList.filter(theme => {
+                        if (seen.has(theme.parentName)) return false;
+                        seen.add(theme.parentName);
+                        return true;
+                    });
+                }
+            },
             watch: {
                 showModal(newVal) {
                     if (newVal) {
@@ -586,19 +604,19 @@
                 selectedLanguages: {
                     handler: 'handleFilterChange',
                     deep: true
-                  },
-                  selectedRegions: {
+                },
+                selectedRegions: {
                     handler: 'handleFilterChange',
                     deep: true
-                  },
-                  selectedThemes : {
+                },
+                selectedThemes: {
                     handler: 'handleFilterChange',
                     deep: true
-                  },
-                  selectedDates: {
+                },
+                selectedDates: {
                     handler: 'handleFilterChange',
                     deep: true
-                  }
+                }
             },
             methods: {
                 resetDatePicker() {
@@ -608,7 +626,7 @@
 
                 debouncedToursList: _.debounce(function () {
                     this.fnToursList();
-                  }, 300),
+                }, 300),
 
                 handleDateInput(dates) {
                     this.selectedDates = dates;
@@ -660,9 +678,9 @@
                         selectedRegions: JSON.stringify(self.selectedRegions),
                         selectedLanguages: JSON.stringify(self.selectedLanguages),
                         selectedThemes: JSON.stringify(self.selectedThemes),
-                        keyword : keyword
+                        keyword: keyword
                     };
-                    console.log(">>>>>>>>>>>" + nparmap);
+                    console.log(">>>>>>>>>nparmap>>" + nparmap);
                     $.ajax({
                         url: "/tours/list.dox",
                         dataType: "json",
@@ -832,70 +850,70 @@
                 fnGetWishList(callback) {
                     let self = this;
                     if (!self.sessionId) return;
-                  
+
                     let nparmap = {
-                      userNo: parseInt(self.sessionId)
+                        userNo: parseInt(self.sessionId)
                     };
-                  
+
                     $.ajax({
-                      url: "/wishList/getWishList.dox",
-                      type: "POST",
-                      dataType: "json",
-                      data: nparmap,
-                      success: function (data) {
-                        const wishTourNos = (data.list || []).map(item => +item.tourNo);
-                  
-                        // 찜 여부 추가
-                        self.toursList = self.toursList.map(tour => ({
-                          ...tour,
-                          isFavorite: wishTourNos.includes(Number(tour.tourNo)) ? "Y" : "N"
-                        }));
-                  
-                        // 🔥 콜백으로 후처리
-                        if (typeof callback === 'function') {
-                          callback(wishTourNos);
+                        url: "/wishList/getWishList.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: nparmap,
+                        success: function (data) {
+                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+
+                            // 찜 여부 추가
+                            self.toursList = self.toursList.map(tour => ({
+                                ...tour,
+                                isFavorite: wishTourNos.includes(Number(tour.tourNo)) ? "Y" : "N"
+                            }));
+
+                            // 🔥 콜백으로 후처리
+                            if (typeof callback === 'function') {
+                                callback(wishTourNos);
+                            }
                         }
-                      }
                     });
-                  },
+                },
 
                 fnWishListTours() {
                     let self = this;
                     if (!self.sessionId) return;
-                  
+
                     let nparmap = { userNo: parseInt(self.sessionId) };
-                  
+
                     $.ajax({
-                      url: "/wishList/getWishList.dox",
-                      type: "POST",
-                      dataType: "json",
-                      data: nparmap,
-                      success: function (data) {
-                        const wishTourNos = (data.list || []).map(item => +item.tourNo);
-                        self.isWishlistMode = !self.isWishlistMode;
-                  
-                        if (self.isWishlistMode) {
-                          self.applyWishlistFilters(wishTourNos);
-                        } else {
-                          self.filteredToursList = [];
+                        url: "/wishList/getWishList.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: nparmap,
+                        success: function (data) {
+                            const wishTourNos = (data.list || []).map(item => +item.tourNo);
+                            self.isWishlistMode = !self.isWishlistMode;
+
+                            if (self.isWishlistMode) {
+                                self.applyWishlistFilters(wishTourNos);
+                            } else {
+                                self.filteredToursList = [];
+                            }
                         }
-                      }
                     });
-                  },
+                },
 
                 selectOnlyThisRegion(siNo) {
                     let self = this;
                     this.selectedRegions = [siNo]; // 기존 필터 제거하고 이 지역만 선택
                     this.fnToursList();
-                    
+
                     if (this.isWishlistMode) {
                         // toursList가 AJAX로 불러와지고 나서 처리되도록 타이밍 맞춰서
                         setTimeout(() => {
-                          self.fnGetWishList((wishTourNos) => {
-                            // wishTourNos를 기준으로 새로 불러온 toursList를 필터
-                            self.filteredToursList = self.toursList
-                              .filter(tour => wishTourNos.includes(Number(tour.tourNo)));
-                          });
+                            self.fnGetWishList((wishTourNos) => {
+                                // wishTourNos를 기준으로 새로 불러온 toursList를 필터
+                                self.filteredToursList = self.toursList
+                                    .filter(tour => wishTourNos.includes(Number(tour.tourNo)));
+                            });
                         }, 500); // 서버 응답 시간에 따라 필요 시 조정
                     }
                 },
@@ -973,42 +991,68 @@
                     this.selectedThemes = [];
                     this.showDatePicker = true;
                     this.fnToursList(); // 전체 상품 목록 다시 불러오기
-                  },
-                  applyWishlistFilters(wishTourNos) {
+                },
+                applyWishlistFilters(wishTourNos) {
                     const self = this;
-                  
+
                     self.filteredToursList = self.toursList.filter(tour => {
-                      const isWish = wishTourNos.includes(Number(tour.tourNo));
-                      const matchRegion = self.selectedRegions.length === 0 || self.selectedRegions.includes(tour.siNo);
-                      const matchLanguage = self.selectedLanguages.length === 0 || (tour.language &&tour.language
+                        const isWish = wishTourNos.includes(Number(tour.tourNo));
+                        const matchRegion = self.selectedRegions.length === 0 || self.selectedRegions.includes(tour.siNo);
+                        const matchLanguage = self.selectedLanguages.length === 0 || (tour.language && tour.language
                             .split(",")// 배열로 분리
                             .map(l => l.trim())// 공백 제거
                             .some(lang => self.selectedLanguages.includes(lang)) // 하나라도 일치하면 true
                         );
-                      const matchTheme = self.selectedThemes.length === 0 || self.selectedThemes.includes(tour.themeNo);
-                  
-                      // 날짜는 tour.tourDate가 selectedDates 사이에 포함되어야 함
-                      let matchDate = true;
-                      if (self.selectedDates.length === 2) {
-                        const start = new Date(self.selectedDates[0]);
-                        const end = new Date(self.selectedDates[1]);
-                        const tourDate = new Date(tour.tourDate);
-                        matchDate = tourDate >= start && tourDate <= end;
-                      }
-                      console.log('tour: '+ tour.title + ' lang: ' + tour.language + ' matchLang: ' + matchLanguage +' selectedLang: ' + self.selectedLanguages);
-                      return isWish && matchRegion && matchLanguage && matchTheme && matchDate;
-                    });
-                  },
+                        const matchTheme = self.selectedThemes.length === 0 || self.selectedThemes.includes(tour.themeNo);
 
-                  handleFilterChange() {
+                        // 날짜는 tour.tourDate가 selectedDates 사이에 포함되어야 함
+                        let matchDate = true;
+                        if (self.selectedDates.length === 2) {
+                            const start = new Date(self.selectedDates[0]);
+                            const end = new Date(self.selectedDates[1]);
+                            const tourDate = new Date(tour.tourDate);
+                            matchDate = tourDate >= start && tourDate <= end;
+                        }
+                        console.log('tour: ' + tour.title + ' lang: ' + tour.language + ' matchLang: ' + matchLanguage + ' selectedLang: ' + self.selectedLanguages);
+                        return isWish && matchRegion && matchLanguage && matchTheme && matchDate;
+                    });
+                },
+
+                handleFilterChange() {
                     if (this.isWishlistMode) {
-                      this.fnGetWishList((wishTourNos) => {
-                        this.applyWishlistFilters(wishTourNos);
-                      });
+                        this.fnGetWishList((wishTourNos) => {
+                            this.applyWishlistFilters(wishTourNos);
+                        });
                     } else {
-                      this.debouncedToursList(); // 기본 모드일 땐 서버에서 필터링
+                        this.debouncedToursList(); // 기본 모드일 땐 서버에서 필터링
                     }
-                  }
+                },
+                // 상위 테마에 해당하는 모든 하위 테마 번호 반환
+                getChildThemeNos(parentName) {
+                    return this.themeList
+                        .filter(t => t.parentName === parentName)
+                        .map(t => t.themeNo);
+                },
+
+                // 상위 테마 선택 여부 확인
+                isParentChecked(parentName) {
+                    const children = this.getChildThemeNos(parentName);
+                    return children.every(no => this.selectedThemes.includes(no));
+                },
+
+                // 상위 테마 토글 → 해당하는 하위 테마들을 selectedThemes에 반영
+                toggleParentTheme(parentName) {
+                    const children = this.getChildThemeNos(parentName);
+                    const allChecked = children.every(no => this.selectedThemes.includes(no));
+
+                    if (allChecked) {
+                        // 모두 체크돼 있으면 제거
+                        this.selectedThemes = this.selectedThemes.filter(no => !children.includes(no));
+                    } else {
+                        // 포함 안된 것만 추가
+                        this.selectedThemes = [...new Set(this.selectedThemes.concat(children))];
+                    }
+                }
 
 
             },
@@ -1033,7 +1077,7 @@
                 self.fnGetTourDateList();
                 self.fnGetBasket();
                 self.fnGetBasketList();
-                
+
                 setTimeout(() => {
                     if (this.sessionId && !isNaN(this.sessionId)) {
                         this.fnGetWishList();

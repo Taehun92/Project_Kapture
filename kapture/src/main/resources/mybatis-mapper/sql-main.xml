@@ -17,8 +17,9 @@
 		    FROM THEME T1
 		    INNER JOIN THEME T2 ON T1.THEME_PARENT_NO = T2.THEME_NO
 		)TEMP2 ON T.THEME_NO = TEMP2.THEME_NO
-		WHERE T.DELETEYN = 'N'
+		WHERE T.DELETEYN = 'N' AND I.THUMBNAIL = 'Y'
 		ORDER BY NVL(RATING, 0) DESC
+		OFFSET 0 ROWS FETCH NEXT 12 ROWS ONLY
 	</select>
 	
 	<select id="selectReviewList" parameterType="hashmap" resultType="com.example.kapture.main.model.Main">
