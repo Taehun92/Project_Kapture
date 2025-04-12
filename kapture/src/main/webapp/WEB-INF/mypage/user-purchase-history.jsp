@@ -156,13 +156,9 @@
                     // } else {
                     //     self.page = localStorage.getItem('page');
                     // }
-                    if (this.sessionId === null) {
-                        alert("로그인 후 이용해주세요.");
-                        location.href = "localhost:8080/main.do";
-                    }
-                    if (this.sessionRole === 'GUIDE') {
+                    if (!this.sessionId || this.sessionRole === 'GUIDE') {
                         alert("일반회원만 이용가능합니다.");
-                        location.href = "http://localhost:8080/main.do";
+                        location.href = "/main.do";
                     }
 
                     this.fnGetPayments(() => {
