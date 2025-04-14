@@ -3,11 +3,11 @@
 
 
 💡 프로젝트 소개
-Kapture 여행사는 한국에 여행을 올 예정인 외국인들을 위한 소규모 맞춤형 관광 상품 판매 쇼핑몰입니다.
+Kapture 여행사는 한국에 여행 예정인 외국인들을 위한 소규모 맞춤형 관광 상품 판매 쇼핑몰입니다.
 
 
 기존의 패키지 여행의 단점을 보완하고, 새로운 기획의 상품들을 제공하여 한국에서의 잊지 못할 추억을 선사해드립니다.
-가이드는 본인의 전공 / 취미 / 고향 등을 앞세워 전문성 있는 가이드가 될 수 있으며, 고객은 본인이 원하는 장소/ 테마 / 활동을 제공 받을 수 있습니다.
+가이드는 본인의 전공 / 취미 / 장점 등을 앞세워 전문성 있는 가이드가 될 수 있으며, 고객은 본인이 원하는 장소/ 테마 / 활동의 상품을 선택 할 수 있습니다.
 
 🗓 개발 기간
 03/17 ~ 03/21
@@ -20,14 +20,13 @@ Kapture 여행사는 한국에 여행을 올 예정인 외국인들을 위한 �
 
 👨‍👩‍👦‍👦 팀원 구성
 이름	GitHub 프로필
-이동재	https://github.com/dlehdwo01
-김예지	https://github.com/vvyejivv
-박승영	https://github.com/javagigig
-박경빈	https://github.com/Bin2been
-박건형 https://github.com/geon-hyung
+이태훈	https://github.com/dlehdwo01
+강재석	https://github.com/vvyejivv
+박건형	https://github.com/geon-hyung
+이재형	https://github.com/Bin2been
 
 🛠️ 사용 언어
-       
+
 📕 발표 PPT
 ▶FOOD114 발표 PPT
 
