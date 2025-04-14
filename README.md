@@ -1,5 +1,7 @@
 # Project_Kapture
 ![Kapture_Logo](https://github.com/Taehun92/Project_Kapture/blob/main/kapture_Logo(1)_500x400.png)
+
+
 💡 프로젝트 소개
 Kapture 여행사는 음식점들의 이벤트들을 소개해주어 바쁜 현대인들의 식비를 조금이라도 줄일 수 있는 기회를 드리는 웹사이트입니다.
 고객이 주소를 지정하면 주변 이벤트들을 확인이 가능하며 희망하는 가게의 상품 주문이 가능합니다
