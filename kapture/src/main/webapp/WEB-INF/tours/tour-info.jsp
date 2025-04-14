@@ -632,6 +632,24 @@
 						return;
 					}
 
+  					if (self.tourInfo.duration === '오전') {
+    					const existsMorning = self.cartList.some(item =>
+      					self.formatDate(new Date(item.tourDate)) === selectedDate && item.duration === '오전');
+    					if (existsMorning) {
+      						alert('같은 날짜에 이미 오전 상품이 담겨 있습니다.');
+      						return;
+    					}
+  					}
+
+  					if (self.tourInfo.duration === '오후') {
+    					const existsAfternoon = self.cartList.some(item =>
+      					self.formatDate(new Date(item.tourDate)) === selectedDate && item.duration === '오후');
+    					if (existsAfternoon) {
+      						alert('같은 날짜에 이미 오후 상품이 담겨 있습니다.');
+      						return;
+    					}
+  					}
+
 					if (self.minDate && self.cartList.length > 0) { // 장바구니에 이미 투어가 담겨있다면 날짜 비교
 						const selectedDate = new Date(self.tourInfo.tourDate);
 						const mindate = new Date(self.minDate);
