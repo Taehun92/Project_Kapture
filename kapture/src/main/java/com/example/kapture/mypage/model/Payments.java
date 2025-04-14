@@ -21,4 +21,10 @@ public class Payments {
 	private String rUpdatedAt;
 	private int reviewNo;
 	private int rating;
+	
+	private int fileNo;
+	private String filePath;
+	private String fileName;
+	private String fileOrgName;
+	private String tgumbnail;
 }
