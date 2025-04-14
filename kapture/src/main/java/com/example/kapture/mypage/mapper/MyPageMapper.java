@@ -67,5 +67,9 @@ public interface MyPageMapper {
 	HashMap<String, Object> selectGuideInfo(HashMap<String, Object> map);
   
 	int updateGuideInfo(HashMap<String, Object> map);
+	// 구매한 상품 조회
+	List<HashMap<String, Object>> selectPurchaseList(HashMap<String, Object> map);
+	// 구매한 상푸 개수
+	int selectPurchaseListTotalCount(HashMap<String, Object> map);
 
 }
