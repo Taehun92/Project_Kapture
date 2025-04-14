@@ -31,6 +31,10 @@
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-purchase-history.do' }"
                             href="/mypage/user-purchase-history.do"
                             class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
+                    <li>
+                        <a :class="{ 'bg-blue-950 text-white': currentPage === 'user-schedule.do' }"
+                            href="/mypage/user-schedule.do" class="block px-3 py-2 rounded hover:bg-blue-100">나의 일정</a>
+                    </li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-reviews.do' }"
                             href="/mypage/user-reviews.do" class="block px-3 py-2 rounded hover:bg-blue-100">이용후기 관리</a>
                     </li>
@@ -64,7 +68,8 @@
                                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mb-2">🕒 {{ formatDate(inquiry.inqCreatedAt) }}</div>
-                            <div class="text-sm text-gray-800 mb-2">📂 카테고리: <span class="font-semibold">{{ inquiry.category }}</span></div>
+                            <div class="text-sm text-gray-800 mb-2">📂 카테고리: <span class="font-semibold">{{
+                                    inquiry.category }}</span></div>
                             <div class="text-sm text-gray-700 mb-2">❓ 문의 내용: {{ inquiry.question }}</div>
                             <div class="text-sm text-gray-700">
                                 💬 답변:
@@ -84,8 +89,8 @@
                 data() {
                     return {
                         inquiryList: [],
-                        sessionId : "${sessionId}",
-                        sessionRole : "${sessionRole}",
+                        sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
                         currentPage: ''
                     };
                 },
@@ -125,9 +130,10 @@
                     this.currentPage = window.location.pathname.split('/').pop();
                     this.fnGetInquiryList();
                 }
-            
+
             });
             app.mount('#app');
         </script>
     </body>
-</html>
+
+    </html>

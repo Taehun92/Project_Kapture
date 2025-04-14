@@ -199,6 +199,22 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	// 구매한 상품 조회
+	public HashMap<String, Object> purchaseList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {		    
+		    List<HashMap<String, Object>> list = myPageMapper.selectPurchaseList(map);
+		    int totalCount = myPageMapper.selectPurchaseListTotalCount(map);
+		    
+			resultMap.put("list", list); // 프론트에 넘길 데이터 key
+		    resultMap.put("totalCount", totalCount);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", "queryFail");
+		}
+		return resultMap;
+	}
 //-------------------------------------------------------------------------------------------------------------------------------------------------  
 	public HashMap<String, Object> addTour(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<>();
@@ -395,5 +411,6 @@ public class MyPageService {
 		}
 		return resultMap;
 	}
+	
 	
 }
