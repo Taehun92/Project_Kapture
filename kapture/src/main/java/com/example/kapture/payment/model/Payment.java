@@ -22,4 +22,10 @@ public class Payment {
 	private int maxPeople;      // 최대 인원
 	private String tourDate;    // 출발 날짜
 	
+	private int fileNo;
+	private String filePath;
+	private String fileName;
+	private String fileOrgName;
+	private String tgumbnail;
+	
 }
