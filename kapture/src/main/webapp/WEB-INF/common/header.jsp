@@ -50,11 +50,11 @@
                     <!-- 로그인 상태 -->
                     <template v-if="sessionId != ''">
                         <a href="/payment.do" class="hover:text-blue-700">장바구니({{ basketCount }})</a>
-                        <a v-if="sessionRole == 'ADMIN'" href="http://localhost:8080/admin.do"
+                        <a v-if="sessionRole == 'ADMIN'" href="/admin.do"
                             class="hover:text-blue-700">관리자 페이지</a>
-                        <a v-if="sessionRole == 'TOURIST'" href="http://localhost:8080/mypage/user-mypage.do"
+                        <a v-if="sessionRole == 'TOURIST'" href="/mypage/user-mypage.do"
                             class="hover:text-blue-700">마이페이지</a>
-                        <a v-if="sessionRole == 'GUIDE'" href="http://localhost:8080/mypage/guide-schedule.do"
+                        <a v-if="sessionRole == 'GUIDE'" href="/mypage/guide-schedule.do"
                             class="hover:text-blue-700">가이드페이지</a>
                         <button @click="fnLogout"
                             class="tracking-normal bg-blue-950 hover:bg-blue-700 text-white px-4 py-1 rounded">
