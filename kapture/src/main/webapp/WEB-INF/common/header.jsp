@@ -17,50 +17,72 @@
         </div>
         <div id="header" class="w-full bg-white shadow-sm border-b !w-full !max-w-full !overflow-visible">
             <div class="w-full max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <!-- 왼쪽 -->
-                <div class="flex flex-wrap items-center gap-6 grow basis-0 min-w-0">
+                <div class="flex items-center gap-6 grow basis-0 min-w-0 flex-nowrap">
                     <!-- 로고 -->
-                    <a href="/main.do">
-                        <img src="../../img/logo/kapture_Logo.png" class="w-32 h-auto shrink-0" alt="로고" />
+                    <a href="/main.do" class="shrink-0">
+                        <img src="../../img/logo/kapture_Logo.png" class="w-32 h-auto" alt="로고" />
                     </a>
 
                     <!-- 검색바 -->
-                    <div class="flex items-center gap-2 flex-wrap shrink-0">
-                        <div class="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-gray-50 w-[320px]">
-                            <input v-model="keyword" type="text" placeholder="상품 제목을 검색하세요..." @keyUp.enter="fnSearch"
-                                class="bg-transparent focus:outline-none text-base w-full" />
+                    <div class="flex items-center gap-2 shrink-0">
+                        <div
+                            class="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-gray-50 w-[280px] sm:w-[320px]">
+                            <input v-model="keyword" type="text" placeholder="Search for product title..."
+                                @keyUp.enter="fnSearch" class="bg-transparent focus:outline-none text-sm w-full" />
                         </div>
                         <button @click="fnSearch"
-                            class="bg-blue-950 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">
+                            class="bg-blue-950 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded whitespace-nowrap">
                             검색
                         </button>
                     </div>
 
                     <!-- 메뉴 -->
-                    <div class="flex items-center gap-6 text-[1.75rem] font-black text-gray-700 whitespace-nowrap">
-                        <a href="/tours/list.do" class="hover:text-blue-700">여행상품</a>
-                        <a href="/request/list.do" class="hover:text-blue-700">요청게시판</a>
+                    <div class="flex items-center gap-4 min-w-0 shrink text-2xl font-semibold text-gray-700">
+                        <a href="/tours/list.do"
+                            class="hover:text-blue-700 truncate max-w-[130px] whitespace-nowrap overflow-hidden block">
+                            여행상품
+                        </a>
+                        <a href="/request/list.do"
+                            class="hover:text-blue-700 truncate max-w-[130px] whitespace-nowrap overflow-hidden block">
+                            요청게시판
+                        </a>
                     </div>
                 </div>
 
                 <!-- 오른쪽 영역 -->
                 <div class="flex items-center gap-4 text-sm whitespace-nowrap">
-                    <a href="/cs/faq.do" class="hover:text-blue-700">FAQ</a>
-                    <a href="/cs/main.do" class="hover:text-blue-700">고객센터</a>
-                    <!-- 로그인 상태 -->
-                    <template v-if="sessionId != ''">
-                        <a href="/payment.do" class="hover:text-blue-700">장바구니({{ basketCount }})</a>
-                        <a v-if="sessionRole == 'ADMIN'" href="/admin.do"
-                            class="hover:text-blue-700">관리자 페이지</a>
-                        <a v-if="sessionRole == 'TOURIST'" href="/mypage/user-mypage.do"
-                            class="hover:text-blue-700">마이페이지</a>
-                        <a v-if="sessionRole == 'GUIDE'" href="/mypage/guide-schedule.do"
-                            class="hover:text-blue-700">가이드페이지</a>
-                        <button @click="fnLogout"
-                            class="tracking-normal bg-blue-950 hover:bg-blue-700 text-white px-4 py-1 rounded">
-                            Logout
-                        </button>
-                    </template>
+                    <div class="flex items-center gap-4 text-sm whitespace-nowrap min-w-0">
+                        <a href="/cs/faq.do"
+                            class="hover:text-blue-700 truncate max-w-[80px] overflow-hidden block">FAQ</a>
+                        <a href="/cs/main.do"
+                            class="hover:text-blue-700 truncate max-w-[100px] overflow-hidden block">고객센터</a>
+
+                        <!-- 로그인 상태 -->
+                        <template v-if="sessionId != ''">
+                            <a href="/payment.do"
+                                class="hover:text-blue-700 truncate max-w-[140px] overflow-hidden block">
+                                장바구니({{ basketCount }})
+                            </a>
+
+                            <a v-if="sessionRole == 'ADMIN'" href="http://localhost:8080/admin.do"
+                                class="hover:text-blue-700 truncate max-w-[130px] overflow-hidden block text-xs">
+                                관리자 페이지
+                            </a>
+                            <a v-if="sessionRole == 'TOURIST'" href="http://localhost:8080/mypage/user-mypage.do"
+                                class="hover:text-blue-700 truncate max-w-[130px] overflow-hidden block text-xs">
+                                마이페이지
+                            </a>
+                            <a v-if="sessionRole == 'GUIDE'" href="http://localhost:8080/mypage/guide-schedule.do"
+                                class="hover:text-blue-700 truncate max-w-[130px] overflow-hidden block text-xs">
+                                가이드페이지
+                            </a>
+
+                            <button @click="fnLogout"
+                                class="tracking-normal bg-blue-950 hover:bg-blue-700 text-white w-[80px] h-8 text-xs font-semibold truncate rounded text-center">
+                                Logout
+                            </button>
+                        </template>
+                    </div>
 
                     <!-- 비로그인 상태 -->
                     <template v-if="sessionId == ''">
