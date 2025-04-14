@@ -344,8 +344,10 @@ public class LoginController {
 
     @RequestMapping(value = "/facebook/login-url.dox", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> getFacebookAuthCodeUrl(@RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
-                                                      HttpSession session) {
+    public Map<String, Object> getFacebookAuthCodeUrl(
+    	    @RequestParam("redirectUri") String redirectUri,  // ✅ 페이스북 콜백 주소
+    	    @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
+    	    HttpSession session) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             // 세션에 returnUrl 저장
@@ -354,13 +356,14 @@ public class LoginController {
             // 페이스북 로그인 URL 구성
             String loginUrl = "https://www.facebook.com/v18.0/dialog/oauth"
                     + "?client_id=" + facebookClientId
-                    + "&redirect_uri=" + URLEncoder.encode(facebookRedirectUri, "UTF-8")
+                    + "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8")
                     + "&response_type=code"
                     + "&scope=email,public_profile"
                     + "&auth_type=reauthenticate"; // ✨ 다른 계정으로 로그인하기 위해 추가
 
             resultMap.put("result", "success");
             resultMap.put("url", loginUrl); // 로그인 URL을 클라이언트로 반환
+            System.out.println("실제 요청 redirect_uri = " + redirectUri);
         } catch (Exception e) {
             resultMap.put("result", "fail");
             resultMap.put("message", "URL 생성 중 오류 발생");
