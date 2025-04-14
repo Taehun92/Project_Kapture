@@ -34,6 +34,8 @@ public class ToursService {
 			List<Tours> toursList = toursMapper.selectToursList(map); // 조건에 맞는 상품 목록 조회 
 			List<Region> regionList = commonMapper.selectRegionList(map); // 상품 검색을 위한 지역별 이름 목록
 			List<Theme> themeList = commonMapper.selectThemeList(map); // 상품 검색을 위한 테마별 이름 목록
+			int count = toursMapper.selectCntTours(map);
+			resultMap.put("count", count);
 			resultMap.put("result", "success");
 			resultMap.put("toursList", toursList);
 			resultMap.put("regionList", regionList);
