@@ -84,7 +84,9 @@ public class LoginService {
             session.setAttribute("sessionRole", login.getRole());
             session.setAttribute("sessionFirstName", login.getUserFirstName());
             session.setAttribute("sessionLastName", login.getUserLastName());
-
+            
+            loginMapper.updateLastLogin(login.getUserNo());
+            
             resultMap.put("login", login);
             resultMap.put("result", "success");
             resultMap.put("message", "로그인 성공");

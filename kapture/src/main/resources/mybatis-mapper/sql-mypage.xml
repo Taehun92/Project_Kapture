@@ -10,22 +10,93 @@
 	</select>
 	
 	<update id="userInfoUpdate" parameterType="hashmap">
-		UPDATE USERS
-	    SET PHONE = #{phone},
-	    	PUSHYN = #{pushYN},
-	    	GENDER = #{gender},
-	    	<if test="address != null">
-	    		ADDRESS = #{address},
-	    	</if>
-	    	U_UPDATED_AT = SYSDATE,
-	    	<if test="birthday != null">
-	    		BIRTHDAY = #{birthday},
-	    	</if>
-	    	<if test="userLastName != null">
-	    		USER_LASTNAME = #{userLastName}
-	    	</if>
+		  UPDATE USERS
+		  <set>
+		    PHONE = #{phone},
+		    PUSHYN = #{pushYN},
+		    GENDER = #{gender},
+			    <if test="address != null and address != ''">
+			      ADDRESS = #{address},
+			    </if>
+			    U_UPDATED_AT = SYSDATE,
+			    <if test="birthday != null and birthday != ''">
+			      BIRTHDAY = #{birthday},
+			    </if>
+			    <if test="userLastName != null and userLastName != ''">
+			      USER_LASTNAME = #{userLastName}
+			    </if>
+		  </set>
+		  		WHERE USER_NO = #{sessionId}
+	</update>
+
+	<select id="selectGuideInfo" parameterType="hashmap">
+		SELECT 
+			U.USER_NO, 
+			G.GUIDE_NO, 
+			U.PASSWORD, 
+			U.EMAIL, 
+			U.PHONE, 
+			U.ROLE, 
+			TO_CHAR(U.BIRTHDAY, 'YYYY-MM-DD') AS BIRTHDAY, 
+			U.ADDRESS, 
+			U.GENDER, 
+			U.U_CREATED_AT, 
+			U.U_UPDATED_AT, 
+			U.USER_FIRSTNAME, 
+			U.USER_LASTNAME, 
+			U.SOCIAL_TYPE, 
+			U.ISFOREIGNER, 
+			U.PUSHYN, 
+			U.UNREGISTERYN,
+			G.LANGUAGE, 
+			G.EXPERIENCE,
+			(
+				SELECT P_FILE_PATH 
+				FROM GUIDE_IMG 
+				WHERE P_GUIDE_NO = G.GUIDE_NO
+				AND ROWNUM = 1
+			) AS P_FILE_PATH
+		FROM USERS U
+		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
+		WHERE U.USER_NO = #{sessionId}
+	</select>
+
+
+	
+	<update id="updateGuideInfo" parameterType="hashmap">
+	    UPDATE GUIDES
+	    SET 
+	    	<if	test= "experience != null and experience != '' ">
+	        	EXPERIENCE = #{experience}
+	        </if>
+	       	<if test = "language != null and language != '' ">,</if>
+	        <if test = "language != null and language != '' ">
+	        	LANGUAGE = #{language}
+	        </if>
 	    WHERE USER_NO = #{sessionId}
 	</update>
+
+	<select id="getGuideInfo" resultType="hashmap">
+	   SELECT *
+			FROM USERS U
+				INNER JOIN GUIDES G ON G.USER_NO = U.USER_NO
+				LEFT JOIN(
+			SELECT GI.*
+			FROM GUIDE_IMG GI
+				INNER JOIN (
+				SELECT P_GUIDE_NO, MAX(P_FILE_NO) AS MAX_FILE_NO
+				FROM GUIDE_IMG
+				GROUP BY P_GUIDE_NO
+			) LATEST ON GI.P_GUIDE_NO = LATEST.P_GUIDE_NO AND GI.P_FILE_NO = LATEST.MAX_FILE_NO
+			) GI ON GI.P_GUIDE_NO = G.GUIDE_NO
+			WHERE U.USER_NO = #{sessionId};
+	</select>
+		
+	
+	<select id="checkGuideImageExists" resultType="int">
+	    SELECT COUNT(*) FROM GUIDE_IMG WHERE P_GUIDE_NO = #{P_GUIDE_NO}
+	</select>
+
 	
 	<select id="selectPayList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
 		SELECT P.*, TITLE, DURATION, TOUR_DATE
@@ -35,13 +106,13 @@
 	</select>	
 	
 	<select id="selectUserReviewsList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Payments">
-		SELECT P.*, TITLE, DURATION, TOUR_DATE, U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
+		SELECT P.*, T.TITLE, T.DURATION, T.TOUR_DATE, U.USER_FIRSTNAME, U.USER_LASTNAME, R.*
 		FROM PAYMENTS P
 		INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
 		INNER JOIN USERS U ON P.USER_NO = U.USER_NO
         LEFT JOIN REVIEWS R ON R.TOUR_NO = T.TOUR_NO AND R.USER_NO = P.USER_NO
 		WHERE P.USER_NO = #{sessionId}
-        ORDER BY PAYMENT_NO
+        ORDER BY P.PAYMENT_NO
 	</select>
 	
 	<insert id="insertUserReview" parameterType="hashmap">
@@ -85,11 +156,11 @@
 	
 	<insert id="insertTour" parameterType="hashmap" useGeneratedKeys="true" keyProperty="tourNo" keyColumn="TOUR_NO">
 
-	  <selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
+	<selectKey keyProperty="tourNo" resultType="long" order="BEFORE">
         SELECT TOUR_SEQ.NEXTVAL FROM DUAL
     </selectKey>
-    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION)
-    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description}
+    	INSERT INTO TOURS (TOUR_NO, GUIDE_NO, TITLE, DURATION, PRICE, MAX_PEOPLE, TOUR_DATE, DELETEYN, SI_NO, GU_NO, THEME_NO, DESCRIPTION ,VEHICLE)
+    	SELECT #{tourNo}, G.GUIDE_NO, #{title}, #{duration}, #{price}, '4', #{tourDate}, 'N', R.SI_NO, R.GU_NO, T.THEME_NO, #{description},#{vehicle}
     	FROM GUIDES G
     	JOIN REGION R ON R.SI_NAME = #{siName} AND R.GU_NAME = #{guName}
     	JOIN THEME T ON T.THEME_NAME = #{themeName}
@@ -115,22 +186,15 @@
         	#{imageUrl}
     	</foreach>
 	</update>
-<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
-		SELECT 
-		    GUIDE_USER.USER_FIRSTNAME AS guide_name,
-		    MEMBER_USER.USER_FIRSTNAME AS member_name,
-		    T.TITLE,
-		    P.PAYMENT_DATE,
-		    ETC,
-		    NUM_PEOPLE,
-		    AMOUNT,
-		    PAYMENT_STATUS
-		    
+	<select id="selectTransactionList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Guide">	
+		SELECT *
 		FROM GUIDES G
-		INNER JOIN USERS GUIDE_USER ON G.USER_NO = GUIDE_USER.USER_NO
-		INNER JOIN TOURS T ON G.GUIDE_NO = T.GUIDE_NO
-		LEFT JOIN PAYMENTS P ON T.TOUR_NO = P.TOUR_NO
-		LEFT JOIN USERS MEMBER_USER ON P.USER_NO = MEMBER_USER.USER_NO
+		INNER JOIN TOURS T ON T.GUIDE_NO = G.GUIDE_NO
+		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+		INNER JOIN REGION R ON T.SI_NO = R.SI_NO AND T.GU_NO = R.GU_NO
+		INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+		LEFT JOIN PAYMENTS P ON P.TOUR_NO = T.TOUR_NO 
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
 		WHERE G.USER_NO = #{sessionId}
 		<if test="keyword != null and keyword != ''">
 		    AND (
@@ -138,16 +202,20 @@
 		        T.TITLE LIKE '%' || #{keyword} || '%'
 		    )
 		</if>
-		ORDER BY P.PAYMENT_DATE DESC
+		ORDER BY T.TOUR_DATE DESC
 		OFFSET ((#{page} - 1) * #{size}) ROWS FETCH NEXT #{size} ROWS ONLY
-</select>
+	</select>
 	<!--가이드 판매내역 페이징처리-->
 <select id="selectTransactionTotalCount" parameterType="hashmap" resultType="int">
 	    SELECT COUNT(*)
-	    FROM PAYMENTS P
-	    JOIN USERS U ON P.USER_NO = U.USER_NO
-	    JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-	    WHERE U.USER_NO = #{sessionId, jdbcType=INTEGER}
+		FROM GUIDES G
+		INNER JOIN TOURS T ON T.GUIDE_NO = G.GUIDE_NO
+		INNER JOIN USERS U ON G.USER_NO = U.USER_NO
+		INNER JOIN REGION R ON T.SI_NO = R.SI_NO AND T.GU_NO = R.GU_NO
+		INNER JOIN THEME TH ON T.THEME_NO = TH.THEME_NO
+		LEFT JOIN PAYMENTS P ON P.TOUR_NO = T.TOUR_NO 
+		LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
+		WHERE G.USER_NO = #{sessionId}
 	    	<if test="keyword != null and keyword != ''">
 	        	AND (
 	            	USER_FIRSTNAME LIKE '%' || #{keyword} || '%'
@@ -191,6 +259,13 @@
 		UPDATE IMG SET THUMBNAIL = 'Y'
 		WHERE FILE_PATH = #{thumbnail}
 	</update>
+	
+	<select id="selectInquiryList" parameterType="hashmap" resultType="com.example.kapture.mypage.model.Inquiry">
+	    SELECT *
+	    FROM INQUIRIES
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY INQ_CREATED_AT DESC
+	</select>
 	
 </mapper>
 

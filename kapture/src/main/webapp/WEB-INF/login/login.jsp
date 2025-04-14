@@ -1,199 +1,159 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Kapture - Login</title>
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f9f9f9;
-		}
-		#app {
-			max-width: 420px;
-			margin: 80px auto;
-			background: #fff;
-			padding: 40px;
-			border-radius: 8px;
-			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-		}
-		.logo {
-			text-align: center;
-			margin-bottom: 30px;
-		}
-		.logo img {
-			height: 60px;
-		}
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-			color: #333;
-		}
-		.login-input {
-			width: 100%;
-			padding: 12px;
-			margin: 10px 0;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			box-sizing: border-box;
-		}
-		.login-btn {
-			width: 100%;
-			background-color: #2b74e4;
-			color: white;
-			padding: 19px;
-			border: none;
-			border-radius: 2px;
-			font-size: 16px;
-			cursor: pointer;
-			margin-top: 10px;
-		}
-		.signup-link {
-			margin-top: 20px;
-			text-align: center;
-			font-size: 15px;
-		}
-		.signup-link a {
-			color: #2b74e4;
-			text-decoration: none;
-		}
-		.error-msg {
-			color: red;
-			font-size: 13px;
-			margin-top: 5px;
-			text-align: center;
-		}
-	</style>
-</head>
+	<!DOCTYPE html>
+	<html>
 
-<body>
-<jsp:include page="../common/header.jsp" />
+	<head>
+		<meta charset="UTF-8">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+		<link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+		<title>Login | kapture</title>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="../../css/kapture-style.css">
+	</head>
 
-<div id="app">
-	<div class="logo">
-		<img src="../../img/kapture_Logo(2).png" alt="Kapture Logo" />
-	</div>
+	<body class="bg-gray-100 font-sans">
+		<jsp:include page="../common/header.jsp" />
 
-	<h2>Login to Kapture</h2>
-	<input class="login-input" type="text" v-model="email" placeholder="Email or ID">
-	<input class="login-input" type="password" v-model="password" placeholder="Password" @keyUp.enter="login">
+		<div id="app" class="flex justify-center items-center min-h-screen px-4">
+			<div class="w-[70%] max-w-2xl bg-white rounded-2xl shadow-lg p-12">
+				<div class="flex justify-center mb-8">
+					<img src="../../img/logo/kapture_Logo(2).png" alt="Kapture Logo" class="h-16" />
+				</div>
 
-	<div class="error-msg" v-if="errorMessage">{{ errorMessage }}</div>
+				<h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Login to Kapture</h2>
 
-	<button class="login-btn" @click="login">Login</button>
+				<input type="text" v-model="email" placeholder="Email or ID"
+					class="w-full mb-4 px-5 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-950">
 
-	<!-- 소셜 로그인 버튼 -->
-	<div style="margin-top: 30px; text-align: center; display: flex; justify-content: center; gap: 16px;">
-		<!-- Google -->
-		<a :href="googleLoginUrl"
-		   style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background-color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-			<img src="../../img/google.png" alt="Google 로그인" style="width: 50px;" />
-		</a>
+				<input type="password" v-model="password" placeholder="Password" @keyUp.enter="login"
+					class="w-full mb-4 px-5 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-950">
 
-		<!-- Twitter (X) -->
-		<button @click="getTwitAuthCodeUrl"
-				style="width: 50px; height: 50px; border: none; border-radius: 50%; background-color: black; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
-			<img src="../../img/x.jpg" alt="X 로그인" style="width: 40px;" />
-		</button>
+				<div class="text-red-500 text-sm mb-4" v-if="errorMessage">{{ errorMessage }}</div>
 
-		<!-- Facebook -->
-		<button @click="getFacebookAuthUrl"
-				style="width: 50px; height: 50px; border: none; border-radius: 50%;background-color: #fff; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;">
-			<img src="../../img/facebook.png" alt="Facebook 로그인" 
-			style="width: 28px;"  />
-		</button>
-	</div>
+				<button @click="login"
+					class="w-full bg-blue-700 hover:bg-blue-950 text-white text-lg font-semibold py-3 rounded-lg mb-8">
+					Login
+				</button>
 
-	<!-- 회원가입/비번찾기 링크 -->
-	<div class="signup-link">
-		Don't have an account? <a href="/join.do">Sign up here</a><br />
-		Forgot your password? <a href="/find-id.do">Find it here</a>
-	</div>
-</div>
+				<!-- 소셜 로그인 버튼 -->
+				<div class="flex justify-center gap-6 mb-8">
+					<!-- Google -->
+					<a :href="googleLoginUrl"
+						class="w-14 h-14 rounded-full bg-white shadow flex justify-center items-center">
+						<img src="../../img/google.png" alt="Google 로그인" class="w-14 h-14 rounded-full" />
+					</a>
 
-<jsp:include page="../common/footer.jsp" />
+					<!-- Twitter (X) -->
+					<button @click="getTwitAuthCodeUrl"
+						class="w-14 h-14 rounded-full bg-black shadow flex justify-center items-center">
+						<img src="../../img/x.jpg" alt="X 로그인" class="w-14 h-14 rounded-full" />
+					</button>
 
-<script>
-	const app = Vue.createApp({
-		data() {
-			return {
-				email: "",
-				password: "",
-				errorMessage: "",
-				googleLoginUrl: "/google/login?returnUrl=/main.do"
-			};
-		},
-		methods: {
-			login() {
-				const self = this;
+					<!-- Facebook -->
+					<button @click="getFacebookAuthUrl"
+						class="w-14 h-14 rounded-full bg-white shadow flex justify-center items-center">
+						<img src="../../img/facebook.png" alt="Facebook 로그인" class="w-14 h-14 rounded-full" />
+					</button>
+				</div>
 
-				if (!self.email || !self.password) {
-					self.errorMessage = "Please enter both email and password.";
-					return;
+
+				<!-- 회원가입/비번찾기 링크 -->
+				<div class="text-center text-base text-gray-600">
+					Don't have an account?
+					<a href="/join.do" class="text-blue-600 hover:underline">Sign up here</a><br />
+					Forgot your password?
+					<a href="/find-id.do" class="text-blue-600 hover:underline">Find it here</a>
+				</div>
+			</div>
+		</div>
+
+		<jsp:include page="../common/footer.jsp" />
+
+		<script>
+			const app = Vue.createApp({
+				data() {
+					return {
+						email: "",
+						password: "",
+						errorMessage: "",
+						googleLoginUrl: "/google/login?returnUrl=/main.do"
+					};
+				},
+				methods: {
+					login() {
+						const self = this;
+
+						if (!self.email || !self.password) {
+							self.errorMessage = "Please enter both email and password.";
+							return;
+						}
+
+						$.ajax({
+							url: "/login.dox",
+							type: "POST",
+							dataType: "json",
+							data: {
+								email: self.email,
+								password: self.password
+							},
+							success(data) {
+								if (data.result === "success") {
+									alert(data.login.userFirstName + "님 환영합니다!");
+									location.href = "/main.do";
+								} else {
+									self.errorMessage = data.message || "Login failed. Please try again.";
+								}
+							},
+							error() {
+								self.errorMessage = "Server error. Please try again later.";
+							}
+						});
+					},
+					getTwitAuthCodeUrl() {
+						$.ajax({
+							type: "POST",
+							url: "/twitter/auth-code-url.dox",
+							dataType: "json",
+							data: { returnUrl: "/main.do" },
+							success: function (res) {
+								if (res.result === "success") {
+									window.location.href = res.url;
+
+								} else {
+									alert("트위터 로그인 URL 생성 실패");
+								}
+							},
+							error: function (xhr, status, error) {
+								alert("트위터 로그인에 실패했습니다.");
+							}
+						});
+					},
+					getFacebookAuthUrl() {
+						$.ajax({
+							type: "POST",
+							url: "/facebook/login-url.dox",
+							dataType: "json",
+							data: { returnUrl: "/main.do" },  // 로그인 후 리디렉션될 URL
+							success: function (res) {
+								if (res.result === "success") {
+
+									// 페이스북 로그인 URL로 리디렉션
+									window.location.href = res.url;
+								} else {
+									alert("페이스북 로그인 URL 생성 실패");
+								}
+							},
+							error: function (xhr, status, error) {
+								alert("페이스북 로그인에 실패했습니다.");
+							}
+						});
+					}
 				}
+			});
+			app.mount('#app');
+		</script>
+	</body>
 
-				$.ajax({
-					url: "/login.dox",
-					type: "POST",
-					dataType: "json",
-					data: {
-						email: self.email,
-						password: self.password
-					},
-					success(data) {
-						if (data.result === "success") {
-							alert(data.login.userFirstName + "님 환영합니다!");
-							location.href = "/main.do";
-						} else {
-							self.errorMessage = data.message || "Login failed. Please try again.";
-						}
-					},
-					error() {
-						self.errorMessage = "Server error. Please try again later.";
-					}
-				});
-			},
-			getTwitAuthCodeUrl() {
-				$.ajax({
-					type: "POST",
-					url: "/twitter/auth-code-url.dox",
-					dataType: "json",
-					data: { returnUrl: "/main.do" },
-					success: function (res) {
-						if (res.result === "success") {
-							window.location.href = res.url;
-						} else {
-							alert("트위터 로그인 URL 생성 실패");
-						}
-					},
-					error: function (xhr, status, error) {
-						alert("트위터 로그인에 실패했습니다.");
-					}
-				});
-			},
-			getFacebookAuthUrl() {
-				$.ajax({
-					type: "POST",
-					url: "/facebook/login-url.dox",
-					dataType: "json",
-					data: { returnUrl: "/main.do" },
-					success: function (res) {
-						if (res.result === "success") {
-							window.location.href = res.url;
-						} else {
-							alert("페이스북 로그인 URL 생성 실패");
-						}
-					},
-					error: function (xhr, status, error) {
-						alert("페이스북 로그인에 실패했습니다.");
-					}
-				});
-			}
-		}
-	});
-	app.mount('#app');
-</script>
-</body>
-</html>
+	</html>
