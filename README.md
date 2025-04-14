@@ -24,7 +24,7 @@ Kapture 여행사는 한국에 여행을 올 예정인 외국인들을 위한 �
 김예지	https://github.com/vvyejivv
 박승영	https://github.com/javagigig
 박경빈	https://github.com/Bin2been
-이진순	https://github.com/lsssssssssssssss
+박건형 https://github.com/geon-hyung
 
 🛠️ 사용 언어
        
