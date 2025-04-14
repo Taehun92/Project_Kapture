@@ -19,7 +19,7 @@
 <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide overflow-x-hidden">
     <div id="sidebar" class="sidebar">
 
-        <div>
+        <div :style="showChat ? { position: 'fixed', bottom: '450px', right: '20px', zIndex: 1100 } : {}">
             <button class="open-weather-btn" v-if="!showWeather" @click="showWeather = true">날씨</button>
         </div>        
         <div>
