@@ -30,11 +30,17 @@ Kapture 여행사는 한국에 여행 예정인 외국인들을 위한 소규모
 
 
 👨‍👩‍👦‍👦 팀원 구성
+
 이름	GitHub 프로필
+
 이태훈	https://github.com/Taehun92
+
 강재석	https://github.com/vvyejivv
+
 박건형	https://github.com/geon-hyung
+
 이재형	https://github.com/Bin2been
+
 
 🛠️ 사용 언어
 
