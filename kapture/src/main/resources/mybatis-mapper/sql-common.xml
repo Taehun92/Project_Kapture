@@ -36,8 +36,9 @@
 	</select>
 	
 	<select id="selectThemeList" parameterType="hashmap" resultType="com.example.kapture.common.model.Theme">
-		SELECT *
-		FROM THEME
+		SELECT T1.THEME_NO, T1.THEME_NAME, T1.THEME_PARENT_NO, T2.THEME_NAME AS PARENT_NAME
+		FROM THEME T1
+		INNER JOIN THEME T2 ON T1.THEME_PARENT_NO = T2.THEME_NO
 	</select>
 	
 	<select id="selectReviewsList" parameterType="hashmap" resultType="com.example.kapture.common.model.Reviews">

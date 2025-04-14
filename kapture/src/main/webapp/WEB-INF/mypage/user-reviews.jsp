@@ -234,13 +234,9 @@
 
                 },
                 mounted() {
-                    if (this.sessionId === null) {
-                        alert("로그인 후 이용해주세요.");
-                        location.href = "http://localhost:8080/main.do";
-                    }
-                    if (this.sessionRole === 'GUIDE') {
+                    if (!this.sessionId || this.sessionRole === 'GUIDE') {
                         alert("일반회원만 이용가능합니다.");
-                        location.href = "http://localhost:8080/main.do";
+                        location.href = "/main.do";
                     }
 
                     // 현재 페이지 파일명 추출 -> 사이드바 active 클래스 적용

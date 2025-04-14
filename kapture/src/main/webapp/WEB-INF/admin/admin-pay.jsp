@@ -44,7 +44,13 @@
             .date-header {
                 font-size: 24px;
                 font-weight: bold;
-                margin-bottom: 20px;
+                display: flex;
+                gap: 20px;
+                margin-bottom: 30px;
+                justify-content: center;
+                /* ✅ 가운데 정렬 */
+                align-items: center;
+                /* 세로 중앙 정렬 (선택 사항) */
                 color: #333;
             }
 
@@ -52,6 +58,10 @@
                 display: flex;
                 gap: 20px;
                 margin-bottom: 30px;
+                justify-content: center;
+                /* ✅ 가운데 정렬 */
+                align-items: center;
+                /* 세로 중앙 정렬 (선택 사항) */
             }
 
             .card-icon {
@@ -165,22 +175,32 @@
                 flex-wrap: wrap;
                 gap: 16px;
                 padding: 30px;
-                max-width: 1200px;
-                margin: 0 auto;
                 margin-left: 220px;
                 box-sizing: border-box;
+                align-items: start;
             }
 
             .chart-card {
-                flex: 0 0 48%;
+                flex: 0 0 calc(33.333% - 12px);
                 background: #fff;
                 border-radius: 12px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
                 padding: 20px;
                 margin-bottom: 20px;
                 box-sizing: border-box;
-                min-height: 300px;
+                height: 400px
             }
+
+            .chart-card>div[id^="chart1"],
+            div[id^="chart2"],
+            div[id^="chart3"],
+            div[id^="chart4"],
+            div[id^="chart5"],
+            div[id^="chart6"] {
+                height: 360px;
+            }
+
+
 
             .card:hover {
                 transform: translateY(-4px);
@@ -264,7 +284,6 @@
             </div> -->
             <div class="chart-grid">
                 <div class="chart-card">
-                    <h3>년도별 매출</h3>
                     <div id="chart4"></div>
                 </div>
                 <div class="chart-card">
@@ -274,17 +293,16 @@
                     </select>
                     <div id="chart1"></div>
                 </div>
-                <div class="chart-card wide">
+                <div class="chart-card">
                     <h3>일별 매출</h3>
                     <select v-model="selectedMonth" @change="loadChart3">
                         <option v-for="m in months" :value="m">{{ m }}월</option>
                     </select>
                     <div id="chart3"></div>
                 </div>
-                <div class="chart-card wide">
-                    <h3>월별 사용자 수</h3>
+                <!-- <div class="chart-card">
                     <div id="chart6"></div>
-                </div>
+                </div> -->
                 <div class="chart-card">
                     <h3>인기 테마 TOP5</h3>
                     <div id="chart5"></div>
@@ -356,7 +374,12 @@
             }
             const app = Vue.createApp({
                 data() {
+                    const now = new Date();
+                    const currentMonth = String(now.getMonth() + 1).padStart(2, '0'); // '01' ~ '12'
+
                     return {
+                        sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
                         startDate: '',
                         endDate: '',
                         statusFilter: '',
@@ -369,8 +392,8 @@
                         today: '날짜 로딩 중...',
                         tab: 'month',
                         years: ['2023', '2024', '2025'], selectedYear: '2025',
-                        selectedRegion: '', regionList: [],
-                        months: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'], selectedMonth: '01',
+                        selectedRegion: '서울특별시', regionList: [],
+                        months: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'], selectedMonth: currentMonth,
                         chart1: null,
                         chart2: null,
                         chart3: null,
@@ -391,7 +414,7 @@
                         self.loadChart3();
                         self.loadChart4();
                         self.loadChart5();
-                        self.loadChart6();
+                        // self.loadChart6();
                     },
                     loadChart1() {
                         let self = this;
@@ -404,7 +427,7 @@
                                 const list = res.list || [];
                                 const options = {
                                     series: [{ name: "월별 매출", data: list.map(i => Number(i.TOTAL) || 0) }],
-                                    chart: { type: "line", height: 600, zoom: { enabled: false } },
+                                    chart: { type: "line", height: '100%', zoom: { enabled: false } },
                                     colors: ["#3B82F6"],
                                     stroke: { curve: "straight", width: 3 },
                                     markers: { size: 5 },
@@ -434,11 +457,11 @@
                             success: (res) => {
                                 const options = {
                                     series: res.series,
-                                    chart: { type: "bar", height: 600, stacked: false },
+                                    chart: { type: "bar", height: '100%', stacked: false },
                                     plotOptions: { bar: { horizontal: false, columnWidth: "50%", borderRadius: 5 } },
                                     stroke: { show: true, width: 2, colors: ["transparent"] },
                                     dataLabels: { enabled: false },
-                                    xaxis: { categories: res.categories, labels: { rotate: -45 } },
+                                    xaxis: { categories: res.categories, labels: { rotate: 0 } },
                                     yaxis: { title: { text: "₩ (만원)" } },
                                     fill: { opacity: 1 },
                                     tooltip: { y: { formatter: val => "₩ " + val.toLocaleString() + " 만원" } },
@@ -463,7 +486,7 @@
                                 const list = res.list || [];
                                 const options = {
                                     series: [{ name: "일별 매출", data: list.map(i => Number(i.TOTAL) || 0) }],
-                                    chart: { type: "line", height: 600, zoom: { enabled: false } },
+                                    chart: { type: "line", height: '100%', zoom: { enabled: false } },
                                     colors: ["#3B82F6"],
                                     stroke: { curve: "straight", width: 3 },
                                     markers: { size: 5 },
@@ -494,7 +517,7 @@
 
                                 const options = {
                                     series: [{ name: '년도별 매출', data: totals }],
-                                    chart: { type: 'bar', height: 250 },
+                                    chart: { type: 'bar', height: '100%' },
                                     dataLabels: {
                                         enabled: true,
                                         formatter: function (val) {
@@ -556,7 +579,7 @@
 
                                 const options = {
                                     series: counts,
-                                    chart: { type: 'pie', height: 250 },
+                                    chart: { type: 'pie', height: '100%' },
                                     labels: labels,
                                     tooltip: {
                                         y: {
@@ -594,60 +617,60 @@
                             }
                         });
                     },
-                    loadChart6() {
-                        $.ajax({
-                            url: "/admin/sales/monthly.dox",
-                            type: "POST",
-                            dataType: "json",
-                            success: (res) => {
-                                console.log("월별 매출 차트 응답 확인 ✅", res);
+                    // loadChart6() {
+                    //     $.ajax({
+                    //         url: "/admin/sales/monthly.dox",
+                    //         type: "POST",
+                    //         dataType: "json",
+                    //         success: (res) => {
+                    //             console.log("월별 매출 차트 응답 확인 ✅", res);
 
-                                if (!res.monthlyList || res.monthlyList.length === 0) {
-                                    $("#chart6").html("<p style='text-align:center;'>데이터가 없습니다</p>");
-                                    return;
-                                }
+                    //             if (!res.monthlyList || res.monthlyList.length === 0) {
+                    //                 $("#chart6").html("<p style='text-align:center;'>데이터가 없습니다</p>");
+                    //                 return;
+                    //             }
 
-                                const months = res.monthlyList.map(item => item.MONTH);
-                                const totals = res.monthlyList.map(item => item.TOTALSALES);
+                    //             const months = res.monthlyList.map(item => item.MONTH);
+                    //             const totals = res.monthlyList.map(item => item.TOTALSALES);
 
-                                console.log("🗓️ months", months);
-                                console.log("💰 totals", totals);
+                    //             console.log("🗓️ months", months);
+                    //             console.log("💰 totals", totals);
 
-                                const options = {
-                                    series: [{
-                                        name: "월별 매출",
-                                        data: totals
-                                    }],
-                                    chart: {
-                                        height: 300,
-                                        type: 'line',
-                                        zoom: { enabled: false }
-                                    },
-                                    xaxis: { categories: months },
-                                    dataLabels: {
-                                        enabled: true,
-                                        formatter: function (val) {
-                                            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
-                                        }
-                                    },
-                                    tooltip: {
-                                        y: {
-                                            formatter: function (val) {
-                                                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
-                                            }
-                                        }
-                                    },
-                                    title: { text: '월별 매출 그래프', align: 'left' }
-                                };
+                    //             const options = {
+                    //                 series: [{
+                    //                     name: "월별 매출",
+                    //                     data: totals
+                    //                 }],
+                    //                 chart: {
+                    //                     height: '100%',
+                    //                     type: 'line',
+                    //                     zoom: { enabled: false }
+                    //                 },
+                    //                 xaxis: { categories: months },
+                    //                 dataLabels: {
+                    //                     enabled: true,
+                    //                     formatter: function (val) {
+                    //                         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+                    //                     }
+                    //                 },
+                    //                 tooltip: {
+                    //                     y: {
+                    //                         formatter: function (val) {
+                    //                             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+                    //                         }
+                    //                     }
+                    //                 },
+                    //                 title: { text: '월별 매출 그래프', align: 'left' }
+                    //             };
 
-                                const chart6 = new ApexCharts(document.querySelector("#chart6"), options);
-                                chart6.render();
-                            },
-                            error: () => {
-                                console.error("❌ 월 매출 데이터 불러오기 실패");
-                            }
-                        });
-                    },
+                    //             const chart6 = new ApexCharts(document.querySelector("#chart6"), options);
+                    //             chart6.render();
+                    //         },
+                    //         error: () => {
+                    //             console.error("❌ 월 매출 데이터 불러오기 실패");
+                    //         }
+                    //     });
+                    // },
                     setToday() {
                         let self = this;
                         const now = new Date();
@@ -720,6 +743,11 @@
                 },
                 created() { this.setToday(); },
                 mounted() {
+                    let self = this;
+                    if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                        alert("관리자만 이용가능합니다.");
+                        location.href = "/main.do";
+                    }
                     this.loadSummary();
                     this.fn();
                     this.fnGetTransactions();

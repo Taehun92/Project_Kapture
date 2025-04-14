@@ -375,6 +375,8 @@
             const app = Vue.createApp({
                 data() {
                     return {
+                        sessionId : "${sessionId}",
+                        sessionRole : "${sessionRole}",
                         startDate: '',
                         endDate: '',
                         statusFilter: '',
@@ -536,6 +538,11 @@
                     }
                 },
                 mounted() {
+                    let self = this;
+				    if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                        alert("관리자만 이용가능합니다.");
+                        location.href = "/main.do";
+                    }   
                     this.fnGetTransactions();
                 }
             });
