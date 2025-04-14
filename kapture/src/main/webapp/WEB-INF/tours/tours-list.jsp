@@ -512,6 +512,13 @@
                     </div>
                 </transition>
             </div>
+            <!-- 페이징 영역 -->
+            <div class="text-center mt-8" v-if="index > 0">
+                <a v-for="num in index" @click="fnPage(num)" class="inline-block mx-1 cursor-pointer">
+                  <span v-if="page == num" class="bg-blue-950 text-white px-4 py-2 rounded">{{ num }}</span>
+                  <span v-else class="px-4 py-2 rounded hover:underline">{{ num }}</span>
+                </a>
+            </div>
         </div>
         <jsp:include page="../common/footer.jsp" />
     </body>
@@ -576,6 +583,10 @@
                     userInput: "",
                     messages: [],
                     showChat: false,
+
+                    page : 1,
+                    pageSize : 18,
+                    index : 0,
                 };
             },
             components: {
@@ -678,7 +689,10 @@
                         selectedRegions: JSON.stringify(self.selectedRegions),
                         selectedLanguages: JSON.stringify(self.selectedLanguages),
                         selectedThemes: JSON.stringify(self.selectedThemes),
-                        keyword: keyword
+                        keyword: keyword,
+
+                        page : (self.page - 1) * self.pageSize,
+                        pageSize : self.pageSize,
                     };
                     console.log(">>>>>>>>>nparmap>>" + nparmap);
                     $.ajax({
@@ -691,7 +705,7 @@
                             self.regionList = data.regionList;
                             self.themeList = data.themeList;
                             console.log(self.toursList);
-
+                            self.index = Math.ceil(data.count / self.pageSize); // 전체 페이지 수 계산
                             if (self.sessionId && !isNaN(self.sessionId)) {
                                 self.fnGetWishList();
                             }
@@ -896,6 +910,8 @@
                                 self.applyWishlistFilters(wishTourNos);
                             } else {
                                 self.filteredToursList = [];
+                                console.log('찜 목록 해제됨. 전체 상품 목록으로 복원됨.');
+                                self.fnToursList(); // 전체 상품 목록 다시 불러오기
                             }
                         }
                     });
@@ -903,10 +919,10 @@
 
                 selectOnlyThisRegion(siNo) {
                     let self = this;
-                    this.selectedRegions = [siNo]; // 기존 필터 제거하고 이 지역만 선택
-                    this.fnToursList();
+                    self.selectedRegions = [siNo]; // 기존 필터 제거하고 이 지역만 선택
+                    self.fnToursList();
 
-                    if (this.isWishlistMode) {
+                    if (self.isWishlistMode) {
                         // toursList가 AJAX로 불러와지고 나서 처리되도록 타이밍 맞춰서
                         setTimeout(() => {
                             self.fnGetWishList((wishTourNos) => {
@@ -1016,6 +1032,11 @@
                         console.log('tour: ' + tour.title + ' lang: ' + tour.language + ' matchLang: ' + matchLanguage + ' selectedLang: ' + self.selectedLanguages);
                         return isWish && matchRegion && matchLanguage && matchTheme && matchDate;
                     });
+                    console.log('applywishlistFilters', self.filteredToursList.length + '개 상품이 찜 목록에 있습니다.');
+                    self.index = Math.ceil(self.filteredToursList.length / self.pageSize); // 필터링된 상품 수에 따라 페이지 수 조정
+                    
+
+                    
                 },
 
                 handleFilterChange() {
@@ -1052,6 +1073,12 @@
                         // 포함 안된 것만 추가
                         this.selectedThemes = [...new Set(this.selectedThemes.concat(children))];
                     }
+                },
+                fnPage(num) {
+                    let self = this;
+                    self.page = num;
+
+                    self.fnToursList();
                 }
 
 
