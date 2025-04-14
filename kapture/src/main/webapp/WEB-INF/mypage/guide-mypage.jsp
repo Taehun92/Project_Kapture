@@ -260,6 +260,7 @@
                             guideNo: self.userInfo.GUIDE_NO,
                             pFilePath: self.userInfo.P_FILE_PATH,
                         };
+                   
                         // Ajax 요청
                         $.ajax({
                             url: "/mypage/guide-info-edit.dox", // 실제 처리할 URL로 수정
@@ -268,7 +269,7 @@
                             data: nparmap,
                             success: function (data) {
                                 console.log("서버 응답:", data);
-                                
+
                                 if (data.result === "success") {
                                     alert("회원정보가 저장되었습니다.");
                                     // location.href = "/mypage/user-purchase-history.do";
