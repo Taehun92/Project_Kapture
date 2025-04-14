@@ -28,7 +28,7 @@ public interface ToursMapper {
 
 	int insertResaleTour(HashMap<String, Object> map);
 
-	
+	int selectCntTours(HashMap<String, Object> map);
 	
 
 }

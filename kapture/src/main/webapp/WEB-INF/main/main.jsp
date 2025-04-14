@@ -25,7 +25,7 @@
             <jsp:include page="../common/sidebar.jsp"></jsp:include>
         </aside>
         <div id="app" class="pb-12">
-
+            
             <!-- Swiper 배너 -->
             <div class="relative w-full h-[600px]">
                 <!-- ✅ 전체 어두운 오버레이 -->
@@ -42,7 +42,7 @@
                 <div class="swiper-container w-full h-full relative z-0">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
-                            <img class="w-full h-full object-cover" src="../../img/city.jpg">
+                            <img class="w-full h-full object-cover" src="../../img/banner.jpg">
                         </div>
                         <div class="swiper-slide">
                             <img class="w-full h-full object-cover" src="../../img/han.jpg">
