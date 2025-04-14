@@ -636,6 +636,7 @@
                 },
 
                 debouncedToursList: _.debounce(function () {
+                    this.page = 1;
                     this.fnToursList();
                 }, 300),
 
