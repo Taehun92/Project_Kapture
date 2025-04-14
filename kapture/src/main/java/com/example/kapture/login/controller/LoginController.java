@@ -1,5 +1,6 @@
 package com.example.kapture.login.controller;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -115,7 +116,7 @@ public class LoginController {
   
   	    return new Gson().toJson(resultMap);
   	}
- // id 중복체크
+  	// id 중복체크
   	@RequestMapping(value = "/check.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
   	@ResponseBody
   	public String check(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -124,7 +125,7 @@ public class LoginController {
   		resultMap = loginService.checkUser(map); 
   		return new Gson().toJson(resultMap);
   	}
-
+  	
     @RequestMapping("/google/login")
     public String googleLoginRedirect() {
         String loginUrl = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -347,16 +348,19 @@ public class LoginController {
                                                       HttpSession session) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
+            // 세션에 returnUrl 저장
             session.setAttribute("returnUrl", returnUrl);
-          
+
+            // 페이스북 로그인 URL 구성
             String loginUrl = "https://www.facebook.com/v18.0/dialog/oauth"
                     + "?client_id=" + facebookClientId
-                    + "&redirect_uri=" + facebookRedirectUri  // ✅ 인코딩 없이 그대로!
+                    + "&redirect_uri=" + URLEncoder.encode(facebookRedirectUri, "UTF-8")
                     + "&response_type=code"
-                    + "&scope=email,public_profile";    
+                    + "&scope=email,public_profile"
+                    + "&auth_type=reauthenticate"; // ✨ 다른 계정으로 로그인하기 위해 추가
 
             resultMap.put("result", "success");
-            resultMap.put("url", loginUrl);
+            resultMap.put("url", loginUrl); // 로그인 URL을 클라이언트로 반환
         } catch (Exception e) {
             resultMap.put("result", "fail");
             resultMap.put("message", "URL 생성 중 오류 발생");
@@ -364,9 +368,13 @@ public class LoginController {
         return resultMap;
     }
 
+
+
     @RequestMapping("/oauth/facebook/callback")
-    public String facebookCallback(@RequestParam("code") String code,
-                                   @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
+    public String facebookCallback(@RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "error_description", required = false) String errorDesc,
+            @RequestParam(value = "returnUrl", defaultValue = "/main.do") String returnUrl,
                                    HttpSession session) {
         try {
             HashMap<String, Object> userInfo = loginService.handleSocialLogin(
@@ -374,6 +382,11 @@ public class LoginController {
                 facebookClientId, facebookClientSecret,
                 facebookRedirectUri, null, null
             );
+            
+            if (code == null) {
+                // 사용자가 "취소"한 경우 → 로그인 페이지로 돌려보내기
+                return "redirect:/login.do?error=social_cancel";
+            }
 
             HashMap<String, Object> user = loginService.findUserByEmail((String) userInfo.get("email"));
             if (user == null) {

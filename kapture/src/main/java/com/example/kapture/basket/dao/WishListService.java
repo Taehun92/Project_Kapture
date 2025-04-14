@@ -25,12 +25,17 @@ public class WishListService {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    //DB에서 찜 목록 조회
 	    try {
-	    	List<WishList> list = wishListMapper.selectWishList(map);
-	    	 
-		    resultMap.put("list", list);
-		    
-		    resultMap.put("result", "success");
-		    
+	    	if (map.get("userNo") == ""  || map.get("userNo").toString().isEmpty()) {
+	    	    // DB 쿼리 실행하지 않도록
+	    		
+	    	    resultMap.put("result", "no-login");
+	    	    return resultMap;
+	    	}
+	    	else {
+	    		List<WishList> list = wishListMapper.selectWishList(map);
+			    resultMap.put("list", list);
+			    resultMap.put("result", "success");
+	    	}
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put("result", "fail");

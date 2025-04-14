@@ -10,13 +10,11 @@
 		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.14/index.global.min.js"></script>
 
-
-
 		<title>관리자 페이지</title>
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90%;
+				width: 90% ;
 				margin: 20px auto;
 				border-collapse: collapse;
 				font-size: 14px;
@@ -123,6 +121,23 @@
 				align-items: center;
 				text-align: center;
 			}
+			.modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+				width: 95%;
+				margin-bottom: 15px;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+                font-weight: bold;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                cursor: pointer;
+            }
 
 			/* 모달 내부 폼 스타일 예시 */
 			.modal-form label {
@@ -142,6 +157,19 @@
 				width: 20px;
 				margin-right: 30px;
 			}
+			.modal-form input[type="text"],
+            .modal-form input[type="date"],
+			.modal-form input[type="password"],
+            .modal-form textarea,
+            .modal-form select {
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+                width: auto;
+                min-width: 150px;
+                max-width: 220px;
+            }
 
 			.modal-form .form-group {
 				margin-bottom: 10px;
@@ -198,6 +226,65 @@
 				gap: 10px;
 				/* 요소 사이 간격 */
 			}
+
+			.add-button {
+				width: 95%;
+				display: flex;
+				justify-content: flex-end;
+				margin: 5px;
+			}
+			
+			.search-div{
+				width: 90%;
+    			margin: 20px auto;
+    			border-collapse: collapse;
+    			font-size: 14px;
+			}
+
+			.search-input,
+            .search-select,
+            .search-date {
+                padding: 10px 14px;
+                font-size: 16px;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                margin-right: 10px;
+                box-sizing: border-box;
+            }
+
+            .search-button {
+                padding: 10px 20px;
+                font-size: 16px;
+                height: 40px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .search-button:hover {
+                background-color: #0056b3;
+            }
+
+			.search-input{
+				width: 300px;
+			}
+
+			.tab-btn {
+                margin-right: 10px;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                background: #f4f4f4;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+
+            .tab-btn.active {
+                background-color: #007bff;
+                color: white;
+            }
 		</style>
 	</head>
 
@@ -208,14 +295,27 @@
 			<div class="page-title">가이드 정보 관리</div>
 
 			<hr>
+			
 			<div class="content">
+			<div class="add-button">
+				<button class="btn-manage" @click="fnOpenAddModal">가이드 추가</button>
+			</div>
+			<div class="search-div">	
+				<input type="date" v-model="startDate" class="search-date">
+					~
+				<input type="date" v-model="endDate" class="search-date">
+				<select v-model="statusFilter" class="search-select">
+					<option value="">전체</option>
+					<option value="userNo">회원번호</option>
+					<option value="guideNo">가이드번호</option>
+					<option value="name">회원명</option>
+				</select>
+            	<input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="회원번호 / 회원명 / 가이드번호 검색">
+            	<button class="search-button" @click="loadFilteredData">검색</button>
+			</div>
 				<table>
 					<thead>
 						<tr>
-							<th>
-								<input type="checkbox" class="check-all" @change="toggleAll($event)"
-									:checked="isAllChecked" />
-							</th>
 							<th>회원번호</th>
 							<th>가이드번호</th>
 							<th>이름</th>
@@ -229,12 +329,11 @@
 						</tr>
 					</thead>
 					<tbody>
+						<tr v-if="guidesList.length === 0">
+							<td colspan="10">검색 결과가 없습니다.</td>
+						</tr>
 						<!-- 가이드 리스트 반복 출력 -->
-						<tr v-for="guide in guidesList" :key="guide.id">
-							<!-- 선택 체크박스 -->
-							<td>
-								<input type="checkbox" :value="guide.userNo" v-model="selectedGuides">
-							</td>
+						<tr v-for="guide in guidesList" >
 							<!-- 회원번호 -->
 							<td>{{ guide.userNo }}</td>
 							<!-- 가이드번호-->
@@ -275,9 +374,21 @@
 					</tbody>
 				</table>
 			</div>
+			<div style="margin-top: 20px; text-align: center;">
+                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                    @click="goPage(p)">
+                    {{ p }}
+                </button>
+                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+            </div>
+			<!-- 가이드 정보 수정 모달 -->
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnGuideEditClose()">
 				<div class="modal-content">
-					<h2>가이드 정보 수정</h2>
+					<div class="modal-header">
+                        <h2>가이드 추가</h2>
+                        <span class="close-btn" @click="fnGuideEditClose()">&times;</span>
+                    </div>
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
@@ -397,6 +508,93 @@
 					<button class="btn-manage" @click="fnCloseScheduleModal">닫기</button>
 				</div>
 			</div>
+			<!-- 가이드 추가 모달 -->
+			<div v-if="showAddModal" class="modal-overlay" @click.self="fnCloseAddModal">
+				<div class="modal-content add-guide-modal">
+					<!-- 닫기 버튼 -->
+					<div class="modal-header">
+                        <h2>가이드 추가</h2>
+                        <span class="close-btn" @click="fnCloseAddModal">&times;</span>
+                    </div>					
+					<div class="modal-form">
+						<!-- 프로필이미지 -->
+						<span class="form-group profile-upload-container">
+							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
+								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							</span>
+							<span v-else class="no-image">NO Image</span>
+							<input type="file" @change="handleProfileUpload" />
+						</span>
+						<div class="form-group">
+							<label>이름</label>
+							<input type="text" v-model="newGuide.userFirstName" />
+						</div>
+						<div class="form-group">
+							<label>이메일</label>
+							<input type="text" v-model="newGuide.email" />
+						</div>
+						
+						<div class="form-group">
+							<label>비밀번호</label>
+							<input type="password" v-model="newGuide.password" @input="validateNewPassword" />
+							<div v-if="newGuide.password.length > 0 && !passwordValid" class="modal-validation">
+								<div :style="{ color: passwordRules.length ? 'green' : 'red' }">
+									{{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters'}}
+								</div>
+								<div :style="{ color: passwordRules.number ? 'green' : 'red' }">
+									{{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
+								</div>
+								<div :style="{ color: passwordRules.upper ? 'green' : 'red' }">
+									{{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
+								</div>
+								<div :style="{ color: passwordRules.lower ? 'green' : 'red' }">
+									{{ passwordRules.lower ? '✅ At least one lowercase letter' : '❌ At least one lowercase letter' }}
+								</div>
+								<div :style="{ color: passwordRules.special ? 'green' : 'red' }">
+									{{ passwordRules.special ? '✅ At least one special character' : '❌ At least one special character' }}
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label>비밀번호 확인</label>
+							<input type="password" v-model="addConfirmPassword" @input="validateNewPassword" />
+							<div v-if="addConfirmPassword.length > 0 && passwordValid" class="modal-validation"
+								:style="{ color: passwordsMatch ? 'green' : 'red' }">
+								{{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
+							</div>
+						</div>
+						<div class="form-group">
+							<span><label>성별</label></span>
+							<span>남성<input type="radio" value="M" v-model="newGuide.gender" /></span>
+							<span>여성<input type="radio" value="F" v-model="newGuide.gender" /></span>
+						</div>
+						<div class="form-group">
+							<label>연락처</label>
+							<input type="text" v-model="newGuide.phone" />
+						</div>
+						<div class="form-group">
+							<label>생년월일</label>
+							<input type="date" v-model="newGuide.birthday" />
+						</div>
+						<div class="form-group">
+							<label>주소</label>
+							<input type="text" v-model="newGuide.address">
+						</div>
+						<div class="form-group">
+							<label>사용가능 언어</label>
+							<input type="text" v-model="newGuide.language">
+						</div>
+						<div class="form-group">
+							<label>자기소개</label>
+							<textarea v-model="newGuide.experience" rows="4"></textarea>
+						</div>
+						<!-- 등록 버튼 -->
+						<div class="modal-footer">
+							<button class="btn-manage" @click="fnAddGuide">등록</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</body>
 
@@ -409,41 +607,55 @@
 					selectedGuides: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
 					showScheduleModal: false,  // 일정 모달 표시 여부
+					showAddModal: false, // 가이드 추가 모달 표시 여부
 					editGuide: {
 						pFilePath: "",
+						pFileNo: "",
 					},          // 수정할 가이드 정보
+					newGuide: {
+						userFirstName: "",
+						password: "",
+						email: "",
+						gender: "M",
+						phone: "",
+						birthday: "",
+						address: "",
+						language: "",
+						experience: "",
+					},
+					addConfirmPassword: "",
 					schedule: [],
 					password: "",
 					confirmPassword: "",
 					passwordRules: { length: false, upper: false, lower: false, special: false, number: false },
 					passwordValid: false,
-					passwordsMatch: false
+					passwordsMatch: false,
+					minDate: new Date().toISOString().split("T")[0],
+					startDate: "",
+                    endDate: "",
+                    keyword: "",
+                    page: 1,
+                    size: 10,
+                    totalCount: 0,
+                    totalPages: 1,
+                    statusFilter: "",
 				};
 			},
-			computed: {
-				// 모든 행이 체크되어 있는지 여부
-				isAllChecked() {
-					return this.guidesList.length > 0
-						&& this.selectedGuides.length === this.guidesList.length;
-				}
-			},
 			methods: {
-				// 예: 전체선택/해제
-				toggleAll(event) {
-					if (event.target.checked) {
-						// 모든 id를 selectedGuides에 넣음
-						this.selectedGuides = this.guidesList.map(g => g.id);
-					} else {
-						// 모두 해제
-						this.selectedGuides = [];
-					}
-				},
-
+				loadFilteredData() { 
+					this.page = 1;
+                    this.fnGetGuidesList(); 
+                },
 				// 가이드 목록 불러오기
 				fnGetGuidesList() {
 					let self = this;
 					let nparmap = {
-
+						startDate: self.startDate,
+                        endDate: self.endDate,
+                        statusFilter: self.statusFilter,
+                        keyword: self.keyword,
+                        page: self.page,
+                        size: self.size,
 					};
 					$.ajax({
 						url: "/admin/guides-list.dox",
@@ -452,21 +664,29 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							for (let i = 0; i < data.guidesList.length; i++) {
-								if (data.guidesList[i].birthday && typeof data.guidesList[i].birthday === 'string') {
-									data.guidesList[i].birthday = data.guidesList[i].birthday.substring(0, 10);
-								} else {
-									data.guidesList[i].birthday = ""; // 또는 기본값 설정
+							if(data.result === "success"){
+								for (let i = 0; i < data.guidesList.length; i++) {
+									if (data.guidesList[i].birthday && typeof data.guidesList[i].birthday === 'string') {
+										data.guidesList[i].birthday = data.guidesList[i].birthday.substring(0, 10);
+									} else {
+										data.guidesList[i].birthday = ""; // 또는 기본값 설정
+									}
 								}
+								self.guidesList = data.guidesList;
+								self.totalCount = data.totalCount;
+								self.totalPages = Math.ceil(self.totalCount / self.size);
 							}
-							self.guidesList = data.guidesList;
-							console.log(self.guidesList);
 						},
 						error: function (err) {
 							console.error(err);
 						}
 					});
 				},
+				goPage(p) {
+                    if (p < 1 || p > this.totalPages) return;
+                    this.page = p;
+                    this.fnGetGuidesList();
+                },
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
 				fnGuideEdit(guide) {
 					let self = this;
@@ -497,9 +717,9 @@
 						gender: self.editGuide.gender,
 						phone: self.editGuide.phone,
 						birthday: self.editGuide.birthday,
-
+						pFilePath: self.editGuide.pFilePath,
+						pFileNo: self.editGuide.pFileNo,
 						guideNo: guideNo,
-						profileImage: self.editGuide.profileImage,
 						language: self.editGuide.language,
 						experience: self.editGuide.experience,
 					};
@@ -547,6 +767,12 @@
 						success: function (data) {
 							if (data.result === "success") {
 								alert("삭제되었습니다.");
+								if(data.guideResult === "fail"){
+									alert("가이드 정보 삭제 실패");
+								}
+								if(data.guideImgResult === "fail"){
+									alert("가이드 이미지 삭제 실패");
+								}
 								// 목록 새로고침
 								location.reload();
 							} else {
@@ -560,8 +786,16 @@
 					});
 				},
 				validateNewPassword() {
-					const pw = this.password;
-					const pw2 = this.confirmPassword;
+					let pw = "";
+					let pw2 = "";
+					if(this.showEditModal){
+						pw = this.password;
+						pw2 = this.confirmPassword;
+					}
+					if(this.showAddModal){
+						pw = this.newGuide.password;
+						pw2 = this.addConfirmPassword;
+					}
 					this.passwordRules.length = pw.length >= 6;
 					this.passwordRules.upper = /[A-Z]/.test(pw);
 					this.passwordRules.lower = /[a-z]/.test(pw);
@@ -640,7 +874,6 @@
 					const formData = new FormData();
 					formData.append('profile', profile);
 					// 필요한 경우 가이드 번호나 사용자 번호도 함께 전송
-					formData.append('guideNo', self.editGuide.guideNo);
 
 					$.ajax({
 						url: '/admin/guide-profile.dox', // 파일 업로드 처리 엔드포인트
@@ -650,9 +883,15 @@
 						contentType: false,   // 필수: multipart/form-data로 전송
 						dataType: 'json',
 						success: function (data) {
+							console.log("프로필 이미지 저장:");
+							console.log(data);
 							if (data.result === 'success') {
 								// 서버가 새 파일 경로를 반환한다고 가정: data.newFilePath
 								self.editGuide.pFilePath = data.newFilePath;
+								self.editGuide.pFileNo = data.pFileNo;
+								console.log("파일넘버 : ");
+								console.log(self.editGuide.pFileNo);
+								
 							} else {
 								alert('이미지 업로드에 실패했습니다.');
 							}
@@ -663,6 +902,128 @@
 						}
 					});
 				},
+				fnOpenAddModal() {
+					let self = this;
+					self.showAddModal = true;
+				},
+				fnCloseAddModal() {
+					let self = this;
+					self.showAddModal = false;
+					self.newGuide = {
+						userFirstName: "",
+						password: "",
+						email: "",
+						gender: "M",
+						phone: "",
+						birthday: "",
+						address: "",
+						language: "",
+						experience: "",
+					};
+					self.editGuide = {
+						pFilePath: "",
+						pFileNo: "",
+					};
+					self.addConfirmPassword = "";
+					self.passwordRules = { length: false, upper: false, lower: false, special: false, number: false };
+					self.passwordValid = false;
+					self.passwordsMatch = false;
+				},
+				fnAddGuide() {
+					let self = this;
+					let nparmap = { 
+						userFirstName: self.newGuide.userFirstName,
+						password: self.newGuide.password,
+						email: self.newGuide.email,
+						gender: self.newGuide.gender,
+						phone: self.newGuide.phone,
+						birthday: self.newGuide.birthday,
+						address: self.newGuide.address,
+						language: self.newGuide.language,
+						experience: self.newGuide.experience,
+						pFilePath: self.editGuide.pFilePath,
+						pFileNo: self.editGuide.pFileNo,
+					};
+					if(!self.newGuide.userFirstName || self.newGuide.userFirstName.trim() === ""){
+						alert("이름을 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.password){
+						alert("비밀번호를 입력하세요.");
+						return;
+					}
+					if(!self.passwordRules.length){
+						alert("비밀번호는 6글자 이상입니다.");
+						return;
+					}
+					if(!self.passwordRules.upper){
+						alert("비밀번호에 대문자가 하나 이상 포함되야 합니다.");
+						return;
+					}
+					if(!self.passwordRules.lower){
+						alert("비밀번호에 소문자가 하나 이상 포함되야 합니다.");
+						return;
+					}
+					if(!self.passwordRules.special){
+						alert("비밀번호에 특수문자가 하나 이상 포함되야 합니다.");
+						return;
+					}
+					if(!self.passwordRules.number){
+						alert("비밀번호에 숫자가 하나 이상 포함되야 합니다.");
+						return;
+					}
+					if(!self.passwordsMatch){
+						alert("비밀번호를 확인해주세요.");
+						return;
+					}
+					if(!self.newGuide.email || self.newGuide.email.trim() === ""){
+						alert("이메일을 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.phone || self.newGuide.phone.trim() === ""){
+						alert("연락처를 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.birthday || self.newGuide.birthday.trim() === ""){
+						alert("생년월일을 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.birthday >= new Date()){
+						alert("생년월일을 확인해주세요.");
+						return;
+					}
+					if(!self.newGuide.address || self.newGuide.address.trim() === ""){
+						alert("주소를 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.language || self.newGuide.language.trim() === ""){
+						alert("사용가능 언어를 입력하세요.");
+						return;
+					}
+					if(!self.newGuide.experience || self.newGuide.experience.trim() === ""){
+						alert("자기소개 및 경력을 입력하세요.");
+						return;
+					}
+					$.ajax({
+						url: "/admin/guide-insert.dox",
+						dataType: "json",
+						type: "POST",
+						data: nparmap,
+						success: function (data) {
+							if (data.result === "success") {
+								alert("가이드가 성공적으로 등록되었습니다.");
+								self.fnCloseAddModal();
+								self.fnGetGuidesList();
+							} else {
+								alert("등록에 실패했습니다.");
+							}
+						},
+						error: function (err) {
+							console.error(err);
+							alert("등록 요청 중 오류가 발생했습니다.");
+						}
+					});
+				}
 			},
 			mounted() {
 				let self = this;

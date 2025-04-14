@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.kapture.common.model.Common;
+import com.example.kapture.common.model.Img;
 import com.example.kapture.common.model.Region;
-import com.example.kapture.common.model.Theme;
 import com.example.kapture.common.model.Reviews;
+import com.example.kapture.common.model.Theme;
 
 @Mapper
 public interface CommonMapper {
@@ -33,5 +35,23 @@ public interface CommonMapper {
 	Theme selectThemeParent(HashMap<String, Object> map);
 	
 	Theme selectThemeName(HashMap<String, Object> map);
+	
+	List<Theme> selectThemeListByParentNo(HashMap<String, Object> map);
+	
+	List<Region> selectGuListBysiNo(HashMap<String, Object> map);
+	
+	List<Region> selectgetSiNameNoList(HashMap<String, Object> map);
+	
+	// 날씨 정보 가져오기
+	List<Common> selectSi(HashMap<String, Object> map);
+	
+	List<Common> selectGu(HashMap<String, Object> map);
+	
+	List<Common> selectDong(HashMap<String, Object> map);
+	
+	Common selectXY(HashMap<String, Object> map);
+
+	Img selectTourThumbnail(HashMap<String, Object> map);
+
 	
 }

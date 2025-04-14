@@ -4,27 +4,17 @@ import lombok.Data;
 
 @Data
 public class Main {
-
 	private String tourNo;
-	private String guideNo;
 	private String title;
-	private String duration;
-	private String price;
-	private String maxPeople;
-	private String tourDate;
-	private String tCreatedAt;
-	private String tUpdatedAt;
-	private String deleteYn;
-	private String siNo;
-	private String guNo;
-	private String themeNo;
-	private String description;
-	private String testClob;
-	
+	private String comment;
 	private double rating;
-	
+	private String userFirstname;
+	private String userLastname;
 	private String filePath;
-	private String fileName;
-	
+	private String duration;
+	private double price;
+	private String thumbnail;
+	private String rCreatedAt;
+	private String tourDate;
 	
 }

@@ -15,6 +15,7 @@ public class Admin {
 	private String merchantId;
 	private int numPeople;
 	private int basketNo;
+	private String etc;
 	private int reviewNo;
 	private int rating;
 	private String comment;

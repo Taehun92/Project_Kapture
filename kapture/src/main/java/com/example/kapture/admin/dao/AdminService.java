@@ -18,6 +18,7 @@ import com.example.kapture.admin.mapper.AdminMapper;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
+import com.example.kapture.tours.model.Tours;
 
 @Service
 public class AdminService {
@@ -173,6 +174,9 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Guide> guidesList = adminMapper.selectguidesList(map);
+			int totalCount = adminMapper.selectGuidesTotalCount(map);
+		    
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("result", "success");
 			resultMap.put("guidesList", guidesList);
 			
@@ -189,17 +193,33 @@ public class AdminService {
 		try {
 			String hashPwd = passwordEncoder.encode((String) map.get("password"));
 	        map.put("password", hashPwd);
-			int guideInfo = adminMapper.updateGuideInfo(map);
+	        int guideInfo = adminMapper.updateGuideInfo(map);
+			System.out.println("가이드 수정 쿼리 실행 후 : " + map);
+			
 			int userInfo = adminMapper.updateUserInfo(map);
+			String pFilePath = (String)map.get("pFilePath");
 			String result;
-			if(guideInfo > 0 && userInfo > 0) {
-				result = "success";
+			
+			if(pFilePath != null && pFilePath != "") {
+				int guideImg = adminMapper.updateGuideImg(map);
+				int guideImgCount = adminMapper.guideImgCount(map);
+				if(guideImgCount > 1) {
+					int beforeGuideImg = adminMapper.deleteBeforeGuideImg(map);
+				}
+				if(guideInfo > 0 && userInfo > 0 && guideImg > 0) {
+					result = "success";
+				} else {
+					result = "fail";
+				}
+				
 			} else {
-				result = "fail";
+				if(guideInfo > 0 && userInfo > 0) {
+					result = "success";
+				} else {
+					result = "fail";
+				}
 			}
 			resultMap.put("result", result);
-			
-			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			resultMap.put("result", e.getMessage());
@@ -211,12 +231,6 @@ public class AdminService {
 	    
 	    int page = Integer.parseInt(String.valueOf(map.get("page")));
 	    int size = Integer.parseInt(String.valueOf(map.get("size")));
-
-	    int start = (page - 1) * size + 1;
-	    int end = page * size;
-
-	    map.put("start", start);
-	    map.put("end", end);
 	    
 	    List<HashMap<String, Object>> list = adminMapper.selectTransactionList(map);
 	    int totalCount = adminMapper.selectTransactionTotalCount(map);
@@ -231,9 +245,12 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			System.out.println(map);
+			
 			int result = adminMapper.insertGuideProfile(map);
-			System.out.println(result);
+			System.out.println("insertGuideProfile 이후 "+map);
+			int pFileNo = Integer.parseInt(String.valueOf(map.get("pFileNo")));
+			System.out.println("map.get(\"pFileNo\")"+pFileNo);
+			resultMap.put("pFileNo", pFileNo);
 			resultMap.put("result", result > 0 ? "success" : "fail");			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -242,7 +259,7 @@ public class AdminService {
 		return resultMap;
 	}
 
-	// 회원 탈퇴 처리(삭제)
+	// 가이드 관리 삭제, 고객관리 회원 탈퇴 처리(삭제)
 	public HashMap<String, Object> userUnregister(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
@@ -259,12 +276,34 @@ public class AdminService {
 			        guideNo = (Integer) guideNoObj;
 			    }
 			}
+			int getGuideNo = 0;
+			// 가이드이미지 삭제(가이드 번호 조회)
+			if("GUIDE".equals(role)) {
+				getGuideNo = adminMapper.selectGuideNo(map);
+				map.put("guideNo", getGuideNo);
+				System.out.println("가이드넘버조회====="+map);
+			}
+			// 프로필 존재 여부
+			String getPFilePath = "";
+			if(guideNo != null || getGuideNo >0) {
+				getPFilePath = adminMapper.selectPFilePath(map);
+				System.out.println("가이드이미지조회====="+getPFilePath);
+			}
 	        // 가이드 번호가 있을 경우 가이드 삭제도 수행
 	        if (((guideNo != null && guideNo > 0) || "GUIDE".equals(role)) && result > 0) {
 	            int guideResult = adminMapper.deleteGuide(map);
-	            	resultMap.put("guideResult", "success");
+	            if(getPFilePath != null && getPFilePath != "") {
+	            	int guideImg = adminMapper.deleteGuideImg(map);
+	            	if (guideImg <= 0) {
+		                resultMap.put("guideImgResult", "fail");
+		            } else {
+		            	resultMap.put("guideImgResult", "success");
+		            }
+	            }
 	            if (guideResult <= 0) {
 	                resultMap.put("guideResult", "fail");
+	            } else {
+	            	resultMap.put("guideResult", "success");
 	            }
 	        }
 	        resultMap.put("result", result > 0 ? "success" : "fail");
@@ -312,6 +351,10 @@ public class AdminService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Login> usersList= adminMapper.selectUsersList(map);
+			// 회원 총 인원
+			int totalCount = adminMapper.selectUsersTotalCount(map);
+
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("usersList", usersList);
 			resultMap.put("result", "success");			
 		} catch (Exception e) {
@@ -320,12 +363,15 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-  // 고객 문의 리스트 
+    // 고객 문의 리스트 조회 
 	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			List<Cs> inquiriesList= adminMapper.selectInquiriesList(map);
+			// 문의조회 총 갯수
+			int totalCount = adminMapper.selectInquiriesTotalCount(map);
+			resultMap.put("totalCount", totalCount);
 			resultMap.put("inquiriesList", inquiriesList);
 			resultMap.put("result", "success");			
 		} catch (Exception e) {
@@ -334,14 +380,263 @@ public class AdminService {
 		}
 		return resultMap;
 	}
-
-
+	// 고객 문의 답변 저장
+	public HashMap<String, Object> inquiryAnswerSave(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateInquiryAnswer(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 고객 문의 삭제
+	public HashMap<String, Object> removeInquiry(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.deleteInquiry(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+	// 환불 처리
+	public HashMap<String, Object> payRefunded(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			int result = adminMapper.updateRefunded(map);
+			resultMap.put("result", result > 0 ? "success" : "fail");			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
 
 	public HashMap<String, Object> getAllReviewList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
-	    List<HashMap<String, Object>> list = adminMapper.selectAllReviews();
+	    
+	    // 페이징 파라미터 추출
+	    int page = Integer.parseInt((String) map.getOrDefault("page", "1"));
+	    int pageSize = Integer.parseInt((String) map.getOrDefault("pageSize", "10"));
+	    int offset = (page - 1) * pageSize;
+	    
+	    map.put("offset", offset);
+	    map.put("pageSize", pageSize);
+
+	    // 리뷰 리스트 가져오기
+	    List<HashMap<String, Object>> list = adminMapper.selectReviewList(map);
+	    map.get("keyword");
+	    map.get("sort");
+	    
+	    // 전체 리뷰 수
+	    int totalCount = adminMapper.selectReviewCount(map);
+	    System.out.println("전체 리뷰 수: " + totalCount);
+
+	    // 결과 저장
 	    resultMap.put("list", list);
+	    resultMap.put("totalCount", totalCount);
+
 	    return resultMap;
 	}
+	//리뷰 삭제 
+	 public HashMap<String, Object> deleteReview(HashMap<String, Object> map) throws Exception {
+	        HashMap<String, Object> resultMap = new HashMap<>();
+
+	        int result = adminMapper.deleteReview(map);
+	        System.out.println(map);
+
+	        if (result > 0) {
+	            resultMap.put("status", "success");
+	            resultMap.put("message", "리뷰가 삭제되었습니다.");
+	        } else {
+	            resultMap.put("status", "fail");
+	            resultMap.put("message", "삭제할 리뷰가 없습니다.");
+	        }
+
+	        return resultMap;
+}
+	 
+	 public HashMap<String, Object> getReviewSummary() {
+		    return adminMapper.getReviewSummary();
+		}
+
+	 // 주문상세내역 수정
+	 public HashMap<String, Object> saveOrderInfo(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.updateOrderInfo(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	 }
+	 //주문내역 삭제
+	 public HashMap<String, Object> removeOrder(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.deleteOrder(map);
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 
+	 public HashMap<String, Object> getSalesSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> salesList = adminMapper.selectSalesByYear();
+		    resultMap.put("salesList", salesList);
+		    return resultMap;
+		}
+	 
+	 public HashMap<String, Object> getThemeSummary() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> themeList = adminMapper.selectThemeSummary();
+		    int totalCount = adminMapper.selectThemeTotalCount();
+		    resultMap.put("themeList", themeList);
+		    resultMap.put("totalCount", totalCount);
+		    return resultMap;
+		}
+	 
+	 
+	 public HashMap<String, Object> getLatestReviews() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+		    List<Map<String, Object>> reviewList = adminMapper.selectLatestReviews();
+		    resultMap.put("reviews", reviewList);
+		    return resultMap;
+		}
+
+	 // 상품관리 조회
+	 public HashMap<String, Object> toursManagementList(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 List<Tours> toursList = adminMapper.selectToursManagementList(map);
+			 // 상품관리 총 갯수
+			 int totalCount = adminMapper.selectToursTotalCount(map);
+			    
+			 resultMap.put("totalCount", totalCount);
+			 resultMap.put("toursList", toursList);
+			 resultMap.put("result", toursList != null ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 // 상품관리 수정
+	 public HashMap<String, Object> tourUpdate(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.updateTour(map);
+			 
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 // 상품관리 삭제
+	 public HashMap<String, Object> removeTour(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 int result = adminMapper.deleteTour(map);
+			 
+			 resultMap.put("result", result > 0 ? "success" : "fail");			
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
+	 // 가이드 추가(유저 정보, 가이드 정보)
+	 public HashMap<String, Object> addGuide(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			System.out.println("insertNewUser 이전 " + map);
+			int insertUserResult = adminMapper.insertNewUser(map);
+			System.out.println("insertNewUser 이후 " + map);
+			int insertGuideResult = adminMapper.insertNewGuide(map);
+			String pFilePath = (String)map.get("pFilePath");
+			if(pFilePath != null && pFilePath != "") {
+				int guideImg = adminMapper.updateGuideImg(map);
+				if(insertGuideResult > 0 && insertUserResult > 0 && guideImg > 0) {
+					resultMap.put("result", "success");
+				} else {
+					resultMap.put("result", "fail");
+				}
+			} else {
+				if(insertGuideResult > 0 && insertUserResult > 0) {
+					resultMap.put("result", "success");
+				} else {
+					resultMap.put("result", "fail");
+				}
+			}
+			
+		} catch (Exception e) {
+		    System.out.println(e.getMessage());
+		    resultMap.put("result", e.getMessage());
+		}
+		return resultMap;
+	}
+
+	 
+	 public HashMap<String, Object> getMonthlySales() {
+	        HashMap<String, Object> resultMap = new HashMap<>();
+	        List<Map<String, Object>> list = adminMapper.selectMonthlySales();
+	        resultMap.put("monthlyList", list);
+	        return resultMap;
+	    }
+	 
+	 public HashMap<String, Object> getLatestSales() {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+
+		    // 오프셋 기본값: 처음 0부터, 5개
+		    Map<String, Object> param = new HashMap<>();
+		    param.put("offset", 0);
+		    param.put("limit", 5);
+
+		    List<Map<String, Object>> list = adminMapper.selectLatestSales(param);
+		    resultMap.put("salesList", list);
+		    return resultMap;
+		}
+	 public HashMap<String, Object> getLatestRequests(HashMap<String, Object> map) {
+		    HashMap<String, Object> resultMap = new HashMap<>();
+
+		    try {
+		        map.put("offset", 0);
+		        map.put("limit", 5);
+
+		        List<HashMap<String, Object>> list = adminMapper.selectLatestRequests(map);
+
+		        resultMap.put("requestList", list);
+		        resultMap.put("totalCount", list.size());
+		        resultMap.put("result", "success");
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        resultMap.put("result", "fail");
+		        resultMap.put("message", "요청글 데이터 조회 실패");
+		    }
+
+		    return resultMap;
+		}
 
 }

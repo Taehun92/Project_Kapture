@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
-
+<!DOCTYPE html>
+<html>
     <head>
         <meta charset="UTF-8">
-        <title>마이페이지</title>
+        <link rel="icon" type="image/png" sizes="96x96" href="/img/logo/favicon-96x96.png" />
+        <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
+        <title>이용 후기 | kapture</title>
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -12,331 +13,93 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
         <!-- rating -->
         <script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="../../css/kapture-style.css">
         <style>
-            /* 전체 레이아웃 설정 */
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: 'Noto Sans KR', sans-serif;
-                background-color: #fff;
-                color: #333;
-            }
-
-            .container {
-                /* 사이드 메뉴와 콘텐츠를 가로로 배치하기 위해 flex 사용 */
-                display: flex;
-                max-width: 1200px;
-                min-height: calc(100vh - 300px);
-                margin: 0 auto;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-
-            /* 사이드 메뉴 */
-            .side-menu {
-                width: 200px;
-                height: 100%;
-                border: 1px solid #ddd;
-                position: sticky;
-                top: 0;
-                background: white;
-                transition: top 0.3s;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            }
-
-            .side-menu ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .side-menu li {
-                margin-bottom: 10px;
-            }
-
-            .side-menu li a.active {
-                display: block;
-                background-color: #3e4a97;
-                color: white;
-                padding: 10px;
-                text-decoration: none;
-            }
-
-            .side-menu a {
-                text-decoration: none;
-                color: #333;
-                font-weight: 500;
-            }
-
-            .side-menu a:hover {
-                color: #ff5555;
-            }
-
-            /* 메인 콘텐츠 영역 */
-            .content-area {
-                flex: 1;
-            }
-
-            /* ========== 후기 레이아웃 추가 ========== */
-            .review-container {
-                max-width: 1000px;
-                /* 필요에 따라 조정 */
-                margin: 0 auto;
-                padding: 0 20px;
-                box-sizing: border-box;
-            }
-
-            /* 헤더 영역 (검색 기능 제외) */
-            .review-header {
-                display: flex;
-                align-items: center;
-                margin-bottom: 15px;
-            }
-
-            .review-header h2 {
-                font-size: 20px;
-                font-weight: bold;
-                margin: 0;
-                margin-right: auto;
-            }
-
-            /* 후기 목록 */
-            .review-list {
-                border-top: 1px solid #ccc;
-                margin-top: 10px;
-                padding-top: 10px;
-            }
-
-            /* 각 후기 아이템 */
-            .review-item {
-                display: flex;
-                margin-bottom: 20px;
-            }
-
-            /* 후기 이미지 */
-            .review-img {
-                margin-right: 15px;
-            }
-
-            .review-img img {
-                width: 80px;
-                height: 80px;
-                object-fit: cover;
-                /* 이미지 비율 유지 */
-                border: 1px solid #ccc;
-            }
-
-            /* 후기 내용 */
-            .review-content {
-                flex: 1;
-            }
-
-            /* 작성자, 작성일, 평점 등 메타 정보 */
-            .review-meta {
-                font-size: 14px;
-                color: #666;
-                margin-bottom: 5px;
-            }
-
-            .review-meta span {
-                margin-right: 10px;
-            }
-
-            /* 후기 본문 텍스트 */
-            .review-text {
-                font-size: 15px;
-                line-height: 1.4;
-                color: #333;
-            }
-
-            /* 모달 오버레이 (뒷배경) */
-            .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-color: rgba(0, 0, 0, 0.5);
-                /* 모달을 화면 가운데 정렬하기 위해 */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9999;
-                /* 다른 요소 위에 표시 */
-            }
-
-            /* 모달 컨테이너 */
-            .modal-container {
-                background-color: #fff;
-                width: 500px;
-                padding: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-                border-radius: 5px;
-            }
-
-            /* 테이블 예시 */
-            .review-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 15px;
-            }
-
-            .review-table th,
-            .review-table td {
-                text-align: left;
-                padding: 8px;
-                border-bottom: 1px solid #ddd;
-                vertical-align: top;
-                width: 30%;
-            }
-
-            /* 버튼 영역 */
-            .btn-area {
-                text-align: right;
-                margin-top: 10px;
-            }
-
-            .btn-area button {
-                padding: 6px 12px;
-                margin-left: 5px;
+            [v-cloak] {
+                display: none !important;
             }
         </style>
     </head>
 
-    <body>
-        <!-- 공통 헤더 -->
+    <body class="bg-white text-gray-800 text-[16px] tracking-wide">
         <jsp:include page="../common/header.jsp" />
-        <div id="app" class="container">
-            <!-- 좌측 사이드 메뉴 -->
-            <div class="side-menu">
-                <ul>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-mypage.do' }"
-                            href="http://localhost:8080/mypage/user-mypage.do">
-                            회원 정보수정
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-purchase-history.do' }"
-                            href="http://localhost:8080/mypage/user-purchase-history.do">
-                            구매한 상품
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-reviews.do' }"
-                            href="http://localhost:8080/mypage/user-reviews.do">
-                            이용후기 관리
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://localhost:8080/cs/qna.do">
-                            문의하기
-                        </a>
-                    </li>
-                    <li>
-                        <a :class="{ active: currentPage === 'user-unregister.do' }"
-                            href="http://localhost:8080/mypage/user-unregister.do">
-                            회원 탈퇴
-                        </a>
-                    </li>
+        
+        <div id="app" class="flex max-w-6xl mx-auto px-6 py-8 gap-10 min-h-[700px]">
+            <!-- 사이드바 -->
+            <div class="w-56 bg-white shadow-md p-4 rounded">
+                <ul class="space-y-2 font-semibold">
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-mypage.do' }" href="/mypage/user-mypage.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 정보수정</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-purchase-history.do' }" href="/mypage/user-purchase-history.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-reviews.do' }" href="/mypage/user-reviews.do" class="block px-3 py-2 rounded hover:bg-blue-100">이용후기 관리</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-qna.do' }" href="/mypage/user-qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의 내역 확인</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-unregister.do' }" href="/mypage/user-unregister.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 탈퇴</a></li>
                 </ul>
+
             </div>
-
-            <!-- 우측 메인 콘텐츠 -->
-            <div class="content-area">
-                <!-- ========== 사용후기 레이아웃 ========== -->
-                <div class="review-container">
-                    <div class="review-header">
-                        <h2>사용후기</h2>
-                    </div>
-                    <!-- 두 번째 후기 -->
-                    <div class="review-item" v-for="review in reviewsList">
-
-                        <div class="review-img">
-                            <img src="../img/1.jpg" alt="상품이미지">
-                            <div>상품명: {{review.title}}</div>
+            <!-- 콘텐츠 영역 -->
+            <div class="flex-1">
+                <div class="border border-gray-200 rounded shadow-sm p-6">
+                    <h2 class="text-xl font-bold mb-6">사용후기</h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div v-for="review in reviewsList" class="border border-gray-100 rounded-lg p-4 shadow-sm">
+                            <div class="flex gap-4">
+                                <img src="../img/1.jpg" class="w-24 h-24 object-cover rounded border" />
+                                <div class="flex-1">
+                                    <div class="text-sm text-gray-500 mb-1">상품명: {{ review.title }}</div>
+                                    <template v-if="review.reviewNo != 0">
+                                        <div class="text-sm text-gray-500 mb-1">
+                                            <span>작성자: {{review.userFirstName}}</span>
+                                            <span v-if="review.userLastName"> {{review.userLastName}}</span>
+                                            <span> · {{ review.rUpdatedAt.substring(0, 10) }}</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            평점:
+                                            <star-rating :rating="review.rating" :read-only="true" :star-size="14" :increment="1" :border-width="5" :show-rating="false" :rounded-corners="true" style="display: inline-block;"></star-rating>
+                                        </div>
+                                        <div class="text-sm text-gray-800 mb-2 whitespace-pre-wrap">{{review.comment}}</div>
+                                        <div class="flex gap-3 text-sm">
+                                            <button @click="fnReviewEdit(review.reviewNo, review.title, review.rating, review.comment)" class="text-blue-600 hover:underline">수정</button>
+                                            <button @click="fnReviewRemove(review.reviewNo)" class="text-red-500 hover:underline">삭제</button>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <button @click="fnReviewAdd(review.title, review.tourNo)" class="text-blue-600 hover:underline text-sm">리뷰 등록</button>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
-                        <template v-if="review.reviewNo != 0">
-                            <div class="review-content">
-                                <div class="review-meta">
-                                    <span>작성자: {{review.userFirstName}} </span>
-                                    <span v-if="review.userLastName != null">{{review.userLastName}}</span>
-                                    <span>작성일: {{review.rUpdatedAt}}</span>
-                                    <div>
-                                        평점: <star-rating :rating="review.rating" :read-only="true" :star-size="10"
-                                            :increment="1" :border-width="5" :show-rating="false"
-                                            :rounded-corners="true"
-                                            style="display: inline-block; vertical-align: middle;"></star-rating>
-                                    </div>
-                                </div>
-                                <div class="review-text">
-                                    {{review.comment}}
-                                </div>
-                                <div>
-                                    <span>
-                                        <button @click="fnReviewEdit(review.reviewNo, review.title,
-                                                                    review.rating, review.comment)">
-                                            수정
-                                        </button>
-                                    </span>
-                                    <span>
-                                        <button @click="fnReviewRemove(review.reviewNo)">삭제</button>
-                                    </span>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div class="review-text">
-                                <button @click="fnReviewAdd(review.title,review.tourNo)">리뷰 등록</button>
-                            </div>
-                        </template>
                     </div>
                 </div>
-            </div>
-            <!-- ========== 사용후기 레이아웃 끝 ========== -->
-            <div v-if="showReviewModal" class="modal-overlay">
-                <!-- 모달 창 -->
-                <div class="modal-container">
-                    <h3>사용후기 작성</h3>
-                    <table class="review-table">
-                        <tr>
-                            <th>상품명</th>
-                            <td>
-                                <!-- 상품명 (제목) -->
-                                <input type="text" v-model="ReviewTitle" readonly />
-                                <!-- 필요하다면 readonly 제거하고 수정 가능하도록 -->
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>이용후기</th>
-                            <td>
-                                <!-- textarea로 후기 입력 -->
-                                <textarea v-model="ReviewComment" rows="5" cols="50"
-                                    placeholder="이용후기를 입력해주세요."></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>평점</th>
-                            <td>
-                                <!-- 별 5개 (max-rating=5), 사용자가 선택할 수 있도록 v-model -->
-                                <star-rating :rating="rating" :increment="1" :star-size="20" :border-width="2"
-                                    :show-rating="false" :rounded-corners="true"
-                                    @update:rating="setRating"></star-rating>
-                            </td>
-                        </tr>
-                    </table>
-                    <!-- 작성 완료, 닫기 버튼 -->
-                    <div class="btn-area">
-                        <button @click="fnReviewSubmit">작성 완료</button>
-                        <button @click="fnReviewClose">닫기</button>
+        
+                <!-- 모달 -->
+                <div v-if="showReviewModal" v-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div class="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+                        <h3 class="text-lg font-bold mb-4">사용후기 작성</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-semibold mb-1">상품명</label>
+                                <input type="text" v-model="ReviewTitle" class="w-full border px-3 py-2 rounded" readonly />
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">이용후기</label>
+                                <textarea v-model="ReviewComment" rows="5" class="w-full border px-3 py-2 rounded" placeholder="이용후기를 입력해주세요."></textarea>
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">평점</label>
+                                <star-rating :rating="rating" :increment="1" :star-size="20" :border-width="2" :show-rating="false" :rounded-corners="true" @update:rating="setRating"></star-rating>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-2">
+                            <button @click="fnReviewSubmit" class="bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700">작성 완료</button>
+                            <button @click="fnReviewClose" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">닫기</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-        <!-- 공통 푸터 -->
+        
         <jsp:include page="../common/footer.jsp" />
 
         <script>
@@ -490,6 +253,5 @@
             app.component('star-rating', VueStarRating.default)
             app.mount('#app');
         </script>
-    </body>
 
-    </html>
+

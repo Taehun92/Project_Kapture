@@ -16,11 +16,17 @@ public class Tours {
 	private String tCreatedAt;
 	private String tUpdatedAt;
 	private String deleteYN;
-	private int themeNo;
-	private String themeName;
-	private int themeParentNo;
 	private int siNo;
 	private int guNo;
+	private int themeNo;
+	
+	private String themeName;
+	private int themeParentNo;
+	
+	
+	private String siName;
+	private String guName;
+	
 	private int fileNo;
 	private String filePath;
 	private String fileName;
@@ -30,14 +36,21 @@ public class Tours {
 	private String fileExtension;
 	private String iUploadDate;
 	private String thumbNail;
-	private String language;
-	private String siName;
-	private String guName;
+	
+	
 	private int userNo;
+	private String language;
 	private String experience;
 	private String profileImage;
+	private String vehicle;
 	
+	private String pFilePath;
+	private String userFirstName;
+	private String gender;
 	private String rating;
+	
+	private String comment;
+	
 	
 	
 }
