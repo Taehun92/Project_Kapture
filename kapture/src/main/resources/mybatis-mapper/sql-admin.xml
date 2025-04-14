@@ -566,7 +566,7 @@
 	    FROM REVIEWS
 	</select>
 
-	<!-- 주문상세내역 조회 -->
+	<!-- 주문상세내역 수정 -->
 	<update id="updateOrderInfo" parameterType="hashmap">
 		UPDATE PAYMENTS
 		SET PAYMENT_STATUS = #{paymentStatus}
