@@ -14,18 +14,19 @@
         <title>관리자 페이지</title>
         <style>
             .page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				/* margin-top: 20px; */
-				margin-left: 220px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 220px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
+
             .title-hr {
                 margin-bottom: 30px;
             }
@@ -36,29 +37,23 @@
         <jsp:include page="menu.jsp"></jsp:include>
         <div id="app">
             <!-- 제목 추가 -->
-			<div class="page-title">운영 및 설정 관리</div>
-			<hr class="title-hr">
+            <div class="page-title">운영 및 설정 관리</div>
+            <hr class="title-hr">
             <div class="flex gap-8 ml-[240px] mt-8 px-6">
-                <button
-                    class="font-semibold text-gray-600 hover:text-blue-700"
-                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 3 }"
-                    value="3"
+                <button class="font-semibold text-gray-600 hover:text-blue-700"
+                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 3 }" value="3"
                     @click="onClickTab($event)">
                     이용약관
                 </button>
-            
-                <button
-                    class="font-semibold text-gray-600 hover:text-blue-700"
-                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 2 }"
-                    value="2"
+
+                <button class="font-semibold text-gray-600 hover:text-blue-700"
+                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 2 }" value="2"
                     @click="onClickTab($event)">
                     개인정보 처리방침
                 </button>
-            
-                <button
-                    class="font-semibold text-gray-600 hover:text-blue-700"
-                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 1 }"
-                    value="1"
+
+                <button class="font-semibold text-gray-600 hover:text-blue-700"
+                    :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTermsId === 1 }" value="1"
                     @click="onClickTab($event)">
                     마케팅 수신 동의
                 </button>
@@ -86,6 +81,8 @@
             const app = Vue.createApp({
                 data() {
                     return {
+                        sessionId : "${sessionId}",
+                        sessionRole : "${sessionRole}",
                         selectedTermsId: null,
                         quill: null,
                         termsList: []
@@ -101,7 +98,7 @@
                         $.ajax({
                             url: "/terms/getTerms.dox",
                             type: "POST",
-                            data: { termsId : termsId },
+                            data: { termsId: termsId },
                             dataType: "json",
                             success: function (data) {
                                 console.log(data);
@@ -124,10 +121,10 @@
                                 content: html
                             },
                             success: function (res) {
-                                if(res.num > 0){
+                                if (res.num > 0) {
                                     alert("저장되었습니다.");
                                 }
-                                else{
+                                else {
                                     console.log("수정 error");
                                 }
                             }
@@ -138,6 +135,11 @@
                     this.quill = new Quill('#editor', {
                         theme: 'snow'
                     });
+                    let self = this;
+                    if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                        alert("관리자만 이용가능합니다.");
+                        location.href = "/main.do";
+                    }
                     this.fnGetTermsList(3);
                 }
             });

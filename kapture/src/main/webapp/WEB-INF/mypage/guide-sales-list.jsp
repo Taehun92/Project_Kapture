@@ -418,12 +418,12 @@
         fnRemoveTour(tourNo) {
           if (confirm("정말 삭제하시겠습니까?")) {
             $.ajax({
-              url: "/tours/deleteTour.dox",
+              url: "/mypage/guide-delete.dox",
               method: "POST",
               data: { tourNo: tourNo },
               dataType: "json",
               success: (res) => {
-                if (res.num > 0) {
+                if (res.result === 'success') {
                   alert("삭제되었습니다.");
                   this.fnGetTransactions();
                 }
@@ -712,6 +712,10 @@
       },
       mounted() {
         let self = this;
+		if (!this.sessionId || this.sessionRole === 'TOURIST') {
+			alert("가이드만 이용가능합니다.");
+			location.href = "http://localhost:8080/main.do";
+		}
         this.setCurrentPage();
         this.fnGetTransactions();
 

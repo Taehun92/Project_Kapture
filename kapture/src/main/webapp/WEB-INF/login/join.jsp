@@ -14,14 +14,15 @@
     <link rel="stylesheet" href="../../css/kapture-style.css">
   </head>
 
-  <body class="bg-gray-100 font-sans">
-    <!-- 뒤로가기 버튼 -->
+  <body class="bg-gray-100">
+    <jsp:include page="../common/header.jsp" />
+    <!-- 뒤로가기 버튼
     <div class="absolute top-5 left-5">
       <button onclick="window.history.back()" class="text-black text-lg font-bold hover:underline">
         <i class="fas fa-arrow-left"></i> Back
       </button>
-    </div>
-    <div id="app" class="max-w-md mx-auto mt-20 p-8 bg-white shadow-lg rounded-lg">
+    </div> -->
+    <div id="app" class="max-w-md mx-auto mt-20 mb-20 p-8 bg-white shadow-lg rounded-lg">
       <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Join Kapture</h2>
 
       <!-- 국적 선택 -->
@@ -183,6 +184,7 @@
         <a href="#" class="text-blue-500 hover:underline">Privacy Notice</a>.
       </p>
     </div>
+    <jsp:include page="../common/footer.jsp" />
     <script>
       const app = Vue.createApp({
         data() {

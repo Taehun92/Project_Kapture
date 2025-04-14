@@ -59,7 +59,7 @@
 		FROM USERS U
 		INNER JOIN GUIDES G ON U.USER_NO = G.USER_NO
 		WHERE U.USER_NO = #{sessionId}
-	</select>
+	</select>  
 
 
 	

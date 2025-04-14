@@ -570,6 +570,8 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
+			String hashPwd = passwordEncoder.encode((String) map.get("password"));
+	        map.put("password", hashPwd);
 			System.out.println("insertNewUser 이전 " + map);
 			int insertUserResult = adminMapper.insertNewUser(map);
 			System.out.println("insertNewUser 이후 " + map);

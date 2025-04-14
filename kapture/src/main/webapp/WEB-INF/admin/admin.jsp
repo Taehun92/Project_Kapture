@@ -168,6 +168,8 @@
         const app = Vue.createApp({
             data() {
                 return {
+                    sessionId : "${sessionId}",
+                    sessionRole : "${sessionRole}",
                     reviewList: [],
                     salesList: [],
                     requestCount: 0,
@@ -428,6 +430,11 @@
             },
 
             mounted() {
+                let self = this;
+				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                    alert("관리자만 이용가능합니다.");
+                    location.href = "/main.do";
+                }
                 this.fn();
 
             }
