@@ -135,7 +135,11 @@
 							type: "POST",
 							url: "/facebook/login-url.dox",
 							dataType: "json",
-							data: { returnUrl: "/main.do" },  // 로그인 후 리디렉션될 URL
+							data: {
+								redirectUri: "https://98b6-14-37-8-141.ngrok-free.app/oauth/facebook/callback",  // 페북 리디렉션용
+								returnUrl: "/main.do"  // 로그인 성공 후 돌아갈 페이지
+							},  // 로그인 후 리디렉션될 URL
+							
 							success: function (res) {
 								if (res.result === "success") {
 
