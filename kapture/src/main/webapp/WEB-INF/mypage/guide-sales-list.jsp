@@ -150,13 +150,14 @@
             </div>
 
             <!-- 수정 버튼 -->
-            <button @click="fnEditTour(tour)"
+            <button v-if="!(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)" @click="fnEditTour(tour)"
               class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
               수정
             </button>
 
             <!-- 삭제 버튼 -->
-            <button @click="fnRemoveTour(tour.tourNo)"
+            <button v-if="!(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)"
+              @click="fnRemoveTour(tour.tourNo)"
               class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
               삭제
             </button>
@@ -358,7 +359,7 @@
           const formatted = dateStr.replace(" ", "T");
           const tourDate = new Date(formatted);
           tourDate.setHours(0, 0, 0, 0);
-          return tourDate < today;
+          return tourDate <= today;
         },
 
         setCurrentPage() {
@@ -533,7 +534,12 @@
                 const editorEl = document.getElementById("editor");
 
                 // Quill 초기화
-                if (editorEl && !window.quill) {
+                if (editorEl) {
+                  if (window.quill) {
+                    // 기존 에디터 제거 및 초기화
+                    window.quill = null;
+                    editorEl.innerHTML = '';
+                  }
                   window.quill = new Quill(editorEl, {
                     theme: 'snow',
                     modules: {
@@ -647,13 +653,64 @@
           if (editorEl) editorEl.innerHTML = ''; // 백업
         },
 
-        fnSaveEditTour() {
+        fnSaveEditTour: async function () {
           const self = this;
 
           if (window.quill) {
-            self.editTour.description = window.quill.root.innerHTML;
+            // 1. 에디터 내용 가져오기
+            const rawHtml = window.quill.root.innerHTML;
+
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = rawHtml;
+
+            const imgTags = tempDiv.querySelectorAll("img");
+            self.imgList = [];
+
+            for (let i = 0; i < imgTags.length; i++) {
+              const src = imgTags[i].getAttribute("src");
+
+              // base64 이미지 제외
+              if (src.startsWith("data:")) continue;
+
+              try {
+                // 2. 이미지 fetch → blob → 재업로드
+                const response = await fetch(src);
+                const blob = await response.blob();
+
+                const formData = new FormData();
+                formData.append("file", blob, "resale-img-" + i + ".jpg");
+
+                const uploadRes = await fetch("/upload/image", {
+                  method: "POST",
+                  body: formData
+                });
+
+                const result = await uploadRes.json();
+
+                if (result.success) {
+                  const newUrl = result.imageUrl;
+
+                  // 3. 에디터 이미지 src 교체
+                  imgTags[i].setAttribute("src", newUrl);
+
+                  // 4. imgList에 추가
+                  self.imgList.push({
+                    url: newUrl,
+                    thumbnail: i === 0 ? "Y" : "N"
+                  });
+                } else {
+                  console.error("❌ 이미지 업로드 실패:", src);
+                }
+              } catch (err) {
+                console.error("❌ 이미지 처리 실패:", err);
+              }
+            }
+
+            // 5. 최종 description HTML 갱신
+            self.editTour.description = tempDiv.innerHTML;
           }
 
+          // 유효성 검사
           if (
             !self.editTour.title ||
             !self.editTour.duration ||
@@ -679,6 +736,7 @@
             return;
           }
 
+          // 6. 재판매 상품 등록
           $.ajax({
             url: '/mypage/guide-add.dox',
             method: 'POST',
@@ -690,11 +748,13 @@
             success(res) {
               if (res.result === 'success') {
                 alert("재판매 상품이 등록되었습니다.");
+
                 if (self.imgList.length > 0) {
-                  self.fnUpdateImgList(res.tourNo);
+                  self.fnUpdateImgList(res.tourNo); // 이미지 별도 저장
                 } else {
                   location.href = "/mypage/guide-sales-list.do";
                 }
+
                 self.fnTourEditClose();
                 self.fnGetTransactions();
               } else {
@@ -712,10 +772,10 @@
       },
       mounted() {
         let self = this;
-		if (!this.sessionId || this.sessionRole === 'TOURIST') {
-			alert("가이드만 이용가능합니다.");
-			location.href = "http://localhost:8080/main.do";
-		}
+        if (!this.sessionId || this.sessionRole === 'TOURIST') {
+          alert("가이드만 이용가능합니다.");
+          location.href = "http://localhost:8080/main.do";
+        }
         this.setCurrentPage();
         this.fnGetTransactions();
 
