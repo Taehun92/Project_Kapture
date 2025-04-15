@@ -9,6 +9,76 @@
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="../../css/kapture-style.css">
+    <style>
+        /* 모달 관련 CSS */
+        .order-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+
+            .modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+
+            .modal-content {
+                position: relative;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                width: 800px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                cursor: pointer;
+            }
+
+            .modal-body .info-section {
+                margin-bottom: 20px;
+            }
+
+            .modal-body table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+
+            .modal-body th,
+            .modal-body td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .modal-body th {
+                background-color: #f9f9f9;
+            }
+    </style>
     </head>
 
     <body class="bg-white text-gray-800 text-[16px] tracking-wide">
@@ -115,6 +185,72 @@
                     </button>
                     <button @click="goPage(page + 1)" :disabled="page === totalPages" class="px-3 py-1 border rounded"
                         :class="{ 'bg-gray-300': page === totalPages }">다음</button>
+                </div>
+            </div>
+            <!-- 주문 상세 모달 -->
+            <div v-if="showViewModal" class="order-modal" @click.self="fnViewOrderClose">
+                <div class="modal-overlay" @click="fnViewOrderClose"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>주문 상세 정보</h2>
+                        <span class="close-btn" @click="fnViewOrderClose">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 주문회원정보 -->
+                        <div class="info-section">
+                            <h3>주문회원정보</h3>
+                            <table>
+                                <tr>
+                                    <th>이름</th>
+                                    <td>
+                                        {{ viewOrderInfo.USER_FIRSTNAME }}
+                                        <template v-if="viewOrderInfo.USER_LASTNAME != 'N/A'">
+                                            {{ viewOrderInfo.USER_LASTNAME }}
+                                        </template>
+                                    </td>
+                                    <th>연락처</th>
+                                    <td>{{ viewOrderInfo.PHONE }}</td>
+                                </tr>
+                                <tr>
+                                    <th>이메일</th>
+                                    <td>{{ viewOrderInfo.EMAIL }}</td>
+                                    <th>국적</th>
+                                    <td v-if="viewOrderInfo.ISFOREIGNER === 'Y'">외국인</td>
+                                    <td v-else>내국인</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- 예약 여행 정보 -->
+                        <div class="info-section">
+                            <h3>예약 여행 정보</h3>
+                            <table>
+                                <tr>
+                                    <th>결제번호</th>
+                                    <td>{{ viewOrderInfo.PAYMENT_NO }}</td>
+                                    <th>결제일시</th>
+                                    <td v-html="formatDate(viewOrderInfo.PAYMENT_DATE)"></td>
+                                </tr>
+                                <tr>
+                                    <th>상품 제목</th>
+                                    <td>{{ viewOrderInfo.TITLE }}</td>
+                                    <th>여행 날짜</th>
+                                    <td v-html="formatDate(viewOrderInfo.TOUR_DATE)"></td>
+                                </tr>
+                                <tr>
+                                    <th>인원</th>
+                                    <td>{{ viewOrderInfo.NUM_PEOPLE }}명</td>
+                                    <th>여행 기간</th>
+                                    <td>{{ viewOrderInfo.DURATION }}</td>
+                                </tr>
+                                <tr>
+                                    <th>결제상태</th>
+                                    <td>{{viewOrderInfo.PAYMENT_STATUS}}</td>
+                                    <th>결제금액</th>
+                                    <td>{{ formatCurrency(viewOrderInfo.AMOUNT) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
