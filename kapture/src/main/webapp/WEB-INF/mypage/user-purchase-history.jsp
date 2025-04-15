@@ -125,7 +125,7 @@
                         <option value="환불요청">환불요청</option>
                         <option value="환불완료">환불완료</option>
                     </select>
-                    <input type="text" v-model="keyword" @keyup.enter="loadFilteredData" placeholder="상태 검색"
+                    <input type="text" v-model="keyword" @keyup.enter="loadFilteredData" placeholder="제목 검색"
                         class="border rounded px-3 py-2 w-64">
                     <button @click="loadFilteredData"
                         class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">검색</button>
