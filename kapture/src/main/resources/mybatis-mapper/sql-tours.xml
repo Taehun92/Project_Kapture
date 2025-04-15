@@ -56,6 +56,7 @@
 	        </foreach>
    		</if>
    		ORDER BY T.TOUR_DATE 
+
    		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 	
