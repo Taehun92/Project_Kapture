@@ -166,7 +166,7 @@
 
           findEmail() {
             let self = this;
-            if (!self.user.firstName || !self.user.phone || !self.birthday.YYYY || !self.birthday.MM || !self.birthday.DD) {
+            if (!self.user.firstName || !self.user.phone) {
               alert("모든 값을 입력해 주세요."); return;
             }
             const birthdayFormatted = this.formatBirthday();

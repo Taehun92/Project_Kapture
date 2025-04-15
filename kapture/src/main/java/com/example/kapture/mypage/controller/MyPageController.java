@@ -39,9 +39,14 @@ public class MyPageController {
 			return "/mypage/user-mypage";
 		}
 		// 유저 마이페이지 주소(구매한 상품)
-		@RequestMapping("/mypage/user-purchase-history.do")
+		@RequestMapping("mypage/user-purchase-history.do")
 		public String purchaseHistory(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
 			return "/mypage/user-purchase-history";
+		}	
+		// 유저 마이페이지 주소(나의 일정)
+		@RequestMapping("/mypage/user-schedule.do")
+		public String fullcalendar(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+			return "/mypage/user-schedule";
 		}
 		// 이용후기 관리 페이지
 		@RequestMapping("/mypage/user-reviews.do")
@@ -89,11 +94,17 @@ public class MyPageController {
 		    resultMap = myPageService.userInfoEdit(map);
 		    return new Gson().toJson(resultMap);
 		}
-		
-
-
-		// 구매내역 
+		// 구매한 상품
 		@RequestMapping(value = "/mypage/user-purchase-history.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+		@ResponseBody
+		public String purchaseList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+			HashMap<String, Object> resultMap = new HashMap<String, Object>();
+			
+			resultMap = myPageService.purchaseList(map);
+			return new Gson().toJson(resultMap);
+		}
+		// 나의 일정 
+		@RequestMapping(value = "/mypage/user-schedule.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 		@ResponseBody
 		public String payList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 			HashMap<String, Object> resultMap = new HashMap<String, Object>();

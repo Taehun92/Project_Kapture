@@ -39,7 +39,7 @@
                             </span>
                             <br>
                             <span v-if="info.currency != 'KRW'">
-                                원화(\) 기준: {{ getConvertedBudgetToKRW().toLocaleString() }} 원
+                                원화(￦) 기준: {{ getConvertedBudgetToKRW().toLocaleString() }} 원
                             </span>
                         </td>
                     </tr>
@@ -154,6 +154,13 @@
                         message: this.localAnswerComment
                     });
                     this.localAnswerComment = ""; // 입력값 초기화
+                },
+                convertUrls(text) {
+                    if (!text) return '';
+                    return text.replace(
+                        /(https?:\/\/[^\s]+)/g,
+                        '<a href="$1" target="_blank" class="text-blue-600 underline hover:text-blue-800">$1</a>'
+                    );
                 }
             },
             template: `
@@ -161,8 +168,8 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between" :class="{ 'opacity-50 italic': comment.deleted }">
                     <div class="flex items-center space-x-2">
                         <span v-if="parseInt(comment.parentCommentNo) !== 0" class="text-gray-400">↳</span>
-                        <span class="font-semibold text-gray-800">{{ comment.userFirstName }}</span>
-                        <span class="text-gray-700">{{ comment.message }}</span>
+                        <span class="font-semibold text-gray-800 w-[80px] truncate">{{ comment.userFirstName }}</span>
+                        <span class="text-gray-700" v-html="convertUrls(comment.message)"></span>
                     </div>
 
                     <!-- 버튼 영역 -->
@@ -299,6 +306,7 @@
                     console.log("[getNestedComments] parentNo:", parentNo, "result:", result);
                     return result;
                 },
+            
                 // 들여쓰기 계산 함수
                 depthMargin(depth) {
                     return (depth * 24) + 'px';

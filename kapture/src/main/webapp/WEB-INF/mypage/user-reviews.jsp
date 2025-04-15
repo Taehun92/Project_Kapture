@@ -30,6 +30,7 @@
             <div class="w-56 bg-white shadow-md p-4 rounded">
                 <ul class="space-y-2 font-semibold">
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-mypage.do' }" href="/mypage/user-mypage.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 정보수정</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-schedule.do' }" href="/mypage/user-schedule.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-purchase-history.do' }" href="/mypage/user-purchase-history.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-reviews.do' }" href="/mypage/user-reviews.do" class="block px-3 py-2 rounded hover:bg-blue-100">이용후기 관리</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
@@ -45,7 +46,7 @@
                     <div class="grid grid-cols-1 gap-6">
                         <div v-for="review in reviewsList" class="border border-gray-100 rounded-lg p-4 shadow-sm">
                             <div class="flex gap-4">
-                                <img src="../img/1.jpg" class="w-24 h-24 object-cover rounded border" />
+                                <img :src="review.filePath" class="w-24 h-24 object-cover rounded border" />
                                 <div class="flex-1">
                                     <div class="text-sm text-gray-500 mb-1">상품명: {{ review.title }}</div>
                                     <template v-if="review.reviewNo != 0">
@@ -135,7 +136,8 @@
                             data: nparmap,
                             success: function (data) {
                                 if (data.result == "success") {
-                                    console.log("Data : " + data);
+                                    console.log("Data : ");
+                                    console.log(data);
                                     self.reviewsList = data.reviewsList;
                                     console.log(self.reviewsList);
                                 } else {
@@ -174,7 +176,8 @@
                             data: nparmap,
                             success: function (data) {
                                 if (data.result == "success") {
-                                    console.log("Data : " + data);
+                                    console.log("Data : ");
+                                    console.log(data);
                                     self.fnReviews();
                                     self.editFlg ?  alert("리뷰가 수정되었습니다.") : alert("리뷰가 등록되었습니다.");
                                     // 완료 후 모달 닫기

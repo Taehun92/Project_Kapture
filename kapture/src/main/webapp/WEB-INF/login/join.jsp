@@ -379,27 +379,47 @@
           },
 
           validateBirthdayParts() {
-            const { mm, dd, yyyy } = this.birth;
-            const mmNum = parseInt(mm), ddNum = parseInt(dd), yyyyNum = parseInt(yyyy);
-            const isValid = (
-              yyyy.length === 4 &&
-              mm.length >= 1 &&
-              dd.length >= 1 &&
+            const mmNum = parseInt(this.birth.mm);
+            const ddNum = parseInt(this.birth.dd);
+            const yyyyNum = parseInt(this.birth.yyyy);
+
+            // 기본 유효성 검사
+            const isBasicValid =
+              this.birth.yyyy.length === 4 &&
+              this.birth.mm.length >= 1 &&
+              this.birth.dd.length >= 1 &&
               !isNaN(yyyyNum) && !isNaN(mmNum) && !isNaN(ddNum) &&
               mmNum >= 1 && mmNum <= 12 &&
               ddNum >= 1 && ddNum <= 31 &&
-              yyyyNum >= 1900 && yyyyNum <= 2100
-            );
-            this.isBirthdayValid = isValid;
-            if (isValid) {
-              const yy = yyyy.slice(2);
-              const pad = (n) => n.toString().padStart(2, '0');
-              const paddedMM = pad(mm);
-              const paddedDD = pad(dd);
-              this.user.birthday = yy + '/' + paddedMM + '/' + paddedDD;
-            } else {
-              this.user.birthday = null; // or ''
+              yyyyNum >= 1900 && yyyyNum <= 2100;
+
+            if (!isBasicValid) {
+              this.isBirthdayValid = false;
+              this.user.birthday = null;
+              return;
             }
+
+            // 날짜 조합 및 Date 객체 생성
+            var paddedMM = (mmNum < 10 ? "0" + mmNum : mmNum);
+            var paddedDD = (ddNum < 10 ? "0" + ddNum : ddNum);
+            var birthStr = yyyyNum + "-" + paddedMM + "-" + paddedDD;
+            var birthDate = new Date(birthStr);
+
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            birthDate.setHours(0, 0, 0, 0);
+
+            // 미래 날짜는 유효하지 않음
+            if (birthDate > today) {
+              this.isBirthdayValid = false;
+              this.user.birthday = null;
+              return;
+            }
+
+            // 유효할 경우 YY/MM/DD 형식 저장
+            this.isBirthdayValid = true;
+            var yy = yyyyNum.toString().slice(2);
+            this.user.birthday = yy + "/" + paddedMM + "/" + paddedDD;
           },
 
           fnJoin() {

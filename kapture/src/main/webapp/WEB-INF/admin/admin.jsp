@@ -117,7 +117,7 @@
 
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3>최근 판매 6건</h3>
+                        <h3>최근 판매 5건</h3>
                         <button class="detail-btn" @click="goToDetail('tours')">판매리스트</button>
                     </div>
 
@@ -382,7 +382,7 @@
                         type: "POST",
                         data: {
                             offset: 0,
-                            limit: 6
+                            limit: 5
                         },
                         dataType: "json",
                         success: (res) => {
