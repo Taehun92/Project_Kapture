@@ -30,6 +30,7 @@
             <div class="w-56 bg-white shadow-md p-4 rounded">
                 <ul class="space-y-2 font-semibold">
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-mypage.do' }" href="/mypage/user-mypage.do" class="block px-3 py-2 rounded hover:bg-blue-100">회원 정보수정</a></li>
+                    <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-schedule.do' }" href="/mypage/user-schedule.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-purchase-history.do' }" href="/mypage/user-purchase-history.do" class="block px-3 py-2 rounded hover:bg-blue-100">구매한 상품</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'user-reviews.do' }" href="/mypage/user-reviews.do" class="block px-3 py-2 rounded hover:bg-blue-100">이용후기 관리</a></li>
                     <li><a :class="{ 'bg-blue-950 text-white': currentPage === 'qna.do' }" href="/cs/qna.do" class="block px-3 py-2 rounded hover:bg-blue-100">문의하기</a></li>
