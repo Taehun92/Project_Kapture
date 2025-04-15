@@ -609,26 +609,27 @@
 
 
 	<select id="selectLatestReviews" resultType="hashmap">
-	  SELECT *
-	  FROM (
-	    SELECT 
-	    T.TITLE, 
-	    T.DURATION, 
-	    T.PRICE, 
-	    T.MAX_PEOPLE, 
-	    T.TOUR_DATE,
-	    R."COMMENT", 
-	    R.RATING,
-	    R_CREATED_AT,
-	    USER_FIRSTNAME AS USERFIRSTNAME,
-	    USER_LASTNAME AS USERLASTNAME
-	    FROM TOURS T
-	    INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
-	    INNER JOIN USERS U ON R.USER_NO = U.USER_NO
-	    ORDER BY R_CREATED_AT DESC
-	  )
-	  WHERE ROWNUM &lt;= 5
-	</select>
+  SELECT * FROM (
+    SELECT * FROM (
+      SELECT 
+        T.TITLE, 
+        T.DURATION, 
+        T.PRICE, 
+        T.MAX_PEOPLE, 
+        T.TOUR_DATE,
+        R."COMMENT", 
+        R.RATING,
+        R.R_CREATED_AT,
+        U.USER_FIRSTNAME AS USERFIRSTNAME,
+        U.USER_LASTNAME AS USERLASTNAME
+      FROM TOURS T
+      INNER JOIN REVIEWS R ON T.TOUR_NO = R.TOUR_NO
+      INNER JOIN USERS U ON R.USER_NO = U.USER_NO
+      ORDER BY R.R_CREATED_AT DESC
+    )
+    WHERE ROWNUM &lt;= 5
+  )
+</select>
 	<!-- 상품관리 조회-->
 	<select id="selectToursManagementList" parameterType="map" resultType="com.example.kapture.tours.model.Tours">
 		SELECT * FROM (
@@ -751,23 +752,29 @@
 		    ORDER BY MONTH ASC
 		</select>
 		
-		<select id="selectLatestSales" parameterType="map" resultType="map">
-		    SELECT 
-		        T.TITLE,
-		        TO_CHAR(P.PAYMENT_DATE, 'YYYY-MM-DD') AS PAYMENT_DATE,
-		        P.AMOUNT,
-		        P.NUM_PEOPLE,
-		        U.USER_FIRSTNAME AS GUIDE_FIRST_NAME,
-		        U.USER_LASTNAME AS GUIDE_LAST_NAME,
-		        I.FILE_PATH AS IMAGE_PATH
-		    FROM PAYMENTS P
-		    INNER JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
-		    INNER JOIN USERS U ON T.GUIDE_NO = U.USER_NO
-		    LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
-		    WHERE P.PAYMENT_STATUS = '거래완료'
-		    ORDER BY P.PAYMENT_DATE DESC
-		    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
-		</select>
+	<select id="selectLatestSales" parameterType="map" resultType="map">
+		SELECT * FROM (
+		    SELECT ROWNUM AS RNUM, DATA.*
+		    FROM (
+		        SELECT 
+		            T.TITLE,
+		            TO_CHAR(P.PAYMENT_DATE, 'YYYY-MM-DD') AS PAYMENT_DATE,
+		            P.AMOUNT,
+		            P.NUM_PEOPLE,
+		            U.USER_FIRSTNAME AS GUIDE_FIRST_NAME,
+		            U.USER_LASTNAME AS GUIDE_LAST_NAME,
+		            I.FILE_PATH AS IMAGE_PATH
+		        FROM PAYMENTS P
+		        LEFT JOIN TOURS T ON P.TOUR_NO = T.TOUR_NO
+		        LEFT JOIN USERS U ON T.GUIDE_NO = U.USER_NO
+		        LEFT JOIN IMG I ON T.TOUR_NO = I.TOUR_NO AND I.THUMBNAIL = 'Y'
+		        WHERE P.PAYMENT_STATUS = '거래완료'
+		        ORDER BY P.PAYMENT_DATE DESC
+		    ) DATA
+		    WHERE ROWNUM &lt;= #{offset} + #{limit}
+		)
+		WHERE RNUM &gt; #{offset}
+	</select>
 		
 	<select id="selectRequestCount" resultType="int">
     		SELECT COUNT(*) FROM REQUESTS WHERE STATUS != ''
