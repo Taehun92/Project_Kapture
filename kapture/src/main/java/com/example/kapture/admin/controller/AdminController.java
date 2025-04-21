@@ -88,8 +88,7 @@ public class AdminController {
 		return "/admin/admin-review";
 	}
 	
-
-	
+	// 관리자 차트 데이터 조회
 	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST)
 	@ResponseBody
 	public String getChart(@RequestParam HashMap<String, Object> map) {
@@ -97,6 +96,7 @@ public class AdminController {
 	    HashMap<String, Object> resultMap = adminService.getChartByTypeAndYear(map);
 	    return new Gson().toJson(resultMap);
 	}
+	
 	//지역 리스트 
 	@RequestMapping("/admin/getRegionList.dox")
 	@ResponseBody
@@ -106,6 +106,7 @@ public class AdminController {
 	    return new Gson().toJson(result);
 	}
 
+	//
 	@RequestMapping(value = "/admin/getSummary.dox", method = RequestMethod.POST)
 	@ResponseBody
 	public String getSummary(@RequestParam HashMap<String, Object> map) {
