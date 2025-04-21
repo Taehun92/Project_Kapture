@@ -34,8 +34,8 @@
                 <!-- ✅ 텍스트를 배너 정중앙에 위치시키기 -->
                 <div
                     class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white text-center px-4">
-                    <h1 class="text-5xl font-black">Capture Korea, Kapture Memories</h1>
-                    <p class="text-xl mt-4 font-black">한국을 담고, 기억을 Kapture 하세요</p>
+                    <h1 class="text-6xl font-light">Capture Korea, Kapture Memories</h1>
+                    <p class="text-2xl mt-4 font-light">한국을 담고, 기억을 Kapture 하세요</p>
                 </div>
 
                 <!-- ✅ 배경 이미지 (Swiper) -->
@@ -86,7 +86,7 @@
 
             <!-- 추천 리뷰 -->
             <div class="mb-10 max-w-[1200px] mx-auto mt-12">
-                <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">추천 리뷰</div>
+                <div class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6">최근 리뷰</div>
                 <div class="space-y-6">
                     <div v-for="item in limitedReviewList"
                         class="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition">
