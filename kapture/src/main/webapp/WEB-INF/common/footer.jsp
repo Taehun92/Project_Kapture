@@ -10,7 +10,7 @@
 	</head>
 
 	<body>
-		<div id="footer" class="bg-gray-300 text-gray-700 text-sm px-6 py-6">
+		<div id="footer" class="bg-gray-300 text-gray-700 text-md px-6 py-6">
 			<div class="max-w-[70%] mx-auto">
 				<!-- 상단 텍스트 링크 -->
 				<div class="flex flex-wrap gap-4 mb-4 font-medium">
@@ -26,7 +26,7 @@
 						<div>상호 : (주) 캡쳐여행사 | 대표 : 이태훈</div>
 						<div>주소 : 인천광역시 부평구 경원대로 1366 7층 더조은컴퓨터아카데미</div>
 						<div>사업자등록번호 : 999-99-00001 | 통신판매업신고번호 : 제 2025-90000 호</div>
-						<div>이메일 : taehun92@gmail.com</div>
+						<div>이메일 : kapture_auth@gmail.com</div>
 						<div>Copyright ⓒ 캡쳐여행사 All Rights Reserved. Powered by K-apture Corp.</div>
 					</div>
 
