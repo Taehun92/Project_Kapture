@@ -92,7 +92,7 @@
 	</select>
 	
 	<insert id="insertPartnership" parameterType="hashmap">
-	    INSERT INTO PARTNERSHIP
+	    INSERT INTO PARTNERSHIP(PARTNERSHIP_NO, TITLE, CONTENT, NAME, EMAIL, PHONE)
 	    VALUES (PARTNERSHIP_SEQ.NEXTVAL, #{title}, #{content}, #{name}, #{email}, #{phone})
 	</insert>
 </mapper>

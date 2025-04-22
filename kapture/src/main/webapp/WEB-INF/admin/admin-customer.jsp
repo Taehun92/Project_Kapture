@@ -269,7 +269,7 @@
 				box-sizing: border-box;
 			}
 
-			.search-input{
+			.search-input {
 				width: 300px;
 			}
 
@@ -288,7 +288,7 @@
 				background-color: #0056b3;
 			}
 
-			.search-container{
+			.search-container {
 				width: 90%;
 				margin: 20px auto;
 			}
@@ -311,15 +311,15 @@
 
 	<body>
 		<jsp:include page="menu.jsp"></jsp:include>
-		<div id="app">
+		<div id="app" v-cloak>
 			<!-- 제목 추가 -->
 			<div class="page-title">고객 정보 관리</div>
 			<hr>
-			
+
 			<div class="content">
 				<div class="search-container">
 					<input type="date" v-model="startDate" class="search-date">
-            		 ~ 
+					~
 					<input type="date" v-model="endDate" class="search-date">
 					<select v-model="statusFilter" class="search-select">
 						<option value="">전체</option>
@@ -327,89 +327,93 @@
 						<option value="email">이메일</option>
 						<option value="name">회원명</option>
 						<option value="phone">연락처</option>
-            		</select>
-            		<input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData" placeholder="회원번호 / 회원명 / 이메일 / 연락처 검색">
-            		<button class="search-button" @click="loadFilteredData">검색</button>
+					</select>
+					<input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+						placeholder="회원번호 / 회원명 / 이메일 / 연락처 검색">
+					<button class="search-button" @click="loadFilteredData">검색</button>
 				</div>
-				<table>
-					<thead>
-						<tr>
-							<th>회원번호</th>
-							<th>이메일</th>
-							<th>이름</th>
-							<th>성별</th>
-							<th>연락처</th>
-							<th>생년월일</th>
-							<th>주소</th>
-							<th>역할</th>
-							<th>국적</th>
-							<th>소셜타입</th>
-							<th>알림 동의</th>
-							<th>최근접속</th>
-							<th>상태</th>
-							<th>관리</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="usersList.length === 0">
-							<td colspan="14">검색 결과가 없습니다.</td>
-						</tr>
-						<!-- 가이드 리스트 반복 출력 -->
-						<tr v-for="user in usersList">
-							<!-- 회원번호 -->
-							<td>{{ user.userNo }}</td>
-							<!-- 이메일-->
-							<td>{{ user.email }}</td>
-							<!-- 이름 -->
-							<td>{{ user.userFirstName }}
-								<template v-if="user.userLastName != 'N/A'">{{ user.userLastName }}</template>
-							</td>
-							<!-- 성별 -->
-							<td>{{ user.gender }}</td>
-							<!-- 연락처 -->
-							<td>{{ user.phone }}</td>
-							<!-- 생년월일 -->
-							<td>{{user.birthday}}</td>
-							<!-- 주소 -->
-							<td>{{ user.address }}</td>
-							<!-- 역할 -->
-							<td v-if="user.role === 'TOURIST'">일반회원</td>
-							<td v-if="user.role === 'GUIDE'">가이드</td>
-							<td v-if="user.role === 'ADMIN'">관리자</td>
-							<!-- 국적 -->
-							<td v-if="user.isForeigner === 'Y'">외국인</td>
-							<td v-else>내국인</td>
-							<!-- 소셜타입 -->
-							<td>{{ user.socialType }}</td>
-							<!-- 알림 동의 -->
-							<td>{{user.pushYN}}</td>
-							<!-- 최근접속 -->
-							<td>{{user.lastLogin}}</td>
-							<!-- 상태 -->
-							<td v-if="user.unregisterYN === 'N'">회원</td>
-							<td v-else>탈퇴</td>
-							<!-- 관리 ( 수정, 삭제 ) -->
-							<td>
-								<button class="btn-manage" @click="fnUserEdit(user)">
-									수정
-								</button>
-								<button class="btn-manage" @click="fnUnregister(user.userNo, user.role)">
-									삭제
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<div style="margin-top: 20px; text-align: center;">
-					<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-					<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-						@click="goPage(p)">
-						{{ p }}
-					</button>
-					<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+				<div v-if="loaded">
+					<table>
+						<thead>
+							<tr>
+								<th>회원번호</th>
+								<th>이메일</th>
+								<th>이름</th>
+								<th>성별</th>
+								<th>연락처</th>
+								<th>생년월일</th>
+								<th>주소</th>
+								<th>역할</th>
+								<th>국적</th>
+								<th>소셜타입</th>
+								<th>알림 동의</th>
+								<th>최근접속</th>
+								<th>상태</th>
+								<th>관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="usersList.length === 0">
+								<td colspan="14">검색 결과가 없습니다.</td>
+							</tr>
+							<!-- 가이드 리스트 반복 출력 -->
+							<tr v-for="user in usersList">
+								<!-- 회원번호 -->
+								<td>{{ user.userNo }}</td>
+								<!-- 이메일-->
+								<td>{{ user.email }}</td>
+								<!-- 이름 -->
+								<td>{{ user.userFirstName }}
+									<template v-if="user.userLastName != 'N/A'">{{ user.userLastName }}</template>
+								</td>
+								<!-- 성별 -->
+								<td>{{ user.gender }}</td>
+								<!-- 연락처 -->
+								<td>{{ user.phone }}</td>
+								<!-- 생년월일 -->
+								<td>{{user.birthday}}</td>
+								<!-- 주소 -->
+								<td>{{ user.address }}</td>
+								<!-- 역할 -->
+								<td v-if="user.role === 'TOURIST'">일반회원</td>
+								<td v-if="user.role === 'GUIDE'">가이드</td>
+								<td v-if="user.role === 'ADMIN'">관리자</td>
+								<!-- 국적 -->
+								<td v-if="user.isForeigner === 'Y'">외국인</td>
+								<td v-else>내국인</td>
+								<!-- 소셜타입 -->
+								<td>{{ user.socialType }}</td>
+								<!-- 알림 동의 -->
+								<td>{{user.pushYN}}</td>
+								<!-- 최근접속 -->
+								<td>{{user.lastLogin}}</td>
+								<!-- 상태 -->
+								<td v-if="user.unregisterYN === 'N'">회원</td>
+								<td v-else>탈퇴</td>
+								<!-- 관리 ( 수정, 삭제 ) -->
+								<td>
+									<button class="btn-manage" @click="fnUserEdit(user)">
+										수정
+									</button>
+									<button class="btn-manage" @click="fnUnregister(user.userNo, user.role)">
+										삭제
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div style="margin-top: 20px; text-align: center;">
+						<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+						<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+							@click="goPage(p)">
+							{{ p }}
+						</button>
+						<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+					</div>
 				</div>
+				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
 			</div>
-			
+
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnUserEditClose()">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -534,8 +538,8 @@
 		const app = Vue.createApp({
 			data() {
 				return {
-					sessionId : "${sessionId}",
-					sessionRole : "${sessionRole}",
+					sessionId: "${sessionId}",
+					sessionRole: "${sessionRole}",
 					usersList: [],
 					selectedUsers: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
@@ -547,31 +551,32 @@
 					passwordsMatch: false,
 					beforeRole: "",
 					startDate: "",
-                    endDate: "",
-                    keyword: "",
-                    page: 1,
-                    size: 10,
-                    totalCount: 0,
-                    totalPages: 1,
-                    statusFilter: "",
+					endDate: "",
+					keyword: "",
+					page: 1,
+					size: 10,
+					totalCount: 0,
+					totalPages: 1,
+					statusFilter: "",
+					loaded: false
 
 				};
 			},
 			methods: {
-				loadFilteredData() { 
+				loadFilteredData() {
 					this.page = 1;
-                    this.fnGetUsersList(); 
-                },
+					this.fnGetUsersList();
+				},
 				// 유저 목록 불러오기
 				fnGetUsersList() {
 					let self = this;
 					let nparmap = {
 						startDate: self.startDate,
-                        endDate: self.endDate,
-                        statusFilter: self.statusFilter,
-                        keyword: self.keyword,
-                        page: self.page,
-                        size: self.size,
+						endDate: self.endDate,
+						statusFilter: self.statusFilter,
+						keyword: self.keyword,
+						page: self.page,
+						size: self.size,
 					};
 					$.ajax({
 						url: "/admin/users-list.dox",
@@ -580,7 +585,7 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							if(data.result === 'success'){
+							if (data.result === 'success') {
 								for (let i = 0; i < data.usersList.length; i++) {
 									if (data.usersList[i].birthday && typeof data.usersList[i].birthday === 'string') {
 										data.usersList[i].birthday = data.usersList[i].birthday.substring(0, 10);
@@ -591,6 +596,7 @@
 								self.usersList = data.usersList;
 								self.totalCount = data.totalCount;
 								self.totalPages = Math.ceil(self.totalCount / self.size);
+								self.loaded = true;
 							} else {
 								alert("데이터를 가지고 오는데 실패했습니다.");
 							}
@@ -601,10 +607,10 @@
 					});
 				},
 				goPage(p) {
-                    if (p < 1 || p > this.totalPages) return;
-                    this.page = p;
-                    this.fnGetUsersList();
-                },
+					if (p < 1 || p > this.totalPages) return;
+					this.page = p;
+					this.fnGetUsersList();
+				},
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
 				fnUserEdit(user) {
 					let self = this;
@@ -725,9 +731,9 @@
 			mounted() {
 				let self = this;
 				if (!self.sessionId || self.sessionRole != 'ADMIN') {
-                    alert("관리자만 이용가능합니다.");
-                    location.href = "/main.do";
-                }
+					alert("관리자만 이용가능합니다.");
+					location.href = "/main.do";
+				}
 				self.fnGetUsersList();
 			}
 		});
