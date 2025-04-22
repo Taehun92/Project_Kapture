@@ -143,13 +143,17 @@
 				background-color: #007bff;
 				color: white;
 			}
+
+			[v-cloak] {
+				display: none;
+			}
 		</style>
 		</style>
 	</head>
 
 	<body>
 		<jsp:include page="menu.jsp"></jsp:include>
-		<div id="app">
+		<div id="app" v-cloak>
 			<!-- 제목 추가 -->
 			<div class="page-title">고객 문의 관리</div>
 
@@ -163,7 +167,7 @@
 						<option value="">전체</option>
 						<option value="inquiryNo">문의번호</option>
 						<option value="userNo">회원번호</option>
-						<option value="naem">회원명</option>
+						<option value="name">회원명</option>
 						<option value="category">카테고리</option>
 						<option value="qnaTitle">제목</option>
 						<option value="qnaStatus">상태</option>
@@ -172,74 +176,77 @@
 						placeholder="회원명/상품 검색">
 					<button class="search-button" @click="loadFilteredData">검색</button>
 				</div>
-				<table>
-					<thead>
-						<tr>
-							<th>문의번호</th>
-							<th>회원번호</th>
-							<th>이름</th>
-							<th>이메일</th>
-							<th>연락처</th>
-							<th>카테고리</th>
-							<th>제목</th>
-							<th>문의내용</th>
-							<th>답변내용</th>
-							<th>접수일</th>
-							<th>처리상태</th>
-							<th>관리</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="inquiriesList.length === 0">
-							<td colspan="12">검색 결과가 없습니다.</td>
-						</tr>
-						<!-- 문의 리스트 반복 출력 -->
-						<tr v-for="inquiry in inquiriesList">
-							<!-- 문의번호 -->
-							<td>{{ inquiry.inquiryNo }}</td>
-							<!-- 회원번호-->
-							<td>{{ inquiry.userNo }}</td>
-							<!-- 회원번호-->
-							<td>
-								{{ inquiry.userFirstName }}
-								<template v-if="inquiry.userLastName != 'N/A'">{{inquiry.userLastName}}</template>
-							</td>
-							<!-- 이메일-->
-							<td>{{ inquiry.email }}</td>
-							<!-- 연락처-->
-							<td>{{ inquiry.phone }}</td>
-							<!-- 카테고리 -->
-							<td>{{ inquiry.category }}</td>
-							<!-- 제목 -->
-							<td>{{ inquiry.qnaTitle }}</td>
-							<!-- 문의내용 -->
-							<td>{{ inquiry.question }}</td>
-							<!-- 답변 -->
-							<td>{{inquiry.answer}}</td>
-							<!-- 접수일-->
-							<td>{{ inquiry.inqCreatedAt }}</td>
-							<!-- 처리상태 -->
-							<td>{{inquiry.qnaStatus}}</td>
-							<!-- 관리 ( 수정, 삭제 ) -->
-							<td>
-								<button class="btn-manage" @click="fnInquiryAnswer(inquiry)">
-									답변
-								</button>
-								<button class="btn-manage" @click="fnInquiryDelete(inquiry.inquiryNo)">
-									삭제
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<div style="margin-top: 20px; text-align: center;">
-					<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-					<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-						@click="goPage(p)">
-						{{ p }}
-					</button>
-					<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+				<div v-if="loaded">
+					<table>
+						<thead>
+							<tr>
+								<th>문의번호</th>
+								<th>회원번호</th>
+								<th>이름</th>
+								<th>이메일</th>
+								<th>연락처</th>
+								<th>카테고리</th>
+								<th>제목</th>
+								<th>문의내용</th>
+								<th>답변내용</th>
+								<th>접수일</th>
+								<th>처리상태</th>
+								<th>관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="inquiriesList.length === 0">
+								<td colspan="12">검색 결과가 없습니다.</td>
+							</tr>
+							<!-- 문의 리스트 반복 출력 -->
+							<tr v-for="inquiry in inquiriesList">
+								<!-- 문의번호 -->
+								<td>{{ inquiry.inquiryNo }}</td>
+								<!-- 회원번호-->
+								<td>{{ inquiry.userNo }}</td>
+								<!-- 회원번호-->
+								<td>
+									{{ inquiry.userFirstName }}
+									<template v-if="inquiry.userLastName != 'N/A'">{{inquiry.userLastName}}</template>
+								</td>
+								<!-- 이메일-->
+								<td>{{ inquiry.email }}</td>
+								<!-- 연락처-->
+								<td>{{ inquiry.phone }}</td>
+								<!-- 카테고리 -->
+								<td>{{ inquiry.category }}</td>
+								<!-- 제목 -->
+								<td>{{ inquiry.qnaTitle }}</td>
+								<!-- 문의내용 -->
+								<td>{{ inquiry.question }}</td>
+								<!-- 답변 -->
+								<td>{{inquiry.answer}}</td>
+								<!-- 접수일-->
+								<td>{{ inquiry.inqCreatedAt }}</td>
+								<!-- 처리상태 -->
+								<td>{{inquiry.qnaStatus}}</td>
+								<!-- 관리 ( 수정, 삭제 ) -->
+								<td>
+									<button class="btn-manage" @click="fnInquiryAnswer(inquiry)">
+										답변
+									</button>
+									<button class="btn-manage" @click="fnInquiryDelete(inquiry.inquiryNo)">
+										삭제
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div style="margin-top: 20px; text-align: center;">
+						<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+						<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+							@click="goPage(p)">
+							{{ p }}
+						</button>
+						<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+					</div>
 				</div>
+				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
 			</div>
 			<div v-if="showAnswerModal" class="modal-overlay" @click.self="fnCloseAnswerModal">
 				<div class="modal-content">
@@ -325,6 +332,7 @@
 					totalCount: 0,
 					totalPages: 1,
 					statusFilter: "",
+					loaded: false
 				};
 			},
 			methods: {
@@ -354,6 +362,7 @@
 								self.inquiriesList = data.inquiriesList;
 								self.totalCount = data.totalCount;
 								self.totalPages = Math.ceil(self.totalCount / self.size);
+								self.loaded = true;
 							} else {
 								alert("데이터를 불러오는데 실패했습니다.");
 							}
@@ -449,10 +458,10 @@
 			},
 			mounted() {
 				let self = this;
-                if (!self.sessionId || self.sessionRole != 'ADMIN') {
-                    alert("관리자만 이용가능합니다.");
-                    location.href = "/main.do";
-                }
+				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+					alert("관리자만 이용가능합니다.");
+					location.href = "/main.do";
+				}
 				self.fnGetInquiryiesList();
 			}
 		});

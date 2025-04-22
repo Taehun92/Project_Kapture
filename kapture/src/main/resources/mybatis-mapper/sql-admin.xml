@@ -844,4 +844,83 @@
 	    ORDER BY R.RQ_CREATED_AT DESC
 	    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
 	</select>
+	<!-- 상품관리 조회-->
+	<select id="selectPartnershipList" parameterType="map" resultType="com.example.kapture.admin.model.Partnership">
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM PARTNERSHIP 
+				WHERE 1 = 1
+				<if test="startDate != null and startDate != ''">
+					AND PS_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  			</if>
+	  			<if test="endDate != null and endDate != ''">
+	    			AND PS_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  			</if>
+	  			<if test="statusFilter == null or statusFilter == ''">
+		    		AND (
+						PARTNERSHIP_NO LIKE '%' || #{keyword} || '%' 
+	      				OR NAME LIKE '%' || #{keyword} || '%' 
+	      				OR EMAIL LIKE '%' || #{keyword} || '%' 
+	      				OR TITLE LIKE '%' || #{keyword} || '%' 
+	      				OR PS_STATUS LIKE '%' || #{keyword} || '%' 
+	      				)
+	  			</if>
+		  		<if test="statusFilter != null and statusFilter == 'tourNo'">
+				    AND PARTNERSHIP_NO LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'title'">
+		    		AND NAME LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'siName'">
+		    		AND EMAIL LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'themeName'">
+		    		AND TITLE LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			<if test="statusFilter != null and statusFilter == 'themeName'">
+		    		AND PS_STATUS LIKE '%' || #{keyword} || '%' 
+	  			</if>
+	  			ORDER BY PS_CREATED_AT DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{page} * #{size}
+		)
+		WHERE RNUM &gt; (#{page} - 1) * #{size}
+	</select>
+	<!-- 상품관리 총 갯수 -->
+	<select id="selectPartnershipListCount" resultType="int">
+		SELECT COUNT(*)
+		FROM PARTNERSHIP		
+		WHERE 1 = 1
+		<if test="startDate != null and startDate != ''">
+			AND PS_CREATED_AT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="endDate != null and endDate != ''">
+	    	AND PS_CREATED_AT &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	  	</if>
+	  	<if test="statusFilter == null or statusFilter == ''">
+			AND (
+				PARTNERSHIP_NO LIKE '%' || #{keyword} || '%' 
+	    		OR NAME LIKE '%' || #{keyword} || '%' 
+	    		OR EMAIL LIKE '%' || #{keyword} || '%' 
+	    		OR TITLE LIKE '%' || #{keyword} || '%' 
+	    		OR PS_STATUS LIKE '%' || #{keyword} || '%' 
+	      		)
+	  	</if>
+		<if test="statusFilter != null and statusFilter == 'tourNo'">
+		    AND PARTNERSHIP_NO LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'title'">
+			AND NAME LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'siName'">
+			AND EMAIL LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'themeName'">
+			AND TITLE LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	  	<if test="statusFilter != null and statusFilter == 'themeName'">
+			AND PS_STATUS LIKE '%' || #{keyword} || '%' 
+	  	</if>
+	</select>
 </mapper>

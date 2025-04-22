@@ -106,7 +106,7 @@
                                 class="block px-2 py-1 text-sm rounded hover:bg-gray-600">고객 문의 관리</a></li>
                     </ul>
                 </li>
-
+				<li><a href="/admin/partnership.do" class="block px-3 py-2 rounded hover:bg-gray-700">제휴문의 관리</a></li>
                 <li><a href="/admin/setting.do" class="block px-3 py-2 rounded hover:bg-gray-700">운영 및 설정 관리</a></li>
             </ul>
         </div>

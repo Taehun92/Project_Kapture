@@ -87,7 +87,13 @@ public class AdminController {
 	public String review(Model model) throws Exception{
 		return "/admin/admin-review";
 	}
-	
+
+	// 제휴문의 관리
+	@RequestMapping("/admin/partnership.do")
+	public String partnership(Model model) throws Exception{
+		return "/admin/admin-partnership";
+	}
+  
 	// 관리자 차트 데이터 조회
 	@RequestMapping(value = "/admin/chart.dox", method = RequestMethod.POST)
 	@ResponseBody
@@ -357,6 +363,14 @@ public class AdminController {
 	@ResponseBody
 	public String getRequestSummary(@RequestParam HashMap<String, Object> map) {
 	    return new Gson().toJson(adminService.getLatestRequests(map));
+	}
+	// 제휴문의 조회(승인대기, 승인거부)
+	@RequestMapping(value = "/admin/partnership.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String getPartnershipList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.getPartnershipList(map);
+	    return new Gson().toJson(resultMap);
 	}
 
 

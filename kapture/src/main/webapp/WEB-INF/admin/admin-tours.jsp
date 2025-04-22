@@ -25,19 +25,20 @@
             }
 
             /* 제목 스타일 */
-			.page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				/* margin-top: 20px; */
-				margin-left: 220px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+            .page-title {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 220px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
+
             .title-hr {
                 margin-bottom: 30px;
             }
@@ -105,10 +106,10 @@
                 background-color: #0056b3;
             }
 
-            .search-input{
-				width: 300px;
-			}
-            
+            .search-input {
+                width: 300px;
+            }
+
             /* 모달 관련 CSS */
             .order-modal {
                 position: fixed;
@@ -254,15 +255,19 @@
                 border-radius: 5px;
                 max-width: fit-content;
             }
+
+            [v-cloak] {
+                display: none;
+            }
         </style>
     </head>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
-        <div id="app">
+        <div id="app" v-cloak>
             <!-- 제목 추가 -->
-			<div class="page-title">상품 관리</div>
-			<hr class="title-hr">
+            <div class="page-title">상품 관리</div>
+            <hr class="title-hr">
             <input type="date" v-model="startDate" class="search-date">
             ~
             <input type="date" v-model="endDate" class="search-date">
@@ -273,74 +278,78 @@
                 <option value="siName">지역명</option>
                 <option value="themeName">테마명</option>
             </select>
-            <input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="상품번호 / 제목 / 지역명 / 테마명 검색">
+            <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                placeholder="상품번호 / 제목 / 지역명 / 테마명 검색">
             <button class="search-button" @click="loadFilteredData">검색</button>
+            <div v-if="loaded">
+                <table class="tours-table">
+                    <thead>
+                        <tr>
+                            <th>상품 번호</th>
+                            <th>사진</th>
+                            <th>상품 제목</th>
+                            <th>여행 날짜</th>
+                            <th>여행 기간</th>
+                            <th>가격</th>
+                            <th>판매 상태</th>
+                            <th>지역</th>
+                            <th>테마</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="toursList.length === 0">
+                            <td colspan="10">검색 결과가 없습니다.</td>
+                        </tr>
+                        <tr v-for="tour in toursList">
+                            <td>{{ tour.tourNo }}</td>
+                            <td>
+                                <template v-if="tour.thumbNail === 'Y'">
+                                    <img :src="tour.filePath" class="tour-thumbNail">
+                                </template>
+                            </td>
+                            <td>{{ tour.title }}</td>
+                            <td v-html="formatDate(tour.tourDate)"></td>
+                            <td>{{ tour.duration }}</td>
+                            <td>{{ formatCurrency(tour.price) }}</td>
+                            <td>
+                                <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) < today)"
+                                    style=" color: red">
+                                    미판매
+                                </span>
+                                <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) >= today)"
+                                    style=" color: green">
+                                    판매중
+                                </span>
+                                <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)"
+                                    style=" color: blue">
+                                    판매완료
+                                </span>
+                                <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) < today)"
+                                    style=" color: blue">
+                                    거래완료
+                                </span>
+                            </td>
+                            <td>{{ tour.siName }}</td>
+                            <td>{{ tour.themeName }}</td>
+                            <td>
+                                <button class="table-button" @click="fnGetTourEdit(tour)">수정</button>
+                                <button class="table-button" @click="fnRemoveTour(tour.tourNo)">삭제</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <table class="tours-table">
-                <thead>
-                    <tr>
-                        <th>상품 번호</th>
-                        <th>사진</th>
-                        <th>상품 제목</th>
-                        <th>여행 날짜</th>
-                        <th>여행 기간</th>
-                        <th>가격</th>
-                        <th>판매 상태</th>
-                        <th>지역</th>
-                        <th>테마</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="toursList.length === 0">
-                        <td colspan="10">검색 결과가 없습니다.</td>
-                    </tr>
-                    <tr v-for="tour in toursList">
-                        <td>{{ tour.tourNo }}</td>
-                        <td>
-                            <template v-if="tour.thumbNail === 'Y'">
-                                <img :src="tour.filePath" class="tour-thumbNail">
-                            </template>
-                        </td>
-                        <td>{{ tour.title }}</td>
-                        <td v-html="formatDate(tour.tourDate)"></td>
-                        <td>{{ tour.duration }}</td>
-                        <td>{{ formatCurrency(tour.price) }}</td>
-                        <td>
-                            <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) < today)" style=" color: red">
-                                미판매
-                            </span>
-                            <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) >= today)"
-                                style=" color: green">
-                                판매중
-                            </span>
-                            <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)"
-                                style=" color: blue">
-                                판매완료
-                            </span>
-                            <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) < today)"
-                                style=" color: blue">
-                                거래완료
-                            </span>
-                        </td>
-                        <td>{{ tour.siName }}</td>
-                        <td>{{ tour.themeName }}</td>
-                        <td>
-                            <button class="table-button" @click="fnGetTourEdit(tour)">수정</button>
-                            <button class="table-button" @click="fnRemoveTour(tour.tourNo)">삭제</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                    @click="goPage(p)">
-                    {{ p }}
-                </button>
-                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                    <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                        @click="goPage(p)">
+                        {{ p }}
+                    </button>
+                    <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                </div>
             </div>
-
+            <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
             <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
             <div v-if="showEditModal" class="order-modal" @click.self="fnTourEditClose">
                 <div class="modal-overlay" @click="fnTourEditClose"></div>
@@ -467,12 +476,13 @@
                     statusFilter: "",
                     showEditModal: false,
                     minDate: new Date().toISOString().split("T")[0],
+                    loaded: false
                 };
             },
             methods: {
-                loadFilteredData() { 
+                loadFilteredData() {
                     this.page = 1;
-                    this.fnGetToursManagement(); 
+                    this.fnGetToursManagement();
                 },
                 fnGetToursManagement() {
                     let self = this;
@@ -494,6 +504,10 @@
                             self.toursList = data.toursList;
                             self.totalCount = data.totalCount;
                             self.totalPages = Math.ceil(self.totalCount / self.size);
+                            self.toursList = data.toursList;
+                            self.totalCount = data.totalCount;
+                            self.totalPages = Math.ceil(self.totalCount / self.size);
+                            self.loaded = true;
                         }
                     });
                 },
@@ -964,7 +978,7 @@
             },
             mounted() {
                 let self = this;
-				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                if (!self.sessionId || self.sessionRole != 'ADMIN') {
                     alert("관리자만 이용가능합니다.");
                     location.href = "/main.do";
                 }

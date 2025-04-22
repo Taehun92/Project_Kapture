@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.kapture.admin.mapper.AdminMapper;
+import com.example.kapture.admin.model.Partnership;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
@@ -657,5 +658,22 @@ public class AdminService {
 
 		    return resultMap;
 		}
+	 // 제휴문의 조회(승인대기, 승인거부)
+	 public HashMap<String, Object> getPartnershipList(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 List<Partnership> list = adminMapper.selectPartnershipList(map);
+			 int totalCount = adminMapper.selectPartnershipListCount(map);
+			    
+			 resultMap.put("totalCount", totalCount);
+			 resultMap.put("partnershipList", list);
+			 resultMap.put("result",list != null ? "success" : "fail");
+		 } catch (Exception e) {
+		     System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	 }
 
 }

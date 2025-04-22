@@ -16,19 +16,19 @@
             }
 
             /* 제목 스타일 */
-			.page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				/* margin-top: 20px; */
-				margin-left: 220px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+            .page-title {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 220px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
 
             .title-hr {
                 margin-bottom: 30px;
@@ -103,10 +103,10 @@
                 background-color: #0056b3;
             }
 
-            .search-input{
-				width: 300px;
-			}
-            
+            .search-input {
+                width: 300px;
+            }
+
             .refunded-button {
                 margin-top: 5px;
                 padding: 2px 5px;
@@ -219,15 +219,19 @@
             .table-button:hover {
                 background-color: #0056b3;
             }
+
+            [v-cloak] {
+                display: none;
+            }
         </style>
     </head>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
-        <div id="app">
+        <div id="app" v-cloak>
             <!-- 제목 추가 -->
-			<div class="page-title">주문내역 관리</div>
-			<hr class="title-hr">
+            <div class="page-title">주문내역 관리</div>
+            <hr class="title-hr">
             <input type="date" v-model="startDate" class="search-date">
             ~
             <input type="date" v-model="endDate" class="search-date">
@@ -238,54 +242,57 @@
                 <option value="환불요청">환불요청</option>
                 <option value="환불완료">환불완료</option>
             </select>
-            <input type="text" v-model="keyword" class="search-input"   @keyup.enter="loadFilteredData" placeholder="상태 검색">
+            <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                placeholder="상태 검색">
             <button class="search-button" @click="loadFilteredData">검색</button>
-
-            <table class="transaction-table">
-                <thead>
-                    <tr>
-                        <th>상품 번호</th>
-                        <th>결제일</th>
-                        <th>회원 이름</th>
-                        <th>상품 제목</th>
-                        <th>여행 날짜</th>
-                        <th>여행 기간</th>
-                        <th>결제 금액</th>
-                        <th>상태</th>
-                        <th>인원</th>
-                        <th>정보</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="transactions.length === 0">
-                        <td colspan="10">검색 결과가 없습니다.</td>
-                    </tr>
-                    <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
-                        <td>{{ item.TOUR_NO }}</td>
-                        <td v-html="formatDate(item.PAYMENT_DATE)"></td>
-                        <td>
-                            {{ item.USER_FIRSTNAME }}
-                            <template v-if="item.USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
-                        </td>
-                        <td>{{ item.TITLE }}</td>
-                        <td v-html="formatDate(item.TOUR_DATE)"></td>
-                        <td>{{ item.DURATION }}</td>
-                        <td>{{ formatCurrency(item.AMOUNT) }}</td>
-                        <td
-                            :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
-                            {{ item.PAYMENT_STATUS }}
-                            <div v-if="item.PAYMENT_STATUS === '환불요청'">
-                                <button class="refunded-button" @click="fnRefunded(item.PAYMENT_NO)">환불처리</button>
-                            </div>
-                        </td>
-                        <td>{{ item.NUM_PEOPLE }}명</td>
-                        <td>
-                            <button class="table-button" @click="fnGetOrderInfo(item)">보기</button>
-                            <button class="table-button" @click="fnRemoveOrder(item.PAYMENT_NO)">삭제</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="loaded">
+                <table class="transaction-table">
+                    <thead>
+                        <tr>
+                            <th>상품 번호</th>
+                            <th>결제일</th>
+                            <th>회원 이름</th>
+                            <th>상품 제목</th>
+                            <th>여행 날짜</th>
+                            <th>여행 기간</th>
+                            <th>결제 금액</th>
+                            <th>상태</th>
+                            <th>인원</th>
+                            <th>정보</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="transactions.length === 0">
+                            <td colspan="10">검색 결과가 없습니다.</td>
+                        </tr>
+                        <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
+                            <td>{{ item.TOUR_NO }}</td>
+                            <td v-html="formatDate(item.PAYMENT_DATE)"></td>
+                            <td>
+                                {{ item.USER_FIRSTNAME }}
+                                <template v-if="item.USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
+                            </td>
+                            <td>{{ item.TITLE }}</td>
+                            <td v-html="formatDate(item.TOUR_DATE)"></td>
+                            <td>{{ item.DURATION }}</td>
+                            <td>{{ formatCurrency(item.AMOUNT) }}</td>
+                            <td
+                                :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
+                                {{ item.PAYMENT_STATUS }}
+                                <div v-if="item.PAYMENT_STATUS === '환불요청'">
+                                    <button class="refunded-button" @click="fnRefunded(item.PAYMENT_NO)">환불처리</button>
+                                </div>
+                            </td>
+                            <td>{{ item.NUM_PEOPLE }}명</td>
+                            <td>
+                                <button class="table-button" @click="fnGetOrderInfo(item)">보기</button>
+                                <button class="table-button" @click="fnRemoveOrder(item.PAYMENT_NO)">삭제</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
             <div style="margin-top: 20px; text-align: center;">
                 <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
                 <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
@@ -375,8 +382,8 @@
             const app = Vue.createApp({
                 data() {
                     return {
-                        sessionId : "${sessionId}",
-                        sessionRole : "${sessionRole}",
+                        sessionId: "${sessionId}",
+                        sessionRole: "${sessionRole}",
                         startDate: '',
                         endDate: '',
                         statusFilter: '',
@@ -389,6 +396,7 @@
                         showEditModal: false,
                         editOrderInfo: {},
                         editPaymentStatus: "",
+                        loaded: false
                     };
                 },
                 methods: {
@@ -415,6 +423,7 @@
                                 self.transactions = data.list;
                                 self.totalCount = data.totalCount;
                                 self.totalPages = Math.ceil(data.totalCount / self.size);
+                                self.loaded = true;
                             },
                             error: err => console.error("거래 내역 불러오기 실패", err)
                         });
@@ -539,10 +548,10 @@
                 },
                 mounted() {
                     let self = this;
-				    if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                    if (!self.sessionId || self.sessionRole != 'ADMIN') {
                         alert("관리자만 이용가능합니다.");
                         location.href = "/main.do";
-                    }   
+                    }
                     this.fnGetTransactions();
                 }
             });
