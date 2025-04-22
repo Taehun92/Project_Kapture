@@ -30,6 +30,7 @@ public class AdminService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    // 관리자 페이지 차트 데이터 조회
     public HashMap<String, Object> getChartByTypeAndYear(HashMap<String, Object> map) {
         String type = (String) map.get("type");
         String year = (String) map.get("year");
@@ -147,6 +148,7 @@ public class AdminService {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
     
+    
     public HashMap<String, Object> getSummary(HashMap<String, Object> map) {
         HashMap<String, Object> result = new HashMap<>();
         
@@ -169,6 +171,7 @@ public class AdminService {
     public List<String> getAllRegionNames() {
         return adminMapper.getRegionList();
     }
+    
     // 가이드관리 가이드정보 조회
 	public HashMap<String, Object> getGuidesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -187,6 +190,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 가이드관리 정보 수정
 	public HashMap<String, Object> editGuide(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -227,6 +231,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	public HashMap<String, Object> getTransactionList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    
@@ -241,6 +246,7 @@ public class AdminService {
 	    
 	    return resultMap;
 	}
+	
 	// 가이드관리 프로필 이미지 저장
 	public HashMap<String, Object> addGuideProfile(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -314,6 +320,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 회원관리 유저정보 수정
 	public HashMap<String, Object> editUser(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -346,6 +353,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 회원관리 정보 조회
 	public HashMap<String, Object> getUsersList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -364,6 +372,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
     // 고객 문의 리스트 조회 
 	public HashMap<String, Object> userInquiriesList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -381,6 +390,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 고객 문의 답변 저장
 	public HashMap<String, Object> inquiryAnswerSave(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -394,6 +404,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 고객 문의 삭제
 	public HashMap<String, Object> removeInquiry(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -407,6 +418,7 @@ public class AdminService {
 		}
 		return resultMap;
 	}
+	
 	// 환불 처리
 	public HashMap<String, Object> payRefunded(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -447,6 +459,7 @@ public class AdminService {
 
 	    return resultMap;
 	}
+	
 	//리뷰 삭제 
 	 public HashMap<String, Object> deleteReview(HashMap<String, Object> map) throws Exception {
 	        HashMap<String, Object> resultMap = new HashMap<>();
@@ -482,6 +495,7 @@ public class AdminService {
 		 }
 		 return resultMap;
 	 }
+	 
 	 //주문내역 삭제
 	 public HashMap<String, Object> removeOrder(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -538,6 +552,7 @@ public class AdminService {
 		 }
 		 return resultMap;
 	}
+	 
 	 // 상품관리 수정
 	 public HashMap<String, Object> tourUpdate(HashMap<String, Object> map) {
 		 // TODO Auto-generated method stub
@@ -552,6 +567,7 @@ public class AdminService {
 		 }
 		 return resultMap;
 	}
+	 
 	 // 상품관리 삭제
 	 public HashMap<String, Object> removeTour(HashMap<String, Object> map) {
 		 // TODO Auto-generated method stub
@@ -566,6 +582,7 @@ public class AdminService {
 		 }
 		 return resultMap;
 	}
+	 
 	 // 가이드 추가(유저 정보, 가이드 정보)
 	 public HashMap<String, Object> addGuide(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -600,7 +617,6 @@ public class AdminService {
 		return resultMap;
 	}
 
-	 
 	 public HashMap<String, Object> getMonthlySales() {
 	        HashMap<String, Object> resultMap = new HashMap<>();
 	        List<Map<String, Object>> list = adminMapper.selectMonthlySales();
@@ -620,6 +636,7 @@ public class AdminService {
 		    resultMap.put("salesList", list);
 		    return resultMap;
 		}
+	 
 	 public HashMap<String, Object> getLatestRequests(HashMap<String, Object> map) {
 		    HashMap<String, Object> resultMap = new HashMap<>();
 
