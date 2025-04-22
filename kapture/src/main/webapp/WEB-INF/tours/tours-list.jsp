@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker/dist/main.css">
         <link rel="stylesheet" href="../../css/chatbot.css">
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
         <style>
             .slide-modal-enter-active,
             .slide-modal-leave-active {
@@ -86,8 +87,10 @@
                 <aside class="w-64 space-y-4">
                     <!-- 날짜 필터 -->
                     <div class="bg-gray-50 border rounded p-4">
-                        <button class="font-extralight mb-2" @click="toggleFilter('date')">
-                            여행기간 {{ filters.date ? '∧' : '∨' }}
+                        <button class="font-extralight mb-2 flex items-center justify-between w-full"
+                            @click="toggleFilter('date')">
+                            <span>여행기간</span>
+                            <i :class="filters.date ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
                         </button>
                         <div v-if="filters.date">
                             <div v-if="Array.isArray(selectedDates) && selectedDates.length > 0 && !showDatePicker">
@@ -103,9 +106,11 @@
 
                     <!-- 언어 필터 -->
                     <div class="bg-gray-50 border rounded p-4">
-                        <button class="font-extralight mb-2" @click="toggleFilter('language')">가이드 언어 {{ filters.language
-                            ?
-                            '∧' : '∨' }}</button>
+                        <button class="font-extralight mb-2 flex items-center justify-between w-full"
+                            @click="toggleFilter('language')">
+                            <span>가이드 언어</span>
+                            <i :class="filters.language ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                        </button>
                         <div v-if="filters.language">
                             <div v-for="language in languages" :key="language.eng">
                                 <label class="text-sm">
@@ -119,9 +124,11 @@
 
                     <!-- 지역 필터 -->
                     <div class="bg-gray-50 border rounded p-4">
-                        <button class="font-extralight mb-2" @click="toggleFilter('region')">지역별 {{ filters.region ? '∧' :
-                            '∨'
-                            }}</button>
+                        <button class="font-extralight mb-2 flex items-center justify-between w-full"
+                            @click="toggleFilter('region')">
+                            <span>지역별</span>
+                            <i :class="filters.region ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                        </button>
                         <div v-if="filters.region">
                             <div v-for="item in regionList" :key="item.siNo">
                                 <label class="text-sm">
@@ -134,9 +141,11 @@
 
                     <!-- 테마 필터 -->
                     <div class="bg-gray-50 border rounded p-4">
-                        <button class="font-extralight mb-2" @click="toggleFilter('theme')">테마별 {{ filters.theme ? '∧' :
-                            '∨'
-                            }}</button>
+                        <button class="font-extralight mb-2 flex items-center justify-between w-full"
+                            @click="toggleFilter('theme')">
+                            <span>테마별</span>
+                            <i :class="filters.theme ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                        </button>
                         <div v-if="filters.theme">
                             <div v-for="theme in uniqueParentThemes" :key="theme.themeNo">
                                 <label class="text-sm">
@@ -173,13 +182,19 @@
                                 <img src="../../svg/taeguk-full.svg" alt="찜" class="w-5 h-5" />
                                 찜 상품
                             </button>
-
-                            <!-- 관광지 알아보기 버튼 -->
-                            <button
-                                class="text-sm bg-blue-950 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors shadow-sm"
-                                @click="fnFindLocation">
-                                🇰🇷 관광지 알아보기
-                            </button>
+                            <!-- 검색바 -->
+                            <div class="flex items-center gap-2 shrink-0">
+                                <div
+                                    class="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-gray-50 w-[200px] sm:w-[200px]">
+                                    <input v-model="keyword" type="text" placeholder="Search for product title..."
+                                        @keyUp.enter="fnSearch"
+                                        class="bg-transparent focus:outline-none text-sm w-full" />
+                                </div>
+                                <button @click="fnSearch"
+                                    class="bg-blue-950 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded whitespace-nowrap">
+                                    검색
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <hr class="mb-4">
@@ -190,7 +205,8 @@
                             <img :src="tour.filePath" alt="썸네일" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm text-gray-600 font-extralight">{{ formatDate(tour.tourDate) }}</span>
+                                    <span class="text-sm text-gray-600 font-extralight">{{ formatDate(tour.tourDate)
+                                        }}</span>
                                     <span class="text-gray-600 text-xs"> ⏱ {{ tour.duration }}</span>
                                     <span class="text-sm text-blue-700"> # {{ tour.themeName }}</span>
                                     <img :src="tour.isFavorite === 'Y' ? '../../svg/taeguk-full.svg' : '../../svg/taeguk-outline.svg'"
@@ -205,7 +221,8 @@
                                         <span>{{ tour.rating || 0 }}</span>
                                         <span>/ 5</span>
                                     </span>
-                                    <span class="font-extralight text-gray-800"> ₩ {{ tour.price.toLocaleString() }}</span>
+                                    <span class="font-extralight text-gray-800"> ₩ {{ tour.price.toLocaleString()
+                                        }}</span>
                                 </div>
                                 <button @click="goToTourInfo(tour.tourNo)"
                                     class="mt-3 w-full text-white py-2 rounded shadow text-center transition-colors bg-blue-950 hover:bg-blue-700">
@@ -515,8 +532,8 @@
             <!-- 페이징 영역 -->
             <div class="text-center mt-8" v-if="index > 0">
                 <a v-for="num in index" @click="fnPage(num)" class="inline-block mx-1 cursor-pointer">
-                  <span v-if="page == num" class="bg-blue-950 text-white px-4 py-2 rounded">{{ num }}</span>
-                  <span v-else class="px-4 py-2 rounded hover:underline">{{ num }}</span>
+                    <span v-if="page == num" class="bg-blue-950 text-white px-4 py-2 rounded">{{ num }}</span>
+                    <span v-else class="px-4 py-2 rounded hover:underline">{{ num }}</span>
                 </a>
             </div>
         </div>
@@ -584,9 +601,9 @@
                     messages: [],
                     showChat: false,
 
-                    page : 1,
-                    pageSize : 18,
-                    index : 0,
+                    page: 1,
+                    pageSize: 18,
+                    index: 0,
                 };
             },
             components: {
@@ -630,6 +647,16 @@
                 }
             },
             methods: {
+                fnSearch() {
+                    if (!this.keyword.trim()) {
+                        alert("검색어를 입력해주세요.");
+                        return;
+                    }
+                    console.log("🔍 검색 키워드:", this.keyword);
+                    // 예: 검색 페이지로 이동
+                    window.location.href = "/tours/list.do?keyword=" + encodeURIComponent(this.keyword);
+                },
+
                 resetDatePicker() {
                     this.selectedDates = [];
                     this.showDatePicker = true;
@@ -692,8 +719,8 @@
                         selectedThemes: JSON.stringify(self.selectedThemes),
                         keyword: keyword,
 
-                        page : (self.page - 1) * self.pageSize,
-                        pageSize : self.pageSize,
+                        page: (self.page - 1) * self.pageSize,
+                        pageSize: self.pageSize,
                     };
                     console.log(">>>>>>>>>nparmap>>" + nparmap);
                     $.ajax({
@@ -994,9 +1021,6 @@
                         chatBox.scrollTop = chatBox.scrollHeight;
                     });
                 },
-                fnFindLocation() {
-                    location.href = "/course.do";
-                },
 
                 goToAirbnb() {
                     window.open("https://www.airbnb.co.kr", "_blank");
@@ -1035,9 +1059,9 @@
                     });
                     console.log('applywishlistFilters', self.filteredToursList.length + '개 상품이 찜 목록에 있습니다.');
                     self.index = Math.ceil(self.filteredToursList.length / self.pageSize); // 필터링된 상품 수에 따라 페이지 수 조정
-                    
 
-                    
+
+
                 },
 
                 handleFilterChange() {
