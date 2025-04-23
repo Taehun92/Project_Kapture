@@ -13,7 +13,7 @@
     <body>
         <jsp:include page="../common/header.jsp" />
         <div id="app">
-            <svg viewBox="0 0 2000 3500" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+            <svg viewBox="100 0 800 1000" xmlns="http://www.w3.org/2000/svg" class="w-[300px] h-[300px]">
                 <path v-for="(regionName, regionId) in regionMap" :key="regionId" :d="getPathData(regionId)"
                     @click="selectRegion(regionId)" :fill="selectedRegion === regionId ? '#60a5fa' : '#e5e7eb'"
                     stroke="#333" class="cursor-pointer hover:fill-blue-400 transition" />
