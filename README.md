@@ -49,10 +49,11 @@ Kapture 여행사는 한국에 여행 예정인 외국인들을 위한 소규모
 
 📕 발표 PPT
 
+<https://docs.google.com/presentation/d/1O1HBkP1YuUfVkF9pXeFPH0zuARhn-8gI/edit?usp=drive_link&ouid=102108838383969454196&rtpof=true&sd=true>
 
 🎞 시연 영상
 
-https://youtu.be/nYb7iXMzafA
+<https://youtu.be/nYb7iXMzafA>
 
 
 👨‍👩‍👦‍👦 역할 분담
