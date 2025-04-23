@@ -49,11 +49,10 @@ Kapture 여행사는 한국에 여행 예정인 외국인들을 위한 소규모
 
 📕 발표 PPT
 
-▶FOOD114 발표 PPT
 
 🎞 시연 영상
 
-▶FOOD114 시연영상
+https://youtu.be/nYb7iXMzafA
 
 
 👨‍👩‍👦‍👦 역할 분담
