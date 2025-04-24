@@ -372,6 +372,14 @@ public class AdminController {
 		resultMap = adminService.getPartnershipList(map);
 	    return new Gson().toJson(resultMap);
 	}
+	// 제휴문의 조회(승인대기, 승인거부)
+	@RequestMapping(value = "/admin/partnership-edit.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public String editPartnership(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = new HashMap<String, Object>();	
+		resultMap = adminService.editPartnership(map);
+	    return new Gson().toJson(resultMap);
+	}
 
 
 }

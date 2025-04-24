@@ -127,9 +127,15 @@ public interface AdminMapper {
 
 		int guideImgCount(HashMap<String, Object> map);
 		// 제휴문의 조회(승인대기, 승인거부)
-		List<Partnership> selectPartnershipList(HashMap<String, Object> map);
+		List<Partnership> selectWaitingPartnershipList(HashMap<String, Object> map);
 		// 제휴문의 조회(승인대기, 승인거부) 총 개수
-		int selectPartnershipListCount(HashMap<String, Object> map);
+		int countWaitingPartnership(HashMap<String, Object> map);
+		// 제휴문의 조회(승인완료)
+		List<Partnership> selectApprovedPartnershipList(HashMap<String, Object> map);
+		// 제휴문의 조회(승인완료) 총 개수
+		int countApprovedPartnership(HashMap<String, Object> map);
+		// 제휴문의 수정
+		int updatePartnership(HashMap<String, Object> map);
 
 		
 
