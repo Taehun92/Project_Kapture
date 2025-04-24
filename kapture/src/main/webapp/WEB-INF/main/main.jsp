@@ -16,7 +16,16 @@
         <link rel="shortcut icon" href="/img/logo/favicon-96x96.png" />
         <script src="https://unpkg.com/vue-star-rating@next/dist/VueStarRating.umd.min.js"></script>
         <title>메인 페이지 | kapture</title>
-
+        <style>
+            .gtranslate-wrapper,
+            .chatbot-wrapper,
+            .weather-wrapper {
+                position: fixed;
+                z-index: 9999;
+                bottom: 40px;
+                transition: bottom 0.3s ease;
+            }
+        </style>
     </head>
 
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide overflow-x-hidden">
@@ -25,7 +34,7 @@
             <jsp:include page="../common/sidebar.jsp"></jsp:include>
         </aside>
         <div id="app" class="pb-12">
-            
+
             <!-- Swiper 배너 -->
             <div class="relative w-full h-[600px]">
                 <!-- ✅ 전체 어두운 오버레이 -->
@@ -102,9 +111,12 @@
                                         <span>👤 {{ item.userFirstname }} {{ item.userLastname || '' }}</span>
                                         <div class="flex items-center gap-1 text-gray-600">
                                             <span>⭐ 평점:</span>
-                                            <star-rating :rating="item.rating" :read-only="true" :star-size="14"
-                                                :increment="1" :border-width="3" :show-rating="false"
-                                                :rounded-corners="true" class="inline-block align-middle"></star-rating>
+                                            <template v-if="showRating && typeof item.rating === 'number'">
+                                                <star-rating :rating="item.rating" :read-only="true" :star-size="14"
+                                                    :increment="1" :border-width="3" :show-rating="false"
+                                                    :rounded-corners="true"
+                                                    class="inline-block align-middle"></star-rating>
+                                            </template>
                                         </div>
                                     </div>
                                     <!-- 🕒 작성일 -->
@@ -150,8 +162,11 @@
                     sessionId: "${sessionId}",
                     userInput: "",
                     messages: [],
+                    bottomOffset: 40,
                     showChat: false,
+                    showWeather: false,
                     reviewList: [],
+                    showRating: false,
                 };
             },
 
@@ -279,6 +294,9 @@
                         success: function (data) {
                             console.log('리뷰 데이타 : ', data);
                             self.reviewList = data.reviewList;
+                            setTimeout(() => {
+                                self.showRating = true;
+                            }, 500); // 또는 300ms까지도 시도
                         }
                     });
                 }
@@ -313,9 +331,32 @@
                         console.log("세션 로딩이 아직 안됨");
                     }
                 }, 300);
+
                 self.fnGetReviewList();
             }
         });
+
         app.component('star-rating', VueStarRating.default);
         app.mount('#app');
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            window.addEventListener("scroll", () => {
+                const footer = document.querySelector("#footer");
+                const gtranslate = document.querySelector("#gt_float_wrapper");
+                if (!footer || !gtranslate) return;
+                const scrollBottom = window.scrollY + window.innerHeight;
+                const footerTop = footer.getBoundingClientRect().top + window.scrollY;
+                const footerHeight = footer.offsetHeight;
+                const baseOffset = 20;
+                const buffer = 80;
+                if (scrollBottom >= footerTop - buffer) {
+                    offset = (scrollBottom - footerTop) + 60;
+                } else {
+                    offset = baseOffset;
+                }
+                gtranslate.style.setProperty("bottom", offset + "px", "important");
+            });
+        });
     </script>
