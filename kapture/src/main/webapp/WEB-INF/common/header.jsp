@@ -14,7 +14,7 @@
     <body class="bg-white text-gray-800 text-[16px] tracking-wide">
 
         <!-- 번역 위젯 -->
-        <div class="gtranslate-wrapper fixed bottom-20 left-4 sm:bottom-24 md:bottom-28 z-50">
+        <div class="gtranslate-wrapper fixed left-4 z-50" style="bottom: 80px;">
             <div class="gtranslate_wrapper"></div>
         </div>
 
