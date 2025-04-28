@@ -9,14 +9,16 @@
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90%;
-				margin: 20px auto;
+				width: 100%;
+				margin: 20px 0;
 				border-collapse: collapse;
 				font-size: 14px;
 			}
 
 			.content th,
 			.content td {
+				word-break: break-word;
+				white-space: normal;
 				border: 1px solid #ccc;
 				padding: 10px;
 				text-align: center;
@@ -25,27 +27,6 @@
 
 			.content th {
 				background-color: #f4f4f4;
-			}
-
-			/* 이미지 스타일 */
-			.guide-img {
-				width: 60px;
-				height: 60px;
-				object-fit: cover;
-				/* 이미지가 잘리지 않도록 조정 */
-				border-radius: 5px;
-			}
-
-			/* "No Image" 문구 표시 스타일 */
-			.no-image {
-				width: 60px;
-				height: 60px;
-				border: 1px dashed #999999;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				color: #999;
-				font-size: 12px;
 			}
 
 			/* 체크박스와 관리 버튼 예시 */
@@ -63,18 +44,13 @@
 				background-color: #0056b3;
 			}
 
-			/* 전체 선택 체크박스 스타일 (th 안) */
-			.check-all {
-				cursor: pointer;
-			}
-
 			/* 제목 스타일 */
 			.page-title {
 				text-align: center;
 				font-size: 24px;
 				font-weight: bold;
 				margin-top: 20px;
-				margin-left: 220px;
+				margin-left: 240px;
 				/* 사이드바 너비(200px) + 여백(20px) */
 				padding: 20px;
 				display: flex;
@@ -118,22 +94,32 @@
 			}
 
 			.modal-header {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				width: 95%;
-				margin-bottom: 15px;
-			}
+                position: relative;
+                height: 60px;
+                /* 높이 지정 (필수) */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
 
-			.modal-header h2 {
-				margin: 0;
-				font-weight: bold;
-			}
+            .modal-header h2 {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+                font-weight: bold;
+                font-size: 22px;
+            }
 
-			.close-btn {
-				font-size: 28px;
-				cursor: pointer;
-			}
+            .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 28px;
+                cursor: pointer;
+            }
 
 			/* 모달 내부 폼 스타일 예시 */
 			.modal-form label {
@@ -189,48 +175,6 @@
 			.modal-validation {
 				font-size: 13px;
 				line-height: 1.4;
-			}
-
-			/* content-area 및 custom 버튼 스타일 (일정 모달 내부) */
-			.content-area {
-				width: 100%;
-			}
-
-			.custom-buttons {
-				list-style: none;
-				padding: 0;
-				margin: 0 0 10px 0;
-				display: flex;
-				gap: 10px;
-				justify-content: center;
-			}
-
-			.custom-button {
-				display: flex;
-				align-items: center;
-				font-size: 14px;
-			}
-
-			.custom-button .dot {
-				margin-right: 4px;
-			}
-
-			.fc-event-title {
-				white-space: normal !important;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-				/* 최대 2줄로 표시 */
-				line-clamp: 2;
-			}
-
-			.profile-upload-container {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				/* 요소 사이 간격 */
 			}
 
 			/* 라디오 버튼 전용 컨테이너 */
@@ -289,8 +233,8 @@
 			}
 
 			.search-container {
-				width: 90%;
-				margin: 20px auto;
+				width: 100%;
+				margin: 20px 0;
 			}
 
 			.tab-btn {
@@ -319,7 +263,7 @@
 			<div class="content">
 				<div class="search-container">
 					<input type="date" v-model="startDate" class="search-date">
-					~
+					~　
 					<input type="date" v-model="endDate" class="search-date">
 					<select v-model="statusFilter" class="search-select">
 						<option value="">전체</option>
@@ -386,7 +330,7 @@
 								<!-- 알림 동의 -->
 								<td>{{user.pushYN}}</td>
 								<!-- 최근접속 -->
-								<td>{{user.lastLogin}}</td>
+								<td>{{user.lastLogin.substring(0, 10)}}</td>
 								<!-- 상태 -->
 								<td v-if="user.unregisterYN === 'N'">회원</td>
 								<td v-else>탈퇴</td>
@@ -412,124 +356,123 @@
 					</div>
 				</div>
 				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
-			</div>
+				<div v-if="showEditModal" class="modal-overlay" @click.self="fnUserEditClose()">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h2>회원 정보 수정</h2>
+							<span class="close-btn" @click="fnUserEditClose()">&times;</span>
+						</div>
+						<div class="modal-form">
+							<!-- 이메일 -->
+							<div class="form-group">
+								<label>이메일</label>
+								<input type="text" v-model="editUser.email" placeholder="이메일" />
+							</div>
+							<!-- 이름 -->
+							<div class="form-group">
+								<label>First Name</label>
+								<input type="text" v-model="editUser.userFirstName" />
+							</div>
+							<div class="form-group">
+								<label>Last Name</label>
+								<input type="text" v-model="editUser.userLastName" placeholder="Last Name" />
+							</div>
+							<!-- 비밀번호 -->
+							<div class="form-group">
+								<label>비밀번호</label>
+								<input type="password" v-model="password" @input="validateNewPassword" />
+								<div v-if="password.length > 0 && !passwordValid" class="modal-validation">
+									<div :style="{ color: passwordRules.length ? 'green' : 'red' }">
+										{{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters'}}
+									</div>
+									<div :style="{ color: passwordRules.number ? 'green' : 'red' }">
+										{{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
+									</div>
+									<div :style="{ color: passwordRules.upper ? 'green' : 'red' }">
+										{{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
+									</div>
+									<div :style="{ color: passwordRules.lower ? 'green' : 'red' }">
+										{{ passwordRules.lower ? '✅ At least one lowercase letter' : '❌ At least one lowercase letter' }}
+									</div>
+									<div :style="{ color: passwordRules.special ? 'green' : 'red' }">
+										{{ passwordRules.special ? '✅ At least one special character' : '❌ At least one special character' }}
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label>비밀번호 확인</label>
+								<input type="password" v-model="confirmPassword" @input="validateNewPassword" />
+								<div v-if="confirmPassword.length > 0 && passwordValid" class="modal-validation"
+									:style="{ color: passwordsMatch ? 'green' : 'red' }">
+									{{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
+								</div>
+							</div>
+							<!-- 성별 -->
+							<div class="form-group">
+								<label>성별</label>
+								<div class="radio-container">
+									<label><input type="radio" value="M" v-model="editUser.gender" />남성</label>
+									<label><input type="radio" value="F" v-model="editUser.gender" />여성</label>
+								</div>
+							</div>
+							<!-- 연락처 -->
+							<div class="form-group">
+								<label>연락처</label>
+								<input type="text" v-model="editUser.phone" />
+							</div>
+							<!-- 생년월일 -->
+							<div class="form-group">
+								<label>생년월일</label>
+								<input type="date" v-model="editUser.birthday" />
+							</div>
+							<!-- 주소 -->
+							<div class="form-group">
+								<label>주소</label>
+								<input type="text" v-model="editUser.address" />
+							</div>
+							<!-- 역할 -->
+							<div class="form-group">
+								<label>역할</label>
+								<select v-model="editUser.role">
+									<option value="TOURIST">일반회원</option>
+									<option value="GUIDE">가이드</option>
+									<option value="ADMIN">관리자</option>
+								</select>
+							</div>
+							<!-- 국적 -->
+							<div class="form-group">
+								<label>국적</label>
+								<input type="text" v-model="editUser.isForeigner" />
+							</div>
+							<!-- 소셜타입 -->
+							<div class="form-group">
+								<label>소셜타입</label>
+								<input type="text" v-model="editUser.socialType" />
+							</div>
+							<!-- 알림동의 -->
+							<div class="form-group">
+								<label>알림동의</label>
+								<div class="radio-container">
+									<label><input type="radio" value="Y" v-model="editUser.pushYN" />예</label>
+									<label><input type="radio" value="N" v-model="editUser.pushYN" />아니요</label>
+								</div>
+							</div>
+							<!-- 상태 -->
+							<div class="form-group">
+								<label>상태</label>
+								<input type="text" v-model="editUser.unregisterYN" />
+							</div>
+							<!-- 저장 / 취소 -->
+							<div>
+								<button @click="fnSaveUser(editUser.userNo)">저장하기</button>
+								<button @click="fnUserEditClose">취소</button>
+							</div>
+						</div>
 
-			<div v-if="showEditModal" class="modal-overlay" @click.self="fnUserEditClose()">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h2>회원 정보 수정</h2>
-						<span class="close-btn" @click="fnUserEditClose()">&times;</span>
 					</div>
-					<div class="modal-form">
-						<!-- 이메일 -->
-						<div class="form-group">
-							<label>이메일</label>
-							<input type="text" v-model="editUser.email" placeholder="이메일" />
-						</div>
-						<!-- 이름 -->
-						<div class="form-group">
-							<label>First Name</label>
-							<input type="text" v-model="editUser.userFirstName" />
-						</div>
-						<div class="form-group">
-							<label>Last Name</label>
-							<input type="text" v-model="editUser.userLastName" placeholder="Last Name" />
-						</div>
-						<!-- 비밀번호 -->
-						<div class="form-group">
-							<label>비밀번호</label>
-							<input type="password" v-model="password" @input="validateNewPassword" />
-							<div v-if="password.length > 0 && !passwordValid" class="modal-validation">
-								<div :style="{ color: passwordRules.length ? 'green' : 'red' }">
-									{{ passwordRules.length ? '✅ At least 6 characters' : '❌ At least 6 characters'}}
-								</div>
-								<div :style="{ color: passwordRules.number ? 'green' : 'red' }">
-									{{ passwordRules.number ? '✅ At least one number' : '❌ At least one number' }}
-								</div>
-								<div :style="{ color: passwordRules.upper ? 'green' : 'red' }">
-									{{ passwordRules.upper ? '✅ At least one uppercase letter' : '❌ At least one uppercase letter' }}
-								</div>
-								<div :style="{ color: passwordRules.lower ? 'green' : 'red' }">
-									{{ passwordRules.lower ? '✅ At least one lowercase letter' : '❌ At least one lowercase letter' }}
-								</div>
-								<div :style="{ color: passwordRules.special ? 'green' : 'red' }">
-									{{ passwordRules.special ? '✅ At least one special character' : '❌ At least one special character' }}
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label>비밀번호 확인</label>
-							<input type="password" v-model="confirmPassword" @input="validateNewPassword" />
-							<div v-if="confirmPassword.length > 0 && passwordValid" class="modal-validation"
-								:style="{ color: passwordsMatch ? 'green' : 'red' }">
-								{{ passwordsMatch ? '✅ Passwords match.' : '❌ Passwords do not match.' }}
-							</div>
-						</div>
-						<!-- 성별 -->
-						<div class="form-group">
-							<label>성별</label>
-							<div class="radio-container">
-								<label><input type="radio" value="M" v-model="editUser.gender" />남성</label>
-								<label><input type="radio" value="F" v-model="editUser.gender" />여성</label>
-							</div>
-						</div>
-						<!-- 연락처 -->
-						<div class="form-group">
-							<label>연락처</label>
-							<input type="text" v-model="editUser.phone" />
-						</div>
-						<!-- 생년월일 -->
-						<div class="form-group">
-							<label>생년월일</label>
-							<input type="date" v-model="editUser.birthday" />
-						</div>
-						<!-- 주소 -->
-						<div class="form-group">
-							<label>주소</label>
-							<input type="text" v-model="editUser.address" />
-						</div>
-						<!-- 역할 -->
-						<div class="form-group">
-							<label>역할</label>
-							<select v-model="editUser.role">
-								<option value="TOURIST">일반회원</option>
-								<option value="GUIDE">가이드</option>
-								<option value="ADMIN">관리자</option>
-							</select>
-						</div>
-						<!-- 국적 -->
-						<div class="form-group">
-							<label>국적</label>
-							<input type="text" v-model="editUser.isForeigner" />
-						</div>
-						<!-- 소셜타입 -->
-						<div class="form-group">
-							<label>소셜타입</label>
-							<input type="text" v-model="editUser.socialType" />
-						</div>
-						<!-- 알림동의 -->
-						<div class="form-group">
-							<label>알림동의</label>
-							<div class="radio-container">
-								<label><input type="radio" value="Y" v-model="editUser.pushYN" />예</label>
-								<label><input type="radio" value="N" v-model="editUser.pushYN" />아니요</label>
-							</div>
-						</div>
-						<!-- 상태 -->
-						<div class="form-group">
-							<label>상태</label>
-							<input type="text" v-model="editUser.unregisterYN" />
-						</div>
-						<!-- 저장 / 취소 -->
-						<div>
-							<button @click="fnSaveUser(editUser.userNo)">저장하기</button>
-							<button @click="fnUserEditClose">취소</button>
-						</div>
-					</div>
-
 				</div>
+				<!-- [모달 끝] -->
 			</div>
-			<!-- [모달 끝] -->
 		</div>
 	</body>
 

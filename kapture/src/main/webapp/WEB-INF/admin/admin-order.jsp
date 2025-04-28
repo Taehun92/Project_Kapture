@@ -8,20 +8,13 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <style>
-            body {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                font-family: Arial, sans-serif;
-            }
-
             /* 제목 스타일 */
             .page-title {
                 text-align: center;
                 font-size: 24px;
                 font-weight: bold;
                 /* margin-top: 20px; */
-                margin-left: 220px;
+                margin-left: 240px;
                 /* 사이드바 너비(200px) + 여백(20px) */
                 padding: 20px;
                 display: flex;
@@ -32,12 +25,6 @@
 
             .title-hr {
                 margin-bottom: 30px;
-            }
-
-            #app {
-                margin-left: 220px;
-                padding: 20px;
-                width: calc(100% - 220px);
             }
 
             .tab-btn {
@@ -154,17 +141,29 @@
             }
 
             .modal-header {
+                position: relative;
+                height: 60px;
+                /* 높이 지정 (필수) */
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                margin-bottom: 15px;
+                justify-content: center;
+                width: 100%;
             }
 
             .modal-header h2 {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
                 margin: 0;
+                font-weight: bold;
+                font-size: 22px;
             }
 
             .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
                 font-size: 28px;
                 cursor: pointer;
             }
@@ -179,31 +178,8 @@
                 margin-top: 10px;
             }
 
-            .modal-body th,
-            .modal-body td {
-                border: 1px solid #ddd;
-                padding: 8px;
-                text-align: left;
-            }
-
-            .modal-body th {
-                background-color: #f9f9f9;
-            }
-
             .modal-footer {
                 text-align: right;
-            }
-
-            .modal-footer button {
-                padding: 6px 12px;
-                cursor: pointer;
-                border: 1px solid #ccc;
-                background-color: #f5f5f5;
-                border-radius: 4px;
-            }
-
-            .modal-footer button:hover {
-                background-color: #eaeaea;
             }
 
             .table-button {
@@ -232,148 +208,152 @@
             <!-- 제목 추가 -->
             <div class="page-title">주문내역 관리</div>
             <hr class="title-hr">
-            <input type="date" v-model="startDate" class="search-date">
-            ~
-            <input type="date" v-model="endDate" class="search-date">
-            <select v-model="statusFilter" class="search-select">
-                <option value="">전체</option>
-                <option value="결제완료">결제완료</option>
-                <option value="거래완료">거래완료</option>
-                <option value="환불요청">환불요청</option>
-                <option value="환불완료">환불완료</option>
-            </select>
-            <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
-                placeholder="상태 검색">
-            <button class="search-button" @click="loadFilteredData">검색</button>
-            <div v-if="loaded">
-                <table class="transaction-table">
-                    <thead>
-                        <tr>
-                            <th>상품 번호</th>
-                            <th>결제일</th>
-                            <th>회원 이름</th>
-                            <th>상품 제목</th>
-                            <th>여행 날짜</th>
-                            <th>여행 기간</th>
-                            <th>결제 금액</th>
-                            <th>상태</th>
-                            <th>인원</th>
-                            <th>정보</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="transactions.length === 0">
-                            <td colspan="10">검색 결과가 없습니다.</td>
-                        </tr>
-                        <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
-                            <td>{{ item.TOUR_NO }}</td>
-                            <td v-html="formatDate(item.PAYMENT_DATE)"></td>
-                            <td>
-                                {{ item.USER_FIRSTNAME }}
-                                <template v-if="item.USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
-                            </td>
-                            <td>{{ item.TITLE }}</td>
-                            <td v-html="formatDate(item.TOUR_DATE)"></td>
-                            <td>{{ item.DURATION }}</td>
-                            <td>{{ formatCurrency(item.AMOUNT) }}</td>
-                            <td
-                                :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
-                                {{ item.PAYMENT_STATUS }}
-                                <div v-if="item.PAYMENT_STATUS === '환불요청'">
-                                    <button class="refunded-button" @click="fnRefunded(item.PAYMENT_NO)">환불처리</button>
-                                </div>
-                            </td>
-                            <td>{{ item.NUM_PEOPLE }}명</td>
-                            <td>
-                                <button class="table-button" @click="fnGetOrderInfo(item)">보기</button>
-                                <button class="table-button" @click="fnRemoveOrder(item.PAYMENT_NO)">삭제</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                    @click="goPage(p)">
-                    {{ p }}
-                </button>
-                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
-            </div>
-            <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
-            <div v-if="showEditModal" class="order-modal" @click.self="fnEditOrderClose">
-                <div class="modal-overlay" @click="fnEditOrderClose"></div>
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>주문 상세 정보</h2>
-                        <span class="close-btn" @click="fnEditOrderClose">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <!-- 주문회원정보 -->
-                        <div class="info-section">
-                            <h3>주문회원정보</h3>
-                            <table>
-                                <tr>
-                                    <th>이름</th>
-                                    <td>
-                                        {{ editOrderInfo.USER_FIRSTNAME }}
-                                        <template v-if="editOrderInfo.USER_LASTNAME != 'N/A'">
-                                            {{ editOrderInfo.USER_LASTNAME }}
-                                        </template>
-                                    </td>
-                                    <th>연락처</th>
-                                    <td>{{ editOrderInfo.PHONE }}</td>
-                                </tr>
-                                <tr>
-                                    <th>이메일</th>
-                                    <td>{{ editOrderInfo.EMAIL }}</td>
-                                    <th>국적</th>
-                                    <td v-if="editOrderInfo.ISFOREIGNER === 'Y'">외국인</td>
-                                    <td v-else>내국인</td>
-                                </tr>
-                            </table>
+            <div class="content">
+                <input type="date" v-model="startDate" class="search-date">
+                ~　
+                <input type="date" v-model="endDate" class="search-date">
+                <select v-model="statusFilter" class="search-select">
+                    <option value="">전체</option>
+                    <option value="결제완료">결제완료</option>
+                    <option value="거래완료">거래완료</option>
+                    <option value="환불요청">환불요청</option>
+                    <option value="환불완료">환불완료</option>
+                </select>
+                <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                    placeholder="상태 검색">
+                <button class="search-button" @click="loadFilteredData">검색</button>
+                <div v-if="loaded">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>상품 번호</th>
+                                <th>결제일</th>
+                                <th>회원 이름</th>
+                                <th>상품 제목</th>
+                                <th>여행 날짜</th>
+                                <th>여행 기간</th>
+                                <th>결제 금액</th>
+                                <th>상태</th>
+                                <th>인원</th>
+                                <th>정보</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="transactions.length === 0">
+                                <td colspan="10">검색 결과가 없습니다.</td>
+                            </tr>
+                            <tr v-for="item in transactions"
+                                :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
+                                <td>{{ item.TOUR_NO }}</td>
+                                <td v-html="formatDate(item.PAYMENT_DATE)"></td>
+                                <td>
+                                    {{ item.USER_FIRSTNAME }}
+                                    <template v-if="item.USER_LASTNAME != 'N/A'">{{ item.USER_LASTNAME }}</template>
+                                </td>
+                                <td>{{ item.TITLE }}</td>
+                                <td v-html="formatDate(item.TOUR_DATE)"></td>
+                                <td>{{ item.DURATION }}</td>
+                                <td>{{ formatCurrency(item.AMOUNT) }}</td>
+                                <td
+                                    :style="{ color: (item.PAYMENT_STATUS === '결제완료' || item.PAYMENT_STATUS === '거래완료')  ? 'green' : item.PAYMENT_STATUS === '환불요청' ? 'red' : 'blue' }">
+                                    {{ item.PAYMENT_STATUS }}
+                                    <div v-if="item.PAYMENT_STATUS === '환불요청'">
+                                        <button class="refunded-button"
+                                            @click="fnRefunded(item.PAYMENT_NO)">환불처리</button>
+                                    </div>
+                                </td>
+                                <td>{{ item.NUM_PEOPLE }}명</td>
+                                <td>
+                                    <button class="table-button" @click="fnGetOrderInfo(item)">보기</button>
+                                    <button class="table-button" @click="fnRemoveOrder(item.PAYMENT_NO)">삭제</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                    <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                        @click="goPage(p)">
+                        {{ p }}
+                    </button>
+                    <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                </div>
+                <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
+                <div v-if="showEditModal" class="order-modal" @click.self="fnEditOrderClose">
+                    <div class="modal-overlay" @click="fnEditOrderClose"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>주문 상세 정보</h2>
+                            <span class="close-btn" @click="fnEditOrderClose">&times;</span>
                         </div>
-                        <!-- 예약 여행 정보 -->
-                        <div class="info-section">
-                            <h3>예약 여행 정보</h3>
-                            <table>
-                                <tr>
-                                    <th>결제번호</th>
-                                    <td>{{ editOrderInfo.PAYMENT_NO }}</td>
-                                    <th>결제일시</th>
-                                    <td v-html="formatDate(editOrderInfo.PAYMENT_DATE)"></td>
-                                </tr>
-                                <tr>
-                                    <th>상품 제목</th>
-                                    <td>{{ editOrderInfo.TITLE }}</td>
-                                    <th>여행 날짜</th>
-                                    <td v-html="formatDate(editOrderInfo.TOUR_DATE)"></td>
-                                </tr>
-                                <tr>
-                                    <th>인원</th>
-                                    <td>{{ editOrderInfo.NUM_PEOPLE }}명</td>
-                                    <th>여행 기간</th>
-                                    <td>{{ editOrderInfo.DURATION }}</td>
-                                </tr>
-                                <tr>
-                                    <th>결제상태</th>
-                                    <td>
-                                        <select v-model="editPaymentStatus" class="search-select">
-                                            <option value="결제완료">결제완료</option>
-                                            <option value="거래완료">거래완료</option>
-                                            <option value="환불요청">환불요청</option>
-                                            <option value="환불완료">환불완료</option>
-                                        </select>
-                                    </td>
-                                    <th>결제금액</th>
-                                    <td>{{ formatCurrency(editOrderInfo.AMOUNT) }}</td>
-                                </tr>
-                            </table>
+                        <div class="modal-body">
+                            <!-- 주문회원정보 -->
+                            <div class="info-section">
+                                <h3>주문회원정보</h3>
+                                <table class="transaction-table">
+                                    <tr>
+                                        <th>이름</th>
+                                        <td>
+                                            {{ editOrderInfo.USER_FIRSTNAME }}
+                                            <template v-if="editOrderInfo.USER_LASTNAME != 'N/A'">
+                                                {{ editOrderInfo.USER_LASTNAME }}
+                                            </template>
+                                        </td>
+                                        <th>연락처</th>
+                                        <td>{{ editOrderInfo.PHONE }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>이메일</th>
+                                        <td>{{ editOrderInfo.EMAIL }}</td>
+                                        <th>국적</th>
+                                        <td v-if="editOrderInfo.ISFOREIGNER === 'Y'">외국인</td>
+                                        <td v-else>내국인</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <!-- 예약 여행 정보 -->
+                            <div class="info-section">
+                                <h3>예약 여행 정보</h3>
+                                <table class="transaction-table">
+                                    <tr>
+                                        <th>결제번호</th>
+                                        <td>{{ editOrderInfo.PAYMENT_NO }}</td>
+                                        <th>결제일시</th>
+                                        <td v-html="formatDate(editOrderInfo.PAYMENT_DATE)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>상품 제목</th>
+                                        <td>{{ editOrderInfo.TITLE }}</td>
+                                        <th>여행 날짜</th>
+                                        <td v-html="formatDate(editOrderInfo.TOUR_DATE)"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>인원</th>
+                                        <td>{{ editOrderInfo.NUM_PEOPLE }}명</td>
+                                        <th>여행 기간</th>
+                                        <td>{{ editOrderInfo.DURATION }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>결제상태</th>
+                                        <td>
+                                            <select v-model="editPaymentStatus" class="search-select">
+                                                <option value="결제완료">결제완료</option>
+                                                <option value="거래완료">거래완료</option>
+                                                <option value="환불요청">환불요청</option>
+                                                <option value="환불완료">환불완료</option>
+                                            </select>
+                                        </td>
+                                        <th>결제금액</th>
+                                        <td>{{ formatCurrency(editOrderInfo.AMOUNT) }}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button @click="fnSaveOrderInfo">저장</button>
+                        <div class="modal-footer">
+                            <button class="table-button" @click="fnSaveOrderInfo">저장</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -442,11 +422,8 @@
                         let year = d.getFullYear();
                         let month = ('0' + (d.getMonth() + 1)).slice(-2);
                         let day = ('0' + d.getDate()).slice(-2);
-                        let hours = ('0' + d.getHours()).slice(-2);
-                        let minutes = ('0' + d.getMinutes()).slice(-2);
-                        let seconds = ('0' + d.getSeconds()).slice(-2);
 
-                        return year + "-" + month + "-" + day + "<div>" + hours + ":" + minutes + ":" + seconds + "</div>";
+                        return year + "-" + month + "-" + day;
                     },
                     fnRefunded(paymentNo) {
                         let self = this;
