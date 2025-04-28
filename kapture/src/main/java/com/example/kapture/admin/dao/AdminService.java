@@ -663,17 +663,36 @@ public class AdminService {
 		 // TODO Auto-generated method stub
 		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		 try {
-			 List<Partnership> list = adminMapper.selectPartnershipList(map);
-			 int totalCount = adminMapper.selectPartnershipListCount(map);
-			    
-			 resultMap.put("totalCount", totalCount);
-			 resultMap.put("partnershipList", list);
-			 resultMap.put("result",list != null ? "success" : "fail");
+			 List<Partnership> waitingList = adminMapper.selectWaitingPartnershipList(map);
+			 int countWaiting = adminMapper.countWaitingPartnership(map);
+			 List<Partnership> approvedList = adminMapper.selectApprovedPartnershipList(map);
+			 int countApproved = adminMapper.countApprovedPartnership(map);
+			 
+			 resultMap.put("result", "success");
+			 resultMap.put("waitingList", waitingList);
+			 resultMap.put("countWaiting", countWaiting);
+			 resultMap.put("approvedList", approvedList);
+			 resultMap.put("countApproved", countApproved);
 		 } catch (Exception e) {
 		     System.out.println(e.getMessage());
 			 resultMap.put("result", e.getMessage());
 		 }
 		 return resultMap;
 	 }
+	 // 제휴문의 수정
+	 public HashMap<String, Object> editPartnership(HashMap<String, Object> map) {
+		 // TODO Auto-generated method stub
+		 HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		 try {
+			 System.out.println(map.get("psStatus"));
+			 int result = adminMapper.updatePartnership(map);
+			 
+			 resultMap.put("result", result > 0 ? "success" : "fail");
+		 } catch (Exception e) {
+			 System.out.println(e.getMessage());
+			 resultMap.put("result", e.getMessage());
+		 }
+		 return resultMap;
+	}
 
 }

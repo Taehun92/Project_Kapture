@@ -144,6 +144,33 @@
                 color: white;
             }
 
+            .status-wait {
+                background-color: #ffd400;
+                /* 노란색 */
+                color: white;
+                font-weight: bold;
+                padding: 6px 12px;
+                border-radius: 6px;
+            }
+
+            .status-done {
+                background-color: #007bff;
+                /* 파란색 */
+                color: white;
+                font-weight: bold;
+                padding: 6px 12px;
+                border-radius: 6px;
+            }
+
+            .status-reject {
+                background-color: #dc3545;
+                /* 빨간색 */
+                color: white;
+                font-weight: bold;
+                padding: 6px 12px;
+                border-radius: 6px;
+            }
+
             [v-cloak] {
                 display: none;
             }
@@ -160,22 +187,6 @@
             <hr>
             <div class="content">
                 <!-- 제휴문의 -->
-                <div class="search-container">
-                    <input type="date" v-model="startDate" class="search-date">
-                    ~
-                    <input type="date" v-model="endDate" class="search-date">
-                    <select v-model="statusFilter" class="search-select">
-                        <option value="">전체</option>
-                        <option value="partnershipNo">제휴번호</option>
-                        <option value="name">이름</option>
-                        <option value="email">이메일</option>
-                        <option value="title">제목</option>
-                        <option value="psStatus">제휴상태</option>
-                    </select>
-                    <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
-                        placeholder="제휴번호/이름/이메일/제목/제휴상태 검색">
-                    <button class="search-button" @click="loadFilteredData">검색</button>
-                </div>
                 <div v-if="loaded">
                     <table>
                         <thead>
@@ -192,12 +203,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="partnershipList.length === 0">
-                                <td colspan="10">검색 결과가 없습니다.</td>
+                            <tr v-if="waitingList.length === 0">
+                                <td colspan="10">데이터가 없습니다.</td>
                             </tr>
                             <!-- 제휴문의 리스트 반복 출력 -->
-                            <template v-for="partnership in partnershipList">
-                                <tr v-if="partnership.psStatus === '승인대기'">
+                            <template v-for="partnership in waitingList">
+                                <tr v-if="partnership.psStatus != '승인완료'">
                                     <!-- 제휴번호 -->
                                     <td>{{ partnership.partnershipNo }}</td>
                                     <!-- 이름 -->
@@ -211,11 +222,17 @@
                                     <!-- 내용 -->
                                     <td>{{ partnership.content }}</td>
                                     <!-- 제휴상태 -->
-                                    <td>{{partnership.psStatus}}</td>
+                                    <td :class="{
+                                        'status-wait': partnership.psStatus === '승인대기',
+                                        'status-done': partnership.psStatus === '승인완료',
+                                        'status-reject': partnership.psStatus === '승인거부'
+                                      }">
+                                        {{partnership.psStatus}}
+                                    </td>
                                     <!-- 신청일-->
                                     <td>{{ partnership.psCreatedAt }}</td>
                                     <td>
-                                        <select v-model="partnership.psStatus" @change="fnStatusEdit">
+                                        <select v-model="partnership.psStatus" @change="fnStatusEdit(partnership)">
                                             <option value="승인대기">승인대기</option>
                                             <option value="승인완료">승인완료</option>
                                             <option value="승인거부">승인거부</option>
@@ -226,32 +243,19 @@
                         </tbody>
                     </table>
                     <div style="margin-top: 20px; text-align: center;">
-                        <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                        <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                            @click="goPage(p)">
+                        <button class="tab-btn" @click="waitingPage--; fnGetPartnershipList"
+                            :disabled="waitingPage === 1">이전</button>
+                        <button v-for="p in waitingPages" :key="p" class="tab-btn"
+                            :class="{ active: p === waitingPage }" @click="waitingPage=p; fnGetPartnershipList">
                             {{ p }}
                         </button>
-                        <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                        <button class="tab-btn" @click="waitingPage++; fnGetPartnershipList"
+                            :disabled="waitingPage === waitingPages">다음</button>
                     </div>
                 </div>
                 <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
                 <hr>
                 <!-- 제휴 중 -->
-                <div class="search-container">
-                    <input type="date" v-model="startDate" class="search-date">
-                    ~
-                    <input type="date" v-model="endDate" class="search-date">
-                    <select v-model="statusFilter" class="search-select">
-                        <option value="">전체</option>
-                        <option value="partnershipNo">제휴번호</option>
-                        <option value="name">이름</option>
-                        <option value="email">이메일</option>
-                        <option value="title">제목</option>
-                    </select>
-                    <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
-                        placeholder="제휴번호/이름/이메일/제목 검색">
-                    <button class="search-button" @click="loadFilteredData">검색</button>
-                </div>
                 <div v-if="loaded">
                     <table>
                         <thead>
@@ -267,11 +271,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="partnershipList.length === 0">
-                                <td colspan="10">검색 결과가 없습니다.</td>
+                            <tr v-if="approvedList.length === 0">
+                                <td colspan="10">데이터가 없습니다.</td>
                             </tr>
                             <!-- 제휴문의 리스트 반복 출력 -->
-                            <template v-for="partnership in partnershipList">
+                            <template v-for="partnership in approvedList">
                                 <tr v-if="partnership.psStatus === '승인완료'">
                                     <!-- 제휴번호 -->
                                     <td>{{ partnership.partnershipNo }}</td>
@@ -297,12 +301,14 @@
                         </tbody>
                     </table>
                     <div style="margin-top: 20px; text-align: center;">
-                        <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                        <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                            @click="goPage(p)">
+                        <button class="tab-btn" @click="approvedPage--; fnGetPartnershipList"
+                            :disabled="approvedPage === 1">이전</button>
+                        <button v-for="p in approvedPages" :key="p" class="tab-btn"
+                            :class="{ active: p === approvedPage }" @click="approvedPage=p; fnGetPartnershipList">
                             {{ p }}
                         </button>
-                        <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                        <button class="tab-btn" @click="approvedPage++; fnGetPartnershipList"
+                            :disabled="approvedPage === approvedPages">다음</button>
                     </div>
                 </div>
                 <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
@@ -358,9 +364,9 @@
                             <tr>
                                 <td style="background-color: #f4f4f4; text-align: center; 
 										   border: 1px solid #ccc; padding: 10px;">
-                                    제목
+                                    이메일
                                 </td>
-                                <td style="border: 1px solid #ccc; padding: 10px;">
+                                <td colspan="3" style="border: 1px solid #ccc; padding: 10px;">
                                     <input type="text" v-model="partnershipInfo.email" readonly
                                         style="width: 97%; padding: 5px;" />
                                 </td>
@@ -370,7 +376,7 @@
 										   border: 1px solid #ccc; padding: 10px;">
                                     제목
                                 </td>
-                                <td style="border: 1px solid #ccc; padding: 10px;">
+                                <td colspan="3" style="border: 1px solid #ccc; padding: 10px;">
                                     <input type="text" v-model="partnershipInfo.title" readonly
                                         style="width: 97%; padding: 5px;" />
                                 </td>
@@ -381,7 +387,7 @@
 										   border: 1px solid #ccc; padding: 10px;">
                                     문의내용
                                 </td>
-                                <td style="border: 1px solid #ccc; padding: 10px;">
+                                <td colspan="3" style="border: 1px solid #ccc; padding: 10px;">
                                     <textarea v-model="partnershipInfo.content" readonly
                                         style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
                                 </td>
@@ -389,7 +395,7 @@
                         </tbody>
                     </table>
                     <div style="margin-top: 20px;">
-                        <button class="btn-manage" @click="fnStatusEdit">저장</button>
+                        <button class="btn-manage" @click="fnStatusEdit()">저장</button>
                     </div>
                 </div>
             </div>
@@ -402,37 +408,30 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    partnershipList: [],
+                    waitingList: [],
+                    approvedList: [],
                     sessionId: "${sessionId}",
                     sessionRole: "${sessionRole}",
                     showPartnershipModal: false,// 답변 모달 표시 여부
                     partnershipInfo: {},
                     editPsStatus: null, // 현재 선택된 문의 정보
-                    startDate: "",
-                    endDate: "",
-                    keyword: "",
-                    page: 1,
+                    waitingPage: 1,
+                    approvedPage: 1,
                     size: 10,
-                    totalCount: 0,
-                    totalPages: 1,
-                    statusFilter: "",
+                    countWaiting: 0,
+                    waitingPages: 1,
+                    countApproved: 0,
+                    approvedPages: 1,
                     loaded: false
                 };
             },
             methods: {
-                loadFilteredData() {
-                    this.page = 1;
-                    this.fnGetPartnershipList();
-                },
                 // 문의 목록 불러오기
                 fnGetPartnershipList() {
                     let self = this;
                     let nparmap = {
-                        startDate: self.startDate,
-                        endDate: self.endDate,
-                        statusFilter: self.statusFilter,
-                        keyword: self.keyword,
-                        page: self.page,
+                        waitingPage: self.waitingPage,
+                        approvedPage: self.approvedPage,
                         size: self.size,
                     };
                     $.ajax({
@@ -441,11 +440,17 @@
                         type: "POST",
                         data: nparmap,
                         success: function (data) {
+                            console.log("데이터-=========== ");
                             console.log(data);
                             if (data.result === "success") {
-                                self.partnershipList = data.partnershipList;
-                                self.totalCount = data.totalCount;
-                                self.totalPages = Math.ceil(self.totalCount / self.size);
+                                // 승인대기, 승인거부 목록
+                                self.waitingList = data.waitingList;
+                                self.countWaiting = data.countWaiting;
+                                self.waitingPages = Math.max(1, Math.ceil(self.countApproved / self.size));
+                                // 승인완료 목록
+                                self.approvedList = data.approvedList;
+                                self.countApproved = data.countApproved;
+                                self.approvedPages = Math.max(1, Math.ceil(self.countApproved / self.size));
                                 self.loaded = true;
                             } else {
                                 alert("데이터를 불러오는데 실패했습니다.");
@@ -456,18 +461,23 @@
                         }
                     });
                 },
-                goPage(p) {
-                    if (p < 1 || p > this.totalPages) return;
-                    this.page = p;
-                    this.fnGetPartnershipList();
-                },
-                fnStatusEdit(partnershipNo) {
+                fnStatusEdit(partnership) {
                     let self = this;
-                    let nparmap = {
-                        partnershipNo: partnershipNo,
-                        psStatus: self.editPsStatus
-                    };
+                    let nparmap;
 
+                    if (partnership) {
+                        nparmap = {
+                            partnershipNo: partnership.partnershipNo,
+                            psStatus: partnership.psStatus
+                        };
+                    } else {
+                        // 모달에서 저장 버튼을 누를 때
+                        nparmap = {
+                            partnershipNo: self.partnershipInfo.partnershipNo,
+                            psStatus: self.editPsStatus
+                        };
+                    }
+                    
                     $.ajax({
                         url: "/admin/partnership-edit.dox",
                         dataType: "json",
@@ -492,12 +502,14 @@
                 // '답변' 버튼 클릭 시 모달 열기
                 fnPartnershipInfo(partnership) {
                     this.showPartnershipModal = true;
+                    this.partnershipInfo = partnership;
                     this.editPsStatus = partnership.psStatus; // 원본 답변 복사
                 },
 
                 // 모달 닫기
                 fnClosePartnershipModal() {
                     this.showPartnershipModal = false;
+                    this.partnershipInfo = {};
                     this.editPsStatus = "";
                 },
             },
@@ -512,3 +524,22 @@
         });
         app.mount('#app');
     </script>
+
+
+    <!-- 백업 -->
+    <!-- 검색기능 -->
+    <!-- <div class="search-container">
+                    <input type="date" v-model="startDate" class="search-date">
+                    ~
+                    <input type="date" v-model="endDate" class="search-date">
+                    <select v-model="statusFilter" class="search-select">
+                        <option value="">전체</option>
+                        <option value="partnershipNo">제휴번호</option>
+                        <option value="name">이름</option>
+                        <option value="email">이메일</option>
+                        <option value="title">제목</option>
+                    </select>
+                    <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                        placeholder="제휴번호/이름/이메일/제목 검색">
+                    <button class="search-button" @click="loadFilteredData">검색</button>
+                </div> -->
