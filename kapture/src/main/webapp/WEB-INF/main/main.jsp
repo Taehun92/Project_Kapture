@@ -340,7 +340,7 @@
         app.mount('#app');
     </script>
 
-    <script>
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", function () {
             window.addEventListener("scroll", () => {
                 const footer = document.querySelector("#footer");
@@ -358,5 +358,32 @@
                 }
                 gtranslate.style.setProperty("bottom", offset + "px", "important");
             });
+        });
+    </script> -->
+    <script>
+        window.addEventListener("load", function () {
+            window.addEventListener("scroll", function () {
+                const footer = document.querySelector("#footer");
+                const gtranslate = document.querySelector("#gt_float_wrapper");
+
+                if (!footer) return;
+
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                const footerTop = footer.getBoundingClientRect().top + scrollY;
+                const baseOffset = 40;
+                const buffer = 20;
+                const scrollBottom = scrollY + windowHeight;
+
+                let newOffset = baseOffset;
+                if (scrollBottom >= footerTop + buffer) {
+                    const overlap = scrollBottom - (footerTop + buffer);
+                    newOffset = baseOffset + overlap;
+                }
+
+                if (gtranslate) {
+                    gtranslate.style.setProperty("bottom", newOffset + "px", "important");
+                }
+            }, { passive: true });
         });
     </script>

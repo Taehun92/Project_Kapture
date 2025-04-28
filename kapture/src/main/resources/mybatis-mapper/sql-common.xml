@@ -136,6 +136,13 @@
 		WHERE TOUR_NO = #{tourNo} AND THUMBNAIL = 'Y'
 	</select>
 	
+	<select id="selectWeather" parameterType="hashmap" resultType="com.example.kapture.common.model.Weather">
+		SELECT * 
+		FROM REGION R
+		INNER JOIN RIG_WEATHER W ON R.SI_NAME LIKE '%' || W.SI_NAME || '%' OR R.GU_NAME LIKE '%' || W.SI_NAME || '%'
+		WHERE R.SI_NAME = #{si} AND GU_NAME =#{gu}
+	</select>
+	
 </mapper>
 
 

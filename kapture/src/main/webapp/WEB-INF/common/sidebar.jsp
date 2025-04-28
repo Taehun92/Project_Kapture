@@ -12,12 +12,16 @@
     <body class="bg-white text-gray-800 font-sans text-[16px] tracking-wide overflow-x-hidden">
         <div id="sidebar" class="sidebar">
 
-            <div :style="showChat ? { position: 'fixed', bottom: '450px', right: '20px', zIndex: 1100 } : {}">
-                <button class="open-weather-btn" v-if="!showWeather" @click="showWeather = true">날씨</button>
-            </div>
-            <div>
-                <button class="open-chat-btn" v-if="!showChat" @click="showChat = true">🤖챗봇 열기</button>
-            </div>
+            <!-- 날씨 버튼 -->
+            <button v-show="!showWeather" class="open-chat-btn" @click="showWeather = true"
+                :style="{ position: 'fixed', bottom: bottomOffset + 60 + 'px', right: '20px', zIndex: 1100 }">
+                🤖날씨 열기
+            </button>
+            <!-- 챗봇 버튼 -->
+            <button v-show="!showChat" class="open-chat-btn" @click="showChat = true"
+                :style="{ position: 'fixed', bottom: bottomOffset + 'px', right: '20px', zIndex: 1100 }">
+                🤖챗봇 열기
+            </button>
 
             <div class="chatbot-overlay" v-if="showChat"
                 :style="{ bottom: bottomOffset + 'px', position: 'fixed', right: '20px', zIndex: 9999 }">
@@ -39,11 +43,11 @@
             </div>
 
             <div class="weather-overlay" v-if="showWeather"
-                :style="{ bottom: bottomOffset + 'px', position: 'fixed', right: '60px', zIndex: 9999 }">
-                <div class="weather-container">
-                    <div class="weather-header bg-blue-950 text-white p-2 rounded-t-lg">
-                        날씨 정보
-                        <button class="close-btn" @click="showWeather = false">✕</button>
+                :style="{ bottom: bottomOffset + 'px', top : '400px', right: '20px', position: 'fixed', zIndex: 9999 }">
+                <div class="weather-container bg-white shadow-lg rounded-xl p-4 w-64">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">날씨 정보</h2>
+                        <button class="text-gray-400 hover:text-gray-600" @click="showWeather = false">✕</button>
                     </div>
                     <div class="weather-box">
                         <div>
@@ -126,7 +130,7 @@
                     userInput: "",
                     messages: [],
                     showChat: false,
-                    showWeather: false,
+                    showWeather: true,
                     temp: "",
                     cloud: "",
                     si: "",
@@ -181,6 +185,57 @@
                         chatBox.scrollTop = chatBox.scrollHeight;
                     });
                 },
+
+                bindScrollEvent() {
+                    let self = this;
+                    if (self.scrollListenerAdded) return; // 중복 방지
+                    window.addEventListener("scroll", function () {
+                        const footer = document.querySelector("#footer");
+                        if (!footer) return;
+
+                        const scrollY = window.scrollY;
+                        const windowHeight = window.innerHeight;
+                        const footerTop = footer.getBoundingClientRect().top + scrollY;
+                        const buffer = 20;
+                        const baseOffset = 40;
+                        const scrollBottom = scrollY + windowHeight;
+
+                        let newOffset = baseOffset;
+                        if (scrollBottom >= footerTop + buffer) {
+                            const overlap = scrollBottom - (footerTop + buffer);
+                            newOffset = baseOffset + overlap;
+                        }
+
+                        self.bottomOffset = newOffset;
+                    }, { passive: true });
+
+                    self.scrollListenerAdded = true; // 플래그 세팅
+                },
+
+                fnGetMidForecast() {
+                    const self = this;
+
+                    const regId = '11B10101'; // 서울 (예시)
+
+                    $.ajax({
+                        url: "/weather/mid-forecast.do",
+                        type: "POST",
+                        data: { regId: regId },
+                        success: function (response) {
+                            if (response.status === "success") {
+                                console.log("🌤️ 서버 응답:", response.data);
+                                // self.weatherData = response.data
+                            } else {
+                                console.error("❌ 서버 에러:", response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("❌ 호출 실패:", error);
+                        }
+                    });
+                },
+
+
 
                 //날씨 정보 가져오기
                 fnWeather() {
@@ -393,6 +448,29 @@
                         case '4': return '🌫️ 소나기';
                         default: return '알 수 없음';
                     }
+                },
+
+                adjustButtonBottom() {
+                    const footer = document.querySelector("#footer");
+                    const openChatButton = document.querySelector(".open-chat-btn");
+                    const openWeatherButton = document.querySelector(".open-weather-btn");
+
+                    if (!footer) return;
+
+                    const scrollY = window.scrollY;
+                    const windowHeight = window.innerHeight;
+                    const footerTop = footer.getBoundingClientRect().top + scrollY;
+                    const baseOffset = 40;
+                    const buffer = 20;
+                    const scrollBottom = scrollY + windowHeight;
+
+                    let newOffset = baseOffset;
+                    if (scrollBottom >= footerTop + buffer) {
+                        const overlap = scrollBottom - (footerTop + buffer);
+                        newOffset = baseOffset + overlap;
+                    }
+
+                    this.bottomOffset = newOffset;
                 }
 
 
@@ -402,26 +480,14 @@
                 showChat(val) {
                     if (val) {
                         this.$nextTick(() => {
-                            const el = document.querySelector('.chatbot-overlay');
-                            if (el) {
-                                el.style.position = 'fixed';
-                                el.style.bottom = '40px';
-                                el.style.right = '20px';
-                                el.style.zIndex = '9999';
-                            }
+                            this.adjustButtonBottom();
                         });
                     }
                 },
                 showWeather(val) {
                     if (val) {
                         this.$nextTick(() => {
-                            const el = document.querySelector('.weather-overlay');
-                            if (el) {
-                                el.style.position = 'fixed';
-                                el.style.bottom = '40px';
-                                el.style.right = '60px';
-                                el.style.zIndex = '9999';
-                            }
+                            this.adjustButtonBottom();
                         });
                     }
                 }
@@ -429,9 +495,14 @@
 
             mounted() {
                 let self = this;
+                this.showWeather = false;
+                this.showChat = false;
                 self.fnSelectSi(); // 페이지 로드 시 시도 목록 가져오기
 
-            },
+                window.addEventListener("scroll", this.adjustButtonBottom);
+                this.adjustButtonBottom(); // 초기화
+
+            }
         });
         sidebar.mount("#sidebar");
     </script>
