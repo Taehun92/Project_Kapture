@@ -51,7 +51,7 @@
 
         /* 메뉴와 본문이 겹치지 않도록 여백 추가 */
         .content {
-            margin-left: 220px;
+            margin-left: 240px;
             padding: 20px;
         }
 

@@ -9,8 +9,8 @@
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90%;
-				margin: 20px auto;
+				width: 100%;
+				margin: 20px 0;
 				border-collapse: collapse;
 				font-size: 14px;
 			}
@@ -21,6 +21,8 @@
 				padding: 10px;
 				text-align: center;
 				vertical-align: middle;
+				word-break: break-word;
+				white-space: normal;
 			}
 
 			.content th {
@@ -48,7 +50,7 @@
 				font-size: 24px;
 				font-weight: bold;
 				margin-top: 20px;
-				margin-left: 220px;
+				margin-left: 240px;
 				/* 사이드바 너비(200px) + 여백(20px) */
 				padding: 20px;
 				display: flex;
@@ -86,13 +88,33 @@
 				text-align: center;
 			}
 
-			/* 모달 내부에서의 textarea */
-			.answer-textarea {
-				width: 100%;
-				height: 150px;
-				resize: none;
-				margin-top: 10px;
-			}
+			.modal-header {
+                position: relative;
+                height: 60px;
+                /* 높이 지정 (필수) */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .modal-header h2 {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+                font-weight: bold;
+                font-size: 22px;
+            }
+
+            .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 28px;
+                cursor: pointer;
+            }
 
 			.search-input,
 			.search-select,
@@ -126,8 +148,8 @@
 			}
 
 			.search-container {
-				width: 90%;
-				margin: 20px auto;
+				width: 100%;
+				margin: 20px 0;
 			}
 
 			.tab-btn {
@@ -222,7 +244,7 @@
 								<!-- 답변 -->
 								<td>{{inquiry.answer}}</td>
 								<!-- 접수일-->
-								<td>{{ inquiry.inqCreatedAt }}</td>
+								<td>{{ inquiry.inqCreatedAt.substring(0, 10) }}</td>
 								<!-- 처리상태 -->
 								<td>{{inquiry.qnaStatus}}</td>
 								<!-- 관리 ( 수정, 삭제 ) -->
@@ -247,70 +269,74 @@
 					</div>
 				</div>
 				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
-			</div>
-			<div v-if="showAnswerModal" class="modal-overlay" @click.self="fnCloseAnswerModal">
-				<div class="modal-content">
-					<h2>1:1 문의 답변</h2>
-					<!-- 테이블 시작 -->
-					<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-						<tbody>
-							<!-- 문의유형 -->
-							<tr>
-								<!-- 왼쪽 셀: 라벨 -->
-								<td style="width: 120px; background-color: #f4f4f4; text-align: center; 
-										   border: 1px solid #ccc; padding: 10px;">
-									문의유형
-								</td>
-								<!-- 오른쪽 셀: 인풋박스 -->
-								<td style="border: 1px solid #ccc; padding: 10px;">
-									<input type="text" v-model="selectedInquiry.category" readonly
-										style="width: 97%; padding: 5px;" />
-								</td>
-							</tr>
+			
+				<div v-if="showAnswerModal" class="modal-overlay" @click.self="fnCloseAnswerModal">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h2>1:1 문의 답변</h2>
+							<span class="close-btn" @click="fnCloseAnswerModal">&times;</span>
+						</div>
+						<!-- 테이블 시작 -->
+						<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+							<tbody>
+								<!-- 문의유형 -->
+								<tr>
+									<!-- 왼쪽 셀: 라벨 -->
+									<td style="width: 120px; background-color: #f4f4f4; text-align: center; 
+											border: 1px solid #ccc; padding: 10px;">
+										문의유형
+									</td>
+									<!-- 오른쪽 셀: 인풋박스 -->
+									<td style="border: 1px solid #ccc; padding: 10px;">
+										<input type="text" v-model="selectedInquiry.category" readonly
+											style="width: 97%; padding: 5px;" />
+									</td>
+								</tr>
 
-							<!-- 제목 -->
-							<tr>
-								<td style="background-color: #f4f4f4; text-align: center; 
-										   border: 1px solid #ccc; padding: 10px;">
-									제목
-								</td>
-								<td style="border: 1px solid #ccc; padding: 10px;">
-									<input type="text" v-model="selectedInquiry.qnaTitle" readonly
-										style="width: 97%; padding: 5px;" />
-								</td>
-							</tr>
+								<!-- 제목 -->
+								<tr>
+									<td style="background-color: #f4f4f4; text-align: center; 
+											border: 1px solid #ccc; padding: 10px;">
+										제목
+									</td>
+									<td style="border: 1px solid #ccc; padding: 10px;">
+										<input type="text" v-model="selectedInquiry.qnaTitle" readonly
+											style="width: 97%; padding: 5px;" />
+									</td>
+								</tr>
 
-							<!-- 문의내용 -->
-							<tr>
-								<td style="background-color: #f4f4f4; text-align: center; 
-										   border: 1px solid #ccc; padding: 10px;">
-									문의내용
-								</td>
-								<td style="border: 1px solid #ccc; padding: 10px;">
-									<textarea v-model="selectedInquiry.question" readonly
-										style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
-								</td>
-							</tr>
+								<!-- 문의내용 -->
+								<tr>
+									<td style="background-color: #f4f4f4; text-align: center; 
+											border: 1px solid #ccc; padding: 10px;">
+										문의내용
+									</td>
+									<td style="border: 1px solid #ccc; padding: 10px;">
+										<textarea v-model="selectedInquiry.question" readonly
+											style="width: 97%; height: 100px; padding: 5px; resize: none;"></textarea>
+									</td>
+								</tr>
 
-							<!-- 답변 -->
-							<tr>
-								<td style="background-color: #f4f4f4; text-align: center; 
-										   border: 1px solid #ccc; padding: 10px;">
-									답변
-								</td>
-								<td style="border: 1px solid #ccc; padding: 10px;">
-									<textarea v-model="answerText" placeholder="답변 내용을 입력해주세요"
-										style="width: 97%; height: 150px; padding: 5px; resize: none;"></textarea>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<div style="margin-top: 20px;">
-						<button class="btn-manage" @click="fnSaveAnswer">저장</button>
+								<!-- 답변 -->
+								<tr>
+									<td style="background-color: #f4f4f4; text-align: center; 
+											border: 1px solid #ccc; padding: 10px;">
+										답변
+									</td>
+									<td style="border: 1px solid #ccc; padding: 10px;">
+										<textarea v-model="answerText" placeholder="답변 내용을 입력해주세요"
+											style="width: 97%; height: 150px; padding: 5px; resize: none;"></textarea>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div style="margin-top: 20px;">
+							<button class="btn-manage" @click="fnSaveAnswer">저장</button>
+						</div>
 					</div>
 				</div>
+				<!-- [모달 끝] -->
 			</div>
-			<!-- [모달 끝] -->
 		</div>
 	</body>
 

@@ -14,8 +14,7 @@
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90%;
-				margin: 20px auto;
+				width: 100%;
 				border-collapse: collapse;
 				font-size: 14px;
 			}
@@ -39,6 +38,14 @@
 				object-fit: cover;
 				/* 이미지가 잘리지 않도록 조정 */
 				border-radius: 5px;
+			}
+
+			.guide-img-wrapper {
+				width: 60px;
+				height: 60px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 			}
 
 			/* "No Image" 문구 표시 스타일 */
@@ -68,18 +75,13 @@
 				background-color: #0056b3;
 			}
 
-			/* 전체 선택 체크박스 스타일 (th 안) */
-			.check-all {
-				cursor: pointer;
-			}
-
 			/* 제목 스타일 */
 			.page-title {
 				text-align: center;
 				font-size: 24px;
 				font-weight: bold;
 				margin-top: 20px;
-				margin-left: 220px;
+				margin-left: 240px;
 				/* 사이드바 너비(200px) + 여백(20px) */
 				padding: 20px;
 				display: flex;
@@ -123,19 +125,29 @@
 			}
 
 			.modal-header {
+				position: relative;
+				height: 60px;
+				/* 높이 지정 (필수) */
 				display: flex;
-				justify-content: space-between;
 				align-items: center;
-				width: 95%;
-				margin-bottom: 15px;
+				justify-content: center;
+				width: 100%;
 			}
 
 			.modal-header h2 {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
 				margin: 0;
 				font-weight: bold;
+				font-size: 22px;
 			}
 
 			.close-btn {
+				position: absolute;
+				right: 20px;
+				top: 50%;
+				transform: translateY(-50%);
 				font-size: 28px;
 				cursor: pointer;
 			}
@@ -211,17 +223,6 @@
 				margin-right: 4px;
 			}
 
-			.fc-event-title {
-				white-space: normal !important;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-				/* 최대 2줄로 표시 */
-				line-clamp: 2;
-			}
-
 			.profile-upload-container {
 				display: flex;
 				align-items: center;
@@ -237,7 +238,6 @@
 			}
 
 			.search-div {
-				width: 90%;
 				margin: 20px auto;
 				border-collapse: collapse;
 				font-size: 14px;
@@ -308,7 +308,7 @@
 				</div>
 				<div class="search-div">
 					<input type="date" v-model="startDate" class="search-date">
-					~
+					~　
 					<input type="date" v-model="endDate" class="search-date">
 					<select v-model="statusFilter" class="search-select">
 						<option value="">전체</option>
@@ -330,7 +330,7 @@
 								<th>성별</th>
 								<th>연락처</th>
 								<th>사진</th>
-								<th>가입일</th>
+								<th>수정일</th>
 								<th>생년월일</th>
 								<th>최근접속</th>
 								<th>관리</th>
@@ -354,17 +354,21 @@
 								<td>{{ guide.phone }}</td>
 								<!-- 사진: 있으면 <img>, 없으면 "No Image" 표시 -->
 								<td>
-									<div v-if="guide.pFilePath && guide.pFilePath !== ''">
-										<img :src="guide.pFilePath" alt="가이드사진" class="guide-img" />
+									<div class="guide-img-wrapper">
+										<img v-if="guide.pFilePath && guide.pFilePath !== ''"
+											:src="guide.pFilePath"
+											alt="가이드사진"
+											class="guide-img"
+											@error="handleImageError($event)" />
+										<div v-else class="no-image">NO Image</div>
 									</div>
-									<div v-else class="no-image">NO Image</div>
 								</td>
 								<!-- 수정일 -->
-								<td>{{ guide.uUpdatedAt }}</td>
+								<td>{{ guide.uUpdatedAt.substring(0, 10) }}</td>
 								<!-- 생년월일 -->
 								<td>{{ guide.birthday }}</td>
 								<!-- 최근접속 -->
-								<td>{{ guide.lastLogin }}</td>
+								<td>{{ guide.lastLogin.substring(0, 10) }}</td>
 
 								<!-- 관리 ( 수정, 삭제 ) -->
 								<td>
@@ -384,7 +388,7 @@
 				</div>
 				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
 			</div>
-			
+
 			<div style="margin-top: 20px; text-align: center;">
 				<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
 				<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
@@ -403,10 +407,11 @@
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
-							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
-								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							<span class="guide-img-wrapper">
+								<img v-if="editGuide.pFilePath && editGuide.pFilePath !== ''"
+								:src="editGuide.pFilePath" alt="가이드사진" class="guide-img" @error="handleImageError($event)" />
+								<div v-else class="no-image">NO Image</div>
 							</span>
-							<span v-else class="no-image">NO Image</span>
 							<input type="file" @change="handleProfileUpload" />
 						</span>
 						<!-- 이름 -->
@@ -477,14 +482,14 @@
 						</div>
 						<!-- 자기소개 등 (예시) -->
 						<div class="form-group">
-							<label>자기소개 OR 경력</label>
+							<label>자기소개</label>
 							<textarea v-model="editGuide.experience" rows="4"></textarea>
 						</div>
 
 						<!-- 저장 / 취소 -->
 						<div>
-							<button @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
-							<button @click="fnGuideEditClose">취소</button>
+							<button class="btn-manage" @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
+							<button class="btn-manage" @click="fnGuideEditClose">취소</button>
 						</div>
 					</div>
 
@@ -494,7 +499,10 @@
 			<!-- 일정 모달 추가 -->
 			<div v-if="showScheduleModal" class="modal-overlay" @click.self="fnCloseScheduleModal">
 				<div class="modal-content">
-					<h2>가이드 일정</h2>
+					<div class="modal-header">
+						<h2>상품 상세 정보</h2>
+						<span class="close-btn" @click="fnCloseScheduleModal">&times;</span>
+					</div>
 					<div class="content-area">
 						<ol class="custom-buttons">
 							<li class="custom-button">
@@ -530,10 +538,11 @@
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
-							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
-								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							<span class="guide-img-wrapper">
+								<img v-if="editGuide.pFilePath && editGuide.pFilePath !== ''"
+								:src="editGuide.pFilePath" alt="가이드사진" class="guide-img" @error="handleImageError($event)" />
+								<div v-else class="no-image">NO Image</div>
 							</span>
-							<span v-else class="no-image">NO Image</span>
 							<input type="file" @change="handleProfileUpload" />
 						</span>
 						<div class="form-group">
@@ -1038,7 +1047,11 @@
 							alert("등록 요청 중 오류가 발생했습니다.");
 						}
 					});
-				}
+				},
+				handleImageError(event) {
+					event.target.style.display = 'none'; // 이미지 숨기기
+					event.target.parentNode.innerHTML = '<div class="no-image">NO Image</div>'; // 부모 div에 No Image 삽입
+				},
 			},
 			mounted() {
 				let self = this;

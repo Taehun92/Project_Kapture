@@ -9,8 +9,8 @@
         <style>
             /* 테이블 스타일 */
             .content table {
-                width: 90%;
-                margin: 20px auto;
+                width: 100%;
+                margin: 20px 0;
                 border-collapse: collapse;
                 font-size: 14px;
             }
@@ -57,6 +57,10 @@
                 align-items: center;
             }
 
+            .title-hr {
+                margin: 30px 0;
+            }
+
             /* 모달 오버레이 (뒷배경) */
             .modal-overlay {
                 position: fixed;
@@ -86,48 +90,40 @@
                 text-align: center;
             }
 
-            /* 모달 내부에서의 textarea */
-            .answer-textarea {
+            .modal-header {
+                position: relative;
+                height: 60px;
+                /* 높이 지정 (필수) */
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 width: 100%;
-                height: 150px;
-                resize: none;
-                margin-top: 10px;
             }
 
-            .search-input,
-            .search-select,
-            .search-date {
-                padding: 10px 14px;
-                font-size: 16px;
-                height: 40px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                margin-right: 10px;
-                box-sizing: border-box;
+            .modal-header h2 {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+                font-weight: bold;
+                font-size: 22px;
             }
 
-            .search-input {
-                width: 300px;
-            }
-
-            .search-button {
-                padding: 10px 20px;
-                font-size: 16px;
-                height: 40px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 6px;
+            .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 28px;
                 cursor: pointer;
             }
 
-            .search-button:hover {
-                background-color: #0056b3;
-            }
-
-            .search-container {
-                width: 90%;
-                margin: 20px auto;
+            .css-select {
+                padding: 5px 5px;
+                height: 30px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                box-sizing: border-box;
             }
 
             .tab-btn {
@@ -144,31 +140,30 @@
                 color: white;
             }
 
-            .status-wait {
+            .status-wait,
+            .status-done,
+            .status-reject {
+                display: inline-block;
+                /* 텍스트 크기만큼만 너비 차지 */
                 background-color: #ffd400;
-                /* 노란색 */
+                /* 기본은 승인대기용 */
                 color: white;
                 font-weight: bold;
-                padding: 6px 12px;
+                padding: 4px 8px;
+                /* 살짝만 여백 */
                 border-radius: 6px;
+                font-size: 14px;
             }
 
+            /* 각각 다른 상태별로 배경색 */
             .status-done {
                 background-color: #007bff;
-                /* 파란색 */
-                color: white;
-                font-weight: bold;
-                padding: 6px 12px;
-                border-radius: 6px;
+                /* 승인완료용 파란색 */
             }
 
             .status-reject {
                 background-color: #dc3545;
-                /* 빨간색 */
-                color: white;
-                font-weight: bold;
-                padding: 6px 12px;
-                border-radius: 6px;
+                /* 승인거부용 빨간색 */
             }
 
             [v-cloak] {
@@ -183,7 +178,6 @@
         <div id="app" v-cloak>
             <!-- 제목 추가 -->
             <div class="page-title">제휴문의 관리</div>
-
             <hr>
             <div class="content">
                 <!-- 제휴문의 -->
@@ -222,17 +216,20 @@
                                     <!-- 내용 -->
                                     <td>{{ partnership.content }}</td>
                                     <!-- 제휴상태 -->
-                                    <td :class="{
-                                        'status-wait': partnership.psStatus === '승인대기',
-                                        'status-done': partnership.psStatus === '승인완료',
-                                        'status-reject': partnership.psStatus === '승인거부'
-                                      }">
-                                        {{partnership.psStatus}}
+                                    <td>
+                                        <span :class="{
+                                          'status-wait': partnership.psStatus === '승인대기',
+                                          'status-done': partnership.psStatus === '승인완료',
+                                          'status-reject': partnership.psStatus === '승인거부'
+                                        }">
+                                            {{partnership.psStatus}}
+                                        </span>
                                     </td>
                                     <!-- 신청일-->
-                                    <td>{{ partnership.psCreatedAt }}</td>
+                                    <td>{{ partnership.psCreatedAt.substring(0, 10) }}</td>
                                     <td>
-                                        <select v-model="partnership.psStatus" @change="fnStatusEdit(partnership)">
+                                        <select class="css-select" v-model="partnership.psStatus"
+                                            @change="fnStatusEdit(partnership)">
                                             <option value="승인대기">승인대기</option>
                                             <option value="승인완료">승인완료</option>
                                             <option value="승인거부">승인거부</option>
@@ -254,7 +251,7 @@
                     </div>
                 </div>
                 <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
-                <hr>
+                <hr class="title-hr">
                 <!-- 제휴 중 -->
                 <div v-if="loaded">
                     <table>
@@ -290,7 +287,7 @@
                                     <!-- 내용 -->
                                     <td>{{ partnership.content }}</td>
                                     <!-- 신청일-->
-                                    <td>{{ partnership.psCreatedAt }}</td>
+                                    <td>{{ partnership.psCreatedAt.substring(0, 10) }}</td>
                                     <td>
                                         <button class="btn-manage" @click="fnPartnershipInfo(partnership)">
                                             보기
@@ -315,7 +312,10 @@
             </div>
             <div v-if="showPartnershipModal" class="modal-overlay" @click.self="fnClosePartnershipModal">
                 <div class="modal-content">
-                    <h2>제휴 문의</h2>
+                    <div class="modal-header">
+                        <h2>제휴 문의</h2>
+                        <span class="close-btn" @click="fnClosePartnershipModal">&times;</span>
+                    </div>
                     <!-- 테이블 시작 -->
                     <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                         <tbody>
@@ -334,7 +334,7 @@
                                     제휴상태
                                 </td>
                                 <td style="border: 1px solid #ccc; padding: 10px;">
-                                    <select v-model="editPsStatus">
+                                    <select class="css-select" v-model="editPsStatus">
                                         <option value="승인대기">승인대기</option>
                                         <option value="승인완료">승인완료</option>
                                         <option value="승인거부">승인거부</option>
@@ -477,7 +477,7 @@
                             psStatus: self.editPsStatus
                         };
                     }
-                    
+
                     $.ajax({
                         url: "/admin/partnership-edit.dox",
                         dataType: "json",
