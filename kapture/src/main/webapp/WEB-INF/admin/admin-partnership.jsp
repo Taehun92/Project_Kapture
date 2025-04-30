@@ -47,8 +47,8 @@
                 text-align: center;
                 font-size: 24px;
                 font-weight: bold;
-                margin-top: 20px;
-                margin-left: 220px;
+                /* margin-top: 20px; */
+                margin-left: 240px;
                 /* 사이드바 너비(200px) + 여백(20px) */
                 padding: 20px;
                 display: flex;
@@ -58,7 +58,7 @@
             }
 
             .title-hr {
-                margin: 30px 0;
+                margin-bottom: 30px;
             }
 
             /* 모달 오버레이 (뒷배경) */
