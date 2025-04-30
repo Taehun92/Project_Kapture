@@ -46,18 +46,22 @@
 
 			/* 제목 스타일 */
 			.page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				margin-top: 20px;
-				margin-left: 240px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 240px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
+
+            .title-hr {
+                margin-bottom: 30px;
+            }
 
 			/* 모달 오버레이 (뒷배경) */
 			.modal-overlay {

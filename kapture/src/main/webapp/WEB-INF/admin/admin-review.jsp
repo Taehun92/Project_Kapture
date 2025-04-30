@@ -10,48 +10,13 @@
         <title>첫번째 페이지</title>
     </head>
     <style>
-        /* ✅ 사이드바 - 고정 유지 */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200px;
-            height: 100vh;
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            padding: 10px 0;
-        }
-
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-
-        .sidebar ul li a:hover {
-            background-color: #555;
-        }
-
         /* 제목 스타일 */
         .page-title {
             text-align: center;
             font-size: 24px;
             font-weight: bold;
             /* margin-top: 20px; */
-            margin-left: 220px;
+            margin-left: 240px;
             /* 사이드바 너비(200px) + 여백(20px) */
             padding: 20px;
             display: flex;
@@ -211,7 +176,7 @@
         }
 
         [v-cloak] {
-                display: none;
+            display: none;
         }
     </style>
 
@@ -219,11 +184,11 @@
         <jsp:include page="menu.jsp"></jsp:include>
         <!-- ✅ 이 영역만 Vue에서 리스트 출력 -->
         <div id="app" v-cloak>
-
+            <!-- 제목 추가 -->
+            <div class="page-title">리뷰 및 평점 관리</div>
+            <hr class="title-hr">
             <div class="content">
-                <!-- 제목 추가 -->
-                <div class="page-title">리뷰 및 평점 관리</div>
-                <hr class="title-hr">
+                
                 <h2>전체 리뷰 리스트</h2>
                 <!-- ✅ 리뷰 요약 박스 -->
                 <div v-if="loaded">
