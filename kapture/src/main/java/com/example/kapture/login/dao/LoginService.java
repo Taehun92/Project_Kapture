@@ -116,7 +116,19 @@ public class LoginService {
 			session.setAttribute("sessionLastName", login.getUserLastName());
 
 			loginMapper.updateLastLogin(login.getUserNo());
-
+			
+//			// 추가: 리뷰 알림 저장
+//		    int pastReviewCount = loginMapper.countPastPurchasesForReview(login.getUserNo());
+//		    if (pastReviewCount > 0) {
+//		        HashMap<String, Object> alramMap = new HashMap<>();
+//		        alramMap.put("targetUserNo", login.getUserNo());
+//		        alramMap.put("alramType", "리뷰");
+//		        alramMap.put("urlParam", null); // 리뷰는 파라미터 없음
+//		        alramMap.put("alramStatus", "N");
+//
+//		        loginMapper.insertAlram(alramMap); // 알람 저장
+//		    }
+			
 			resultMap.put("login", login);
 			resultMap.put("result", "success");
 			resultMap.put("message", "로그인 성공");

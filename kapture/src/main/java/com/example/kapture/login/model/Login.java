@@ -23,4 +23,16 @@ public class Login {
 	
 	private String lastLogin;
 	
+	private int paymentNo;
+	private int tourNo;
+	private String paymentStatus;
+	
+	private String tourDate;
+	
+	private int alramNo;
+	private int targetUserNo;
+	private String alramType;
+	private String urlParam;
+	private String alCreatedAt;
+	
 }	
