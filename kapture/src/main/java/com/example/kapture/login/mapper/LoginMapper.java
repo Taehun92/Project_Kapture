@@ -36,4 +36,7 @@ public interface LoginMapper {
     int insertTwitterUser(Map<String, Object> param);
 
     void updateLastLogin(int userNo);
+
+//	void insertAlram(HashMap<String, Object> alramMap);
+
 }
