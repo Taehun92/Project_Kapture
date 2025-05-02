@@ -29,10 +29,12 @@ public class Login {
 	
 	private String tourDate;
 	
-	private int alramNo;
+	private int alarmNo;
 	private int targetUserNo;
-	private String alramType;
+	private int referenceId;
+	private String referenceType;
 	private String urlParam;
+	private String alarmStatus;
 	private String alCreatedAt;
 	
 }	

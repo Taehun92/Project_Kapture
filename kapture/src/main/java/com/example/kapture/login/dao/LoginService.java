@@ -117,17 +117,20 @@ public class LoginService {
 
 			loginMapper.updateLastLogin(login.getUserNo());
 			
-//			// 추가: 리뷰 알림 저장
-//		    int pastReviewCount = loginMapper.countPastPurchasesForReview(login.getUserNo());
-//		    if (pastReviewCount > 0) {
-//		        HashMap<String, Object> alramMap = new HashMap<>();
-//		        alramMap.put("targetUserNo", login.getUserNo());
-//		        alramMap.put("alramType", "리뷰");
-//		        alramMap.put("urlParam", null); // 리뷰는 파라미터 없음
-//		        alramMap.put("alramStatus", "N");
-//
-//		        loginMapper.insertAlram(alramMap); // 알람 저장
-//		    }
+			// 리뷰 알림 처리
+		    List<Integer> reviewTargetTours = loginMapper.selectReviewTargets(login.getUserNo());
+		    System.out.println("📌 리뷰 알림 대상 투어 목록: " + reviewTargetTours);
+		    System.out.println("🧪 사용자 번호: " + login.getUserNo());
+		    for (Integer tourNo : reviewTargetTours) {
+		        HashMap<String, Object> alarmMap = new HashMap<>();
+		        alarmMap.put("targetUserNo", login.getUserNo());
+		        alarmMap.put("referenceType", "TOUR");
+		        alarmMap.put("referenceId", tourNo);
+		        alarmMap.put("urlParam", null);
+
+		        loginMapper.insertAlarm(alarmMap);
+		    }
+
 			
 			resultMap.put("login", login);
 			resultMap.put("result", "success");
