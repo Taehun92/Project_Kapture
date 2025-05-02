@@ -36,7 +36,11 @@ public interface LoginMapper {
     int insertTwitterUser(Map<String, Object> param);
 
     void updateLastLogin(int userNo);
+    // 지난 여행 중 알림 없는 상품 조회 쿼리
+	List<Integer> selectReviewTargets(int userNo);
+	// 알람 등록
+	void insertAlarm(HashMap<String, Object> alarmMap);
 
-//	void insertAlram(HashMap<String, Object> alramMap);
+
 
 }

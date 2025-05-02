@@ -2,6 +2,7 @@ package com.example.kapture.common.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -52,6 +53,10 @@ public interface CommonMapper {
 	Common selectXY(HashMap<String, Object> map);
 
 	Img selectTourThumbnail(HashMap<String, Object> map);
+	// 최신 10개 알람 조회
+	List<HashMap<String, Object>> selectRecentAlarms(int userNo);
+	// 읽은 알람 상태 처리
+	int updateAlarmStatus(Map<String, Object> map);
 
 	
 }

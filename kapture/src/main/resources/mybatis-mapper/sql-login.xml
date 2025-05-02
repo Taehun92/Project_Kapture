@@ -8,7 +8,43 @@
 		FROM USERS 
 		WHERE EMAIL = #{email}
 	</select>
-	
+
+	<!-- 지난 여행 중 알림 없는 상품 조회 쿼리 -->
+	<select id="selectReviewTargets" parameterType="int" resultType="int">
+	    SELECT DISTINCT t.TOUR_NO
+	    FROM PAYMENTS p
+	    JOIN TOURS t ON p.TOUR_NO = t.TOUR_NO
+	    WHERE p.USER_NO = #{userNo}
+	      AND p.PAYMENT_STATUS = '거래완료'
+	      AND t.TOUR_DATE &lt; SYSDATE
+	      AND NOT EXISTS (
+	          SELECT 1
+	          FROM ALARM a
+	          WHERE a.TARGET_USER_NO = p.USER_NO
+	            AND a.REFERENCE_TYPE = 'TOUR'
+	            AND a.REFERENCE_ID = t.TOUR_NO
+	      )
+	</select>
+	<!-- 알람 등록 -->
+	<insert id="insertAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{referenceId},
+	        #{urlParam, jdbcType=VARCHAR},
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
 	<insert id="insertUser" parameterType="hashmap">
 		INSERT INTO USERS (USER_NO, PASSWORD, EMAIL, PHONE, ROLE, BIRTHDAY, GENDER, U_CREATED_AT, U_UPDATED_AT, USER_FIRSTNAME, USER_LASTNAME, ISFOREIGNER, PUSHYN)
 		VALUES (USERS_SEQ.NEXTVAL, #{password}, #{email}, #{phone}, 'TOURIST', #{birthday, jdbcType=DATE}, #{gender}, SYSDATE, SYSDATE,

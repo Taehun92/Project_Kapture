@@ -59,13 +59,16 @@
                             </button>
 
                             <!-- 🔽 알림 모달 -->
-                            <div v-if="showAlarm"
+                            <div v-if="showAlarmModal"
                                 class="absolute right-0 mt-2 w-60 bg-white border rounded shadow-md z-50 text-sm">
                                 <div class="p-3 border-b font-semibold text-gray-700">새 알림</div>
                                 <ul>
-                                    <li v-for="alarm in alarmList" :key="alarm.id"
-                                        class="px-4 py-2 hover:bg-gray-100 text-gray-700">
+                                    <li v-for="alarm in alarmList" :key="alarm.alarmNo"
+                                        class="border-b py-2 px-2 text-sm flex justify-between items-center cursor-pointer"
+                                        :class="alarm.alarmStatus === 'N' ? 'font-bold text-black' : 'text-gray-400'"
+                                        @click="fnReadAlarm(alarm)">
                                         {{ alarm.content }}
+                                        <span class="text-xs">{{ alarm.formattedDate }}</span>
                                     </li>
                                 </ul>
                                 <div v-if="alarmList.length === 0" class="p-3 text-center text-gray-400">알림이 없습니다.</div>
@@ -143,16 +146,74 @@
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         basketCount: 0,
-                        showAlarm: false,
-                        unreadAlarmCount: 3,
-                        alarmList: [
-                            { id: 1, content: '예약이 확정되었습니다.' },
-                            { id: 2, content: '가이드가 메시지를 보냈습니다.' },
-                            { id: 3, content: '리뷰를 남겨주세요!' }
-                        ]
+                        alarmList: [],              // 전체 알림 10개
+                        unreadAlarmCount: 0,        // 읽지 않은 알림 수
+                        unreadAlarms: [],           // 알림에 content, formattedDate 포함
+                        showAlarmModal: false       // 모달 토글
                     };
                 },
                 methods: {
+                    fnGetAlarms() {
+                        let self = this;
+                        $.ajax({
+                            url: "/common/alarms.dox",  // 이 엔드포인트는 모든 알림 반환하도록 백엔드도 조정 필요
+                            type: "POST",
+                            data: { sessionId: self.sessionId },
+                            dataType: "json",
+                            success: function (data) {
+                                console.log("alarmdata===>", data);
+                                self.alarmList = data.list.map(item => {
+                                    let content = "";
+                                    if (item.referenceType === "PAYMENT") {
+                                        content = "예약이 확정되었습니다.";
+                                    } else if (item.referenceType === "COMMENT") {
+                                        content = "게시글에 댓글이 달렸습니다.";
+                                    } else if (item.referenceType === "TOUR") {
+                                        content = "리뷰를 남겨주세요!";
+                                    }
+
+                                    let formattedDate = item.alCreatedAt?.substring(2, 10).replace(/-/g, '.');
+
+                                    return {
+                                        ...item,
+                                        content: content,
+                                        formattedDate: formattedDate
+                                    };
+                                });
+                                // 안읽은 알림 수 (카운트용)
+                                self.unreadAlarmCount = data.list.filter(item => item.alarmStatus === 'N').length;
+                            }
+                        });
+                    },
+                    fnReadAlarm(alarm) {
+                        let self = this;
+                        $.ajax({
+                            url: "/common/read-alarm.dox",
+                            type: "POST",
+                            data: { alarmNo: alarm.alarmNo },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    // URL 이동 처리
+                                    let url = "";
+                                    if (alarm.referenceType === "TOUR") {
+                                        url = "/mypage/user-reviews.do";
+                                    } else if (alarm.referenceType === "COMMENT") {
+                                        url = "/request/view.do?requestNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "PAYMENT") {
+                                        url = "/mypage/user-purchase-history.do";
+                                    }
+
+                                    location.href = url;
+                                } else {
+                                    alert("알림 상태 업데이트에 실패했습니다.");
+                                }
+                            },
+                            error: function () {
+                                alert("서버 오류가 발생했습니다.");
+                            }
+                        });
+                    },
                     fnLogout() {
                         var self = this;
                         $.ajax({
@@ -181,14 +242,14 @@
                     },
 
                     fnToggleAlarm() {
-                        this.showAlarm = !this.showAlarm;
+                        this.showAlarmModal = !this.showAlarmModal;
                     },
 
                     fnCloseAlarmOutside(e) {
                         // 알림 영역 DOM 찾기
                         const alarmBox = document.querySelector('.alarm-box');
                         if (alarmBox && !alarmBox.contains(e.target)) {
-                            this.showAlarm = false;
+                            this.showAlarmModal = false;
                         }
                     }
                 },
@@ -197,6 +258,7 @@
                         this.fnGetBasket();
                     }
                     const self = this;
+                    self.fnGetAlarms();
                     window.addEventListener("storage", function (e) {
                         if (e.key === "basketChanged") {
                             self.fnGetBasket();
