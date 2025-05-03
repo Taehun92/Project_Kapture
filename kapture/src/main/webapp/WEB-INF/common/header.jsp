@@ -166,10 +166,14 @@
                                     let content = "";
                                     if (item.referenceType === "PAYMENT") {
                                         content = "예약이 확정되었습니다.";
-                                    } else if (item.referenceType === "COMMENT") {
-                                        content = "게시글에 댓글이 달렸습니다.";
+                                    } if (item.referenceType === 'COMMENT') {
+                                        content = "내 요청글에 새로운 댓글이 달렸습니다.";
+                                    } else if (item.referenceType === 'ACCEPT') {
+                                        content = "내 댓글이 채택되었습니다!";
                                     } else if (item.referenceType === "TOUR") {
                                         content = "리뷰를 남겨주세요!";
+                                    } else if (item.referenceType === "REVIEW") {
+                                        content = "새로운 리뷰가 등록되었습니다.";
                                     }
 
                                     let formattedDate = item.alCreatedAt?.substring(2, 10).replace(/-/g, '.');
@@ -200,8 +204,12 @@
                                         url = "/mypage/user-reviews.do";
                                     } else if (alarm.referenceType === "COMMENT") {
                                         url = "/request/view.do?requestNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "ACCEPT") {
+                                        url = "/request/view.do?requestNo=" + alarm.urlParam;
                                     } else if (alarm.referenceType === "PAYMENT") {
                                         url = "/mypage/user-purchase-history.do";
+                                    } else if (alarm.referenceType === "REVIEW") {
+                                        url = "/tours/tour-info.do?tourNo=" + alarm.urlParam;
                                     }
 
                                     location.href = url;
@@ -258,6 +266,7 @@
                         this.fnGetBasket();
                     }
                     const self = this;
+                    window.header = this;
                     self.fnGetAlarms();
                     window.addEventListener("storage", function (e) {
                         if (e.key === "basketChanged") {

@@ -37,8 +37,36 @@
 	    WHERE BASKET_NO = #{basketNo}
 	</delete>
 	<update id="updateRequestMessage" parameterType="hashmap">
-    UPDATE PAYMENTS
-    SET ETC = #{requestMessage}
-    WHERE PAYMENT_NO = #{paymentNo}
-</update>
+	    UPDATE PAYMENTS
+	    SET ETC = #{requestMessage}
+	    WHERE PAYMENT_NO = #{paymentNo}
+	</update>
+	<!-- 결제 성공시 알림 정보 저장 -->
+	<insert id="insertAlarm" parameterType="hashmap">
+    INSERT INTO ALARM (
+        ALARM_NO,
+        TARGET_USER_NO,
+        REFERENCE_TYPE,
+        REFERENCE_ID,
+        URL_PARAM,
+        ALARM_STATUS,
+        AL_CREATED_AT
+    ) VALUES (
+        ALARM_SEQ.NEXTVAL,
+        #{targetUserNo},
+        #{referenceType},
+        #{referenceId},
+        #{urlParam, jdbcType=VARCHAR},
+        'N',
+        SYSDATE
+    )
+	</insert>
+	<!-- 해당 유저의 가장 최근 결제 번호 가져오기 -->
+	<select id="selectLatestPaymentNo" parameterType="int" resultType="int">
+	    SELECT PAYMENT_NO
+	    FROM PAYMENTS
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY PAYMENT_DATE DESC
+	    FETCH FIRST 1 ROWS ONLY
+	</select>
 </mapper> 

@@ -79,7 +79,7 @@
                 <comment-item v-for="comment in commentList" :key="comment.commentNo" :comment="comment" :depth="0"
                     :session-id="sessionId" :session-role="sessionRole" :request-status="info.status"
                     :request-user-no="info.userNo" :active-reply-no="commentNo" :reply-flg="replyFlg"
-                    :answer-comment="answerComment" :can-accept="canAccept" @reply="fnReply" @edit="fnEditComment"
+                    :answer-comment="answerComment"  @reply="fnReply" @edit="fnEditComment"
                     @remove="fnRemoveComment" @add-reply="fnAddReply" @back="fnBack"
                     @accept-comment="fnAcceptComment" />
             </section>
@@ -119,7 +119,7 @@
                 requestStatus: String,
                 requestUserNo: [String, Number],
                 replyFlg: Boolean,
-                activeReplyNo: [String, Number]
+                activeReplyNo: [String, Number],
             },
             emits: ['reply', 'edit', 'remove', 'add-reply', 'back'],
             data() {
@@ -306,7 +306,7 @@
                     console.log("[getNestedComments] parentNo:", parentNo, "result:", result);
                     return result;
                 },
-            
+
                 // 들여쓰기 계산 함수
                 depthMargin(depth) {
                     return (depth * 24) + 'px';
@@ -363,6 +363,28 @@
                     this.commentNo = commentNo;  // 어떤 댓글에 대해 답글 쓸지 기억
                     this.replyFlg = true;
                 },
+                fnRegisterCommentAlarm(commentNo, targetUserNo) {
+                    console.log("commentNo============>", commentNo);
+                    console.log("commentNo============>", targetUserNo);
+                    const self = this;
+                    $.ajax({
+                        url: "/request/registerCommentAlarm.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            userNo: targetUserNo, // 요청 작성자 번호
+                            referenceType: "COMMENT",
+                            referenceId: commentNo,
+                            urlParam: self.requestNo
+                        },
+                        success(res) {
+                            console.log("✅ 댓글 알림 등록 성공", res);
+                        },
+                        error() {
+                            console.error("❌ 댓글 알림 등록 실패");
+                        }
+                    });
+                },
                 fnAddReply(payload) {
                     var self = this;
 
@@ -393,6 +415,7 @@
                             comments: message
                         },
                         success: function (data) {
+                            console.log("data.comment===>", data.COMMENT_NO);
                             if (data.num > 0 && data.comment) {
                                 if (parentCommentNo === "0") {
                                     self.commentList.push(data.comment);
@@ -403,6 +426,17 @@
                                         parent.children.push(data.comment);
                                     }
                                 }
+                                const isReply = parentCommentNo !== "0";
+                                // 1. 게시글 작성자에게 알림
+                                self.fnRegisterCommentAlarm(data.comment.COMMENT_NO, self.info.userNo);
+                                // 2. 대댓글이면 부모 댓글 작성자에게도 알림
+                                if (isReply) {
+                                    const parent = self.findCommentInTree(self.commentList, parentCommentNo);
+                                    if (parent && parent.userNo != self.info.userNo) {
+                                        // 게시글 작성자와 다를 경우에만 중복 방지
+                                        self.fnRegisterCommentAlarm(data.comment.COMMENT_NO, parent.userNo);
+                                    }
+                                }
 
                                 alert("댓글이 등록 되었습니다.");
                                 self.replyFlg = false;
@@ -410,6 +444,14 @@
                                 self.answerComment = "";
                                 self.commentNo = "";
                                 self.fnview();
+
+                                // ✅ 헤더 알림 정보 즉시 갱신
+                                // 알림 재조회 → 다음 tick에서 실행되게 해서 렌더링 반영 유도
+                                if (window.header && typeof window.header.fnGetAlarms === "function") {
+                                    setTimeout(() => {
+                                        window.header.fnGetAlarms();
+                                    }, 100); // 짧은 delay (보통 50~100ms면 충분)
+                                }
                             }
                         }
                     });
@@ -508,7 +550,26 @@
                     }
                     return false;
                 },
-                fnAccept() {
+                fnRegisterAcceptAlarm(commentNo, targetUserNo) {
+                    $.ajax({
+                        url: "/request/registerCommentAlarm.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            userNo: targetUserNo,
+                            referenceType: "ACCEPT",
+                            referenceId: commentNo,
+                            urlParam: this.requestNo
+                        },
+                        success(res) {
+                            console.log("✅ 채택 알림 등록 성공", res);
+                        },
+                        error() {
+                            console.error("❌ 채택 알림 등록 실패");
+                        }
+                    });
+                },
+                fnAcceptComment(commentNo) {
                     var self = this;
                     if (!confirm("채택하시겠습니까? 채택 후 수정 / 삭제는 불가능합니다.")) {
                         return;
@@ -517,11 +578,24 @@
                         url: "/request/accept.dox",
                         type: "POST",
                         dataType: "json",
-                        data: { requestNo: self.requestNo },
+                        data: {
+                            requestNo: self.requestNo,
+                            commentNo: commentNo
+                        },
                         success: function (data) {
                             if (data.num > 0) {
                                 alert("답변이 채택 되었습니다.");
                                 self.fnview();
+                                // ✅ 채택된 유저에게 알림 전송
+                                const acceptedComment = self.findCommentInTree(self.commentList, commentNo);
+                                if (acceptedComment) {
+                                    self.fnRegisterAcceptAlarm(commentNo, acceptedComment.userNo);
+                                }
+
+                                // ✅ 헤더 알림 최신화
+                                if (window.header && typeof window.header.fnGetAlarms === "function") {
+                                    setTimeout(() => window.header.fnGetAlarms(), 100);
+                                }
                             }
                         }
                     });

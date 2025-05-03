@@ -2,6 +2,7 @@ package com.example.kapture.board.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -172,7 +173,11 @@ public class RequestService {
 		}
 		return resultMap;
 	}
-
+	// 댓글 달리면 알림 정보 저장
+	public void registerAlarm(Map<String, Object> map) throws Exception {
+		System.out.println("map=======>"+map);
+		requestMapper.insertAlarm(map);
+	}
 	
 	
 }
