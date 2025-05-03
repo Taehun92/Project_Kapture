@@ -2,6 +2,7 @@ package com.example.kapture.board.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -36,8 +37,8 @@ public interface RequestMapper {
 	int acceptRequestStatus(HashMap<String, Object> map);
 
 	HashMap<String, Object> selectCommentDetail(Integer commentNo);
-
-	
+	// 댓글 달리면 알림 정보 저장
+	void insertAlarm(Map<String, Object> map);
 
 	
 

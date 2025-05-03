@@ -71,7 +71,7 @@
 		</if>
 	</select>
 	
-	<insert id="insertQna" parameterType="hashmap">
+	<insert id="insertQna" parameterType="hashmap" useGeneratedKeys="true" keyProperty="inquiryNo" keyColumn="INQUIRY_NO">
   		INSERT INTO INQUIRIES (INQUIRY_NO, USER_NO, CATEGORY, QUESTION, INQ_CREATED_AT, INQ_UPDATED_AT, QNA_TITLE)
   		VALUES(INQUIRIES_SEQ.NEXTVAL, #{userNo}, #{category}, #{question}, SYSDATE, SYSDATE, #{qnaTitle})
 	</insert>
@@ -94,5 +94,31 @@
 	<insert id="insertPartnership" parameterType="hashmap">
 	    INSERT INTO PARTNERSHIP(PARTNERSHIP_NO, TITLE, CONTENT, NAME, EMAIL, PHONE)
 	    VALUES (PARTNERSHIP_SEQ.NEXTVAL, #{title}, #{content}, #{name}, #{email}, #{phone})
+	</insert>
+	<!-- 관리자 유저 리스트 조회 -->
+	<select id="selectAdminUserList" resultType="hashmap">
+	    SELECT USER_NO
+	    FROM USERS
+	    WHERE ROLE = 'ADMIN' AND UNREGISTERYN = 'N'
+	</select>
+	<!-- 문의시 알림 정보 저장 -->
+	<insert id="insertQnaAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{referenceId},
+	        #{urlParam, jdbcType=VARCHAR},
+	        'N',
+	        SYSDATE
+	    )
 	</insert>
 </mapper>

@@ -132,8 +132,23 @@ public class PaymentService {
         }
         return resultMap;
     }
+	// 결제 성공시 알림 정보 저장
+	public void registerPaymentAlarm(Map<String, Object> map) {
+	    int userNo = Integer.parseInt(map.get("userNo").toString());
+	    System.out.println("최근 결제 번호");
+	    // 해당 유저의 가장 최근 결제 번호 가져오기
+	    Integer paymentNo = paymentMapper.selectLatestPaymentNo(userNo);
 
-	
+	    if (paymentNo != null) {
+	        Map<String, Object> alarmMap = new HashMap<>();
+	        alarmMap.put("targetUserNo", userNo);
+	        alarmMap.put("referenceType", "PAYMENT");
+	        alarmMap.put("referenceId", paymentNo);
+	        alarmMap.put("urlParam", null);
+
+	        paymentMapper.insertAlarm(alarmMap);
+	    }
+	}
 
 }
 

@@ -71,5 +71,9 @@ public interface MyPageMapper {
 	List<HashMap<String, Object>> selectPurchaseList(HashMap<String, Object> map);
 	// 구매한 상푸 개수
 	int selectPurchaseListTotalCount(HashMap<String, Object> map);
-
+	
+	// 가이드의 USER_NO 조회
+	Integer getGuideUserNoByTourNo(HashMap<String, Object> map);
+	// 리뷰 등록시 알림 저장
+	int insertReviewAlarm(HashMap<String, Object> map);
 }

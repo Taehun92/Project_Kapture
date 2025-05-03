@@ -157,6 +157,16 @@ public class MyPageController {
 			resultMap = myPageService.changePassword(map);
 			return new Gson().toJson(resultMap);
 		}
+		// 리뷰 등록시 알림 저장
+		@RequestMapping("/mypage/registerReviewAlarm.dox")
+		@ResponseBody
+		public Map<String, Object> registerReviewAlarm(@RequestParam HashMap<String, Object> map) {
+		    Map<String, Object> result = new HashMap<>();
+		    int inserted = myPageService.registerReviewAlarm(map);
+		    result.put("result", inserted > 0 ? "success" : "fail");
+		    return result;
+		}
+		
 //--------------------------------------------------------------------가이드페이지--------------------------------------------------------------------------------------------  
 		
 		// 가이드 페이지
