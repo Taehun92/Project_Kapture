@@ -119,8 +119,6 @@ public class LoginService {
 			
 			// 리뷰 알림 처리
 		    List<Integer> reviewTargetTours = loginMapper.selectReviewTargets(login.getUserNo());
-		    System.out.println("📌 리뷰 알림 대상 투어 목록: " + reviewTargetTours);
-		    System.out.println("🧪 사용자 번호: " + login.getUserNo());
 		    for (Integer tourNo : reviewTargetTours) {
 		        HashMap<String, Object> alarmMap = new HashMap<>();
 		        alarmMap.put("targetUserNo", login.getUserNo());

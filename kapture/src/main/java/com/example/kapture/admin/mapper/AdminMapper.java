@@ -136,6 +136,10 @@ public interface AdminMapper {
 		int countApprovedPartnership(HashMap<String, Object> map);
 		// 제휴문의 수정
 		int updatePartnership(HashMap<String, Object> map);
+		// 문의 답변시 알림 정보 저장
+		void insertAnswerAlarm(HashMap<String, Object> map);
+		// 제휴 상태 변경시 알림 정보 저장
+		void insertPartnershipStatusAlarm(HashMap<String, Object> map);
 
 		
 

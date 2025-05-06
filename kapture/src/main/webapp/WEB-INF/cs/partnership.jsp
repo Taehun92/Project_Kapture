@@ -125,7 +125,8 @@
               email: self.email,
               phone: self.phone,
               title: self.title,
-              content: self.content
+              content: self.content,
+              sessionId: self.sessionId
             };
 
             $.ajax({
@@ -134,7 +135,9 @@
               dataType: "json",
               data: param,
               success: function (data) {
+                console.log("data=========>",data);
                 if (data.result === 'success') {
+                  self.fnRegisterPartnershipAlarm(data.partnershipNo);
                   alert("제휴 문의가 정상적으로 등록되었습니다.");
                   location.href = "/cs/main.do"; // 등록 후 메인 페이지로 이동
                 } else {
@@ -146,7 +149,25 @@
               }
             });
           },
-
+          // 제휴 요청시 알림 정보 저장
+          fnRegisterPartnershipAlarm(partnershipNo) {
+            let self = this;
+            $.ajax({
+              url: "/cs/registerPartnershipAlarm.dox",
+              type: "POST",
+              dataType: "json",
+              data: {
+                referenceType: "PARTNERSHIP",
+                referenceId: partnershipNo,
+              },
+              success(res) {
+                console.log("✅ partnership 알림 등록 성공", res);
+              },
+              error() {
+                console.error("❌ partnership 알림 등록 실패");
+              }
+            });
+          },
           goTo(menu) {
             let self = this;
             if (menu === 'notice') {

@@ -155,6 +155,12 @@
                 methods: {
                     fnGetAlarms() {
                         let self = this;
+
+                        if (!self.sessionId) {
+                            console.warn("⚠️ 로그인되지 않음: 알림 조회 생략");
+                            return;
+                        }
+
                         $.ajax({
                             url: "/common/alarms.dox",  // 이 엔드포인트는 모든 알림 반환하도록 백엔드도 조정 필요
                             type: "POST",
@@ -174,6 +180,20 @@
                                         content = "리뷰를 남겨주세요!";
                                     } else if (item.referenceType === "REVIEW") {
                                         content = "새로운 리뷰가 등록되었습니다.";
+                                    } else if (item.referenceType === "QNA") {
+                                        content = "새로운 문의가 등록되었습니다.";
+                                    } else if (item.referenceType === "ANSWER") {
+                                        content = "문의하신 내용에 답변이 등록되었습니다.";
+                                    } else if (item.referenceType === "PARTNERSHIP") {
+                                        content = "새로운 제휴 문의가 등록되었습니다.";
+                                    } else if (item.referenceType === "PARTNERSHIP_STATUS") {
+                                        if (item.urlParam === "승인완료") {
+                                            content = "제휴 요청이 승인되었습니다.";
+                                        } else if (item.urlParam === "승인거부") {
+                                            content = "제휴 요청이 거부되었습니다.";
+                                        } else {
+                                            content = "제휴 요청 상태가 변경되었습니다.";
+                                        }
                                     }
 
                                     let formattedDate = item.alCreatedAt?.substring(2, 10).replace(/-/g, '.');
@@ -210,6 +230,14 @@
                                         url = "/mypage/user-purchase-history.do";
                                     } else if (alarm.referenceType === "REVIEW") {
                                         url = "/tours/tour-info.do?tourNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "QNA") {
+                                        url = "/admin/customer-inquiry.do";
+                                    } else if (alarm.referenceType === "ANSWER") {
+                                        url = "/mypage/user-qna.do";
+                                    } else if (alarm.referenceType === "PARTNERSHIP") {
+                                        url = "/admin/partnership.do";
+                                    } else if (alarm.referenceType === "PARTNERSHIP_STATUS") {
+                                        url = "/main.do";
                                     }
 
                                     location.href = url;

@@ -13,4 +13,5 @@ public class Partnership {
 	private String psStatus;
 	private String psCreatedAt;
 	private String psUpdatedAt;
+	private int psUserNo;
 }

@@ -468,13 +468,17 @@
                     if (partnership) {
                         nparmap = {
                             partnershipNo: partnership.partnershipNo,
-                            psStatus: partnership.psStatus
+                            psStatus: partnership.psStatus,
+                            targetUserNo: partnership.psUserNo,
+                            referenceType: "PARTNERSHIP_STATUS"
                         };
                     } else {
                         // 모달에서 저장 버튼을 누를 때
                         nparmap = {
                             partnershipNo: self.partnershipInfo.partnershipNo,
-                            psStatus: self.editPsStatus
+                            psStatus: self.editPsStatus,
+                            targetUserNo: self.partnershipInfo.psUserNo,
+                            referenceType: "PARTNERSHIP_STATUS"
                         };
                     }
 

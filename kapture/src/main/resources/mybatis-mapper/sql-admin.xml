@@ -889,4 +889,44 @@
 			PS_UPDATED_AT = SYSDATE
 		WHERE PARTNERSHIP_NO = #{partnershipNo, jdbcType=NUMERIC}
 	</update>
+	<!-- 문의 답변시 알림 정보 저장 -->
+	<insert id="insertAnswerAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{inquiryNo},
+	        null,
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
+	<!-- 제휴 상태 변경시 알림 정보 저장 -->
+	<insert id="insertPartnershipStatusAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{referenceId},
+	        #{psStatus},
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
 </mapper>
