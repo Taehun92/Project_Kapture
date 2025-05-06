@@ -105,20 +105,36 @@ public class CsController {
 		resultMap = csService.savePartnership(map);
 		return new Gson().toJson(resultMap);
 	}
-//	@RequestMapping(value = "/cs/registerQnaAlarm.dox", method = RequestMethod.POST)
-//	@ResponseBody
-//	public Map<String, Object> registerQnaAlarm(@RequestParam HashMap<String, Object> map) {
-//	    Map<String, Object> result = new HashMap<>();
-//
-//	    try {
-//	        csService.registerAdminQnaAlarm(map);  // map 통째로 넘김
-//	        result.put("result", "success");
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	        result.put("result", "fail");
-//	    }
-//
-//	    return result;
-//	}
+	// 문의시 알림 정보 저장
+	@RequestMapping(value = "/cs/registerQnaAlarm.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> registerQnaAlarm(@RequestParam HashMap<String, Object> map) {
+	    Map<String, Object> result = new HashMap<>();
 
+	    try {
+	        csService.registerAdminQnaAlarm(map);  // map 통째로 넘김
+	        result.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("result", "fail");
+	    }
+
+	    return result;
+	}
+	// 제휴 요청시 알림 정보 저장
+	@RequestMapping(value = "/cs/registerPartnershipAlarm.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> registerPartnershipAlarm(@RequestParam HashMap<String, Object> map) {
+	    Map<String, Object> result = new HashMap<>();
+
+	    try {
+	        csService.registerPartnershipAlarm(map);  // map 통째로 넘김
+	        result.put("result", "success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("result", "fail");
+	    }
+
+	    return result;
+	}
 }

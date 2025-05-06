@@ -89,6 +89,7 @@
         },
         methods: {
           fnQna() {
+            let self = this;
             if (!this.category || !this.question) {
               alert("필수 항목을 모두 입력해주세요.");
               return;
@@ -131,7 +132,6 @@
               data: {
                 referenceType: "QNA",
                 referenceId: inquiryNo,
-                urlParam: inquiryNo
               },
               success(res) {
                 console.log("✅ QnA 알림 등록 성공", res);

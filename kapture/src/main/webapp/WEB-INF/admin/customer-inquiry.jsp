@@ -432,7 +432,9 @@
 					self.selectedInquiry.answer = self.answerText;
 					let nparmap = {
 						inquiryNo: self.selectedInquiry.inquiryNo,
-						answer: self.answerText
+						answer: self.answerText,
+						targetUserNo: self.selectedInquiry.userNo,
+						referenceType: "ANSWER",
 					};
 
 					$.ajax({
