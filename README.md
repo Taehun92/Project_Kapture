@@ -50,12 +50,12 @@
 </div>
 </div>         
 <div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 📕 발표 PPT </h2>  
-<https://docs.google.com/presentation/d/1O1HBkP1YuUfVkF9pXeFPH0zuARhn-8gI/edit?usp=drive_link&ouid=102108838383969454196&rtpof=true&sd=true>
+<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 📕 발표 PPT </h2>
+<a href="https://docs.google.com/presentation/d/1O1HBkP1YuUfVkF9pXeFPH0zuARhn-8gI/edit?usp=drive_link&ouid=102108838383969454196&rtpof=true&sd=true" target="_blank">▶FOOD114 발표 PPT</a>
 </div>
 <div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🎞 시연 영상 </h2>  
-<https://youtu.be/nYb7iXMzafA>
+<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🎞 시연 영상 </h2>
+<a href="https://youtu.be/nYb7iXMzafA">▶Kapture 시연영상</a>
 </div>
 <div style= "text-align:left;">
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 👨‍👩‍👦‍👦 역할 분담 </h2>  
