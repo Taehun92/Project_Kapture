@@ -23,19 +23,32 @@
 <li> 페이지 별 개선 사항 / 보완 사항 점검 및 수정</li>
 </ul>
 </div>    
-<div style= "text-align:left;"> 
-<h2 style="color: #282d33;"> 👨‍👩‍👦‍👦 팀원 구성 </h2>
-<div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">  
-이름	GitHub 프로필
-
-이태훈	https://github.com/Taehun92
-
-강재석	https://github.com/vvyejivv
-
-박건형	https://github.com/geon-hyung
-
-이재형	https://github.com/leejh8997
 </div> 
+</div>
+<div style= "text-align:left;">
+<h2 tabindex="-1" class="heading-element" dir="auto" >👨‍👩‍👦‍👦 팀원 구성</h2>
+<table>
+<tr>
+<th>이름</th>                    
+<th>GitHub 프로필</th>
+</tr>
+<tr>
+<th>이태훈</th>
+<td>https://github.com/Taehun92</td>
+</tr>
+<tr>
+<td>강재석</td>
+<td>https://github.com/vvyejivv</td>
+</tr>
+<tr>
+<td>박건형</td>
+<td>https://github.com/geon-hyung</td>
+</tr>
+<tr>
+<td>이재형</td>
+<td>https://github.com/leejh8997</td>
+</tr>
+</table>
 </div>
 <div style= "text-align:left;">
 <h2 style="color: #282d33;"> 🛠️ 사용 언어 </h2>
