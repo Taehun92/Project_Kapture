@@ -51,7 +51,7 @@
 </div>         
 <div style= "text-align:left;">
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 📕 발표 PPT </h2>
-<a href="https://docs.google.com/presentation/d/1O1HBkP1YuUfVkF9pXeFPH0zuARhn-8gI/edit?usp=drive_link&ouid=102108838383969454196&rtpof=true&sd=true" target="_blank">▶FOOD114 발표 PPT</a>
+<a href="https://docs.google.com/presentation/d/1O1HBkP1YuUfVkF9pXeFPH0zuARhn-8gI/edit?usp=drive_link&ouid=102108838383969454196&rtpof=true&sd=true" target="_blank">▶Kapture 발표 PPT</a>
 </div>
 <div style= "text-align:left;">
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🎞 시연 영상 </h2>
