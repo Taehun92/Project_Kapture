@@ -110,10 +110,10 @@
                                 style="top: 100%; margin-top: 0px;">
                                 <a href="/request/list.do"
                                     class="text-gray-800 hover:text-blue-600 font-medium text-lg mr-6 whitespace-nowrap">요청게시판</a>
-                                <a href="/freeboard/list.do"
-                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg mr-6 whitespace-nowrap">자유게시판</a>
-                                <a href="/reviewboard/list.do"
-                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg whitespace-nowrap">후기게시판</a>
+                                <a href="#"
+                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg mr-6 whitespace-nowrap" onclick="alert('준비중입니다.')">자유게시판</a>
+                                <a href="#"
+                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg whitespace-nowrap" onclick="alert('준비중입니다.')">후기게시판</a>
                             </div>
                         </div>
                         <a href="/course.do" class="hover:text-blue-700">Where to Go</a>
