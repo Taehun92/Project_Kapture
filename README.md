@@ -63,6 +63,14 @@
 <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white">
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white">
 <img src="https://img.shields.io/badge/Javascript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=white">
+  <!-- JSP (로고 없음: Java 기반으로 표기) -->
+<img src="https://img.shields.io/badge/JSP-007396?style=for-the-badge&logo=java&logoColor=white">
+
+<!-- RESTful API -->
+<img src="https://img.shields.io/badge/RESTful-API-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+
+<!-- AJAX (로고 없음: JS로 표기) -->
+<img src="https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white">
 </div>
 </div>
 <div style= "text-align:left;">
