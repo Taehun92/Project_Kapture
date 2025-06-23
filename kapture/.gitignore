@@ -35,6 +35,3 @@ build/
 ###.env###
 
 .env
-
-# application.properties 제외
-/src/main/resources/application.properties

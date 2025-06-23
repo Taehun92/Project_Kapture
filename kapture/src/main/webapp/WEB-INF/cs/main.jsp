@@ -28,7 +28,7 @@
   
       <!-- 카드형 버튼 -->
       <div class="bg-blue-50 pt-10 pb-24">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto px-6">
           <div class="bg-white rounded-xl p-8 text-center shadow hover:bg-blue-200 hover:-translate-y-1.5 transition cursor-pointer" @click="goTo('faq')">
             <img src="../../img/faq.png" alt="FAQ" class="w-12 mx-auto mb-3" />
             <div class="text-lg font-semibold text-gray-900">FAQ</div>
@@ -39,10 +39,15 @@
             <div class="text-lg font-semibold text-gray-900">공지사항</div>
             <div class="text-gray-600 mt-1 text-sm">이벤트 및 안내</div>
           </div>
-          <div class="bg-white rounded-xl p-8 text-center shadow hover:bg-blue-200 hover:-translate-y-1.5 transition cursor-pointer" @click="goToQna">
+          <div class="bg-white rounded-xl p-8 text-center shadow hover:bg-blue-200 hover:-translate-y-1.5 transition cursor-pointer" @click="goToQna('qna')">
             <img src="../../img/qna.png" alt="Q&A" class="w-12 mx-auto mb-3" />
             <div class="text-lg font-semibold text-gray-900">Q&A</div>
             <div class="text-gray-600 mt-1 text-sm">문의 답변 확인</div>
+          </div>
+          <div class="bg-white rounded-xl p-8 text-center shadow hover:bg-blue-200 hover:-translate-y-1.5 transition cursor-pointer" @click="goToQna('partnership')">
+            <img src="../../img/relationship.png" alt="Q&A" class="w-12 mx-auto mb-3" />
+            <div class="text-lg font-semibold text-gray-900">제휴 문의</div>
+            <div class="text-gray-600 mt-1 text-sm">프리랜서 가이드·업소 제휴</div>
           </div>
         </div>
   
@@ -79,13 +84,15 @@
           if (menu === 'faq') window.location.href = base + "faq.do";
           if (menu === 'notice') window.location.href = base + "notice.do";
         },
-        goToQna() {
+        goToQna(menu) {
           if (!this.sessionId) {
             alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
             window.location.href = "/login.do";
             return;
           }
-          window.location.href = "/cs/qna.do";
+          if (menu === 'qna') window.location.href = "/cs/qna.do";
+          if (menu === 'partnership') window.location.href = "/cs/partnership.do";
+          
         },
         goToFaqDetail(item) {
           const query = encodeURIComponent(item.question);

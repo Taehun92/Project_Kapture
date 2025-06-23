@@ -111,6 +111,7 @@
 							}
 						});
 					},
+
 					getTwitAuthCodeUrl() {
 						$.ajax({
 							type: "POST",
@@ -130,6 +131,7 @@
 							}
 						});
 					},
+					
 					getFacebookAuthUrl() {
 						$.ajax({
 							type: "POST",

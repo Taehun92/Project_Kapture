@@ -10,48 +10,13 @@
         <title>첫번째 페이지</title>
     </head>
     <style>
-        /* ✅ 사이드바 - 고정 유지 */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200px;
-            height: 100vh;
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            padding: 10px 0;
-        }
-
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-
-        .sidebar ul li a:hover {
-            background-color: #555;
-        }
-
         /* 제목 스타일 */
         .page-title {
             text-align: center;
             font-size: 24px;
             font-weight: bold;
             /* margin-top: 20px; */
-            margin-left: 220px;
+            margin-left: 240px;
             /* 사이드바 너비(200px) + 여백(20px) */
             padding: 20px;
             display: flex;
@@ -209,65 +174,72 @@
         .summary-box:hover {
             transform: scale(1.01);
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
         <!-- ✅ 이 영역만 Vue에서 리스트 출력 -->
-        <div id="app">
-
+        <div id="app" v-cloak>
+            <!-- 제목 추가 -->
+            <div class="page-title">리뷰 및 평점 관리</div>
+            <hr class="title-hr">
             <div class="content">
-                <!-- 제목 추가 -->
-                <div class="page-title">리뷰 및 평점 관리</div>
-                <hr class="title-hr">
+                
                 <h2>전체 리뷰 리스트</h2>
                 <!-- ✅ 리뷰 요약 박스 -->
-                <div class="summary-box">
-                    <div>📝 <span style="color:#34495e;">총 리뷰 수:</span> <strong>{{ summary.TOTALCOUNT }}</strong>건</div>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="text" v-model="keyword" placeholder="검색어 입력" @keyup.enter="onSearch"
-                            style="padding: 6px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
-                        <button @click="onSearch">🔍 검색</button>
-    
-                        <select v-model="sort" @change="fnReviewList"
-                            style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;">
-                            <option value="">최신순</option>
-                            <option value="rating_desc">평점 높은순</option>
-                            <option value="rating_asc">평점 낮은순</option>
-                        </select>
-                    </div>
-                    <div>⭐ <span style="color:#34495e;">평균 평점:</span> <strong>{{ summary.AVGRATING }}</strong>점</div>
+                <div v-if="loaded">
+                    <div class="summary-box">
+                        <div>📝 <span style="color:#34495e;">총 리뷰 수:</span> <strong>{{ summary.TOTALCOUNT }}</strong>건
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <input type="text" v-model="keyword" placeholder="검색어 입력" @keyup.enter="onSearch"
+                                style="padding: 6px; width: 200px; border-radius: 5px; border: 1px solid #ccc;">
+                            <button @click="onSearch">🔍 검색</button>
 
-                </div>
-                
-                <div class="review-list-wrapper">
-                    <div v-for="review in list" class="review-box">
-                        <div class="review-info">
-                            <div class="review-title"> {{ review.TITLE }}</div>
-                            <div class="review-meta">
-                                작성자: {{ review.USERFIRSTNAME }} {{ review.USERRASTNAME }} &nbsp;|&nbsp;
-                                평점: ⭐ {{ review.RATING }} &nbsp;|&nbsp;
-                                상품 시간대: {{ review.DURATION }} &nbsp;|&nbsp;
-                                작성자 이메일: {{review.EMAIL}} &nbsp;|&nbsp;
-                                날짜: {{ review.CREATEDAT }}
-                            </div>
-                            <div class="review-content">
-                                {{ review.CONTENT }}
-                            </div>
+                            <select v-model="sort" @change="fnReviewList"
+                                style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="">최신순</option>
+                                <option value="rating_desc">평점 높은순</option>
+                                <option value="rating_asc">평점 낮은순</option>
+                            </select>
                         </div>
-                        <div class="review-actions">
-                            <button @click="fnDelete(review.REVIEWNO)">리뷰 삭제하기</button>
+                        <div>⭐ <span style="color:#34495e;">평균 평점:</span> <strong>{{ summary.AVGRATING }}</strong>점
+                        </div>
+
+                    </div>
+
+                    <div class="review-list-wrapper">
+                        <div v-for="review in list" class="review-box">
+                            <div class="review-info">
+                                <div class="review-title"> {{ review.TITLE }}</div>
+                                <div class="review-meta">
+                                    작성자: {{ review.USERFIRSTNAME }} {{ review.USERRASTNAME }} &nbsp;|&nbsp;
+                                    평점: ⭐ {{ review.RATING }} &nbsp;|&nbsp;
+                                    상품 시간대: {{ review.DURATION }} &nbsp;|&nbsp;
+                                    작성자 이메일: {{review.EMAIL}} &nbsp;|&nbsp;
+                                    날짜: {{ review.CREATEDAT }}
+                                </div>
+                                <div class="review-content">
+                                    {{ review.CONTENT }}
+                                </div>
+                            </div>
+                            <div class="review-actions">
+                                <button @click="fnDelete(review.REVIEWNO)">리뷰 삭제하기</button>
+                            </div>
                         </div>
                     </div>
+                    <div style="text-align:center; margin-top: 20px;">
+                        <button @click="changePage(page - 1)" :disabled="page === 1">이전</button>
+                        <span> {{ page }} / {{ totalPages }} </span>
+                        <button @click="changePage(page + 1)" :disabled="page === totalPages">다음</button>
+                    </div>
                 </div>
-                <div style="text-align:center; margin-top: 20px;">
-                    <button @click="changePage(page - 1)" :disabled="page === 1">이전</button>
-                    <span> {{ page }} / {{ totalPages }} </span>
-                    <button @click="changePage(page + 1)" :disabled="page === totalPages">다음</button>
-                </div>
+                <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
             </div>
-
-            
         </div>
     </body>
 
@@ -277,8 +249,8 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    sessionId : "${sessionId}",
-                    sessionRole : "${sessionRole}",
+                    sessionId: "${sessionId}",
+                    sessionRole: "${sessionRole}",
                     list: [],  // ✅ 서버에서 가져온 리뷰 저장
                     page: 1,              // 현재 페이지
                     pageSize: 10,         // 페이지당 항목 수
@@ -286,8 +258,8 @@
                     totalPages: 0,         // 전체 페이지 수
                     summary: { totalCount: 0, avgRating: 0 },
                     keyword: "",
-                    sort: ""
-
+                    sort: "",
+                    loaded: false
 
                 };
             },
@@ -308,7 +280,7 @@
                         success: function (data) {
                             self.totalCount = data.totalCount;
                             self.totalPages = Math.max(1, Math.ceil(data.totalCount / self.pageSize));
-
+                            self.loaded = true;
                             console.log("현재 page:", self.page);
                             console.log("totalPages:", self.totalPages);
                             if (self.page > self.totalPages) {
@@ -379,7 +351,7 @@
             },
             mounted() {
                 let self = this;
-				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                if (!self.sessionId || self.sessionRole != 'ADMIN') {
                     alert("관리자만 이용가능합니다.");
                     location.href = "/main.do";
                 }

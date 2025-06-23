@@ -136,6 +136,29 @@
 		WHERE TOUR_NO = #{tourNo} AND THUMBNAIL = 'Y'
 	</select>
 	
+	<select id="selectWeather" parameterType="hashmap" resultType="com.example.kapture.common.model.Weather">
+		SELECT * 
+		FROM REGION R
+		INNER JOIN RIG_WEATHER W ON R.SI_NAME LIKE '%' || W.SI_NAME || '%' OR R.GU_NAME LIKE '%' || W.SI_NAME || '%'
+		WHERE R.SI_NAME = #{si} AND GU_NAME =#{gu}
+	</select>
+	<!-- 최신 10개 알람 조회 -->
+	<select id="selectRecentAlarms" parameterType="int" resultType="com.example.kapture.common.model.Alarm">
+    SELECT *
+    FROM (
+        SELECT *
+        FROM ALARM
+        WHERE TARGET_USER_NO = #{userNo}
+        ORDER BY AL_CREATED_AT DESC
+    )
+    WHERE ROWNUM &lt;= 10
+	</select>
+	<!-- 읽은 알람 상태 처리 -->
+	<update id="updateAlarmStatus" parameterType="hashmap">
+	    UPDATE ALARM
+	    SET ALARM_STATUS = 'Y'
+	    WHERE ALARM_NO = #{alarmNo}
+	</update>
 </mapper>
 
 

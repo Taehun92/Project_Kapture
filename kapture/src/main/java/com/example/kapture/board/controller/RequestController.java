@@ -1,8 +1,7 @@
 package com.example.kapture.board.controller;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,14 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.kapture.board.dao.RequestService;
-import com.example.kapture.common.model.Common;
 import com.google.gson.Gson;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class RequestController {
@@ -130,6 +126,19 @@ public class RequestController {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = requestService.acceptRequest(map);
 		return new Gson().toJson(resultMap);
+	}
+	// 댓글 달리면 알림 정보 저장
+	@RequestMapping(value = "/request/registerCommentAlarm.dox", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> registerCommentAlarm(@RequestParam Map<String, Object> map) throws Exception {
+	    Map<String, Object> resultMap = new HashMap<>();
+	    try {
+	    	requestService.registerAlarm(map);
+	        resultMap.put("result", "success");
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
 	}
 	
 	

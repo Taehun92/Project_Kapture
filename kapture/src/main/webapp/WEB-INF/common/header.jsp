@@ -14,7 +14,7 @@
     <body class="bg-white text-gray-800 text-[16px] tracking-wide">
 
         <!-- 번역 위젯 -->
-        <div class="gtranslate-wrapper fixed bottom-20 left-4 sm:bottom-24 md:bottom-28 z-50">
+        <div class="gtranslate-wrapper fixed left-4 z-50" style="bottom: 80px;">
             <div class="gtranslate_wrapper"></div>
         </div>
 
@@ -59,13 +59,16 @@
                             </button>
 
                             <!-- 🔽 알림 모달 -->
-                            <div v-if="showAlarm"
+                            <div v-if="showAlarmModal"
                                 class="absolute right-0 mt-2 w-60 bg-white border rounded shadow-md z-50 text-sm">
                                 <div class="p-3 border-b font-semibold text-gray-700">새 알림</div>
                                 <ul>
-                                    <li v-for="alarm in alarmList" :key="alarm.id"
-                                        class="px-4 py-2 hover:bg-gray-100 text-gray-700">
+                                    <li v-for="alarm in alarmList" :key="alarm.alarmNo"
+                                        class="border-b py-2 px-2 text-sm flex justify-between items-center cursor-pointer"
+                                        :class="alarm.alarmStatus === 'N' ? 'font-bold text-black' : 'text-gray-400'"
+                                        @click="fnReadAlarm(alarm)">
                                         {{ alarm.content }}
+                                        <span class="text-xs">{{ alarm.formattedDate }}</span>
                                     </li>
                                 </ul>
                                 <div v-if="alarmList.length === 0" class="p-3 text-center text-gray-400">알림이 없습니다.</div>
@@ -95,13 +98,28 @@
                 </div>
 
                 <!-- 🔵 왼쪽: 로고 + 메뉴 -->
-                <div class="flex items-center gap-14 text-[35px] font-thin text-gray-800">
+                <div class="flex items-center gap-28 font-semibold text-[35px] text-gray-800">
                     <a href="/main.do">
                         <img src="../../img/logo/kapture_Logo.png" alt="로고" class="w-[120px] h-[96px] object-contain" />
                     </a>
                     <div class="flex gap-12">
-                        <a href="/tours/list.do" class="hover:text-blue-700">여행상품</a>
-                        <a href="/request/list.do" class="hover:text-blue-700">요청게시판</a>
+                        <a href="/tours/list.do" class="hover:text-blue-700">Tours</a>
+                        <div class="relative group">
+                            <a href="#" class="hover:text-blue-700">
+                                Board
+                            </a>
+                            <!-- 드롭다운: 가로 정렬 fix -->
+                            <div class="absolute left-[-111px] hidden group-hover:flex flex-row items-center bg-white border-t border-gray-300 z-40 px-6 py-2"
+                                style="top: 100%; margin-top: 0px;">
+                                <a href="/request/list.do"
+                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg mr-6 whitespace-nowrap">요청게시판</a>
+                                <a href="/freeboard/list.do"
+                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg mr-6 whitespace-nowrap">자유게시판</a>
+                                <a href="/reviewboard/list.do"
+                                    class="text-gray-800 hover:text-blue-600 font-medium text-lg whitespace-nowrap">후기게시판</a>
+                            </div>
+                        </div>
+                        <a href="/course.do" class="hover:text-blue-700">Where to Go</a>
                     </div>
                 </div>
             </div>
@@ -128,16 +146,110 @@
                         sessionId: "${sessionId}",
                         sessionRole: "${sessionRole}",
                         basketCount: 0,
-                        showAlarm: false,
-                        unreadAlarmCount: 3,
-                        alarmList: [
-                            { id: 1, content: '예약이 확정되었습니다.' },
-                            { id: 2, content: '가이드가 메시지를 보냈습니다.' },
-                            { id: 3, content: '리뷰를 남겨주세요!' }
-                        ]
+                        alarmList: [],              // 전체 알림 10개
+                        unreadAlarmCount: 0,        // 읽지 않은 알림 수
+                        unreadAlarms: [],           // 알림에 content, formattedDate 포함
+                        showAlarmModal: false       // 모달 토글
                     };
                 },
                 methods: {
+                    fnGetAlarms() {
+                        let self = this;
+
+                        if (!self.sessionId) {
+                            console.warn("⚠️ 로그인되지 않음: 알림 조회 생략");
+                            return;
+                        }
+
+                        $.ajax({
+                            url: "/common/alarms.dox",  // 이 엔드포인트는 모든 알림 반환하도록 백엔드도 조정 필요
+                            type: "POST",
+                            data: { sessionId: self.sessionId },
+                            dataType: "json",
+                            success: function (data) {
+                                console.log("alarmdata===>", data);
+                                self.alarmList = data.list.map(item => {
+                                    let content = "";
+                                    if (item.referenceType === "PAYMENT") {
+                                        content = "예약이 확정되었습니다.";
+                                    } if (item.referenceType === 'COMMENT') {
+                                        content = "내 요청글에 새로운 댓글이 달렸습니다.";
+                                    } else if (item.referenceType === 'ACCEPT') {
+                                        content = "내 댓글이 채택되었습니다!";
+                                    } else if (item.referenceType === "TOUR") {
+                                        content = "리뷰를 남겨주세요!";
+                                    } else if (item.referenceType === "REVIEW") {
+                                        content = "새로운 리뷰가 등록되었습니다.";
+                                    } else if (item.referenceType === "QNA") {
+                                        content = "새로운 문의가 등록되었습니다.";
+                                    } else if (item.referenceType === "ANSWER") {
+                                        content = "문의하신 내용에 답변이 등록되었습니다.";
+                                    } else if (item.referenceType === "PARTNERSHIP") {
+                                        content = "새로운 제휴 문의가 등록되었습니다.";
+                                    } else if (item.referenceType === "PARTNERSHIP_STATUS") {
+                                        if (item.urlParam === "승인완료") {
+                                            content = "제휴 요청이 승인되었습니다.";
+                                        } else if (item.urlParam === "승인거부") {
+                                            content = "제휴 요청이 거부되었습니다.";
+                                        } else {
+                                            content = "제휴 요청 상태가 변경되었습니다.";
+                                        }
+                                    }
+
+                                    let formattedDate = item.alCreatedAt?.substring(2, 10).replace(/-/g, '.');
+
+                                    return {
+                                        ...item,
+                                        content: content,
+                                        formattedDate: formattedDate
+                                    };
+                                });
+                                // 안읽은 알림 수 (카운트용)
+                                self.unreadAlarmCount = data.list.filter(item => item.alarmStatus === 'N').length;
+                            }
+                        });
+                    },
+                    fnReadAlarm(alarm) {
+                        let self = this;
+                        $.ajax({
+                            url: "/common/read-alarm.dox",
+                            type: "POST",
+                            data: { alarmNo: alarm.alarmNo },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.result === "success") {
+                                    // URL 이동 처리
+                                    let url = "";
+                                    if (alarm.referenceType === "TOUR") {
+                                        url = "/mypage/user-reviews.do";
+                                    } else if (alarm.referenceType === "COMMENT") {
+                                        url = "/request/view.do?requestNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "ACCEPT") {
+                                        url = "/request/view.do?requestNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "PAYMENT") {
+                                        url = "/mypage/user-purchase-history.do";
+                                    } else if (alarm.referenceType === "REVIEW") {
+                                        url = "/tours/tour-info.do?tourNo=" + alarm.urlParam;
+                                    } else if (alarm.referenceType === "QNA") {
+                                        url = "/admin/customer-inquiry.do";
+                                    } else if (alarm.referenceType === "ANSWER") {
+                                        url = "/mypage/user-qna.do";
+                                    } else if (alarm.referenceType === "PARTNERSHIP") {
+                                        url = "/admin/partnership.do";
+                                    } else if (alarm.referenceType === "PARTNERSHIP_STATUS") {
+                                        url = "/main.do";
+                                    }
+
+                                    location.href = url;
+                                } else {
+                                    alert("알림 상태 업데이트에 실패했습니다.");
+                                }
+                            },
+                            error: function () {
+                                alert("서버 오류가 발생했습니다.");
+                            }
+                        });
+                    },
                     fnLogout() {
                         var self = this;
                         $.ajax({
@@ -166,14 +278,14 @@
                     },
 
                     fnToggleAlarm() {
-                        this.showAlarm = !this.showAlarm;
+                        this.showAlarmModal = !this.showAlarmModal;
                     },
 
                     fnCloseAlarmOutside(e) {
                         // 알림 영역 DOM 찾기
                         const alarmBox = document.querySelector('.alarm-box');
                         if (alarmBox && !alarmBox.contains(e.target)) {
-                            this.showAlarm = false;
+                            this.showAlarmModal = false;
                         }
                     }
                 },
@@ -182,6 +294,8 @@
                         this.fnGetBasket();
                     }
                     const self = this;
+                    window.header = this;
+                    self.fnGetAlarms();
                     window.addEventListener("storage", function (e) {
                         if (e.key === "basketChanged") {
                             self.fnGetBasket();

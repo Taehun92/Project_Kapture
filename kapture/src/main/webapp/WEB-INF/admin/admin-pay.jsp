@@ -9,20 +9,13 @@
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <style>
-            body {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                font-family: Arial, sans-serif;
-            }
-
             /* 제목 스타일 */
             .page-title {
                 text-align: center;
                 font-size: 24px;
                 font-weight: bold;
                 /* margin-top: 20px; */
-                margin-left: 220px;
+                margin-left: 240px;
                 /* 사이드바 너비(200px) + 여백(20px) */
                 padding: 20px;
                 display: flex;
@@ -35,17 +28,12 @@
                 margin-bottom: 30px;
             }
 
-            #app {
-                margin-left: 220px;
-                padding: 20px;
-                width: calc(100% - 220px);
-            }
-
             .date-header {
                 font-size: 24px;
                 font-weight: bold;
                 display: flex;
                 gap: 20px;
+                margin-left: 240px;
                 margin-bottom: 30px;
                 justify-content: center;
                 /* ✅ 가운데 정렬 */
@@ -57,6 +45,7 @@
             .card-container {
                 display: flex;
                 gap: 20px;
+                margin-left: 240px;
                 margin-bottom: 30px;
                 justify-content: center;
                 /* ✅ 가운데 정렬 */
@@ -317,54 +306,56 @@
                 </div>
             </div>
             <div>
-                <input type="date" v-model="startDate" class="search-date">
-                ~
-                <input type="date" v-model="endDate" class="search-date">
-                <select v-model="statusFilter" class="search-select">
-                    <option value="">전체</option>
-                    <option value="결제완료">결제완료</option>
-                    <option value="거래완료">거래완료</option>
-                    <option value="환불요청">환불요청</option>
-                    <option value="환불완료">환불완료</option>
-                </select>
-                <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
-                    placeholder="회원명/상품 검색">
-                <button class="search-button" @click="loadFilteredData">검색</button>
+                <div class="content">
+                    <input type="date" v-model="startDate" class="search-date">
+                    ~　
+                    <input type="date" v-model="endDate" class="search-date">
+                    <select v-model="statusFilter" class="search-select">
+                        <option value="">전체</option>
+                        <option value="결제완료">결제완료</option>
+                        <option value="거래완료">거래완료</option>
+                        <option value="환불요청">환불요청</option>
+                        <option value="환불완료">환불완료</option>
+                    </select>
+                    <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                        placeholder="회원명/상품 검색">
+                    <button class="search-button" @click="loadFilteredData">검색</button>
 
-                <table class="transaction-table">
-                    <thead>
-                        <tr>
-                            <th>결제일</th>
-                            <th>회원 이름</th>
-                            <th>상품 제목</th>
-                            <th>결제 금액</th>
-                            <th>상태</th>
-                            <th>인원</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="transactions.length === 0">
-                            <td colspan="10">검색 결과가 없습니다.</td>
-                        </tr>
-                        <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
-                            <td>{{ item.PAYMENT_DATE }}</td>
-                            <td>{{ item.USER_FIRSTNAME }}</td>
-                            <td>{{ item.TITLE }}</td>
-                            <td>{{ formatCurrency(item.AMOUNT) }}</td>
-                            <td :style="{ color: item.PAYMENT_STATUS === 'PAID' ? 'green' : 'red' }">
-                                {{ item.PAYMENT_STATUS }}
-                            </td>
-                            <td>{{ item.NUM_PEOPLE }}명</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                    <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                        @click="goPage(p)">
-                        {{ p }}
-                    </button>
-                    <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>결제일</th>
+                                <th>회원 이름</th>
+                                <th>상품 제목</th>
+                                <th>결제 금액</th>
+                                <th>상태</th>
+                                <th>인원</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="transactions.length === 0">
+                                <td colspan="10">검색 결과가 없습니다.</td>
+                            </tr>
+                            <tr v-for="item in transactions" :key="item.PAYMENT_DATE + item.USER_FIRSTNAME + item.TITLE">
+                                <td>{{ item.PAYMENT_DATE }}</td>
+                                <td>{{ item.USER_FIRSTNAME }}</td>
+                                <td>{{ item.TITLE }}</td>
+                                <td>{{ formatCurrency(item.AMOUNT) }}</td>
+                                <td :style="{ color: item.PAYMENT_STATUS === 'PAID' ? 'green' : 'red' }">
+                                    {{ item.PAYMENT_STATUS }}
+                                </td>
+                                <td>{{ item.NUM_PEOPLE }}명</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                        <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                            @click="goPage(p)">
+                            {{ p }}
+                        </button>
+                        <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+                    </div>
                 </div>
             </div>
         </div>

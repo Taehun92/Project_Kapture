@@ -844,4 +844,89 @@
 	    ORDER BY R.RQ_CREATED_AT DESC
 	    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
 	</select>
+	<!-- 제휴문의 관리(승인대기, 승인거부) 조회-->
+	<select id="selectWaitingPartnershipList" parameterType="map" resultType="com.example.kapture.admin.model.Partnership">
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM PARTNERSHIP 
+				WHERE PS_STATUS IN ('승인대기', '승인거부')
+	  			ORDER BY PS_CREATED_AT DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{waitingPage} * #{size}
+		)
+		WHERE RNUM &gt; (#{waitingPage} - 1) * #{size}
+	</select>
+	<!-- 제휴문의 관리(승인완료) 조회-->
+	<select id="selectApprovedPartnershipList" parameterType="map" resultType="com.example.kapture.admin.model.Partnership">
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, DATA.* FROM (
+				SELECT *
+				FROM PARTNERSHIP 
+				WHERE PS_STATUS = '승인완료'
+	  			ORDER BY PS_CREATED_AT DESC
+			) DATA
+	    	WHERE ROWNUM &lt;= #{approvedPage} * #{size}
+		)
+		WHERE RNUM &gt; (#{approvedPage} - 1) * #{size}
+	</select>
+	<!-- 제휴문의 관리(승인대기, 승인거부) 총 개수 -->
+	<select id="countWaitingPartnership" resultType="int">
+		SELECT COUNT(*)
+		FROM PARTNERSHIP		
+		WHERE PS_STATUS IN ('승인대기', '승인거부')
+	</select>
+	<!-- 제휴문의 관리(승인완료) 총 개수 -->
+	<select id="countApprovedPartnership" resultType="int">
+		SELECT COUNT(*)
+		FROM PARTNERSHIP		
+		WHERE PS_STATUS = '승인완료'
+	</select>
+	<!-- 제휴문의 관리 수정 -->
+	<update id="updatePartnership" parameterType="hashmap">
+		UPDATE PARTNERSHIP SET 
+			PS_STATUS = #{psStatus, jdbcType=VARCHAR}, 
+			PS_UPDATED_AT = SYSDATE
+		WHERE PARTNERSHIP_NO = #{partnershipNo, jdbcType=NUMERIC}
+	</update>
+	<!-- 문의 답변시 알림 정보 저장 -->
+	<insert id="insertAnswerAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{inquiryNo},
+	        null,
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
+	<!-- 제휴 상태 변경시 알림 정보 저장 -->
+	<insert id="insertPartnershipStatusAlarm" parameterType="hashmap">
+	    INSERT INTO ALARM (
+	        ALARM_NO,
+	        TARGET_USER_NO,
+	        REFERENCE_TYPE,
+	        REFERENCE_ID,
+	        URL_PARAM,
+	        ALARM_STATUS,
+	        AL_CREATED_AT
+	    ) VALUES (
+	        ALARM_SEQ.NEXTVAL,
+	        #{targetUserNo},
+	        #{referenceType},
+	        #{referenceId},
+	        #{psStatus},
+	        'N',
+	        SYSDATE
+	    )
+	</insert>
 </mapper>

@@ -240,7 +240,24 @@
               });
             }
           },
-
+          fnRegisterPaymentAlarm() {
+            const self = this;
+            $.ajax({
+              url: "/payment/registerPaymentAlarm.dox",
+              type: "POST",
+              dataType: "json",
+              data: {
+                userNo: self.sessionId,
+                referenceType: "PAYMENT"
+              },
+              success(data) {
+                console.log("✅ 알림 저장 성공", data);
+              },
+              error() {
+                console.error("❌ 알림 저장 실패");
+              }
+            });
+          },
           fnPaymentSave(amount, method, merchantId) {
             const self = this;
             let nparam = {
@@ -258,6 +275,8 @@
               data: JSON.stringify(nparam),
               success(res) {
                 if (res.result === "success") {
+                  // ✅ 알림 등록 메서드 호출
+                  self.fnRegisterPaymentAlarm();
                   // ✅ POST 방식으로 결제 완료 페이지 이동
                   location.href = "/payment/success.do?merchantId=" + merchantId;
                 } else {

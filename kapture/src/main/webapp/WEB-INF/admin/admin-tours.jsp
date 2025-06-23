@@ -11,33 +11,21 @@
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
         <title>관리자 페이지</title>
         <style>
-            body {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                font-family: Arial, sans-serif;
-            }
-
-            #app {
-                margin-left: 220px;
-                padding: 20px;
-                width: calc(100% - 220px);
-            }
-
             /* 제목 스타일 */
-			.page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				/* margin-top: 20px; */
-				margin-left: 220px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+            .page-title {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 240px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
+
             .title-hr {
                 margin-bottom: 30px;
             }
@@ -105,10 +93,10 @@
                 background-color: #0056b3;
             }
 
-            .search-input{
-				width: 300px;
-			}
-            
+            .search-input {
+                width: 300px;
+            }
+
             /* 모달 관련 CSS */
             .order-modal {
                 position: fixed;
@@ -121,14 +109,6 @@
                 justify-content: center;
                 align-items: center;
                 z-index: 9999;
-            }
-
-            .modal-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
             }
 
             .modal-content {
@@ -150,23 +130,31 @@
             }
 
             .modal-header {
+                position: relative;
+                height: 60px;
+                /* 높이 지정 (필수) */
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: center;
+                width: 100%;
             }
 
             .modal-header h2 {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
                 margin: 0;
                 font-weight: bold;
+                font-size: 22px;
             }
 
             .close-btn {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
                 font-size: 28px;
                 cursor: pointer;
-            }
-
-            .modal-body .info-section {
-                margin-bottom: 20px;
             }
 
             .modal-body table {
@@ -180,7 +168,6 @@
                 border: 1px solid #ddd;
                 padding: 8px;
                 text-align: left;
-
             }
 
             .modal-body input[type="text"],
@@ -198,26 +185,6 @@
 
             .modal-body th {
                 background-color: #f9f9f9;
-            }
-
-            .modal-footer {
-                text-align: right;
-            }
-
-            .modal-save-button {
-                margin-top: 5px;
-                padding: 10px 20px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                font-size: 16px;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-
-            .modal-save-button:hover {
-                background-color: #0056b3;
             }
 
             /* 에디터 크기 */
@@ -246,111 +213,121 @@
             }
 
             /* 이미지 스타일 */
+            .tour-thumbNail-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+
             .tour-thumbNail {
-                width: 100px;
-                height: 100px;
+                width: 100%;
+                height: 100%;
                 object-fit: cover;
-                /* 이미지가 잘리지 않도록 조정 */
                 border-radius: 5px;
-                max-width: fit-content;
+            }
+
+            [v-cloak] {
+                display: none;
             }
         </style>
     </head>
 
     <body>
         <jsp:include page="menu.jsp"></jsp:include>
-        <div id="app">
+        <div id="app" v-cloak>
             <!-- 제목 추가 -->
-			<div class="page-title">상품 관리</div>
-			<hr class="title-hr">
-            <input type="date" v-model="startDate" class="search-date">
-            ~
-            <input type="date" v-model="endDate" class="search-date">
-            <select v-model="statusFilter" class="search-select">
-                <option value="">전체</option>
-                <option value="tourNo">상품번호</option>
-                <option value="title">제목</option>
-                <option value="siName">지역명</option>
-                <option value="themeName">테마명</option>
-            </select>
-            <input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="상품번호 / 제목 / 지역명 / 테마명 검색">
-            <button class="search-button" @click="loadFilteredData">검색</button>
+            <div class="page-title">상품 관리</div>
+            <hr class="title-hr">
+            <div class="content">
+                <input type="date" v-model="startDate" class="search-date">
+                ~　
+                <input type="date" v-model="endDate" class="search-date">
+                <select v-model="statusFilter" class="search-select">
+                    <option value="">전체</option>
+                    <option value="tourNo">상품번호</option>
+                    <option value="title">제목</option>
+                    <option value="siName">지역명</option>
+                    <option value="themeName">테마명</option>
+                </select>
+                <input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+                    placeholder="상품번호 / 제목 / 지역명 / 테마명 검색">
+                <button class="search-button" @click="loadFilteredData">검색</button>
+                <div v-if="loaded">
+                    <table class="tours-table">
+                        <thead>
+                            <tr>
+                                <th>상품 번호</th>
+                                <th>사진</th>
+                                <th>상품 제목</th>
+                                <th>여행 날짜</th>
+                                <th>여행 기간</th>
+                                <th>가격</th>
+                                <th>판매 상태</th>
+                                <th>지역</th>
+                                <th>테마</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="toursList.length === 0">
+                                <td colspan="10">검색 결과가 없습니다.</td>
+                            </tr>
+                            <tr v-for="tour in toursList">
+                                <td>{{ tour.tourNo }}</td>
+                                <td class="tour-thumbNail-wrapper">
+                                    <template v-if="tour.thumbNail === 'Y'">
+                                        <img :src="tour.filePath" class="tour-thumbNail">
+                                    </template>
+                                </td>
+                                <td>{{ tour.title }}</td>
+                                <td v-html="formatDate(tour.tourDate)"></td>
+                                <td>{{ tour.duration }}</td>
+                                <td>{{ formatCurrency(tour.price) }}</td>
+                                <td>
+                                    <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) < today)"
+                                        style=" color: red">
+                                        미판매
+                                    </span>
+                                    <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) >= today)"
+                                        style=" color: green">
+                                        판매중
+                                    </span>
+                                    <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)"
+                                        style=" color: blue">
+                                        판매완료
+                                    </span>
+                                    <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) < today)"
+                                        style=" color: blue">
+                                        거래완료
+                                    </span>
+                                </td>
+                                <td>{{ tour.siName }}</td>
+                                <td>{{ tour.themeName }}</td>
+                                <td>
+                                    <button class="table-button" @click="fnGetTourEdit(tour)">수정</button>
+                                    <button class="table-button" @click="fnRemoveTour(tour.tourNo)">삭제</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-            <table class="tours-table">
-                <thead>
-                    <tr>
-                        <th>상품 번호</th>
-                        <th>사진</th>
-                        <th>상품 제목</th>
-                        <th>여행 날짜</th>
-                        <th>여행 기간</th>
-                        <th>가격</th>
-                        <th>판매 상태</th>
-                        <th>지역</th>
-                        <th>테마</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="toursList.length === 0">
-                        <td colspan="10">검색 결과가 없습니다.</td>
-                    </tr>
-                    <tr v-for="tour in toursList">
-                        <td>{{ tour.tourNo }}</td>
-                        <td>
-                            <template v-if="tour.thumbNail === 'Y'">
-                                <img :src="tour.filePath" class="tour-thumbNail">
-                            </template>
-                        </td>
-                        <td>{{ tour.title }}</td>
-                        <td v-html="formatDate(tour.tourDate)"></td>
-                        <td>{{ tour.duration }}</td>
-                        <td>{{ formatCurrency(tour.price) }}</td>
-                        <td>
-                            <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) < today)" style=" color: red">
-                                미판매
-                            </span>
-                            <span v-if="(tour.deleteYN === 'N' && new Date(tour.tourDate) >= today)"
-                                style=" color: green">
-                                판매중
-                            </span>
-                            <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) >= today)"
-                                style=" color: blue">
-                                판매완료
-                            </span>
-                            <span v-if="(tour.deleteYN === 'Y' && new Date(tour.tourDate) < today)"
-                                style=" color: blue">
-                                거래완료
-                            </span>
-                        </td>
-                        <td>{{ tour.siName }}</td>
-                        <td>{{ tour.themeName }}</td>
-                        <td>
-                            <button class="table-button" @click="fnGetTourEdit(tour)">수정</button>
-                            <button class="table-button" @click="fnRemoveTour(tour.tourNo)">삭제</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                    @click="goPage(p)">
-                    {{ p }}
-                </button>
-                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
-            </div>
-
-            <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
-            <div v-if="showEditModal" class="order-modal" @click.self="fnTourEditClose">
-                <div class="modal-overlay" @click="fnTourEditClose"></div>
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>상품 상세 정보</h2>
-                        <span class="close-btn" @click="fnTourEditClose">&times;</span>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+                        <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+                            @click="goPage(p)">
+                            {{ p }}
+                        </button>
+                        <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
                     </div>
-                    <div class="modal-body">
-                        <div class="info-section">
+                </div>
+                <p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
+                <!-- 주문 상세 모달 (아까 올린 이미지와 동일한 디자인) -->
+                <div v-if="showEditModal" class="order-modal" @click.self="fnTourEditClose">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>상품 상세 정보</h2>
+                            <span class="close-btn" @click="fnTourEditClose">&times;</span>
+                        </div>
+                        <div class="modal-body">
                             <table>
                                 <tr>
                                     <th class="w-24">제목 :</th>
@@ -427,7 +404,7 @@
                                 </tr>
                             </table>
                             <div style="text-align: right;">
-                                <button @click="fnSave" class="modal-save-button">저장</button>
+                                <button @click="fnSave" class="table-button">저장</button>
                             </div>
                         </div>
                     </div>
@@ -467,12 +444,13 @@
                     statusFilter: "",
                     showEditModal: false,
                     minDate: new Date().toISOString().split("T")[0],
+                    loaded: false
                 };
             },
             methods: {
-                loadFilteredData() { 
+                loadFilteredData() {
                     this.page = 1;
-                    this.fnGetToursManagement(); 
+                    this.fnGetToursManagement();
                 },
                 fnGetToursManagement() {
                     let self = this;
@@ -494,6 +472,10 @@
                             self.toursList = data.toursList;
                             self.totalCount = data.totalCount;
                             self.totalPages = Math.ceil(self.totalCount / self.size);
+                            self.toursList = data.toursList;
+                            self.totalCount = data.totalCount;
+                            self.totalPages = Math.ceil(self.totalCount / self.size);
+                            self.loaded = true;
                         }
                     });
                 },
@@ -511,11 +493,9 @@
                     let year = d.getFullYear();
                     let month = ('0' + (d.getMonth() + 1)).slice(-2);
                     let day = ('0' + d.getDate()).slice(-2);
-                    let hours = ('0' + d.getHours()).slice(-2);
-                    let minutes = ('0' + d.getMinutes()).slice(-2);
-                    let seconds = ('0' + d.getSeconds()).slice(-2);
 
-                    return year + "-" + month + "-" + day + "<div>" + hours + ":" + minutes + ":" + seconds + "</div>";
+
+                    return year + "-" + month + "-" + day;
                 },
                 fnGetTourEdit(tour) {
                     let self = this;
@@ -964,7 +944,7 @@
             },
             mounted() {
                 let self = this;
-				if (!self.sessionId || self.sessionRole != 'ADMIN') {
+                if (!self.sessionId || self.sessionRole != 'ADMIN') {
                     alert("관리자만 이용가능합니다.");
                     location.href = "/main.do";
                 }

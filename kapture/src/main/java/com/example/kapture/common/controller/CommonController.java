@@ -1,6 +1,8 @@
 package com.example.kapture.common.controller;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -173,11 +175,24 @@ public class CommonController {
 		resultMap = commonService.getTourThumbnail(map);
 		return new Gson().toJson(resultMap);
 	}
-	
-	
-	
-	
-	
-	
+	// 최신 알림 10개 조회
+	@RequestMapping(value = "/common/alarms.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public Map<String, Object> getRecentAlarms(@RequestParam("sessionId") int userNo) throws Exception {
+	    Map<String, Object> result = new HashMap<>();
+	  
+	    List<HashMap<String, Object>> list = commonService.getRecentAlarms(userNo);
+	    result.put("list", list);
+	    return result;
+	}
+	// 읽은 알림 상태 처리
+	@RequestMapping(value = "/common/read-alarm.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public Map<String, Object> readAlarm(@RequestParam Map<String, Object> map) throws Exception {
+	    Map<String, Object> result = new HashMap<>();
+	    int updateCount = commonService.updateAlarmStatus(map);
+	    result.put("result", updateCount > 0 ? "success" : "fail");
+	    return result;
+	}
 	
 }

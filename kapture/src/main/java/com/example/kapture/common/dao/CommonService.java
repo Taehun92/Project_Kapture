@@ -2,6 +2,7 @@ package com.example.kapture.common.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -202,6 +203,15 @@ public class CommonService {
 		}
 		return resultMap;
 	}
+	// 최신 10개 알람 조회
+	public List<HashMap<String, Object>> getRecentAlarms(int userNo) {
+	    return commonMapper.selectRecentAlarms(userNo);
+	}
+	// 읽은 알람 상태 처리
+	public int updateAlarmStatus(Map<String, Object> map) {
+	    return commonMapper.updateAlarmStatus(map);
+	}
+	
 	
 	
 	

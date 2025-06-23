@@ -14,8 +14,7 @@
 		<style>
 			/* 테이블 스타일 */
 			.content table {
-				width: 90% ;
-				margin: 20px auto;
+				width: 100%;
 				border-collapse: collapse;
 				font-size: 14px;
 			}
@@ -39,6 +38,14 @@
 				object-fit: cover;
 				/* 이미지가 잘리지 않도록 조정 */
 				border-radius: 5px;
+			}
+
+			.guide-img-wrapper {
+				width: 60px;
+				height: 60px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 			}
 
 			/* "No Image" 문구 표시 스타일 */
@@ -68,25 +75,24 @@
 				background-color: #0056b3;
 			}
 
-			/* 전체 선택 체크박스 스타일 (th 안) */
-			.check-all {
-				cursor: pointer;
-			}
-
 			/* 제목 스타일 */
 			.page-title {
-				text-align: center;
-				font-size: 24px;
-				font-weight: bold;
-				margin-top: 20px;
-				margin-left: 220px;
-				/* 사이드바 너비(200px) + 여백(20px) */
-				padding: 20px;
-				display: flex;
-				justify-content: center;
-				/* 수평 중앙 정렬 */
-				align-items: center;
-			}
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                /* margin-top: 20px; */
+                margin-left: 240px;
+                /* 사이드바 너비(200px) + 여백(20px) */
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                /* 수평 중앙 정렬 */
+                align-items: center;
+            }
+
+            .title-hr {
+                margin-bottom: 30px;
+            }
 
 			/* 모달 오버레이 (뒷배경) */
 			.modal-overlay {
@@ -121,23 +127,34 @@
 				align-items: center;
 				text-align: center;
 			}
+
 			.modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-				width: 95%;
-				margin-bottom: 15px;
-            }
+				position: relative;
+				height: 60px;
+				/* 높이 지정 (필수) */
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+			}
 
-            .modal-header h2 {
-                margin: 0;
-                font-weight: bold;
-            }
+			.modal-header h2 {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+				margin: 0;
+				font-weight: bold;
+				font-size: 22px;
+			}
 
-            .close-btn {
-                font-size: 28px;
-                cursor: pointer;
-            }
+			.close-btn {
+				position: absolute;
+				right: 20px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 28px;
+				cursor: pointer;
+			}
 
 			/* 모달 내부 폼 스타일 예시 */
 			.modal-form label {
@@ -157,19 +174,20 @@
 				width: 20px;
 				margin-right: 30px;
 			}
+
 			.modal-form input[type="text"],
-            .modal-form input[type="date"],
+			.modal-form input[type="date"],
 			.modal-form input[type="password"],
-            .modal-form textarea,
-            .modal-form select {
-                padding: 5px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 14px;
-                width: auto;
-                min-width: 150px;
-                max-width: 220px;
-            }
+			.modal-form textarea,
+			.modal-form select {
+				padding: 5px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 14px;
+				width: auto;
+				min-width: 150px;
+				max-width: 220px;
+			}
 
 			.modal-form .form-group {
 				margin-bottom: 10px;
@@ -209,17 +227,6 @@
 				margin-right: 4px;
 			}
 
-			.fc-event-title {
-				white-space: normal !important;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-				/* 최대 2줄로 표시 */
-				line-clamp: 2;
-			}
-
 			.profile-upload-container {
 				display: flex;
 				align-items: center;
@@ -233,169 +240,180 @@
 				justify-content: flex-end;
 				margin: 5px;
 			}
-			
-			.search-div{
-				width: 90%;
-    			margin: 20px auto;
-    			border-collapse: collapse;
-    			font-size: 14px;
+
+			.search-div {
+				margin: 20px auto;
+				border-collapse: collapse;
+				font-size: 14px;
 			}
 
 			.search-input,
-            .search-select,
-            .search-date {
-                padding: 10px 14px;
-                font-size: 16px;
-                height: 40px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                margin-right: 10px;
-                box-sizing: border-box;
-            }
+			.search-select,
+			.search-date {
+				padding: 10px 14px;
+				font-size: 16px;
+				height: 40px;
+				border: 1px solid #ccc;
+				border-radius: 6px;
+				margin-right: 10px;
+				box-sizing: border-box;
+			}
 
-            .search-button {
-                padding: 10px 20px;
-                font-size: 16px;
-                height: 40px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-            }
+			.search-button {
+				padding: 10px 20px;
+				font-size: 16px;
+				height: 40px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				cursor: pointer;
+			}
 
-            .search-button:hover {
-                background-color: #0056b3;
-            }
+			.search-button:hover {
+				background-color: #0056b3;
+			}
 
-			.search-input{
+			.search-input {
 				width: 300px;
 			}
 
 			.tab-btn {
-                margin-right: 10px;
-                padding: 8px 12px;
-                border: 1px solid #ccc;
-                background: #f4f4f4;
-                cursor: pointer;
-                border-radius: 4px;
-            }
+				margin-right: 10px;
+				padding: 8px 12px;
+				border: 1px solid #ccc;
+				background: #f4f4f4;
+				cursor: pointer;
+				border-radius: 4px;
+			}
 
-            .tab-btn.active {
-                background-color: #007bff;
-                color: white;
-            }
+			.tab-btn.active {
+				background-color: #007bff;
+				color: white;
+			}
+
+			[v-cloak] {
+				display: none;
+			}
 		</style>
 	</head>
 
 	<body>
 		<jsp:include page="menu.jsp"></jsp:include>
-		<div id="app">
+		<div id="app" v-cloak>
 			<!-- 제목 추가 -->
 			<div class="page-title">가이드 정보 관리</div>
-
-			<hr>
-			
+			<hr title-hr>
 			<div class="content">
-			<div class="add-button">
-				<button class="btn-manage" @click="fnOpenAddModal">가이드 추가</button>
-			</div>
-			<div class="search-div">	
-				<input type="date" v-model="startDate" class="search-date">
-					~
-				<input type="date" v-model="endDate" class="search-date">
-				<select v-model="statusFilter" class="search-select">
-					<option value="">전체</option>
-					<option value="userNo">회원번호</option>
-					<option value="guideNo">가이드번호</option>
-					<option value="name">회원명</option>
-				</select>
-            	<input type="text" v-model="keyword" class="search-input"  @keyup.enter="loadFilteredData" placeholder="회원번호 / 회원명 / 가이드번호 검색">
-            	<button class="search-button" @click="loadFilteredData">검색</button>
-			</div>
-				<table>
-					<thead>
-						<tr>
-							<th>회원번호</th>
-							<th>가이드번호</th>
-							<th>이름</th>
-							<th>성별</th>
-							<th>연락처</th>
-							<th>사진</th>
-							<th>가입일</th>
-							<th>생년월일</th>
-							<th>최근접속</th>
-							<th>관리</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="guidesList.length === 0">
-							<td colspan="10">검색 결과가 없습니다.</td>
-						</tr>
-						<!-- 가이드 리스트 반복 출력 -->
-						<tr v-for="guide in guidesList" >
-							<!-- 회원번호 -->
-							<td>{{ guide.userNo }}</td>
-							<!-- 가이드번호-->
-							<td>{{ guide.guideNo }}</td>
-							<!-- 닉네임 -->
-							<td>{{ guide.userLastName }}{{ guide.userFirstName }}</td>
-							<!-- 성별 -->
-							<td>{{ guide.gender }}</td>
-							<!-- 연락처 -->
-							<td>{{ guide.phone }}</td>
-							<!-- 사진: 있으면 <img>, 없으면 "No Image" 표시 -->
-							<td>
-								<div v-if="guide.pFilePath && guide.pFilePath !== ''">
-									<img :src="guide.pFilePath" alt="가이드사진" class="guide-img" />
-								</div>
-								<div v-else class="no-image">NO Image</div>
-							</td>
-							<!-- 수정일 -->
-							<td>{{ guide.uUpdatedAt }}</td>
-							<!-- 생년월일 -->
-							<td>{{ guide.birthday }}</td>
-							<!-- 최근접속 -->
-							<td>{{ guide.lastLogin }}</td>
+				<div class="add-button">
+					<button class="btn-manage" @click="fnOpenAddModal">가이드 추가</button>
+				</div>
+				<div class="search-div">
+					<input type="date" v-model="startDate" class="search-date">
+					~　
+					<input type="date" v-model="endDate" class="search-date">
+					<select v-model="statusFilter" class="search-select">
+						<option value="">전체</option>
+						<option value="userNo">회원번호</option>
+						<option value="guideNo">가이드번호</option>
+						<option value="name">회원명</option>
+					</select>
+					<input type="text" v-model="keyword" class="search-input" @keyup.enter="loadFilteredData"
+						placeholder="회원번호 / 회원명 / 가이드번호 검색">
+					<button class="search-button" @click="loadFilteredData">검색</button>
+				</div>
+				<div v-if="loaded">
+					<table>
+						<thead>
+							<tr>
+								<th>회원번호</th>
+								<th>가이드번호</th>
+								<th>이름</th>
+								<th>성별</th>
+								<th>연락처</th>
+								<th>사진</th>
+								<th>수정일</th>
+								<th>생년월일</th>
+								<th>최근접속</th>
+								<th>관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-if="guidesList.length === 0">
+								<td colspan="10">검색 결과가 없습니다.</td>
+							</tr>
+							<!-- 가이드 리스트 반복 출력 -->
+							<tr v-for="guide in guidesList">
+								<!-- 회원번호 -->
+								<td>{{ guide.userNo }}</td>
+								<!-- 가이드번호-->
+								<td>{{ guide.guideNo }}</td>
+								<!-- 닉네임 -->
+								<td>{{ guide.userLastName }}{{ guide.userFirstName }}</td>
+								<!-- 성별 -->
+								<td>{{ guide.gender }}</td>
+								<!-- 연락처 -->
+								<td>{{ guide.phone }}</td>
+								<!-- 사진: 있으면 <img>, 없으면 "No Image" 표시 -->
+								<td>
+									<div class="guide-img-wrapper">
+										<img v-if="guide.pFilePath && guide.pFilePath !== ''"
+											:src="guide.pFilePath"
+											alt="가이드사진"
+											class="guide-img"
+											@error="handleImageError($event)" />
+										<div v-else class="no-image">NO Image</div>
+									</div>
+								</td>
+								<!-- 수정일 -->
+								<td>{{ guide.uUpdatedAt.substring(0, 10) }}</td>
+								<!-- 생년월일 -->
+								<td>{{ guide.birthday }}</td>
+								<!-- 최근접속 -->
+								<td>{{ guide.lastLogin.substring(0, 10) }}</td>
 
-							<!-- 관리 ( 수정, 삭제 ) -->
-							<td>
-								<button class="btn-manage" @click="fnGuideEdit(guide)">
-									수정
-								</button>
-								<button class="btn-manage" @click="fnGuideSchedule(guide.userNo)">
-									일정
-								</button>
-								<button class="btn-manage" @click="fnUnregister(guide.userNo, guide.guideNo)">
-									삭제
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+								<!-- 관리 ( 수정, 삭제 ) -->
+								<td>
+									<button class="btn-manage" @click="fnGuideEdit(guide)">
+										수정
+									</button>
+									<button class="btn-manage" @click="fnGuideSchedule(guide.userNo)">
+										일정
+									</button>
+									<button class="btn-manage" @click="fnUnregister(guide.userNo, guide.guideNo)">
+										삭제
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<p v-else style="text-align:center;">데이터를 불러오는 중입니다...</p>
 			</div>
+
 			<div style="margin-top: 20px; text-align: center;">
-                <button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
-                <button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
-                    @click="goPage(p)">
-                    {{ p }}
-                </button>
-                <button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
-            </div>
+				<button class="tab-btn" @click="goPage(page - 1)" :disabled="page === 1">이전</button>
+				<button v-for="p in totalPages" :key="p" class="tab-btn" :class="{ active: p === page }"
+					@click="goPage(p)">
+					{{ p }}
+				</button>
+				<button class="tab-btn" @click="goPage(page + 1)" :disabled="page === totalPages">다음</button>
+			</div>
 			<!-- 가이드 정보 수정 모달 -->
 			<div v-if="showEditModal" class="modal-overlay" @click.self="fnGuideEditClose()">
 				<div class="modal-content">
 					<div class="modal-header">
-                        <h2>가이드 추가</h2>
-                        <span class="close-btn" @click="fnGuideEditClose()">&times;</span>
-                    </div>
+						<h2>가이드 추가</h2>
+						<span class="close-btn" @click="fnGuideEditClose()">&times;</span>
+					</div>
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
-							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
-								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							<span class="guide-img-wrapper">
+								<img v-if="editGuide.pFilePath && editGuide.pFilePath !== ''"
+								:src="editGuide.pFilePath" alt="가이드사진" class="guide-img" @error="handleImageError($event)" />
+								<div v-else class="no-image">NO Image</div>
 							</span>
-							<span v-else class="no-image">NO Image</span>
 							<input type="file" @change="handleProfileUpload" />
 						</span>
 						<!-- 이름 -->
@@ -466,14 +484,14 @@
 						</div>
 						<!-- 자기소개 등 (예시) -->
 						<div class="form-group">
-							<label>자기소개 OR 경력</label>
+							<label>자기소개</label>
 							<textarea v-model="editGuide.experience" rows="4"></textarea>
 						</div>
 
 						<!-- 저장 / 취소 -->
 						<div>
-							<button @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
-							<button @click="fnGuideEditClose">취소</button>
+							<button class="btn-manage" @click="fnSaveGuide(editGuide.userNo, editGuide.guideNo)">저장하기</button>
+							<button class="btn-manage" @click="fnGuideEditClose">취소</button>
 						</div>
 					</div>
 
@@ -483,7 +501,10 @@
 			<!-- 일정 모달 추가 -->
 			<div v-if="showScheduleModal" class="modal-overlay" @click.self="fnCloseScheduleModal">
 				<div class="modal-content">
-					<h2>가이드 일정</h2>
+					<div class="modal-header">
+						<h2>상품 상세 정보</h2>
+						<span class="close-btn" @click="fnCloseScheduleModal">&times;</span>
+					</div>
 					<div class="content-area">
 						<ol class="custom-buttons">
 							<li class="custom-button">
@@ -513,16 +534,17 @@
 				<div class="modal-content add-guide-modal">
 					<!-- 닫기 버튼 -->
 					<div class="modal-header">
-                        <h2>가이드 추가</h2>
-                        <span class="close-btn" @click="fnCloseAddModal">&times;</span>
-                    </div>					
+						<h2>가이드 추가</h2>
+						<span class="close-btn" @click="fnCloseAddModal">&times;</span>
+					</div>
 					<div class="modal-form">
 						<!-- 프로필이미지 -->
 						<span class="form-group profile-upload-container">
-							<span v-if="editGuide.pFilePath && editGuide.pFilePath !== ''">
-								<img :src="editGuide.pFilePath" alt="가이드사진" class="guide-img" />
+							<span class="guide-img-wrapper">
+								<img v-if="editGuide.pFilePath && editGuide.pFilePath !== ''"
+								:src="editGuide.pFilePath" alt="가이드사진" class="guide-img" @error="handleImageError($event)" />
+								<div v-else class="no-image">NO Image</div>
 							</span>
-							<span v-else class="no-image">NO Image</span>
 							<input type="file" @change="handleProfileUpload" />
 						</span>
 						<div class="form-group">
@@ -533,7 +555,7 @@
 							<label>이메일</label>
 							<input type="text" v-model="newGuide.email" />
 						</div>
-						
+
 						<div class="form-group">
 							<label>비밀번호</label>
 							<input type="password" v-model="newGuide.password" @input="validateNewPassword" />
@@ -603,8 +625,8 @@
 		const app = Vue.createApp({
 			data() {
 				return {
-					sessionId : "${sessionId}",
-					sessionRole : "${sessionRole}",
+					sessionId: "${sessionId}",
+					sessionRole: "${sessionRole}",
 					guidesList: [],
 					selectedGuides: [], // 체크된 id들의 배열
 					showEditModal: false,  // 수정 모달 표시 여부
@@ -634,30 +656,31 @@
 					passwordsMatch: false,
 					minDate: new Date().toISOString().split("T")[0],
 					startDate: "",
-                    endDate: "",
-                    keyword: "",
-                    page: 1,
-                    size: 10,
-                    totalCount: 0,
-                    totalPages: 1,
-                    statusFilter: "",
+					endDate: "",
+					keyword: "",
+					page: 1,
+					size: 10,
+					totalCount: 0,
+					totalPages: 1,
+					statusFilter: "",
+					loaded: false
 				};
 			},
 			methods: {
-				loadFilteredData() { 
+				loadFilteredData() {
 					this.page = 1;
-                    this.fnGetGuidesList(); 
-                },
+					this.fnGetGuidesList();
+				},
 				// 가이드 목록 불러오기
 				fnGetGuidesList() {
 					let self = this;
 					let nparmap = {
 						startDate: self.startDate,
-                        endDate: self.endDate,
-                        statusFilter: self.statusFilter,
-                        keyword: self.keyword,
-                        page: self.page,
-                        size: self.size,
+						endDate: self.endDate,
+						statusFilter: self.statusFilter,
+						keyword: self.keyword,
+						page: self.page,
+						size: self.size,
 					};
 					$.ajax({
 						url: "/admin/guides-list.dox",
@@ -666,7 +689,7 @@
 						data: nparmap,
 						success: function (data) {
 							console.log(data);
-							if(data.result === "success"){
+							if (data.result === "success") {
 								for (let i = 0; i < data.guidesList.length; i++) {
 									if (data.guidesList[i].birthday && typeof data.guidesList[i].birthday === 'string') {
 										data.guidesList[i].birthday = data.guidesList[i].birthday.substring(0, 10);
@@ -677,6 +700,7 @@
 								self.guidesList = data.guidesList;
 								self.totalCount = data.totalCount;
 								self.totalPages = Math.ceil(self.totalCount / self.size);
+								self.loaded = true;
 							}
 						},
 						error: function (err) {
@@ -685,10 +709,10 @@
 					});
 				},
 				goPage(p) {
-                    if (p < 1 || p > this.totalPages) return;
-                    this.page = p;
-                    this.fnGetGuidesList();
-                },
+					if (p < 1 || p > this.totalPages) return;
+					this.page = p;
+					this.fnGetGuidesList();
+				},
 				// 수정 버튼 클릭 시: userNo로 가이드 상세 불러온 뒤 모달 열기
 				fnGuideEdit(guide) {
 					let self = this;
@@ -769,10 +793,10 @@
 						success: function (data) {
 							if (data.result === "success") {
 								alert("삭제되었습니다.");
-								if(data.guideResult === "fail"){
+								if (data.guideResult === "fail") {
 									alert("가이드 정보 삭제 실패");
 								}
-								if(data.guideImgResult === "fail"){
+								if (data.guideImgResult === "fail") {
 									alert("가이드 이미지 삭제 실패");
 								}
 								// 목록 새로고침
@@ -790,11 +814,11 @@
 				validateNewPassword() {
 					let pw = "";
 					let pw2 = "";
-					if(this.showEditModal){
+					if (this.showEditModal) {
 						pw = this.password;
 						pw2 = this.confirmPassword;
 					}
-					if(this.showAddModal){
+					if (this.showAddModal) {
 						pw = this.newGuide.password;
 						pw2 = this.addConfirmPassword;
 					}
@@ -893,7 +917,7 @@
 								self.editGuide.pFileNo = data.pFileNo;
 								console.log("파일넘버 : ");
 								console.log(self.editGuide.pFileNo);
-								
+
 							} else {
 								alert('이미지 업로드에 실패했습니다.');
 							}
@@ -933,7 +957,7 @@
 				},
 				fnAddGuide() {
 					let self = this;
-					let nparmap = { 
+					let nparmap = {
 						userFirstName: self.newGuide.userFirstName,
 						password: self.newGuide.password,
 						email: self.newGuide.email,
@@ -946,63 +970,63 @@
 						pFilePath: self.editGuide.pFilePath,
 						pFileNo: self.editGuide.pFileNo,
 					};
-					if(!self.newGuide.userFirstName || self.newGuide.userFirstName.trim() === ""){
+					if (!self.newGuide.userFirstName || self.newGuide.userFirstName.trim() === "") {
 						alert("이름을 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.password){
+					if (!self.newGuide.password) {
 						alert("비밀번호를 입력하세요.");
 						return;
 					}
-					if(!self.passwordRules.length){
+					if (!self.passwordRules.length) {
 						alert("비밀번호는 6글자 이상입니다.");
 						return;
 					}
-					if(!self.passwordRules.upper){
+					if (!self.passwordRules.upper) {
 						alert("비밀번호에 대문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(!self.passwordRules.lower){
+					if (!self.passwordRules.lower) {
 						alert("비밀번호에 소문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(!self.passwordRules.special){
+					if (!self.passwordRules.special) {
 						alert("비밀번호에 특수문자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(!self.passwordRules.number){
+					if (!self.passwordRules.number) {
 						alert("비밀번호에 숫자가 하나 이상 포함되야 합니다.");
 						return;
 					}
-					if(!self.passwordsMatch){
+					if (!self.passwordsMatch) {
 						alert("비밀번호를 확인해주세요.");
 						return;
 					}
-					if(!self.newGuide.email || self.newGuide.email.trim() === ""){
+					if (!self.newGuide.email || self.newGuide.email.trim() === "") {
 						alert("이메일을 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.phone || self.newGuide.phone.trim() === ""){
+					if (!self.newGuide.phone || self.newGuide.phone.trim() === "") {
 						alert("연락처를 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.birthday || self.newGuide.birthday.trim() === ""){
+					if (!self.newGuide.birthday || self.newGuide.birthday.trim() === "") {
 						alert("생년월일을 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.birthday >= new Date()){
+					if (!self.newGuide.birthday >= new Date()) {
 						alert("생년월일을 확인해주세요.");
 						return;
 					}
-					if(!self.newGuide.address || self.newGuide.address.trim() === ""){
+					if (!self.newGuide.address || self.newGuide.address.trim() === "") {
 						alert("주소를 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.language || self.newGuide.language.trim() === ""){
+					if (!self.newGuide.language || self.newGuide.language.trim() === "") {
 						alert("사용가능 언어를 입력하세요.");
 						return;
 					}
-					if(!self.newGuide.experience || self.newGuide.experience.trim() === ""){
+					if (!self.newGuide.experience || self.newGuide.experience.trim() === "") {
 						alert("자기소개 및 경력을 입력하세요.");
 						return;
 					}
@@ -1025,14 +1049,18 @@
 							alert("등록 요청 중 오류가 발생했습니다.");
 						}
 					});
-				}
+				},
+				handleImageError(event) {
+					event.target.style.display = 'none'; // 이미지 숨기기
+					event.target.parentNode.innerHTML = '<div class="no-image">NO Image</div>'; // 부모 div에 No Image 삽입
+				},
 			},
 			mounted() {
 				let self = this;
 				if (!self.sessionId || self.sessionRole != 'ADMIN') {
-                    alert("관리자만 이용가능합니다.");
-                    location.href = "/main.do";
-                }
+					alert("관리자만 이용가능합니다.");
+					location.href = "/main.do";
+				}
 				self.fnGetGuidesList();
 			}
 		});

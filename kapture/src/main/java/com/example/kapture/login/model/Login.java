@@ -23,4 +23,18 @@ public class Login {
 	
 	private String lastLogin;
 	
+	private int paymentNo;
+	private int tourNo;
+	private String paymentStatus;
+	
+	private String tourDate;
+	
+	private int alarmNo;
+	private int targetUserNo;
+	private int referenceId;
+	private String referenceType;
+	private String urlParam;
+	private String alarmStatus;
+	private String alCreatedAt;
+	
 }	

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.kapture.admin.model.OrderInfo;
+import com.example.kapture.admin.model.Partnership;
 import com.example.kapture.cs.model.Cs;
 import com.example.kapture.login.model.Login;
 import com.example.kapture.mypage.model.Guide;
@@ -89,7 +90,7 @@ public interface AdminMapper {
 		List<Map<String, Object>> selectLatestReviews();
 		// 상품관리 조회
 		List<Tours> selectToursManagementList(HashMap<String, Object> map);
-		// 상품관리 총 갯수
+		// 상품관리 총 개수
 		int selectToursTotalCount(HashMap<String, Object> map);
 		// 상품관리 수정
 		int updateTour(HashMap<String, Object> map);
@@ -119,12 +120,26 @@ public interface AdminMapper {
 		String selectPFilePath(HashMap<String, Object> map);
 		// 회원 총 인원
 		int selectUsersTotalCount(HashMap<String, Object> map);
-		// 문의조회 총 갯수
+		// 문의조회 총 개수
 		int selectInquiriesTotalCount(HashMap<String, Object> map);
 
 		int deleteBeforeGuideImg(HashMap<String, Object> map);
 
 		int guideImgCount(HashMap<String, Object> map);
+		// 제휴문의 조회(승인대기, 승인거부)
+		List<Partnership> selectWaitingPartnershipList(HashMap<String, Object> map);
+		// 제휴문의 조회(승인대기, 승인거부) 총 개수
+		int countWaitingPartnership(HashMap<String, Object> map);
+		// 제휴문의 조회(승인완료)
+		List<Partnership> selectApprovedPartnershipList(HashMap<String, Object> map);
+		// 제휴문의 조회(승인완료) 총 개수
+		int countApprovedPartnership(HashMap<String, Object> map);
+		// 제휴문의 수정
+		int updatePartnership(HashMap<String, Object> map);
+		// 문의 답변시 알림 정보 저장
+		void insertAnswerAlarm(HashMap<String, Object> map);
+		// 제휴 상태 변경시 알림 정보 저장
+		void insertPartnershipStatusAlarm(HashMap<String, Object> map);
 
 		
 

@@ -25,7 +25,10 @@ public interface PaymentMapper {
 	void deleteBasketsByNo(@Param("basketNoList") List<Integer> basketNoList);
 
 	int deleteBasket(HashMap<String, Object> map);
-
+	// 해당 유저의 가장 최근 결제 번호 가져오기
 	void updateRequestMessage(Map<String, Object> request);
-
+	// 결제 성공시 알림 정보 저장
+	void insertAlarm(Map<String, Object> map);
+	
+    Integer selectLatestPaymentNo(int userNo);
 }
