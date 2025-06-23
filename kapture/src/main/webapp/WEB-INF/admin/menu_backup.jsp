@@ -107,17 +107,7 @@
                     </ul>
                 </li>
 				<li><a href="/admin/partnership.do" class="block px-3 py-2 rounded hover:bg-gray-700">제휴문의 관리</a></li>
-                
-                <li class="submenu">
-                    <a href="javascript:void(0)"
-                        class="toggle-submenu flex justify-between items-center px-3 py-2 rounded hover:bg-gray-700">
-                        운영 및 설정 관리 <span class="arrow">∨</span>
-                    </a>
-                    <ul class="submenu-items pl-4 hidden">
-                        <li><a href="/admin/setting.do" class="block px-2 py-1 text-sm rounded hover:bg-gray-600">약관 내용 관리</a></li>
-                        <li><a href="/admin/badWords.do" class="block px-2 py-1 text-sm rounded hover:bg-gray-600">금칙어 관리</a></li>
-                    </ul>
-                </li>
+                <li><a href="/admin/setting.do" class="block px-3 py-2 rounded hover:bg-gray-700">운영 및 설정 관리</a></li>
             </ul>
         </div>
     </body>
@@ -139,10 +129,6 @@
                 // 두 번째 submenu (고객 관리)에 대해서만 작동
                 $('.submenu').eq(1).find('.toggle-submenu .arrow').text('∧');
                 $('.submenu').eq(1).find('.submenu-items').show();
-            } else if (currentPage === "setting.do" || currentPage === "badWords.do") {
-                // 세 번째 submenu (운영 및 설정 관리)에 대해서만 작동
-                $('.submenu').eq(2).find('.toggle-submenu .arrow').text('∧');
-                $('.submenu').eq(2).find('.submenu-items').show();
             }
             $('.toggle-submenu').click(function (e) {
                 e.preventDefault(); // a 태그 기본 이동 막기
