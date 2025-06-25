@@ -73,6 +73,21 @@
 <img src="https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white">
 </div>
 </div>
+
+<div style="text-align:left;">
+<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;">📄 주요 기능 및 페이지</h2>
+<ul>
+<li>회원가입/로그인: Firebase Auth 기반 핸드폰 인증 및 소셜 로그인</li>
+<li>홈: 랜덤 배너/추천 레시피/인기 레시피/상품 목록 표시 (5개 + more)</li>
+<li>마이바: 인벤토리 기반 추천 레시피 표시</li>
+<li>상품: 상세 페이지/장바구니 담기/바로 구매 가능</li>
+<li>결제: Firestore에 주문 문서 저장, 배송지 입력 및 총 결제 금액 표시</li>
+<li>주문 내역: 결제일자/상태/제품 정보 확인 및 리뷰 작성</li>
+<li>주문 취소/교환: 상태에 따른 분기 처리 및 사유 입력</li>
+<li>AR 기능: 카메라 기반 재료 비율 시각화</li>
+</ul>
+</div>
+
 <div style= "text-align:left;">
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 📕 발표 PPT </h2>
 <a href="https://drive.google.com/file/d/1S54vN3MGMAPsJRxfwo8K9Y5LPi9_-tiM/view?usp=drive_link">▶Kapture 발표 PPT</a>
