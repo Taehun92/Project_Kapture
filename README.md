@@ -72,7 +72,7 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 ![AJAX](https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white)
 
 
-<div align="right">[🔝 맨 위로](#top)</div>
+<p align="right">[🔝 맨 위로](#top)</p>
 
 ---
 
@@ -129,5 +129,5 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 
 ▶ [Kapture 시연 영상 보기](https://youtu.be/nYb7iXMzafA)
 
-<div align="right">[🔝 맨 위로](#top)</div>
+<p align="right">[🔝 맨 위로](#top)</p>
 ---
