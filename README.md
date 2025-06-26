@@ -72,7 +72,7 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 ![AJAX](https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white)
 
 
-[🔝맨 위로](#top)
+<div align="right">[🔝 맨 위로](#top)</div>
 
 ---
 
@@ -117,8 +117,6 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 - **작업 페이지**: 관리자 페이지, 유저 마이페이지, 상품 상세
 - **기능 구현**: 여행 상품 필터(지역/날짜/테마), 유효성 검사, 페이징, 프로필 관리
 
-[🔝맨 위로](#top)
-
 ---
 
 ## 📕 발표 PPT
@@ -131,4 +129,5 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 
 ▶ [Kapture 시연 영상 보기](https://youtu.be/nYb7iXMzafA)
 
+<div align="right">[🔝 맨 위로](#top)</div>
 ---
