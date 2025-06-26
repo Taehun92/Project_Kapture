@@ -873,9 +873,10 @@
 									contentHeight: 'auto',  // 콘텐츠 영역 높이를 자동으로 조절
 									themeSystem: 'bootstrap5',
 									initialView: 'dayGridMonth',
-									validRange: function (now) {
-										return { start: now };
-									},
+									initialDate: '2025-03-01',
+									// validRange: function (now) { 이미지 저장하기 위해 임시 주석
+									// 	return { start: now };
+									// },
 									events: eventsArray,
 									eventClick: function (info) {
 										info.jsEvent.preventDefault();

@@ -189,9 +189,10 @@
                         const calendarEl = this.$refs.calendar;
                         const calendar = new FullCalendar.Calendar(calendarEl, {
                             initialView: 'dayGridMonth',
-                            validRange: function (now) {
-                                return { start: now };
-                            },
+                            initialDate: '2025-03-01',
+                            // validRange: function (now) { 오늘 날짜 이전은 선택 불가
+                            //     return { start: now };
+                            // },
                             events: eventsArray,
                             eventClick: function (info) {
                                 let self = this;

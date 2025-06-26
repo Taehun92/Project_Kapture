@@ -134,7 +134,8 @@
 
             const calendar = new FullCalendar.Calendar(this.$refs.calendar, {
               initialView: 'dayGridMonth',
-              validRange: { start: new Date() },
+              initialDate: '2025-03-01',
+              // validRange: { start: new Date() }, 오늘 날짜 이전은 선택 불가
               headerToolbar: {
                 left: 'today',
                 center: 'title',
