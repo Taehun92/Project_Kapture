@@ -1,178 +1,152 @@
+<a name="top"></a>
+
 <div align="center">
-<img src="https://github.com/Taehun92/Project_Kapture/blob/main/kapture_Logo(1)_500x400.png">
-</div>
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;">💡 프로젝트 소개 </h2>
-<div>Kapture 여행사는 한국에 여행 예정인 외국인들을 위한 소규모 맞춤형 관광 상품 판매 쇼핑몰입니다.</div>
-<div>기존의 패키지 여행의 단점을 보완하고, 새로운 기획의 상품들을 제공하여 한국에서의 잊지 못할 추억을 선사해드립니다.</div>
-<div>가이드는 본인의 전공 / 취미 / 장점 등을 앞세워 전문성 있는 가이드가 될 수 있으며,</div>
-<div>고객은 본인이 원하는 장소/ 테마 / 활동의 상품을 선택 할 수 있습니다.</div>
-</div>
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🗓 개발 기간 </h2>  
-<ul>
-<li> <h4>2025. 03. 10 ~ 2025. 03. 19</h4>
-<li>프로젝트 기획 회의(일별 2시간)</li>
-<li>프로젝트 컨셉 및 DB 테이블 설계</li>
-</ul>
-<ul>
-<li> <h4>2025. 03. 20 ~ 2025. 03. 31</h4>
-<li>프로젝트 개발 진행</li>
-</ul>
-<ul>
-<li> <h4>2025. 04. 01 ~ 2025. 04. 14</h4>
-<li> 페이지 별 개선 사항 / 보완 사항 점검 및 수정</li>
-</ul>
-</div>    
-</div> 
-</div>
-<div style= "text-align:left;">
-<h2 tabindex="-1" class="heading-element" dir="auto" >👨‍👩‍👦‍👦 팀원 구성</h2>
-<table>
-<tr>
-<th>이름</th>                    
-<th>GitHub 프로필</th>
-</tr>
-<tr>
-<th>이태훈</th>
-<td>https://github.com/Taehun92</td>
-</tr>
-<tr>
-<td>강재석</td>
-<td>https://github.com/codingjs12</td>
-</tr>
-<tr>
-<td>박건형</td>
-<td>https://github.com/geon-hyung</td>
-</tr>
-<tr>
-<td>이재형</td>
-<td>https://github.com/leejh8997</td>
-</tr>
-</table>
-</div>
-<div style= "text-align:left;">
-<h2 style="color: #282d33;"> 🛠️ 사용 언어 </h2>
-<div style="margin: 0 auto; text-align: left;" align= "left"> 
-<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-<img src="https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=Vue.js&logoColor=white">
-<img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white">
-<img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white">
-<img src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jQuery&logoColor=white">
-<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white">
-<img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white">
-<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white">
-<img src="https://img.shields.io/badge/Javascript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=white">
-  <!-- JSP (로고 없음: Java 기반으로 표기) -->
-<img src="https://img.shields.io/badge/JSP-007396?style=for-the-badge&logo=java&logoColor=white">
-
-<!-- RESTful API -->
-<img src="https://img.shields.io/badge/RESTful-API-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-
-<!-- AJAX (로고 없음: JS로 표기) -->
-<img src="https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white">
-</div>
+  <img src="https://github.com/Taehun92/Project_Kapture/blob/main/kapture_Logo(1)_500x400.png" alt="Kapture Logo" width="300" />
 </div>
 
-<div style="text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;">📄 주요 기능 및 페이지</h2>
-<ul>
-<li>회원가입/로그인: 소셜 로그인 API 활용</li>
-<li>상품관련 : VueRating기능 별점 구현, 장바구니 모달을 통한 장바구니 즉시 확인 가능</li>
-<li>마이페이지: 개인이 구매/판매 하는 상품을 달력 형태로 확인</li>
-<li>상품: 상세 페이지/장바구니 담기/바로 구매 가능</li>
-<li>결제: 환율API 및 해외 결제 API 활용 현재 환율에 맞춰 원화(￦) 및 달러($)결제 가능</li>
-<li>기타: 한국관광공사API, 기상청 API를 활용 관광지 및 한국의 날씨를 제공, 국내여행 일정관리에 도움</li>
-</ul>
-</div>
+# 🌏 Kapture
 
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 📕 발표 PPT </h2>
-<a href="https://drive.google.com/file/d/1S54vN3MGMAPsJRxfwo8K9Y5LPi9_-tiM/view?usp=drive_link">▶Kapture 발표 PPT</a>
-</div>
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🎞 시연 영상 </h2>
-<a href="https://youtu.be/nYb7iXMzafA">▶Kapture 시연영상</a>
-</div>
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 👨‍👩‍👦‍👦 역할 분담 </h2>  
-<h3>😎이태훈</h3>            
-<ul>
-<!--             <li> <h4>역할</h4>
-<ul>                    
-<li>팀원 업무 분배, 팀원 코드 공동 수정, DB 설계</li>
-</ul>
-</li>   -->
-<li><h4>작업 페이지</h4>
-<ul>                    
-<li>로그인 / 일반 회원가입 / 요청 게시판 / 가이드마이페이지(상품 목록), 헤더 및 푸터 </li>
-</ul>
-</li>            
-<li><h4>구현 기능</h4>
-<ul>                    
-<li>회원가입 및 아이디 중복 검사, 이메일 인증, 모달 화면 구성 등 </li>
-</ul>
-</li>
-</ul>
-<h3>😎강재석</h3>
-<ul>            
-<!--             <li><h4>역할</h4>
-<ul>                    
-<li>전반적인 CSS 디자인 구축</li>
-</ul>
-</li>   -->
-<li><h4>작업 페이지</h4>
-<ul>                    
-<li>메인페이지, 가이드 페이지(상품 추가, 수정), 관광지 알아보기 페이지, 상품 페이지(장바구니 기능)</li>
-</ul>
-</li>            
-<li><h4>구현 기능</h4>
-<ul>                    
-<li>메인페이지, 장바구니 담기, 여행상품 추가, 수정, 한국관광공사, 기상청, 챗봇 api 활용</li>
-</ul>
-</li>
-</ul>
-<h3>😎박건형</h3>
-<ul>            
-<!--             <li><h4>역할</h4>
-<ul>                    
-<li>프로젝트 아이디어 기획</li>
-</ul>
-</li>   -->
-<li><h4>작업 페이지</h4>
-<ul>                    
-<li>마이페이지(내정보,비밀번호 변경, 주소지 관리), 사업자 공지사항</li>
-</ul>
-</li>            
-<li><h4>구현 기능</h4>
-<ul>                    
-<li>내정보 수정(아이디, 비밀번호, 이름, 휴대폰 번호), 휴대폰 번호 인증, 공지사항 조회</li>
-</ul>
-</li>
-</ul>
-<h3>😎이재형</h3>
-<ul>
-<!--             <li><h4>역할</h4>
-<ul>                    
-<li>DB 샘플 데이터 삽입으로 웹사이트 생동감 부여</li>
-</ul>
-</li>   -->
-<li><h4>작업 페이지</h4>
-<ul>                    
-<li>유저 마이 페이지, 관리자 페이지(상품 관리, 가이드 관리, 주문내역 관리, 고객 정보 관리, 고객 문의 관리),
-가이드 페이지(가이드 정보 수정), 상품 페이지 , 상품 상세 페이지, </li>
-</ul>
-</li>            
-<li><h4>구현 기능</h4>
-<ul>                    
-<li>여행 상품 필터링(날짜, 언어, 지역, 테마), 정보 수정 및 유효성 검사(관리자, 가이드, 고객 관련 페이지), 페이징 및 검색(관리자 페이지), 프로필 이미지 관리</li>
-</ul>
-</li>
-</ul>
-<!--     <div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;">  📑 페이지별 기능 </h2>      
-</div>
-<div style= "text-align:left;">   
-<div style= "text-align:left;">
-<h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 🎇 프로젝트 후기 </h2>       
-</div> -->
+> **외국인을 위한 맞춤형 소규모 한국 여행 플랫폼**
+
+---
+
+## 📚 목차
+
+1. [💡 프로젝트 소개](#💡-프로젝트-소개)
+2. [🗓 개발 기간](#🗓-개발-기간)
+3. [👨‍👩‍👦‍👦 팀원 구성](#👨‍👩‍👦‍👦-팀원-구성)
+4. [🛠️ 사용 기술](#🛠️-사용-기술)
+5. [📄 주요 기능](#📄-주요-기능)
+6. [👨‍🔧 역할 분담](#👨‍🔧-역할-분담)
+7. [📕 발표 PPT](#📕-발표-ppt)
+8. [🎞 시연 영상](#🎞-시연-영상)
+9. [🔚 맺음말](#🔚-맺음말)
+
+---
+
+## 💡 프로젝트 소개
+
+Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광 쇼핑몰입니다.  
+기존 패키지 여행의 단점을 보완하고, 다양한 테마/장소/가이드 선택을 통해 특별한 여행 경험을 제공합니다.
+
+- 고객은 원하는 장소, 테마, 활동을 자유롭게 선택할 수 있고,  
+- 가이드는 본인의 전공, 취미, 전문성을 바탕으로 상품을 등록할 수 있습니다.
+
+[🔝맨 위로](#top)
+
+---
+
+## 🗓 개발 기간
+
+| 구간 | 기간 | 주요 작업 |
+|------|------|-----------|
+| 기획 | 2025.03.10 ~ 03.19 | 컨셉 설정, DB 설계, 회의 |
+| 개발 | 2025.03.20 ~ 03.31 | 기능 구현, 페이지 개발 |
+| 개선 | 2025.04.01 ~ 04.14 | 보완 및 리팩터링 |
+
+[🔝맨 위로](#top)
+
+---
+
+## 👨‍👩‍👦‍👦 팀원 구성
+
+| 이름 | GitHub |
+|------|--------|
+| 이태훈 | [Taehun92](https://github.com/Taehun92) |
+| 강재석 | [codingjs12](https://github.com/codingjs12) |
+| 박건형 | [geon-hyung](https://github.com/geon-hyung) |
+| 이재형 | [leejh8997](https://github.com/leejh8997) |
+
+[🔝맨 위로](#top)
+
+---
+
+## 🛠️ 사용 기술
+
+> 백엔드, 프론트엔드, DB, API 등을 조합하여 구성
+
+![Spring Boot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=Vue.js&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white)
+![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white)
+![JSP](https://img.shields.io/badge/JSP-007396?style=for-the-badge&logo=java&logoColor=white)
+![jQuery](https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jQuery&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/tailwindcss-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black)
+![RESTful API](https://img.shields.io/badge/RESTful-API-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![AJAX](https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white)
+
+[🔝맨 위로](#top)
+
+---
+
+## 📄 주요 기능
+
+- **회원가입/로그인**: 이메일 인증, 소셜 로그인(Google 등)
+- **상품 관련**: 장바구니 모달, Vue 별점 기능, 바로구매
+- **마이페이지**: 여행 일정 달력으로 확인
+- **결제 시스템**: 환율 API + 해외 결제(PayPal, 카드 등)
+- **외부 API**:
+  - 한국관광공사 OPEN API
+  - 기상청 날씨 API
+  - 챗봇 기능 API 연동
+
+[🔝맨 위로](#top)
+
+---
+
+## 👨‍🔧 역할 분담
+
+### 👤 이태훈
+
+- **작업 페이지**: 로그인/회원가입, 요청 게시판, 가이드 마이페이지, 헤더/푸터
+- **기능 구현**: 이메일 인증, 모달 구성, 유효성 검사, 아이디 중복 체크 등
+
+---
+
+### 👤 강재석
+
+- **작업 페이지**: 메인 페이지, 상품 등록/수정, 관광지 페이지
+- **기능 구현**: 장바구니, 상품 관리, 관광공사 & 기상청 API, 챗봇 연동 등
+
+---
+
+### 👤 박건형
+
+- **작업 페이지**: 마이페이지(내정보, 비밀번호 변경), 공지사항
+- **기능 구현**: 회원정보 수정, 휴대폰 인증, 공지사항 게시 기능
+
+---
+
+### 👤 이재형
+
+- **작업 페이지**: 관리자 페이지, 유저 마이페이지, 상품 상세
+- **기능 구현**: 여행 상품 필터(지역/날짜/테마), 유효성 검사, 페이징, 프로필 관리
+
+[🔝맨 위로](#top)
+
+---
+
+## 📕 발표 PPT
+
+▶ [Kapture 발표 자료 보기](https://drive.google.com/file/d/1S54vN3MGMAPsJRxfwo8K9Y5LPi9_-tiM/view?usp=drive_link)
+
+---
+
+## 🎞 시연 영상
+
+▶ [Kapture 시연 영상 보기](https://youtu.be/nYb7iXMzafA)
+
+[🔝맨 위로](#top)
+
+---
+
+## 🔚 맺음말
+
+첫 팀 프로젝트이자 웹 개발의 흐름을 직접 경험한 귀중한 시간들이었습니다.  
+설계, 구현, 협업, 발표까지 전 과정을 경험하며 **기술적 성장과 협업의 중요성**을 느꼈습니다.  
+향후에는 더 나은 코드 품질과 사용자 경험을 위해 지속적으로 개선해 나가겠습니다.
+
+[🔝맨 위로](#top)
