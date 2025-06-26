@@ -9,7 +9,7 @@
 > **외국인을 위한 맞춤형 소규모 한국 여행 플랫폼**
 
 ---
-
+<a name="toc"></a>
 ## 📚 목차
 
 1. [프로젝트 소개](#-프로젝트-소개)
@@ -86,7 +86,7 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
   - 챗봇 기능 API 연동
     
 
-<p align="right"><a href="#top">🔝 맨 위로</a></p>
+<p align="right"><a href="#toc">🔝 목차로 이동</a></p>
 
 ---
 
@@ -130,5 +130,5 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 
 ▶ [Kapture 시연 영상 보기](https://youtu.be/nYb7iXMzafA)
 
-<p align="right"><a href="#top">🔝 맨 위로</a></p>
+<p align="right"><a href="#toc">🔝 목차로 이동</a></p>
 ---
