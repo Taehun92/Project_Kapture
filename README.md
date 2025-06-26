@@ -131,4 +131,3 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 ▶ [Kapture 시연 영상 보기](https://youtu.be/nYb7iXMzafA)
 
 <p align="right"><a href="#toc">🔝 목차로 이동</a></p>
----
