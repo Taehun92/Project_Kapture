@@ -72,8 +72,6 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 ![AJAX](https://img.shields.io/badge/AJAX-000000?style=for-the-badge&logo=javascript&logoColor=white)
 
 
-<p align="right"><a href="#top">🔝 맨 위로</a></p>
-
 ---
 
 ## 📄 주요 기능
@@ -86,6 +84,9 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
   - 한국관광공사 OPEN API
   - 기상청 날씨 API
   - 챗봇 기능 API 연동
+    
+
+<p align="right"><a href="#top">🔝 맨 위로</a></p>
 
 ---
 
