@@ -122,7 +122,7 @@ Kapture는 한국을 방문하는 외국인을 위한 소규모 맞춤형 관광
 
 ## 📕 발표 PPT
 
-▶ [Kapture 발표 자료 보기](https://drive.google.com/file/d/1S54vN3MGMAPsJRxfwo8K9Y5LPi9_-tiM/view?usp=drive_link)
+▶ [Kapture 발표 자료 보기](https://drive.google.com/file/d/1mIkV4cn3hYR82kwxzxeX8cwDe-EcOK1w/view?usp=drive_link)
 
 ---
 
